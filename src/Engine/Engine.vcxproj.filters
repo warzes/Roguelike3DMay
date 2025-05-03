@@ -2,29 +2,30 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
-    <ClCompile Include="OpenGL4Utils.cpp">
+    <ClCompile Include="OpenGL4Wrapper.cpp">
       <Filter>RHI</Filter>
-    </ClCompile>
-    <ClCompile Include="GlobalApp.cpp">
-      <Filter>App</Filter>
     </ClCompile>
     <ClCompile Include="Log.cpp">
       <Filter>Base</Filter>
     </ClCompile>
+    <ClCompile Include="EngineApp.cpp">
+      <Filter>App</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
-    <ClInclude Include="OpenGL4Utils.h">
+    <ClInclude Include="OpenGL4Wrapper.h">
       <Filter>RHI</Filter>
-    </ClInclude>
-    <ClInclude Include="GlobalApp.h">
-      <Filter>App</Filter>
     </ClInclude>
     <ClInclude Include="Log.h">
       <Filter>Base</Filter>
     </ClInclude>
     <ClInclude Include="EngineConfig.h" />
     <ClInclude Include="BaseHeader.h" />
+    <ClInclude Include="EngineApp.h">
+      <Filter>App</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Base">

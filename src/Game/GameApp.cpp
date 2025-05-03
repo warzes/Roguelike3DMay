@@ -1,16 +1,18 @@
-﻿#include "stdafx.h"
+#include "stdafx.h"
 #include "GameApp.h"
 //=============================================================================
-#if defined(_MSC_VER)
-#	pragma comment( lib, "3rdparty.lib" )
-#	pragma comment( lib, "Engine.lib" )
-#endif
-//=============================================================================
-int main(
-	[[maybe_unused]] int   argc,
-	[[maybe_unused]] char* argv[])
+EngineConfig GameApp::GetConfig() const
 {
-	GameApp game;
-	game.Run();
+	return {};
+}
+//=============================================================================
+bool GameApp::OnCreate()
+{
+	return true;
+}
+//=============================================================================
+void GameApp::OnDestroy()
+{
+
 }
 //=============================================================================

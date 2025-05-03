@@ -1,5 +1,5 @@
 ﻿#include "stdafx.h"
-#include "OpenGL4Utils.h"
+#include "OpenGL4Wrapper.h"
 #include "Log.h"
 //=============================================================================
 

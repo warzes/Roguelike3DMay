@@ -1,4 +1,3 @@
 ﻿#pragma once
 
-#include "Engine/BaseHeader.h"
-#include "GameConfig.h"
+#include "Engine/Engine.h"
