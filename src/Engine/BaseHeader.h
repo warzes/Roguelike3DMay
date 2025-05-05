@@ -28,6 +28,8 @@
 #include <filesystem>
 #include <string>
 #include <string_view>
+#include <array>
+#include <stack>
 
 #include <glad/gl.h>
 #include <glfw/glfw3.h>

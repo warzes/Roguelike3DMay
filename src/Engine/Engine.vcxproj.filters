@@ -6,10 +6,16 @@
       <Filter>RHI</Filter>
     </ClCompile>
     <ClCompile Include="Log.cpp">
-      <Filter>Base</Filter>
+      <Filter>Core</Filter>
     </ClCompile>
     <ClCompile Include="EngineApp.cpp">
       <Filter>App</Filter>
+    </ClCompile>
+    <ClCompile Include="Profiler.cpp">
+      <Filter>App</Filter>
+    </ClCompile>
+    <ClCompile Include="CoreFunc.cpp">
+      <Filter>Core</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -18,7 +24,7 @@
       <Filter>RHI</Filter>
     </ClInclude>
     <ClInclude Include="Log.h">
-      <Filter>Base</Filter>
+      <Filter>Core</Filter>
     </ClInclude>
     <ClInclude Include="EngineConfig.h" />
     <ClInclude Include="BaseHeader.h" />
@@ -26,19 +32,19 @@
       <Filter>App</Filter>
     </ClInclude>
     <ClInclude Include="Engine.h" />
+    <ClInclude Include="Profiler.h">
+      <Filter>App</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreFunc.h">
+      <Filter>Core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Filter Include="Base">
-      <UniqueIdentifier>{dd46222f-db0a-4949-8c3b-dfa5952befcf}</UniqueIdentifier>
-    </Filter>
     <Filter Include="App">
       <UniqueIdentifier>{784c67a7-c103-49ce-a835-233c3aa502c2}</UniqueIdentifier>
     </Filter>
     <Filter Include="RHI">
       <UniqueIdentifier>{a7d95fed-4ab8-4e07-bec9-948d744163d9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Core">
-      <UniqueIdentifier>{a9629990-d340-4f6c-9598-ee432ed2f194}</UniqueIdentifier>
     </Filter>
     <Filter Include="Math">
       <UniqueIdentifier>{a606259f-5eed-44b4-a4d8-23c2f55e9e50}</UniqueIdentifier>
@@ -48,6 +54,9 @@
     </Filter>
     <Filter Include="Graphics">
       <UniqueIdentifier>{31c8c2b4-7516-41ba-994f-903862b1b25e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core">
+      <UniqueIdentifier>{dd46222f-db0a-4949-8c3b-dfa5952befcf}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "EngineApp.h"
 #include "Log.h"
+#include "Profiler.h"
 //=============================================================================
 #if defined(_WIN32)
 extern "C" {
@@ -63,10 +64,84 @@ void messageCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLs
 }
 #endif
 //=============================================================================
+void windowMinimizedCallback(GLFWwindow* window, int minimized) noexcept
+{
+
+}
+//=============================================================================
+void windowMaximizedCallback(GLFWwindow* window, int maximized) noexcept
+{
+
+}
+//=============================================================================
+void mouseEnterLeaveCallback(GLFWwindow* window, int entered) noexcept
+{
+
+}
+//=============================================================================
 void framebufferSizeCallback([[maybe_unused]] GLFWwindow* window, int width, int height) noexcept
 {
+	if (width < 0 || height < 0) return;
+	width = std::max(width, 1);
+	height = std::max(height, 1);
+
 	if (thisIEngineApp)
 		thisIEngineApp->windowResize(width, height);
+}
+//=============================================================================
+void keyCallback(GLFWwindow* window, int key, int scanCode, int action, int mods) noexcept
+{
+	ImGui_ImplGlfw_KeyCallback(window, key, scanCode, action, mods);
+
+	if (key >= 0 && key < MaxKeys)
+	{
+		if (action == GLFW_PRESS)
+		{
+			thisIEngineApp->m_keys[key] = true;
+		}
+		else if (action == GLFW_RELEASE)
+		{
+			thisIEngineApp->m_keys[key] = false;
+		}
+		else if (action == GLFW_REPEAT)
+		{
+			// TODO:
+		}
+	}
+	//std::string keyName = glfwGetKeyName(key, 0);
+}
+//=============================================================================
+void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods) noexcept
+{
+	ImGui_ImplGlfw_MouseButtonCallback(window, button, action, mods);
+
+	if (button >= 0 && button < MaxMouseButtons)
+	{
+		if (action == GLFW_PRESS)
+		{
+			thisIEngineApp->m_mouseButtons[button] = true;
+		}
+		else if (action == GLFW_RELEASE)
+		{
+			thisIEngineApp->m_mouseButtons[button] = false;
+		}
+	}
+}
+//=============================================================================
+void mousePositionCallback([[maybe_unused]] GLFWwindow* window, double xpos, double ypos) noexcept
+{
+	thisIEngineApp->m_mouseX = xpos;
+	thisIEngineApp->m_mouseY = ypos;
+}
+//=============================================================================
+void mouseScrollCallback(GLFWwindow* window, double xoffset, double yoffset) noexcept
+{
+	ImGui_ImplGlfw_ScrollCallback(window, xoffset, yoffset);
+}
+//=============================================================================
+void charCallback(GLFWwindow* window, unsigned int c) noexcept
+{
+	ImGui_ImplGlfw_CharCallback(window, c);
 }
 //=============================================================================
 void IEngineApp::Run()
@@ -80,19 +155,43 @@ void IEngineApp::Run()
 			m_deltaTime = currentFrame - lastFrame;
 			lastFrame = currentFrame;
 
-			OnUpdate(m_deltaTime);
+			m_mouseDeltaX = m_mouseX - m_lastMouseX;
+			m_mouseDeltaY = m_mouseY - m_lastMouseY;
+			m_lastMouseX = m_mouseX;
+			m_lastMouseY = m_mouseY;
 
-			OnRender();
+			profiler::BeginFrame();
 
-			ImGui_ImplOpenGL3_NewFrame();
-			ImGui_ImplGlfw_NewFrame();
-			ImGui::NewFrame();
+			{
+				SE_SCOPED_SAMPLE("Update");
+				OnUpdate(m_deltaTime);
+			}
+			
+			{
+				SE_SCOPED_SAMPLE("Render");
 
-			OnImGuiDraw();
+				glViewport(0, 0, GetWidth(), GetHeight());
 
-			ImGui::Render();
-			ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+				// Clear default framebuffer.
+				glClearColor(0.0f, 0.0f, 0.8f, 1.0f);
+				glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+				OnRender();
+			}
+
+			{
+				SE_SCOPED_SAMPLE("ImGui Draw");
+				ImGui_ImplOpenGL3_NewFrame();
+				ImGui_ImplGlfw_NewFrame();
+				ImGui::NewFrame();
+
+				OnImGuiDraw();
+
+				ImGui::Render();
+				ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+			}
+			
+			profiler::EndFrame();
 			glfwSwapBuffers(m_window);
 			glfwPollEvents();
 		}
@@ -103,6 +202,21 @@ void IEngineApp::Run()
 float IEngineApp::GetAspect() const
 {
 	return (float)m_width / (float)m_height;
+}
+//=============================================================================
+double IEngineApp::GetTimeInSec() const
+{
+	return glfwGetTime();
+}
+//=============================================================================
+void IEngineApp::SetCursorPosition(const glm::uvec2& position)
+{
+	glfwSetCursorPos(m_window, static_cast<double>(position.x), static_cast<double>(position.y));
+}
+//=============================================================================
+void IEngineApp::DrawProfilerInfo()
+{
+	profiler::Ui();
 }
 //=============================================================================
 bool IEngineApp::create()
@@ -116,6 +230,8 @@ bool IEngineApp::create()
 
 	initImGui();
 
+	profiler::Init();
+
 	thisIEngineApp = this;
 	IsExitApp = false;
 	return OnCreate();
@@ -123,11 +239,7 @@ bool IEngineApp::create()
 //=============================================================================
 bool IEngineApp::createWindow(const EngineConfig& config)
 {
-	glfwSetErrorCallback([](int /*error*/, const char* description)
-		{
-			Fatal(description);
-		}
-	);
+	glfwSetErrorCallback([](int e, const char* str) { Fatal("GLTF Context error(" + std::to_string(e) + "): " + str); });
 
 	if (!glfwInit())
 	{
@@ -146,6 +258,7 @@ bool IEngineApp::createWindow(const EngineConfig& config)
 #endif
 
 	glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
+	glfwWindowHint(GLFW_MAXIMIZED, config.window.maximized ? GL_TRUE : GL_FALSE);
 
 	m_window = glfwCreateWindow(config.window.width, config.window.height, config.window.title.data(), nullptr, nullptr);
 	if (!m_window)
@@ -154,7 +267,16 @@ bool IEngineApp::createWindow(const EngineConfig& config)
 		return false;
 	}
 
+	glfwSetWindowIconifyCallback(m_window, windowMinimizedCallback);
+	glfwSetWindowMaximizeCallback(m_window, windowMaximizedCallback);
+	glfwSetCursorEnterCallback(m_window, mouseEnterLeaveCallback);
 	glfwSetFramebufferSizeCallback(m_window, framebufferSizeCallback);
+
+	glfwSetKeyCallback(m_window, keyCallback);
+	glfwSetCursorPosCallback(m_window, mousePositionCallback);
+	glfwSetScrollCallback(m_window, mouseScrollCallback);
+	glfwSetMouseButtonCallback(m_window, mouseButtonCallback);
+	glfwSetCharCallback(m_window,charCallback);
 
 	int displayW, displayH;
 	glfwGetFramebufferSize(m_window, &displayW, &displayH);
@@ -166,7 +288,7 @@ bool IEngineApp::createWindow(const EngineConfig& config)
 
 	if (gladLoadGL(glfwGetProcAddress) == 0)
 	{
-		Fatal("Failed to load GLfunc");
+		Fatal("Failed to initialize OpenGL context!");
 		return false;
 	}
 	glfwSwapInterval(config.render.vsync ? 1 : 0);
@@ -193,7 +315,17 @@ void IEngineApp::initImGui()
 	ImGui_ImplGlfw_InitForOpenGL(m_window, false);
 	ImGui_ImplOpenGL3_Init("#version 150");
 	ImGui::StyleColorsDark();
+
+	GLFWmonitor* primary = glfwGetPrimaryMonitor();
+
+	float xscale, yscale;
+	glfwGetMonitorContentScale(primary, &xscale, &yscale);
+
+	ImGuiStyle* style = &ImGui::GetStyle();
+	style->ScaleAllSizes(xscale > yscale ? xscale : yscale);
+
 	ImGuiIO& io = ImGui::GetIO();
+	io.FontGlobalScale = xscale > yscale ? xscale : yscale;
 	io.IniFilename = nullptr;
 }
 //=============================================================================
@@ -206,7 +338,7 @@ void IEngineApp::destroy()
 {
 	OnDestroy();
 
-	thisIEngineApp = nullptr;
+	profiler::Close();
 
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplGlfw_Shutdown();
@@ -218,6 +350,8 @@ void IEngineApp::destroy()
 		m_window = nullptr;
 	}
 	glfwTerminate();
+
+	thisIEngineApp = nullptr;
 }
 //=============================================================================
 void IEngineApp::windowResize(int width, int height)

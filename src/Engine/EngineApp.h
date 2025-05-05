@@ -9,13 +9,19 @@ struct EngineConfig final
 		uint16_t         width{ 1600 };
 		uint16_t         height{ 900 };
 		std::string_view title{ "Game" };
+		bool             maximized{ false };
+		bool             fullScreen{ false };
 	} window;
 
 	struct Render final
 	{
 		bool             vsync{ true };
+		bool             srgb{ false };
 	} render;
 };
+
+constexpr size_t MaxKeys = 1024;
+constexpr size_t MaxMouseButtons = 5;
 
 class IEngineApp
 {
@@ -46,8 +52,17 @@ public:
 	
 	float GetDeltaTime() const { return m_deltaTime; }
 
+	double GetTimeInSec() const;
+
+	void SetCursorPosition(const glm::uvec2& position);
+
+	void DrawProfilerInfo();
+
 private:
 	friend void framebufferSizeCallback(GLFWwindow*, int, int) noexcept;
+	friend void keyCallback(GLFWwindow*, int, int, int, int) noexcept;
+	friend void mouseButtonCallback(GLFWwindow*, int, int, int) noexcept;
+	friend void mousePositionCallback(GLFWwindow*, double, double) noexcept;
 
 	bool create();
 	bool createWindow(const EngineConfig& config);
@@ -59,7 +74,17 @@ private:
 	void windowResize(int width, int height);
 
 	GLFWwindow* m_window;
-	uint16_t m_width{ 0 };
-	uint16_t m_height{ 0 };
-	float m_deltaTime{ 0.0f };
+	uint16_t    m_width{ 0 };
+	uint16_t    m_height{ 0 };
+	float       m_deltaTime{ 0.0f };
+
+	double      m_mouseX{ 0.0 };
+	double      m_mouseY{ 0.0 };
+	double      m_lastMouseX{ 0.0 };
+	double      m_lastMouseY{ 0.0 };
+	double      m_mouseDeltaX{ 0.0 };
+	double      m_mouseDeltaY{ 0.0 };
+
+	std::array<bool, MaxKeys> m_keys{ false };
+	std::array<bool, MaxMouseButtons> m_mouseButtons{ false };
 };
