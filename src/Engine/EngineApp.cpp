@@ -10,6 +10,7 @@ extern "C" {
 #endif
 //=============================================================================
 bool IsExitApp{ false };
+IEngineApp* thisIEngineApp{ nullptr };
 //=============================================================================
 void ExitApp()
 {
@@ -62,12 +63,36 @@ void messageCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLs
 }
 #endif
 //=============================================================================
+void framebufferSizeCallback([[maybe_unused]] GLFWwindow* window, int width, int height) noexcept
+{
+	if (thisIEngineApp)
+		thisIEngineApp->windowResize(width, height);
+}
+//=============================================================================
 void IEngineApp::Run()
 {
 	if (create())
 	{
+		float lastFrame = 0.0f;
 		while (!shouldWindowClose())
 		{
+			float currentFrame = static_cast<float>(glfwGetTime());
+			m_deltaTime = currentFrame - lastFrame;
+			lastFrame = currentFrame;
+
+			OnUpdate(m_deltaTime);
+
+			OnRender();
+
+			ImGui_ImplOpenGL3_NewFrame();
+			ImGui_ImplGlfw_NewFrame();
+			ImGui::NewFrame();
+
+			OnImGuiDraw();
+
+			ImGui::Render();
+			ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
 			glfwSwapBuffers(m_window);
 			glfwPollEvents();
 		}
@@ -75,10 +100,29 @@ void IEngineApp::Run()
 	destroy();
 }
 //=============================================================================
+float IEngineApp::GetAspect() const
+{
+	return (float)m_width / (float)m_height;
+}
+//=============================================================================
 bool IEngineApp::create()
 {
 	auto engineConfig = GetConfig();
 
+	if (!createWindow(engineConfig))
+		return false;
+
+	initOpenGL();
+
+	initImGui();
+
+	thisIEngineApp = this;
+	IsExitApp = false;
+	return OnCreate();
+}
+//=============================================================================
+bool IEngineApp::createWindow(const EngineConfig& config)
+{
 	glfwSetErrorCallback([](int /*error*/, const char* description)
 		{
 			Fatal(description);
@@ -103,12 +147,18 @@ bool IEngineApp::create()
 
 	glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 
-	m_window = glfwCreateWindow(engineConfig.window.width, engineConfig.window.height, engineConfig.window.title.data(), nullptr, nullptr);
+	m_window = glfwCreateWindow(config.window.width, config.window.height, config.window.title.data(), nullptr, nullptr);
 	if (!m_window)
 	{
 		Fatal("Failed to create GLFW window");
 		return false;
 	}
+
+	glfwSetFramebufferSizeCallback(m_window, framebufferSizeCallback);
+
+	int displayW, displayH;
+	glfwGetFramebufferSize(m_window, &displayW, &displayH);
+	windowResize(displayW, displayH);
 
 	Info("Created window");
 
@@ -119,19 +169,32 @@ bool IEngineApp::create()
 		Fatal("Failed to load GLfunc");
 		return false;
 	}
-	glfwSwapInterval(1);
+	glfwSwapInterval(config.render.vsync ? 1 : 0);
 
+	Info("Created OpenGL context");
+
+	return true;
+}
+//=============================================================================
+void IEngineApp::initOpenGL()
+{
 #if defined(_DEBUG)
 	glDebugMessageCallback(messageCallback, nullptr);
 	glEnable(GL_DEBUG_OUTPUT);
 	glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
 	glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, nullptr, GL_FALSE);
 #endif
-
-	Info("Created OpenGL context");
-
-	IsExitApp = false;
-	return OnCreate();
+}
+//=============================================================================
+void IEngineApp::initImGui()
+{
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGui_ImplGlfw_InitForOpenGL(m_window, false);
+	ImGui_ImplOpenGL3_Init("#version 150");
+	ImGui::StyleColorsDark();
+	ImGuiIO& io = ImGui::GetIO();
+	io.IniFilename = nullptr;
 }
 //=============================================================================
 bool IEngineApp::shouldWindowClose() const
@@ -143,11 +206,24 @@ void IEngineApp::destroy()
 {
 	OnDestroy();
 
+	thisIEngineApp = nullptr;
+
+	ImGui_ImplOpenGL3_Shutdown();
+	ImGui_ImplGlfw_Shutdown();
+	ImGui::DestroyContext();
+
 	if (m_window)
 	{
 		glfwDestroyWindow(m_window);
 		m_window = nullptr;
 	}
 	glfwTerminate();
+}
+//=============================================================================
+void IEngineApp::windowResize(int width, int height)
+{
+	m_width = static_cast<uint32_t>(width);
+	m_height = static_cast<uint32_t>(height);
+	OnResize(m_width, m_height);
 }
 //=============================================================================
