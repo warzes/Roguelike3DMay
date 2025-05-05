@@ -64,17 +64,17 @@ void messageCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLs
 }
 #endif
 //=============================================================================
-void windowMinimizedCallback(GLFWwindow* window, int minimized) noexcept
+void windowIconifyCallback(GLFWwindow* window, int minimized) noexcept
 {
 
 }
 //=============================================================================
-void windowMaximizedCallback(GLFWwindow* window, int maximized) noexcept
+void windowMaximizeCallback(GLFWwindow* window, int maximized) noexcept
 {
 
 }
 //=============================================================================
-void mouseEnterLeaveCallback(GLFWwindow* window, int entered) noexcept
+void cursorEnterCallback(GLFWwindow* window, int entered) noexcept
 {
 
 }
@@ -91,6 +91,8 @@ void framebufferSizeCallback([[maybe_unused]] GLFWwindow* window, int width, int
 //=============================================================================
 void keyCallback(GLFWwindow* window, int key, int scanCode, int action, int mods) noexcept
 {
+	if (key < 0) return;
+
 	ImGui_ImplGlfw_KeyCallback(window, key, scanCode, action, mods);
 
 	if (key >= 0 && key < MaxKeys)
@@ -105,7 +107,7 @@ void keyCallback(GLFWwindow* window, int key, int scanCode, int action, int mods
 		}
 		else if (action == GLFW_REPEAT)
 		{
-			// TODO:
+			thisIEngineApp->m_repeatKeys[key] = true;
 		}
 	}
 	//std::string keyName = glfwGetKeyName(key, 0);
@@ -128,10 +130,10 @@ void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods) n
 	}
 }
 //=============================================================================
-void mousePositionCallback([[maybe_unused]] GLFWwindow* window, double xpos, double ypos) noexcept
+void mouseCursorPosCallback([[maybe_unused]] GLFWwindow* window, double xpos, double ypos) noexcept
 {
-	thisIEngineApp->m_mouseX = xpos;
-	thisIEngineApp->m_mouseY = ypos;
+	thisIEngineApp->m_currentMousePositionX = xpos;
+	thisIEngineApp->m_currentMousePositionY = ypos;
 }
 //=============================================================================
 void mouseScrollCallback(GLFWwindow* window, double xoffset, double yoffset) noexcept
@@ -155,10 +157,10 @@ void IEngineApp::Run()
 			m_deltaTime = currentFrame - lastFrame;
 			lastFrame = currentFrame;
 
-			m_mouseDeltaX = m_mouseX - m_lastMouseX;
-			m_mouseDeltaY = m_mouseY - m_lastMouseY;
-			m_lastMouseX = m_mouseX;
-			m_lastMouseY = m_mouseY;
+			m_mouseDeltaX = m_currentMousePositionX - m_lastMouseX;
+			m_mouseDeltaY = m_currentMousePositionY - m_lastMouseY;
+			m_lastMouseX = m_currentMousePositionX;
+			m_lastMouseY = m_currentMousePositionY;
 
 			profiler::BeginFrame();
 
@@ -190,6 +192,8 @@ void IEngineApp::Run()
 				ImGui::Render();
 				ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 			}
+
+			memset(m_repeatKeys.data(), false, m_repeatKeys.size());
 			
 			profiler::EndFrame();
 			glfwSwapBuffers(m_window);
@@ -202,6 +206,21 @@ void IEngineApp::Run()
 float IEngineApp::GetAspect() const
 {
 	return (float)m_width / (float)m_height;
+}
+//=============================================================================
+bool IEngineApp::GetKeyDown(int key)
+{
+	return m_keys[key];
+}
+//=============================================================================
+bool IEngineApp::GetKeyPressed(int key)
+{
+	return m_repeatKeys[key];
+}
+//=============================================================================
+bool IEngineApp::GetMouseButton(int button)
+{
+	return m_mouseButtons[button];
 }
 //=============================================================================
 double IEngineApp::GetTimeInSec() const
@@ -243,10 +262,11 @@ bool IEngineApp::createWindow(const EngineConfig& config)
 
 	if (!glfwInit())
 	{
-		Fatal("Failed to initialize glfw");
+		Fatal("Failed to initialize GLFW");
 		return false;
 	}
 
+	glfwDefaultWindowHints();
 	glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
@@ -260,6 +280,10 @@ bool IEngineApp::createWindow(const EngineConfig& config)
 	glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 	glfwWindowHint(GLFW_MAXIMIZED, config.window.maximized ? GL_TRUE : GL_FALSE);
 
+	// Disable GlFW auto iconify behaviour
+	// Auto Iconify automatically minimizes (iconifies) the window if the window loses focus additionally auto iconify restores the hardware resolution of the monitor if the window that loses focus is a fullscreen window
+	glfwWindowHint(GLFW_AUTO_ICONIFY, 0);
+
 	m_window = glfwCreateWindow(config.window.width, config.window.height, config.window.title.data(), nullptr, nullptr);
 	if (!m_window)
 	{
@@ -267,16 +291,16 @@ bool IEngineApp::createWindow(const EngineConfig& config)
 		return false;
 	}
 
-	glfwSetWindowIconifyCallback(m_window, windowMinimizedCallback);
-	glfwSetWindowMaximizeCallback(m_window, windowMaximizedCallback);
-	glfwSetCursorEnterCallback(m_window, mouseEnterLeaveCallback);
+	glfwSetWindowIconifyCallback(m_window, windowIconifyCallback);
+	glfwSetWindowMaximizeCallback(m_window, windowMaximizeCallback);
 	glfwSetFramebufferSizeCallback(m_window, framebufferSizeCallback);
 
 	glfwSetKeyCallback(m_window, keyCallback);
-	glfwSetCursorPosCallback(m_window, mousePositionCallback);
-	glfwSetScrollCallback(m_window, mouseScrollCallback);
+	glfwSetCharCallback(m_window, charCallback);
 	glfwSetMouseButtonCallback(m_window, mouseButtonCallback);
-	glfwSetCharCallback(m_window,charCallback);
+	glfwSetCursorPosCallback(m_window, mouseCursorPosCallback);
+	glfwSetScrollCallback(m_window, mouseScrollCallback);
+	glfwSetCursorEnterCallback(m_window, cursorEnterCallback);
 
 	int displayW, displayH;
 	glfwGetFramebufferSize(m_window, &displayW, &displayH);

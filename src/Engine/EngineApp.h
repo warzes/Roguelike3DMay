@@ -20,7 +20,7 @@ struct EngineConfig final
 	} render;
 };
 
-constexpr size_t MaxKeys = 1024;
+constexpr size_t MaxKeys = 512;
 constexpr size_t MaxMouseButtons = 5;
 
 class IEngineApp
@@ -49,6 +49,18 @@ public:
 	uint16_t GetWidth() const { return m_width; }
 	uint16_t GetHeight() const { return m_height; }
 	float GetAspect() const;
+
+	int GetMousePositionX() const { return static_cast<int>(m_currentMousePositionX); }
+	int GetMousePositionY() const { return static_cast<int>(m_currentMousePositionY); }
+	glm::ivec2 GetMousePosition() const { return { GetMousePositionX(), GetMousePositionY() }; }
+
+	int GetMouseDeltaX() const { return static_cast<int>(m_mouseDeltaX); }
+	int GetMouseDeltaY() const { return static_cast<int>(m_mouseDeltaY); }
+	glm::ivec2 GetMouseDelta() const { return { GetMouseDeltaX(), GetMouseDeltaY() }; }
+
+	bool GetKeyDown(int key);
+	bool GetKeyPressed(int key);
+	bool GetMouseButton(int button);
 	
 	float GetDeltaTime() const { return m_deltaTime; }
 
@@ -62,7 +74,7 @@ private:
 	friend void framebufferSizeCallback(GLFWwindow*, int, int) noexcept;
 	friend void keyCallback(GLFWwindow*, int, int, int, int) noexcept;
 	friend void mouseButtonCallback(GLFWwindow*, int, int, int) noexcept;
-	friend void mousePositionCallback(GLFWwindow*, double, double) noexcept;
+	friend void mouseCursorPosCallback(GLFWwindow*, double, double) noexcept;
 
 	bool create();
 	bool createWindow(const EngineConfig& config);
@@ -78,13 +90,14 @@ private:
 	uint16_t    m_height{ 0 };
 	float       m_deltaTime{ 0.0f };
 
-	double      m_mouseX{ 0.0 };
-	double      m_mouseY{ 0.0 };
+	double      m_currentMousePositionX{ 0.0 };
+	double      m_currentMousePositionY{ 0.0 };
 	double      m_lastMouseX{ 0.0 };
 	double      m_lastMouseY{ 0.0 };
 	double      m_mouseDeltaX{ 0.0 };
 	double      m_mouseDeltaY{ 0.0 };
 
 	std::array<bool, MaxKeys> m_keys{ false };
+	std::array<bool, MaxKeys> m_repeatKeys{ false };
 	std::array<bool, MaxMouseButtons> m_mouseButtons{ false };
 };
