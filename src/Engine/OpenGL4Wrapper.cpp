@@ -281,19 +281,12 @@ GLuint gl4::CreateTexture2D(GLenum internalFormat, GLsizei width, GLsizei height
 }
 //=============================================================================
 // Draw a checkerboard on a pre-allocated square RGB image.
-inline uint8_t* genDefaultCheckerboardImage(int* width, int* height)
+inline uint8_t* genDefaultCheckerboardImage(int* width, int* height, int* nrChannels)
 {
-	const int w = 128;
-	const int h = 128;
+	const int w = 64;
+	const int h = 64;
 
 	uint8_t* imgData = (uint8_t*)malloc(w * h * 3); // stbi_load() uses malloc(), so this is safe
-
-	assert(imgData && w > 0 && h > 0);
-	assert(w == h);
-
-	if (!imgData || w <= 0 || h <= 0) return nullptr;
-	if (w != h) return nullptr;
-
 	for (int i = 0; i < w * h; i++)
 	{
 		const int row = i / w;
@@ -303,6 +296,7 @@ inline uint8_t* genDefaultCheckerboardImage(int* width, int* height)
 
 	if (width) *width = w;
 	if (height) *height = h;
+	if (nrChannels) *nrChannels = 3;
 
 	return imgData;
 }
@@ -316,7 +310,7 @@ GLuint gl4::LoadTexture2D(const char* texturePath, bool flipVertical, const Text
 	if (!data)
 	{
 		Error((std::string("Texture: ") + texturePath + " not find").c_str());
-		data = genDefaultCheckerboardImage(&width, &height);
+		data = genDefaultCheckerboardImage(&width, &height, &nrChannels);
 		if (!data)
 		{
 			Fatal("out of memory allocating image for fallback texture");
