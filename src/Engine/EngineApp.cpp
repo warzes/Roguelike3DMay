@@ -242,6 +242,9 @@ bool IEngineApp::create()
 
 	initImGui();
 
+	if (!m_graphics.Create())
+		return false;
+
 	profiler::Init();
 
 	thisIEngineApp = this;
@@ -323,6 +326,8 @@ void IEngineApp::initOpenGL()
 	glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
 	glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, nullptr, GL_FALSE);
 #endif
+
+	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 }
 //=============================================================================
 void IEngineApp::initImGui()
@@ -356,6 +361,8 @@ void IEngineApp::destroy()
 	OnDestroy();
 
 	profiler::Close();
+
+	m_graphics.Destroy();
 
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplGlfw_Shutdown();

@@ -102,6 +102,71 @@ GLuint gl4::CreateShaderProgram(const char* vertexSrc, const char* geometrySrc, 
 	return program;
 }
 //=============================================================================
+int gl4::GetUniformLocation(GLuint program, const std::string& name)
+{
+	return glGetUniformLocation(program, name.c_str());
+}
+//=============================================================================
+void gl4::SetUniform(int uniformLoc, bool value)
+{
+	glUniform1i(uniformLoc, static_cast<int>(value));
+}
+//=============================================================================
+void gl4::SetUniform(int uniformLoc, int value)
+{
+	glUniform1i(uniformLoc, value);
+}
+//=============================================================================
+void gl4::SetUniform(int uniformLoc, float value)
+{
+	glUniform1f(uniformLoc, value);
+}
+//=============================================================================
+void gl4::SetUniform(int uniformLoc, const glm::vec2& value)
+{
+	glUniform2fv(uniformLoc, 1, &value[0]);
+}
+//=============================================================================
+void gl4::SetUniform(int uniformLoc, float x, float y)
+{
+	glUniform2f(uniformLoc, x, y);
+}
+//=============================================================================
+void gl4::SetUniform(int uniformLoc, const glm::vec3& value)
+{
+	glUniform3fv(uniformLoc, 1, &value[0]);
+}
+//=============================================================================
+void gl4::SetUniform(int uniformLoc, float x, float y, float z)
+{
+	glUniform3f(uniformLoc, x, y, z);
+}
+//=============================================================================
+void gl4::SetUniform(int uniformLoc, const glm::vec4& value)
+{
+	glUniform4fv(uniformLoc, 1, &value[0]);
+}
+//=============================================================================
+void gl4::SetUniform(int uniformLoc, float x, float y, float z, float w)
+{
+	glUniform4f(uniformLoc, x, y, z, w);
+}
+//=============================================================================
+void gl4::SetUniform(int uniformLoc, const glm::mat2& mat)
+{
+	glUniformMatrix2fv(uniformLoc, 1, GL_FALSE, &mat[0][0]);
+}
+//=============================================================================
+void gl4::SetUniform(int uniformLoc, const glm::mat3& mat)
+{
+	glUniformMatrix3fv(uniformLoc, 1, GL_FALSE, &mat[0][0]);
+}
+//=============================================================================
+void gl4::SetUniform(int uniformLoc, const glm::mat4& mat)
+{
+	glUniformMatrix4fv(uniformLoc, 1, GL_FALSE, &mat[0][0]);
+}
+//=============================================================================
 GLuint gl4::CreateBuffer(GLbitfield flags, GLsizeiptr size, void* data)
 {
 	GLuint buffer;
@@ -246,12 +311,9 @@ inline GLenum getBaseFormat(GLenum internalFormat)
 	return 0;
 }
 //=============================================================================
-inline int getNumMipMapLevels2D(int w, int h)
+inline int getNumMipMapLevels2D(int width, int height)
 {
-	int levels = 1;
-	while ((w | h) >> levels)
-		levels += 1;
-	return levels;
+	return static_cast<int>(floor(log2(std::max(width, height)))) + 1;
 }
 //=============================================================================
 GLuint gl4::CreateTexture2D(GLenum internalFormat, GLsizei width, GLsizei height, void* data, const TextureParameter& param)
@@ -329,6 +391,84 @@ GLuint gl4::LoadTexture2D(const char* texturePath, bool flipVertical, const Text
 	return texture;
 }
 //=============================================================================
+GLuint gl4::LoadTexture2DHDR(const char* texturePath, bool flipVertical, const TextureParameter& param)
+{
+	// TODO: возможно объединить с LoadTexture2D
+
+	stbi_set_flip_vertically_on_load(flipVertical);
+
+	int width, height, nrChannels;
+	float* data = stbi_loadf(texturePath, &width, &height, &nrChannels, 0);
+	if (!data)
+	{
+		Error((std::string("Texture: ") + texturePath + " not find").c_str());
+		// TODO: создание дефолтной текстуры
+		return 0;
+	}
+	GLuint texture = CreateTexture2D(GL_RGB32F, width, height, data, param);
+	stbi_image_free(data);
+	return texture;
+}
+//=============================================================================
+GLuint gl4::LoadCubeMap(const std::vector<std::string>& files, const std::string& directory)
+{
+	// TODO: возможность настроить через TextureParameter
+
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+	GLuint texture;
+	glCreateTextures(GL_TEXTURE_CUBE_MAP, 1, &texture);
+
+	stbi_set_flip_vertically_on_load(false);
+	int width, height;
+
+	for (uint32_t i = 0; i < files.size(); ++i)
+	{
+		auto filePath = directory + files[i];
+		uint8_t* data = stbi_load(filePath.c_str(), &width, &height, nullptr, STBI_rgb_alpha);
+		if (i == 0)
+		{
+			// Allocate the memory and set the format
+			glTextureStorage2D(texture, 1, GL_RGBA8, width, height);
+		}
+		if (data)
+		{
+			// Upload the data
+			glTextureSubImage3D(texture,
+				0,
+				0,
+				0,
+				static_cast<int>(i),
+				width,
+				height,
+				1,
+				GL_RGBA,
+				GL_UNSIGNED_BYTE, data);
+		}
+		else
+		{
+			stbi_image_free(data);
+			Error("Cubemap texture failed to load: " + files[i]);
+			return 0;
+		}
+		stbi_image_free(data);
+	}
+	glTextureParameteri(texture, GL_TEXTURE_MAX_LEVEL, 0);
+	glTextureParameteri(texture, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTextureParameteri(texture, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTextureParameteri(texture, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTextureParameteri(texture, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTextureParameteri(texture, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
+	return texture;
+}
+//=============================================================================
+void gl4::BindTextureSampler(GLuint unit, GLuint texture, GLuint sampler)
+{
+	glBindTextureUnit(unit, texture);
+	glBindSampler(unit, sampler);
+}
+//=============================================================================
 GLuint gl4::CreateColorBuffer2D(int width, int height, GLenum formatColor)
 {
 	TextureParameter param = defaultTextureParameter2D;
@@ -338,10 +478,14 @@ GLuint gl4::CreateColorBuffer2D(int width, int height, GLenum formatColor)
 //=============================================================================
 GLuint gl4::CreateDepthBuffer2D(int width, int height, GLenum formatDepth)
 {
-	TextureParameter param = defaultTextureParameter2D;
+	TextureParameter param = {};
+	param.minFilter = GL_NEAREST;
+	param.magFilter = GL_NEAREST;
 	param.wrap = GL_CLAMP_TO_BORDER;
+	param.genMipMap = false;
+
 	GLuint texture = gl4::CreateTexture2D(formatDepth, width, height, nullptr, param);
-	const GLfloat border[] = { 0.0f, 0.0f, 0.0f, 0.0f };
+	constexpr GLfloat border[]{ 1.0f, 1.0f, 1.0f, 1.0f };
 	glTextureParameterfv(texture, GL_TEXTURE_BORDER_COLOR, border);
 
 	return texture;

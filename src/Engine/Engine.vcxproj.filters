@@ -17,6 +17,12 @@
     <ClCompile Include="CoreFunc.cpp">
       <Filter>Core</Filter>
     </ClCompile>
+    <ClCompile Include="GraphicSystem.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -37,6 +43,12 @@
     </ClInclude>
     <ClInclude Include="CoreFunc.h">
       <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicSystem.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Graphics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

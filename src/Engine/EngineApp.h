@@ -1,5 +1,7 @@
 #pragma once
 
+#include "GraphicSystem.h"
+
 void ExitApp();
 
 struct EngineConfig final
@@ -70,6 +72,8 @@ public:
 
 	void DrawProfilerInfo();
 
+	GraphicSystem& GetGraphicSystem() { return m_graphics; }
+
 private:
 	friend void framebufferSizeCallback(GLFWwindow*, int, int) noexcept;
 	friend void keyCallback(GLFWwindow*, int, int, int, int) noexcept;
@@ -100,4 +104,6 @@ private:
 	std::array<bool, MaxKeys> m_keys{ false };
 	std::array<bool, MaxKeys> m_repeatKeys{ false };
 	std::array<bool, MaxMouseButtons> m_mouseButtons{ false };
+
+	GraphicSystem m_graphics;
 };
