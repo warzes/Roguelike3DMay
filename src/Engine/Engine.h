@@ -2,10 +2,9 @@
 
 #include "BaseHeader.h"
 
-// Base
-#include "Log.h"
-
 // Core
+#include "Log.h"
+#include "CoreFunc.h"
 
 // Math
 
@@ -17,4 +16,5 @@
 // Scene
 
 // App
+#include "Profiler.h"
 #include "EngineApp.h"
