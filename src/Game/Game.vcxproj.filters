@@ -6,6 +6,15 @@
     <ClCompile Include="GameApp.cpp">
       <Filter>GameApp</Filter>
     </ClCompile>
+    <ClCompile Include="TestBlinnPhong.cpp">
+      <Filter>GameApp\Test</Filter>
+    </ClCompile>
+    <ClCompile Include="TestModelLoading.cpp">
+      <Filter>GameApp\Test</Filter>
+    </ClCompile>
+    <ClCompile Include="TestShadowMapping.cpp">
+      <Filter>GameApp\Test</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -13,10 +22,22 @@
     <ClInclude Include="GameApp.h">
       <Filter>GameApp</Filter>
     </ClInclude>
+    <ClInclude Include="TestBlinnPhong.h">
+      <Filter>GameApp\Test</Filter>
+    </ClInclude>
+    <ClInclude Include="TestModelLoading.h">
+      <Filter>GameApp\Test</Filter>
+    </ClInclude>
+    <ClInclude Include="TestShadowMapping.h">
+      <Filter>GameApp\Test</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="GameApp">
       <UniqueIdentifier>{88bd236d-eb32-4804-86a2-89192bf60a32}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameApp\Test">
+      <UniqueIdentifier>{a4afc0a1-64ea-4061-9112-24639dedacdf}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

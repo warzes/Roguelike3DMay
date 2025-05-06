@@ -32,6 +32,12 @@
     <ClCompile Include="Model.cpp">
       <Filter>Graphics</Filter>
     </ClCompile>
+    <ClCompile Include="PipelineShadowMapping.cpp">
+      <Filter>Graphics\Pipelines</Filter>
+    </ClCompile>
+    <ClCompile Include="Light.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -68,6 +74,12 @@
     <ClInclude Include="Model.h">
       <Filter>Graphics</Filter>
     </ClInclude>
+    <ClInclude Include="PipelineShadowMapping.h">
+      <Filter>Graphics\Pipelines</Filter>
+    </ClInclude>
+    <ClInclude Include="Light.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="App">
@@ -87,6 +99,9 @@
     </Filter>
     <Filter Include="Core">
       <UniqueIdentifier>{dd46222f-db0a-4949-8c3b-dfa5952befcf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Graphics\Pipelines">
+      <UniqueIdentifier>{c688fb09-8a0a-4990-9f32-e7fa1a4414b7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

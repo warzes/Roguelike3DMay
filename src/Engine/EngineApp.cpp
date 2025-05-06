@@ -414,3 +414,18 @@ void IEngineApp::windowResize(int width, int height)
 	OnResize(m_width, m_height);
 }
 //=============================================================================
+uint16_t GetWindowWidth()
+{
+	return thisIEngineApp->GetWidth();
+}
+//=============================================================================
+uint16_t GetWindowHeight()
+{
+	return thisIEngineApp->GetHeight();
+}
+//=============================================================================
+float GetWindowAspect()
+{
+	return thisIEngineApp->GetAspect();
+}
+//=============================================================================

@@ -501,7 +501,7 @@ GLuint gl4::CreateDepthBuffer2D(int width, int height, GLenum formatDepth)
 	return texture;
 }
 //=============================================================================
-GLuint gl4::CreateFrameBuffer2D(int width, int height, GLuint colorBuffer, GLuint depthBuffer)
+GLuint gl4::CreateFrameBuffer2D(GLuint colorBuffer, GLuint depthBuffer)
 {
 	GLuint framebuffer;
 	glCreateFramebuffers(1, &framebuffer);

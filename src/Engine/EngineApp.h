@@ -112,3 +112,7 @@ private:
 
 	GraphicSystem m_graphics;
 };
+
+uint16_t GetWindowWidth();
+uint16_t GetWindowHeight();
+float GetWindowAspect();

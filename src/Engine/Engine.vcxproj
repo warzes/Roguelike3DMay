@@ -96,11 +96,13 @@
     <ClCompile Include="CoreFunc.cpp" />
     <ClCompile Include="EngineApp.cpp" />
     <ClCompile Include="GraphicSystem.cpp" />
+    <ClCompile Include="Light.cpp" />
     <ClCompile Include="Log.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="OpenGL4Wrapper.cpp" />
+    <ClCompile Include="PipelineShadowMapping.cpp" />
     <ClCompile Include="Profiler.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -115,11 +117,13 @@
     <ClInclude Include="EngineApp.h" />
     <ClInclude Include="EngineConfig.h" />
     <ClInclude Include="GraphicSystem.h" />
+    <ClInclude Include="Light.h" />
     <ClInclude Include="Log.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="OpenGL4Wrapper.h" />
+    <ClInclude Include="PipelineShadowMapping.h" />
     <ClInclude Include="Profiler.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>

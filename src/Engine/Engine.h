@@ -14,6 +14,8 @@
 // Graphics
 #include "Camera.h"
 #include "Model.h"
+#include "Light.h"
+#include "PipelineShadowMapping.h"
 #include "GraphicSystem.h"
 
 // Scene

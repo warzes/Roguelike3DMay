@@ -272,6 +272,7 @@ void GameApp::OnRender()
 	glm::mat4 view = camera.GetViewMatrix();
 	glm::mat4 proj = glm::perspective(glm::radians(60.0f), GetAspect(), 0.01f, 1000.0f);
 
+	// вывод квада
 	{
 		glUseProgram(program);
 		gl4::SetUniform(ModelLoc, matmodel);
@@ -284,6 +285,7 @@ void GameApp::OnRender()
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	}
 
+	// вывод меша
 	{
 		glUseProgram(modelProgram);
 		gl4::SetUniform(modelModelLoc, matmodel);
@@ -292,6 +294,7 @@ void GameApp::OnRender()
 		model->Draw(modelProgram);
 	}
 
+	// вывод кубов
 	{
 		glUseProgram(cubeProgram);
 		gl4::SetUniform(cubeModelLoc, matmodel);
