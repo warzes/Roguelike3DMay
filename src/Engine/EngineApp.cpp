@@ -169,10 +169,10 @@ void IEngineApp::Run()
 			}
 			else ++frames;
 
-			m_mouseDeltaX = m_currentMousePositionX - m_lastMouseX;
-			m_mouseDeltaY = m_currentMousePositionY - m_lastMouseY;
-			m_lastMouseX = m_currentMousePositionX;
-			m_lastMouseY = m_currentMousePositionY;
+			m_mouseDeltaX = m_currentMousePositionX - m_mouseLastX;
+			m_mouseDeltaY = m_currentMousePositionY - m_mouseLastY;
+			m_mouseLastX = m_currentMousePositionX;
+			m_mouseLastY = m_currentMousePositionY;
 
 			profiler::BeginFrame();
 
@@ -236,8 +236,8 @@ double IEngineApp::GetTimeInSec() const
 void IEngineApp::SetCursorPosition(const glm::uvec2& position)
 {
 	glfwSetCursorPos(m_window, static_cast<double>(position.x), static_cast<double>(position.y));
-	m_lastMouseX = position.x;
-	m_lastMouseY = position.y;
+	m_mouseLastX = position.x;
+	m_mouseLastY = position.y;
 }
 //=============================================================================
 void IEngineApp::DrawProfilerInfo()
@@ -270,8 +270,8 @@ bool IEngineApp::create()
 
 	double xpos, ypos;
 	glfwGetCursorPos(m_window, &xpos, &ypos);
-	m_lastMouseX = xpos;
-	m_lastMouseY = ypos;
+	m_mouseLastX = xpos;
+	m_mouseLastY = ypos;
 
 	profiler::Init();
 	thisIEngineApp = this;
@@ -348,9 +348,9 @@ bool IEngineApp::createWindow(const EngineConfig& config)
 void IEngineApp::initOpenGL()
 {
 #if defined(_DEBUG)
-	glDebugMessageCallback(messageCallback, nullptr);
 	glEnable(GL_DEBUG_OUTPUT);
 	glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+	glDebugMessageCallback(messageCallback, nullptr);
 	glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, nullptr, GL_FALSE);
 #endif
 

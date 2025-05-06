@@ -15,12 +15,21 @@ void GraphicSystem::Destroy()
 	glDeleteBuffers(1, &m_sphereVBO);
 	glDeleteBuffers(1, &m_sphereIBO);
 	glDeleteVertexArrays(1, &m_sphereVAO);
+	
+	glDeleteBuffers(1, &m_cubeVBO);
+	glDeleteVertexArrays(1, &m_cubeVAO);
 }
 //=============================================================================
-void GraphicSystem::DrawSphere(const glm::mat4& world)
+void GraphicSystem::DrawSphere()
 {
 	glBindVertexArray(m_sphereVAO);
 	glDrawElements(GL_TRIANGLE_STRIP, m_sphereIndexCount, GL_UNSIGNED_INT, 0);
+}
+//=============================================================================
+void GraphicSystem::DrawCube()
+{
+	glBindVertexArray(m_cubeVAO);
+	glDrawArrays(GL_TRIANGLES, 0, 36);
 }
 //=============================================================================
 void GraphicSystem::createSphere()
@@ -85,8 +94,8 @@ void GraphicSystem::createSphere()
 	}
 	m_sphereIndexCount = static_cast<unsigned int>(indices.size());
 
-	m_sphereVBO = gl4::CreateBuffer(0, vertices.size() * sizeof(Vertex), vertices.data());
-	m_sphereIBO = gl4::CreateBuffer(0, indices.size() * sizeof(unsigned int), indices.data());
+	m_sphereVBO = gl4::CreateBuffer(0, vertices);
+	m_sphereIBO = gl4::CreateBuffer(0, indices);
 	m_sphereVAO = gl4::CreateVertexArray(m_sphereVBO, m_sphereIBO, sizeof(Vertex), attribs);
 }
 //=============================================================================

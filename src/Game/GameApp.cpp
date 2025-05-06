@@ -90,6 +90,43 @@ void main()
 }
 )";
 
+	const char* cubeShaderCodVertex = R"(
+# version 460 core
+
+layout(location = 0) in vec3 aPos;
+layout(location = 1) in vec3 aNormal;
+layout(location = 2) in vec2 aTexCoord;
+
+out vec2 TexCoord;
+
+uniform mat4 model;
+uniform mat4 view;
+uniform mat4 projection;
+
+void main()
+{
+	gl_Position = projection * view * model * vec4(aPos, 1.0f);
+	TexCoord = vec2(aTexCoord.x, aTexCoord.y);
+}
+)";
+	const char* cubeShaderCodeFragment = R"(
+#version 460 core
+
+out vec4 FragColor;
+
+in vec2 TexCoord;
+
+// texture sampler
+layout(binding = 0) uniform sampler2D texture1;
+
+void main()
+{
+	FragColor = texture(texture1, TexCoord);
+}
+)";
+
+
+
 	GLuint program;
 	int ModelLoc;
 	int ViewLoc;
@@ -100,6 +137,11 @@ void main()
 	int modelViewLoc;
 	int modelProjLoc;
 
+	GLuint cubeProgram;
+	int cubeModelLoc;
+	int cubeViewLoc;
+	int cubeProjLoc;
+
 	GLuint texture;
 	GLuint vbo;
 	GLuint ibo;
@@ -108,6 +150,20 @@ void main()
 	Camera camera;
 
 	Model* model;
+
+	// World space positions of our cubes
+	const glm::vec3 cubePositions[]{
+		glm::vec3(0.0f,  0.0f,  0.0f),
+		glm::vec3(2.0f,  5.0f, -5.0f),
+		glm::vec3(-1.5f, -2.2f, -2.5f),
+		glm::vec3(-3.8f, -2.0f, -2.3f),
+		glm::vec3(2.4f, -0.4f, -3.5f),
+		glm::vec3(-1.7f,  3.0f, -0.5f),
+		glm::vec3(1.3f, -2.0f, -2.5f),
+		glm::vec3(1.5f,  2.0f, -2.5f),
+		glm::vec3(1.5f,  0.2f, -1.5f),
+		glm::vec3(-1.3f,  1.0f, -1.5f)
+	};
 }
 //=============================================================================
 EngineConfig GameApp::GetConfig() const
@@ -126,6 +182,11 @@ bool GameApp::OnCreate()
 	modelModelLoc = gl4::GetUniformLocation(modelProgram, "model");
 	modelViewLoc = gl4::GetUniformLocation(modelProgram, "view");
 	modelProjLoc = gl4::GetUniformLocation(modelProgram, "projection");
+
+	cubeProgram = gl4::CreateShaderProgram(cubeShaderCodVertex, cubeShaderCodeFragment);
+	cubeModelLoc = gl4::GetUniformLocation(cubeProgram, "model");
+	cubeViewLoc = gl4::GetUniformLocation(cubeProgram, "view");
+	cubeProjLoc = gl4::GetUniformLocation(cubeProgram, "projection");
 
 	texture = gl4::LoadTexture2D("data/textures/colorful.png", true);
 
@@ -162,7 +223,7 @@ bool GameApp::OnCreate()
 
 	camera.SetPosition(glm::vec3(0.0f, 0.0f, -1.0f));
 
-	model = new Model("data/mesh/Zaku/scene.gltf");
+	model = new Model("data/mesh/Sponza/Sponza.gltf");
 
 	glClearColor(0.7f, 0.8f, 0.9f, 1.0f);
 	glEnable(GL_DEPTH_TEST);
@@ -190,12 +251,12 @@ void GameApp::OnUpdate(float deltaTime)
 	if (glfwGetKey(GetGLFWWindow(), GLFW_KEY_D) == GLFW_PRESS)
 		camera.ProcessKeyboard(CameraRight, deltaTime);
 
-	if (glfwGetMouseButton(GetGLFWWindow(), GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
+	if (glfwGetMouseButton(GetGLFWWindow(), GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
 	{
 		SetCursorVisible(false);
-		camera.ProcessMouseMovement(GetMouseDeltaX(), GetMouseDeltaY());
+		camera.ProcessMouseMovement(-GetMouseDeltaX(), -GetMouseDeltaY());
 	}
-	else if (glfwGetMouseButton(GetGLFWWindow(), GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE)
+	else if (glfwGetMouseButton(GetGLFWWindow(), GLFW_MOUSE_BUTTON_RIGHT) == GLFW_RELEASE)
 	{
 		glfwSetInputMode(GetGLFWWindow(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 		SetCursorVisible(true);
@@ -207,27 +268,51 @@ void GameApp::OnRender()
 	glViewport(0, 0, GetWidth(), GetHeight());
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	glUseProgram(program);
-
 	glm::mat4 matmodel = glm::mat4(1.0f);
 	glm::mat4 view = camera.GetViewMatrix();
 	glm::mat4 proj = glm::perspective(glm::radians(60.0f), GetAspect(), 0.01f, 1000.0f);
 
-	gl4::SetUniform(ModelLoc, matmodel);
-	gl4::SetUniform(ViewLoc, view);
-	gl4::SetUniform(ProjLoc, proj);
+	{
+		glUseProgram(program);
+		gl4::SetUniform(ModelLoc, matmodel);
+		gl4::SetUniform(ViewLoc, view);
+		gl4::SetUniform(ProjLoc, proj);
 
-	glBindTextureUnit(0, texture);
-	glBindVertexArray(vao);
+		glBindTextureUnit(0, texture);
+		glBindVertexArray(vao);
 
-	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+	}
 
-	glUseProgram(modelProgram);
+	{
+		glUseProgram(modelProgram);
+		gl4::SetUniform(modelModelLoc, matmodel);
+		gl4::SetUniform(modelViewLoc, view);
+		gl4::SetUniform(modelProjLoc, proj);
+		model->Draw(modelProgram);
+	}
 
-	gl4::SetUniform(modelModelLoc, matmodel);
-	gl4::SetUniform(modelViewLoc, view);
-	gl4::SetUniform(modelProjLoc, proj);
-	model->Draw(modelProgram);
+	{
+		glUseProgram(cubeProgram);
+		gl4::SetUniform(cubeModelLoc, matmodel);
+		gl4::SetUniform(cubeViewLoc, view);
+		gl4::SetUniform(cubeProjLoc, proj);
+
+		glBindTextureUnit(0, texture);
+		// Render boxes
+		for (unsigned int i = 0; i < 10; ++i)
+		{
+			// Calculate the model matrix for each object and pass it to shader before drawing
+			glm::mat4 model = glm::mat4(1.0f); // Make sure to initialize matrix to identity matrix first
+			model = glm::translate(model, cubePositions[i]);
+			const float angle = 20.0f * static_cast<float>(i);
+			model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+			model = glm::scale(model, glm::vec3(0.5));
+			gl4::SetUniform(cubeModelLoc, model);
+
+			GetGraphicSystem().DrawCube();
+		}
+	}
 }
 //=============================================================================
 void GameApp::OnImGuiDraw()

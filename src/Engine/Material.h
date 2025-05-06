@@ -85,9 +85,8 @@ namespace TextureMapper
 	inline TextureType GetTextureType(aiTextureType aiTType)
 	{
 		if (!TextureMapper::assimpTextureToTextureType.contains(aiTType))
-		{
 			return TextureType::NONE;
-		}
+
 		return TextureMapper::assimpTextureToTextureType[aiTType];
 	}
 

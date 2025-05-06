@@ -100,8 +100,8 @@ private:
 
 	double      m_currentMousePositionX{ 0.0 };
 	double      m_currentMousePositionY{ 0.0 };
-	double      m_lastMouseX{ 0.0 };
-	double      m_lastMouseY{ 0.0 };
+	double      m_mouseLastX{ 0.0 };
+	double      m_mouseLastY{ 0.0 };
 	double      m_mouseDeltaX{ 0.0 };
 	double      m_mouseDeltaY{ 0.0 };
 	bool        m_cursorVisible{ true };
