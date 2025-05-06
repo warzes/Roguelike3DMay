@@ -57,40 +57,20 @@ void Mesh::Draw(GLuint shaderProgram, bool skipTexture) const
 //=============================================================================
 void Mesh::setupMesh()
 {
-	// TODO: переделать под gl4
-	glCreateBuffers(1, &m_vbo);
-	glNamedBufferStorage(m_vbo, sizeof(MeshVertex) * m_vertices.size(), m_vertices.data(), GL_DYNAMIC_STORAGE_BIT);
+	std::vector<gl4::VertexAttribute> attribs = {
+		{0, 3, GL_FLOAT, false, offsetof(MeshVertex, Position)},
+		{1, 3, GL_FLOAT, false, offsetof(MeshVertex, Normal)},
+		{2, 2, GL_FLOAT, false, offsetof(MeshVertex, TexCoords)},
+		{3, 3, GL_FLOAT, false, offsetof(MeshVertex, Tangent)},
+		{4, 3, GL_FLOAT, false, offsetof(MeshVertex, Bitangent)},
+		{5, 4, GL_INT,   false, offsetof(MeshVertex, BoneIDs)},
+		{6, 4, GL_FLOAT, false, offsetof(MeshVertex, Weights)},
+	};
 
-	glCreateBuffers(1, &m_ibo);
-	glNamedBufferStorage(m_ibo, sizeof(unsigned int) * m_indices.size(), m_indices.data(), GL_DYNAMIC_STORAGE_BIT);
 
-	glCreateVertexArrays(1, &m_vao);
-	glVertexArrayVertexBuffer(m_vao, 0, m_vbo, 0, sizeof(MeshVertex));
-	glVertexArrayElementBuffer(m_vao, m_ibo);
-
-	glEnableVertexArrayAttrib(m_vao, 0);
-	glEnableVertexArrayAttrib(m_vao, 1);
-	glEnableVertexArrayAttrib(m_vao, 2);
-	glEnableVertexArrayAttrib(m_vao, 3);
-	glEnableVertexArrayAttrib(m_vao, 4);
-	glEnableVertexArrayAttrib(m_vao, 5);
-	glEnableVertexArrayAttrib(m_vao, 6);
-
-	glVertexArrayAttribFormat(m_vao, 0, 3, GL_FLOAT, GL_FALSE, offsetof(MeshVertex, Position));
-	glVertexArrayAttribFormat(m_vao, 1, 3, GL_FLOAT, GL_FALSE, offsetof(MeshVertex, Normal));
-	glVertexArrayAttribFormat(m_vao, 2, 2, GL_FLOAT, GL_FALSE, offsetof(MeshVertex, TexCoords));
-	glVertexArrayAttribFormat(m_vao, 3, 3, GL_FLOAT, GL_FALSE, offsetof(MeshVertex, Tangent));
-	glVertexArrayAttribFormat(m_vao, 4, 3, GL_FLOAT, GL_FALSE, offsetof(MeshVertex, Bitangent));
-	glVertexArrayAttribIFormat(m_vao, 5, 4, GL_INT, offsetof(MeshVertex, BoneIDs));
-	glVertexArrayAttribFormat(m_vao, 6, 4, GL_FLOAT, GL_FALSE, offsetof(MeshVertex, Weights));
-
-	glVertexArrayAttribBinding(m_vao, 0, 0);
-	glVertexArrayAttribBinding(m_vao, 1, 0);
-	glVertexArrayAttribBinding(m_vao, 2, 0);
-	glVertexArrayAttribBinding(m_vao, 3, 0);
-	glVertexArrayAttribBinding(m_vao, 4, 0);
-	glVertexArrayAttribBinding(m_vao, 5, 0);
-	glVertexArrayAttribBinding(m_vao, 6, 0);
+	m_vbo = gl4::CreateBuffer(GL_DYNAMIC_STORAGE_BIT, m_vertices);
+	m_ibo = gl4::CreateBuffer(GL_DYNAMIC_STORAGE_BIT, m_indices);
+	m_vao = gl4::CreateVertexArray(m_vbo, m_ibo, sizeof(MeshVertex), attribs);
 
 #if _DEBUG
 	Print("Mesh vertex count " + std::to_string(m_vertices.size()));

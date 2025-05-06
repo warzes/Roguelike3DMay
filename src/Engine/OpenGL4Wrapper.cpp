@@ -175,11 +175,20 @@ GLuint gl4::CreateBuffer(GLbitfield flags, GLsizeiptr size, void* data)
 	return buffer;
 }
 //=============================================================================
+GLuint gl4::CreateBuffer(GLbitfield flags, GLsizeiptr sizeElement, GLsizeiptr numElement, void* data)
+{
+	return CreateBuffer(flags, sizeElement * numElement, data);
+}
+//=============================================================================
 void gl4::SetVertexAttrib(GLuint vao, GLuint attribIndex, GLint size, GLenum type, GLboolean normalized, GLuint relativeOffset)
 {
 	glEnableVertexArrayAttrib(vao, attribIndex);
 	glVertexArrayAttribBinding(vao, attribIndex, 0);
-	glVertexArrayAttribFormat(vao, attribIndex, size, type, normalized, relativeOffset);
+
+	if (type == GL_INT) // TODO: другие типы возможно тоже учесть, и есть еще glVertexArrayAttribLFormat
+		glVertexArrayAttribIFormat(vao, attribIndex, size, type, relativeOffset);
+	else
+		glVertexArrayAttribFormat(vao, attribIndex, size, type, normalized, relativeOffset);
 }
 //=============================================================================
 void gl4::SetVertexAttrib(GLuint vao, const VertexAttribute& attr)

@@ -30,6 +30,13 @@ namespace gl4
 	//-------------------------------------------------------------------------
 
 	GLuint CreateBuffer(GLbitfield flags, GLsizeiptr size, void* data);
+	GLuint CreateBuffer(GLbitfield flags, GLsizeiptr sizeElement, GLsizeiptr numElement, void* data);
+
+	template<typename T>
+	GLuint CreateBuffer(GLbitfield flags, const std::vector<T>& data)
+	{
+		return CreateBuffer(flags, sizeof(T), data.size(), (void*)data.data());
+	}
 
 	//-------------------------------------------------------------------------
 	// Vertex Array
@@ -37,11 +44,12 @@ namespace gl4
 
 	struct VertexAttribute final
 	{
-		GLuint index;			// example: 0
-		GLint size;				// example: 3
-		GLenum type;			// example: GL_FLOAT
-		bool normalized;		// example: GL_FALSE
-		GLuint relativeOffset;	// example: offsetof(Vertex, pos)
+		//  TODO: для случая type = GL_INT не нужно передавать normalized. Подумать как сделать
+		GLuint index;				// example: 0
+		GLint size;					// example: 3
+		GLenum type;				// example: GL_FLOAT
+		bool normalized{ false };	// example: GL_FALSE
+		GLuint relativeOffset;		// example: offsetof(Vertex, pos)
 	};
 
 	// example:
