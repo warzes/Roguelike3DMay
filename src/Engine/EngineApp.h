@@ -104,6 +104,7 @@ private:
 	double      m_lastMouseY{ 0.0 };
 	double      m_mouseDeltaX{ 0.0 };
 	double      m_mouseDeltaY{ 0.0 };
+	bool        m_cursorVisible{ true };
 
 	std::array<bool, MaxKeys> m_keys{ false };
 	std::array<bool, MaxKeys> m_repeatKeys{ false };

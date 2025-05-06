@@ -247,8 +247,11 @@ void IEngineApp::DrawProfilerInfo()
 //=============================================================================
 void IEngineApp::SetCursorVisible(bool visible)
 {
-	glfwSetInputMode(m_window, GLFW_CURSOR, visible ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_HIDDEN);
-	SetCursorPosition({ m_width / 2, m_height / 2 });
+	if (m_cursorVisible != visible)
+	{
+		glfwSetInputMode(m_window, GLFW_CURSOR, visible ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_HIDDEN);
+		SetCursorPosition({ m_width / 2, m_height / 2 });
+	}
 }
 //=============================================================================
 bool IEngineApp::create()

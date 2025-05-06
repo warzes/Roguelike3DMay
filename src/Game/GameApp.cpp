@@ -52,7 +52,6 @@ void main()
 	GLuint vao;
 
 	Camera camera;
-	bool mouseFirstUse = true;
 }
 //=============================================================================
 EngineConfig GameApp::GetConfig() const
@@ -131,13 +130,13 @@ void GameApp::OnUpdate(float deltaTime)
 
 	if (glfwGetMouseButton(GetGLFWWindow(), GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
 	{
-		glfwSetInputMode(GetGLFWWindow(), GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+		SetCursorVisible(false);
 		camera.ProcessMouseMovement(GetMouseDeltaX(), GetMouseDeltaY());
 	}
 	else if (glfwGetMouseButton(GetGLFWWindow(), GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE)
 	{
 		glfwSetInputMode(GetGLFWWindow(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-		mouseFirstUse = true;
+		SetCursorVisible(true);
 	}
 }
 //=============================================================================
