@@ -42,16 +42,72 @@ void main()
 };
 )";
 
+	const char* modelShaderCodeVertex = R"(
+#version 460 core
+
+layout (location = 0) in vec3 aPos;
+layout (location = 1) in vec3 aNormal;
+layout (location = 2) in vec2 aTexCoords;
+
+out VS_OUT 
+{
+	vec3 FragPos;
+	vec3 Normal;
+	vec2 TexCoords;
+} vs_out;
+
+uniform mat4 model;
+uniform mat4 view;
+uniform mat4 projection;
+
+void main()
+{
+	vs_out.FragPos = mat3(model) * aPos;
+	vs_out.Normal = transpose(inverse(mat3(model))) * aNormal;
+	vs_out.TexCoords = aTexCoords;
+	gl_Position = projection * view * model * vec4(aPos, 1.0);
+}
+)";
+
+	const char* modelShaderCodeFragment = R"(
+#version 460 core
+
+out vec4 FragColor;
+
+in VS_OUT 
+{
+	vec3 FragPos;
+	vec3 Normal;
+	vec2 TexCoords;
+} fs_in;
+
+layout(binding = 0) uniform sampler2D texture_diffuse1; // Texture from glTF model
+
+void main()
+{
+	vec3 color = texture(texture_diffuse1, fs_in.TexCoords).rgb;
+	FragColor = vec4(color, 1.0);
+}
+)";
+
 	GLuint program;
 	int ModelLoc;
 	int ViewLoc;
 	int ProjLoc;
+
+	GLuint modelProgram;
+	int modelModelLoc;
+	int modelViewLoc;
+	int modelProjLoc;
+
 	GLuint texture;
 	GLuint vbo;
 	GLuint ibo;
 	GLuint vao;
 
 	Camera camera;
+
+	Model* model;
 }
 //=============================================================================
 EngineConfig GameApp::GetConfig() const
@@ -62,10 +118,14 @@ EngineConfig GameApp::GetConfig() const
 bool GameApp::OnCreate()
 {
 	program = gl4::CreateShaderProgram(shaderCodeVertex, shaderCodeFragment);
-
 	ModelLoc = gl4::GetUniformLocation(program, "Model");
 	ViewLoc = gl4::GetUniformLocation(program, "View");
 	ProjLoc = gl4::GetUniformLocation(program, "Proj");
+
+	modelProgram = gl4::CreateShaderProgram(modelShaderCodeVertex, modelShaderCodeFragment);
+	modelModelLoc = gl4::GetUniformLocation(modelProgram, "model");
+	modelViewLoc = gl4::GetUniformLocation(modelProgram, "view");
+	modelProjLoc = gl4::GetUniformLocation(modelProgram, "projection");
 
 	texture = gl4::LoadTexture2D("data/textures/colorful.png", true);
 
@@ -101,6 +161,8 @@ bool GameApp::OnCreate()
 	vao = gl4::CreateVertexArray(vbo, ibo, sizeof(Vertex), attribs);
 
 	camera.SetPosition(glm::vec3(0.0f, 0.0f, -1.0f));
+
+	model = new Model("data/mesh/Zaku/scene.gltf");
 
 	glClearColor(0.7f, 0.8f, 0.9f, 1.0f);
 	glEnable(GL_DEPTH_TEST);
@@ -147,11 +209,11 @@ void GameApp::OnRender()
 
 	glUseProgram(program);
 
-	glm::mat4 model = glm::mat4(1.0f);
+	glm::mat4 matmodel = glm::mat4(1.0f);
 	glm::mat4 view = camera.GetViewMatrix();
 	glm::mat4 proj = glm::perspective(glm::radians(60.0f), GetAspect(), 0.01f, 1000.0f);
 
-	gl4::SetUniform(ModelLoc, model);
+	gl4::SetUniform(ModelLoc, matmodel);
 	gl4::SetUniform(ViewLoc, view);
 	gl4::SetUniform(ProjLoc, proj);
 
@@ -159,6 +221,13 @@ void GameApp::OnRender()
 	glBindVertexArray(vao);
 
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+	glUseProgram(modelProgram);
+
+	gl4::SetUniform(modelModelLoc, matmodel);
+	gl4::SetUniform(modelViewLoc, view);
+	gl4::SetUniform(modelProjLoc, proj);
+	model->Draw(modelProgram);
 }
 //=============================================================================
 void GameApp::OnImGuiDraw()

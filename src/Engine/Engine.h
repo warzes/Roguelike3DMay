@@ -13,6 +13,7 @@
 
 // Graphics
 #include "Camera.h"
+#include "Model.h"
 #include "GraphicSystem.h"
 
 // Scene
