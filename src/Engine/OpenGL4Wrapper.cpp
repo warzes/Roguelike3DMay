@@ -483,6 +483,7 @@ GLuint gl4::CreateDepthBuffer2D(int width, int height, GLenum formatDepth)
 	param.magFilter = GL_NEAREST;
 	param.wrap = GL_CLAMP_TO_BORDER;
 	param.genMipMap = false;
+	param.dataType = GL_FLOAT;
 
 	GLuint texture = gl4::CreateTexture2D(formatDepth, width, height, nullptr, param);
 	constexpr GLfloat border[]{ 1.0f, 1.0f, 1.0f, 1.0f };

@@ -3,7 +3,7 @@
 //=============================================================================
 Camera::Camera(glm::vec3 position, glm::vec3 up, float yaw, float pitch)
 	: Position(position)
-	, Front(glm::vec3(0.0f, 0.0f, -1.0f))
+	, Front(glm::vec3(0.0f, 0.0f, 1.0f))
 	, Up(glm::vec3(0.f, 1.f, 0.f))
 	, Right(glm::vec3(1.f, 0.f, 0.f))
 	, WorldUp(up)
@@ -69,21 +69,30 @@ void Camera::ProcessMouseMovement(float xOffset, float yOffset, bool constrainPi
 	updateInternal();
 }
 //=============================================================================
+void Camera::SetPosition(const glm::vec3& position)
+{
+	Position = position;
+	updateInternal();
+}
+//=============================================================================
 void Camera::updateInternal()
 {
+	const float yawRad = glm::radians(Yaw);
+	const float pitchRad = glm::radians(Pitch);
+
 	// Recalculate front vector
 	Front = glm::normalize(
 		glm::vec3
 		(
-			cos(glm::radians(Yaw)) * cos(glm::radians(Pitch)), // x
-			sin(glm::radians(Pitch)), // y
-			sin(glm::radians(Yaw)) * cos(glm::radians(Pitch)) // z
+			cosf(yawRad) * cosf(pitchRad), // x
+			sinf(pitchRad),                // y
+			sinf(yawRad) * cosf(pitchRad)  // z
 		)
 	);
 
 	// Recalculate right and up vector
-	Right = glm::normalize(glm::cross(Front, WorldUp));
-	Up = glm::normalize(glm::cross(Right, Front));
+	Right = glm::normalize(glm::cross(WorldUp, Front));
+	Up = glm::normalize(glm::cross(Front, Right));
 
 	// Matrices
 	m_viewMatrix = glm::lookAt(Position, Position + Front, Up);

@@ -150,12 +150,24 @@ void IEngineApp::Run()
 {
 	if (create())
 	{
-		float lastFrame = 0.0f;
+		float lastTime = 0.0f;
+		float lastTimeFromShow = 0;
+		unsigned frames = 0;
 		while (!shouldWindowClose())
 		{
-			float currentFrame = static_cast<float>(glfwGetTime());
-			m_deltaTime = currentFrame - lastFrame;
-			lastFrame = currentFrame;
+			float currentTime = static_cast<float>(glfwGetTime());
+			// calc deltatime
+			m_deltaTime = currentTime - lastTime;
+			lastTime = currentTime;
+			// calc fps
+			if ((currentTime - lastTimeFromShow) >= 1)
+			{
+				m_fps = frames;
+				frames = 0;
+				lastTimeFromShow = currentTime;
+				//puts(std::to_string(m_fps).c_str());
+			}
+			else ++frames;
 
 			m_mouseDeltaX = m_currentMousePositionX - m_lastMouseX;
 			m_mouseDeltaY = m_currentMousePositionY - m_lastMouseY;
@@ -224,11 +236,19 @@ double IEngineApp::GetTimeInSec() const
 void IEngineApp::SetCursorPosition(const glm::uvec2& position)
 {
 	glfwSetCursorPos(m_window, static_cast<double>(position.x), static_cast<double>(position.y));
+	m_lastMouseX = position.x;
+	m_lastMouseY = position.y;
 }
 //=============================================================================
 void IEngineApp::DrawProfilerInfo()
 {
 	profiler::Ui();
+}
+//=============================================================================
+void IEngineApp::SetCursorVisible(bool visible)
+{
+	glfwSetInputMode(m_window, GLFW_CURSOR, visible ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_HIDDEN);
+	SetCursorPosition({ m_width / 2, m_height / 2 });
 }
 //=============================================================================
 bool IEngineApp::create()
@@ -245,8 +265,12 @@ bool IEngineApp::create()
 	if (!m_graphics.Create())
 		return false;
 
-	profiler::Init();
+	double xpos, ypos;
+	glfwGetCursorPos(m_window, &xpos, &ypos);
+	m_lastMouseX = xpos;
+	m_lastMouseY = ypos;
 
+	profiler::Init();
 	thisIEngineApp = this;
 	IsExitApp = false;
 	return OnCreate();
@@ -349,6 +373,8 @@ void IEngineApp::initImGui()
 	ImGuiIO& io = ImGui::GetIO();
 	io.FontGlobalScale = xscale > yscale ? xscale : yscale;
 	io.IniFilename = nullptr;
+
+	io.ConfigFlags |= ImGuiConfigFlags_NoMouseCursorChange;// TODO: возможно есть другой способ как имгуи не давать показывать скрытый курсор
 }
 //=============================================================================
 bool IEngineApp::shouldWindowClose() const

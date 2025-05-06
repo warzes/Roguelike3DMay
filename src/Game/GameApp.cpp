@@ -10,12 +10,17 @@ layout (location=0) in vec3 aPos;
 layout (location=1) in vec3 aColor;
 layout (location=2) in vec2 aUV;
 
+uniform mat4 Model;
+uniform mat4 View;
+uniform mat4 Proj;
+
+
 out vec3 Color;
 out vec2 UV;
 
 void main()
 {
-	gl_Position = vec4(aPos, 1.0f);
+	gl_Position = Proj * View * Model * vec4(aPos, 1.0f);
 	Color = aColor;
 	UV = aUV;
 }
@@ -29,7 +34,7 @@ layout (location=1) in vec2 UV;
 
 layout (location=0) out vec4 oFragColor;
 
-uniform sampler2D tex0;
+layout(binding = 0) uniform sampler2D tex0;
 
 void main()
 {
@@ -38,11 +43,16 @@ void main()
 )";
 
 	GLuint program;
+	int ModelLoc;
+	int ViewLoc;
+	int ProjLoc;
 	GLuint texture;
 	GLuint vbo;
 	GLuint ibo;
 	GLuint vao;
 
+	Camera camera;
+	bool mouseFirstUse = true;
 }
 //=============================================================================
 EngineConfig GameApp::GetConfig() const
@@ -53,6 +63,11 @@ EngineConfig GameApp::GetConfig() const
 bool GameApp::OnCreate()
 {
 	program = gl4::CreateShaderProgram(shaderCodeVertex, shaderCodeFragment);
+
+	ModelLoc = gl4::GetUniformLocation(program, "Model");
+	ViewLoc = gl4::GetUniformLocation(program, "View");
+	ProjLoc = gl4::GetUniformLocation(program, "Proj");
+
 	texture = gl4::LoadTexture2D("data/textures/colorful.png", true);
 
 	struct Vertex
@@ -86,7 +101,10 @@ bool GameApp::OnCreate()
 	ibo = gl4::CreateBuffer(0, sizeof(indices), indices);
 	vao = gl4::CreateVertexArray(vbo, ibo, sizeof(Vertex), attribs);
 
+	camera.SetPosition(glm::vec3(0.0f, 0.0f, -1.0f));
+
 	glClearColor(0.7f, 0.8f, 0.9f, 1.0f);
+	glEnable(GL_DEPTH_TEST);
 
 	return true;
 }
@@ -102,15 +120,42 @@ void GameApp::OnDestroy()
 //=============================================================================
 void GameApp::OnUpdate(float deltaTime)
 {
+	if (glfwGetKey(GetGLFWWindow(), GLFW_KEY_W) == GLFW_PRESS)
+		camera.ProcessKeyboard(CameraForward, deltaTime);
+	if (glfwGetKey(GetGLFWWindow(), GLFW_KEY_S) == GLFW_PRESS)
+		camera.ProcessKeyboard(CameraBackward, deltaTime);
+	if (glfwGetKey(GetGLFWWindow(), GLFW_KEY_A) == GLFW_PRESS)
+		camera.ProcessKeyboard(CameraLeft, deltaTime);
+	if (glfwGetKey(GetGLFWWindow(), GLFW_KEY_D) == GLFW_PRESS)
+		camera.ProcessKeyboard(CameraRight, deltaTime);
 
+	if (glfwGetMouseButton(GetGLFWWindow(), GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
+	{
+		glfwSetInputMode(GetGLFWWindow(), GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+		camera.ProcessMouseMovement(GetMouseDeltaX(), GetMouseDeltaY());
+	}
+	else if (glfwGetMouseButton(GetGLFWWindow(), GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE)
+	{
+		glfwSetInputMode(GetGLFWWindow(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+		mouseFirstUse = true;
+	}
 }
 //=============================================================================
 void GameApp::OnRender()
 {
 	glViewport(0, 0, GetWidth(), GetHeight());
-	glClear(GL_COLOR_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glUseProgram(program);
+
+	glm::mat4 model = glm::mat4(1.0f);
+	glm::mat4 view = camera.GetViewMatrix();
+	glm::mat4 proj = glm::perspective(glm::radians(60.0f), GetAspect(), 0.01f, 1000.0f);
+
+	gl4::SetUniform(ModelLoc, model);
+	gl4::SetUniform(ViewLoc, view);
+	gl4::SetUniform(ProjLoc, proj);
+
 	glBindTextureUnit(0, texture);
 	glBindVertexArray(vao);
 

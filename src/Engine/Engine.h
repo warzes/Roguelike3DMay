@@ -12,6 +12,8 @@
 #include "OpenGL4Wrapper.h"
 
 // Graphics
+#include "Camera.h"
+#include "GraphicSystem.h"
 
 // Scene
 

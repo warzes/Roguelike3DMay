@@ -65,6 +65,7 @@ public:
 	bool GetMouseButton(int button);
 	
 	float GetDeltaTime() const { return m_deltaTime; }
+	unsigned GetFPS() const { return m_fps; }
 
 	double GetTimeInSec() const;
 
@@ -73,6 +74,8 @@ public:
 	void DrawProfilerInfo();
 
 	GraphicSystem& GetGraphicSystem() { return m_graphics; }
+
+	void SetCursorVisible(bool visible);
 
 private:
 	friend void framebufferSizeCallback(GLFWwindow*, int, int) noexcept;
@@ -93,6 +96,7 @@ private:
 	uint16_t    m_width{ 0 };
 	uint16_t    m_height{ 0 };
 	float       m_deltaTime{ 0.0f };
+	unsigned    m_fps{ 0 };
 
 	double      m_currentMousePositionX{ 0.0 };
 	double      m_currentMousePositionY{ 0.0 };

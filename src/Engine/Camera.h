@@ -9,7 +9,7 @@ enum CameraMovement
 };
 
 // Default camera values
-constexpr float CAMERA_YAW = -90.0f;
+constexpr float CAMERA_YAW = 90.0f;
 constexpr float CAMERA_PITCH = 0.0f;
 constexpr float CAMERA_SPEED = 2.5f;
 constexpr float CAMERA_SENSITIVITY = 0.1f;
@@ -27,6 +27,8 @@ public:
 
 	void ProcessKeyboard(CameraMovement direction, float deltaTime);
 	void ProcessMouseMovement(float xOffset, float yOffset, bool constrainPitch = true);
+
+	void SetPosition(const glm::vec3& position);
 
 	// Attributes
 	glm::vec3 Position{};

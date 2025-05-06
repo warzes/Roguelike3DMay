@@ -102,7 +102,7 @@ namespace gl4
 	//-------------------------------------------------------------------------
 
 	GLuint CreateColorBuffer2D(int width, int height, GLenum formatColor);
-	GLuint CreateDepthBuffer2D(int width, int height, GLenum formatDepth = GL_DEPTH_COMPONENT24);
+	GLuint CreateDepthBuffer2D(int width, int height, GLenum formatDepth = GL_DEPTH_COMPONENT32);
 	// TODO: CreateRenderBuffer???
 	GLuint CreateFrameBuffer2D(int width, int height, GLuint colorBuffer, GLuint depthBuffer);
 }
