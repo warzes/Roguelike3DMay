@@ -4,6 +4,7 @@
 #include "TestModelLoading.h"
 #include "TestShadowMapping.h"
 #include "TestSkyboxWithCube.h"
+#include "TestDeferredSSAO.h"
 //=============================================================================
 #if defined(_MSC_VER)
 #	pragma comment( lib, "3rdparty.lib" )
@@ -19,7 +20,8 @@ int main(
 	//TestBlinnPhong game;
 	//TestModelLoading game;
 	//TestShadowMapping game;
-	TestSkyboxWithCube game;
+	//TestSkyboxWithCube game;
+	TestDeferredSSAO game;
 	game.Run();
 }
 //=============================================================================

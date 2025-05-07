@@ -16,6 +16,7 @@
 #include "Model.h"
 #include "Light.h"
 #include "PipelineShadowMapping.h"
+#include "PipelineDeferredSSAO.h"
 #include "GraphicSystem.h"
 
 // Scene

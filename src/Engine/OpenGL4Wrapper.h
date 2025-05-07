@@ -25,6 +25,20 @@ namespace gl4
 	void SetUniform(int uniformLoc, const glm::mat3& mat);
 	void SetUniform(int uniformLoc, const glm::mat4& mat);
 
+	// Временные для демок, использовать нежелательно
+	void SetUniform(GLuint program, const std::string& name, bool value);
+	void SetUniform(GLuint program, const std::string& name, int value);
+	void SetUniform(GLuint program, const std::string& name, float value);
+	void SetUniform(GLuint program, const std::string& name, const glm::vec2& value);
+	void SetUniform(GLuint program, const std::string& name, float x, float y);
+	void SetUniform(GLuint program, const std::string& name, const glm::vec3& value);
+	void SetUniform(GLuint program, const std::string& name, float x, float y, float z);
+	void SetUniform(GLuint program, const std::string& name, const glm::vec4& value);
+	void SetUniform(GLuint program, const std::string& name, float x, float y, float z, float w);
+	void SetUniform(GLuint program, const std::string& name, const glm::mat2& mat);
+	void SetUniform(GLuint program, const std::string& name, const glm::mat3& mat);
+	void SetUniform(GLuint program, const std::string& name, const glm::mat4& mat);
+
 	//-------------------------------------------------------------------------
 	// Buffer
 	//-------------------------------------------------------------------------

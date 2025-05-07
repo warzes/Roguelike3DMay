@@ -177,6 +177,66 @@ void gl4::SetUniform(int uniformLoc, const glm::mat4& mat)
 	glUniformMatrix4fv(uniformLoc, 1, GL_FALSE, &mat[0][0]);
 }
 //=============================================================================
+void gl4::SetUniform(GLuint program, const std::string& name, bool value)
+{
+	SetUniform(GetUniformLocation(program, name.c_str()), value);
+}
+//=============================================================================
+void gl4::SetUniform(GLuint program, const std::string& name, int value)
+{
+	SetUniform(GetUniformLocation(program, name.c_str()), value);
+}
+//=============================================================================
+void gl4::SetUniform(GLuint program, const std::string& name, float value)
+{
+	SetUniform(GetUniformLocation(program, name.c_str()), value);
+}
+//=============================================================================
+void gl4::SetUniform(GLuint program, const std::string& name, const glm::vec2& value)
+{
+	SetUniform(GetUniformLocation(program, name.c_str()), value);
+}
+//=============================================================================
+void gl4::SetUniform(GLuint program, const std::string& name, float x, float y)
+{
+	SetUniform(GetUniformLocation(program, name.c_str()), x, y);
+}
+//=============================================================================
+void gl4::SetUniform(GLuint program, const std::string& name, const glm::vec3& value)
+{
+	SetUniform(GetUniformLocation(program, name.c_str()), value);
+}
+//=============================================================================
+void gl4::SetUniform(GLuint program, const std::string& name, float x, float y, float z)
+{
+	SetUniform(GetUniformLocation(program, name.c_str()), x, y, z);
+}
+//=============================================================================
+void gl4::SetUniform(GLuint program, const std::string& name, const glm::vec4& value)
+{
+	SetUniform(GetUniformLocation(program, name.c_str()), value);
+}
+//=============================================================================
+void gl4::SetUniform(GLuint program, const std::string& name, float x, float y, float z, float w)
+{
+	SetUniform(GetUniformLocation(program, name.c_str()), x, y, z, w);
+}
+//=============================================================================
+void gl4::SetUniform(GLuint program, const std::string& name, const glm::mat2& mat)
+{
+	SetUniform(GetUniformLocation(program, name.c_str()), mat);
+}
+//=============================================================================
+void gl4::SetUniform(GLuint program, const std::string& name, const glm::mat3& mat)
+{
+	SetUniform(GetUniformLocation(program, name.c_str()), mat);
+}
+//=============================================================================
+void gl4::SetUniform(GLuint program, const std::string& name, const glm::mat4& mat)
+{
+	SetUniform(GetUniformLocation(program, name.c_str()), mat);
+}
+//=============================================================================
 GLuint gl4::CreateBuffer(GLbitfield flags, GLsizeiptr size, void* data)
 {
 	GLuint buffer;

@@ -38,6 +38,9 @@
     <ClCompile Include="Light.cpp">
       <Filter>Graphics</Filter>
     </ClCompile>
+    <ClCompile Include="PipelineDeferredSSAO.cpp">
+      <Filter>Graphics\Pipelines</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -79,6 +82,9 @@
     </ClInclude>
     <ClInclude Include="Light.h">
       <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="PipelineDeferredSSAO.h">
+      <Filter>Graphics\Pipelines</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
