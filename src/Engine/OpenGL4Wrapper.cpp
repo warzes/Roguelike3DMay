@@ -2,6 +2,16 @@
 #include "OpenGL4Wrapper.h"
 #include "Log.h"
 //=============================================================================
+namespace
+{
+	GLuint currentFBO{ 0 };
+}
+//=============================================================================
+void ClearOpenGLState()
+{
+	currentFBO = 0;
+}
+//=============================================================================
 inline std::string shaderTypeToString(GLenum shaderType)
 {
 	switch (shaderType)
@@ -519,5 +529,17 @@ GLuint gl4::CreateFrameBuffer2D(GLuint colorBuffer, GLuint depthBuffer)
 	}
 
 	return framebuffer;
+}
+//=============================================================================
+void gl4::SetFrameBuffer(GLuint fbo, int width, int height, GLbitfield clearMask)
+{
+	if (currentFBO != fbo)
+	{
+		glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+		currentFBO = fbo;
+	}
+
+	glViewport(0, 0, width, height);
+	glClear(clearMask);
 }
 //=============================================================================

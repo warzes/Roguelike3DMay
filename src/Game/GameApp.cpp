@@ -265,8 +265,7 @@ void GameApp::OnUpdate(float deltaTime)
 //=============================================================================
 void GameApp::OnRender()
 {
-	glViewport(0, 0, GetWidth(), GetHeight());
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	gl4::SetFrameBuffer(0, GetWidth(), GetHeight(), GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glm::mat4 matmodel = glm::mat4(1.0f);
 	glm::mat4 view = camera.GetViewMatrix();

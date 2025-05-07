@@ -258,6 +258,9 @@ bool IEngineApp::create()
 {
 	auto engineConfig = GetConfig();
 
+	void ClearOpenGLState();
+	ClearOpenGLState();
+
 	if (!createWindow(engineConfig))
 		return false;
 

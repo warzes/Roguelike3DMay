@@ -24,7 +24,6 @@ private:
 	//GLuint m_cubeIBO;
 	GLuint m_cubeVAO;
 
-
 	GLuint m_quadVBO;
 	GLuint m_quadVAO;
 };

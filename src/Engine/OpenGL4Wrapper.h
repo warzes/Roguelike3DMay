@@ -113,4 +113,12 @@ namespace gl4
 	GLuint CreateDepthBuffer2D(int width, int height, GLenum formatDepth = GL_DEPTH_COMPONENT32);
 	// TODO: CreateRenderBuffer???
 	GLuint CreateFrameBuffer2D(GLuint colorBuffer, GLuint depthBuffer);
+
+
+	//-------------------------------------------------------------------------
+	// Commands
+	//-------------------------------------------------------------------------
+
+	void SetFrameBuffer(GLuint fbo, int width, int height, GLbitfield clearMask);
+
 }
