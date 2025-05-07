@@ -6,6 +6,7 @@ bool GraphicSystem::Create()
 {
 	createSphere();
 	createCube();
+	createQuad();
 
 	return true;
 }
@@ -18,6 +19,9 @@ void GraphicSystem::Destroy()
 	
 	glDeleteBuffers(1, &m_cubeVBO);
 	glDeleteVertexArrays(1, &m_cubeVAO);
+
+	glDeleteBuffers(1, &m_quadVBO);
+	glDeleteVertexArrays(1, &m_quadVAO);
 }
 //=============================================================================
 void GraphicSystem::DrawSphere()
@@ -32,18 +36,24 @@ void GraphicSystem::DrawCube()
 	glDrawArrays(GL_TRIANGLES, 0, 36);
 }
 //=============================================================================
+void GraphicSystem::DrawQuad()
+{
+	glBindVertexArray(m_quadVAO);
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+}
+//=============================================================================
 void GraphicSystem::createSphere()
 {
 	struct Vertex
 	{
 		glm::vec3 position;
-		glm::vec2 uv;
 		glm::vec3 normal;
+		glm::vec2 uv;
 	};
 	std::vector<gl4::VertexAttribute> attribs = {
 		{0, 3, GL_FLOAT, false, offsetof(Vertex, position)},
-		{1, 2, GL_FLOAT, false, offsetof(Vertex, uv)},
-		{2, 3, GL_FLOAT, false, offsetof(Vertex, normal)},
+		{1, 3, GL_FLOAT, false, offsetof(Vertex, normal)},
+		{2, 2, GL_FLOAT, false, offsetof(Vertex, uv)},
 	};
 
 	std::vector<Vertex> vertices{};
@@ -151,17 +161,46 @@ void GraphicSystem::createCube()
 	struct Vertex
 	{
 		glm::vec3 pos;
-		glm::vec3 color;
+		glm::vec3 normal;
 		glm::vec2 uv;
 	};
 
 	std::vector<gl4::VertexAttribute> attribs = {
 		{0, 3, GL_FLOAT, false, offsetof(Vertex, pos)},
-		{1, 3, GL_FLOAT, false, offsetof(Vertex, color)},
+		{1, 3, GL_FLOAT, false, offsetof(Vertex, normal)},
 		{2, 2, GL_FLOAT, false, offsetof(Vertex, uv)},
 	};
 
 	m_cubeVBO = gl4::CreateBuffer(0, sizeof(vertices), (void*)vertices);
 	m_cubeVAO = gl4::CreateVertexArray(m_cubeVBO, sizeof(Vertex), attribs);
+}
+//=============================================================================
+void GraphicSystem::createQuad()
+{
+	struct Vertex
+	{
+		glm::vec3 pos;
+		glm::vec3 normal;
+		glm::vec2 uv;
+	};
+
+	std::vector<gl4::VertexAttribute> attribs = {
+		{0, 3, GL_FLOAT, false, offsetof(Vertex, pos)},
+		{1, 3, GL_FLOAT, false, offsetof(Vertex, normal)},
+		{2, 2, GL_FLOAT, false, offsetof(Vertex, uv)},
+	};
+
+	const std::vector<Vertex> vertices =
+	{
+		// Positions		// Normals		  // Texcoords
+		{{1.0f,  0.0f,  1.0f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f}},
+		{{-1.0f, 0.0f,  1.0f}, {0.0f, 1.0f, 0.0f}, {0.0f, 0.0f}},
+		{{-1.0f, 0.0f, -1.0f}, {0.0f, 1.0f, 0.0f}, {0.0f, 1.0f}},
+		{{1.0f,  0.0f,  1.0f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f}},
+		{{-1.0f, 0.0f, -1.0f}, {0.0f, 1.0f, 0.0f}, {0.0f, 1.0f}},
+		{{1.0f,  0.0f, -1.0f}, {0.0f, 1.0f, 0.0f}, {1.0f, 1.0f}}
+	};
+	m_quadVBO = gl4::CreateBuffer(0, vertices);
+	m_quadVAO = gl4::CreateVertexArray(m_quadVBO, sizeof(Vertex), attribs);
 }
 //=============================================================================
