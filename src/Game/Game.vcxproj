@@ -101,16 +101,20 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="TestBlinnPhong.cpp" />
+    <ClCompile Include="TestDeferredSSAO.cpp" />
     <ClCompile Include="TestModelLoading.cpp" />
     <ClCompile Include="TestShadowMapping.cpp" />
+    <ClCompile Include="TestSkyboxWithCube.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameApp.h" />
     <ClInclude Include="GameConfig.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="TestBlinnPhong.h" />
+    <ClInclude Include="TestDeferredSSAO.h" />
     <ClInclude Include="TestModelLoading.h" />
     <ClInclude Include="TestShadowMapping.h" />
+    <ClInclude Include="TestSkyboxWithCube.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

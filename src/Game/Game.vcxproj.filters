@@ -15,6 +15,12 @@
     <ClCompile Include="TestShadowMapping.cpp">
       <Filter>GameApp\Test</Filter>
     </ClCompile>
+    <ClCompile Include="TestSkyboxWithCube.cpp">
+      <Filter>GameApp\Test</Filter>
+    </ClCompile>
+    <ClCompile Include="TestDeferredSSAO.cpp">
+      <Filter>GameApp\Test</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -29,6 +35,12 @@
       <Filter>GameApp\Test</Filter>
     </ClInclude>
     <ClInclude Include="TestShadowMapping.h">
+      <Filter>GameApp\Test</Filter>
+    </ClInclude>
+    <ClInclude Include="TestSkyboxWithCube.h">
+      <Filter>GameApp\Test</Filter>
+    </ClInclude>
+    <ClInclude Include="TestDeferredSSAO.h">
       <Filter>GameApp\Test</Filter>
     </ClInclude>
   </ItemGroup>

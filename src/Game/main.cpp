@@ -3,6 +3,7 @@
 #include "TestBlinnPhong.h"
 #include "TestModelLoading.h"
 #include "TestShadowMapping.h"
+#include "TestSkyboxWithCube.h"
 //=============================================================================
 #if defined(_MSC_VER)
 #	pragma comment( lib, "3rdparty.lib" )
@@ -17,7 +18,8 @@ int main(
 
 	//TestBlinnPhong game;
 	//TestModelLoading game;
-	TestShadowMapping game;
+	//TestShadowMapping game;
+	TestSkyboxWithCube game;
 	game.Run();
 }
 //=============================================================================
