@@ -86,6 +86,9 @@
     <ClInclude Include="PipelineDeferredSSAO.h">
       <Filter>Graphics\Pipelines</Filter>
     </ClInclude>
+    <ClInclude Include="PipelineDeferredSSAOShaders.h">
+      <Filter>Graphics\Pipelines</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="App">

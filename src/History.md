@@ -32,3 +32,6 @@
 - PipelineShadowMapping - объект позволяющий рендерить карту теней от источника света
 - Тест shadow map
 - SetUniform принимающие строку. Не использовать в игре
+
+# 11.05.2025
+- PipelineDeferredSSAO для рендера Deffered Shading с SSAO

@@ -17,4 +17,10 @@ public:
 	void OnRender() final;
 	void OnImGuiDraw() final;
 	void OnResize(uint16_t width, uint16_t height) final;
+
+	void InitScene();
+	void UpdateLightPositions();
+	void InitLights();
+	void RenderLights();
+	void RenderScene(GLuint shader) const;
 };
