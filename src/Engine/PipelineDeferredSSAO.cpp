@@ -70,7 +70,6 @@ PipelineDeferredSSAO::PipelineDeferredSSAO(int kernelSize, int noiseSize)
 
 	// SSAO Frame buffer
 	glGenFramebuffers(1, &m_ssaoFBO);
-
 	glBindFramebuffer(GL_FRAMEBUFFER, m_ssaoFBO);
 
 	// SSAO color buffer

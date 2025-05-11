@@ -21,6 +21,9 @@
     <ClCompile Include="TestDeferredSSAO.cpp">
       <Filter>GameApp\Test</Filter>
     </ClCompile>
+    <ClCompile Include="TestPBR.cpp">
+      <Filter>GameApp\Test</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -41,6 +44,9 @@
       <Filter>GameApp\Test</Filter>
     </ClInclude>
     <ClInclude Include="TestDeferredSSAO.h">
+      <Filter>GameApp\Test</Filter>
+    </ClInclude>
+    <ClInclude Include="TestPBR.h">
       <Filter>GameApp\Test</Filter>
     </ClInclude>
   </ItemGroup>

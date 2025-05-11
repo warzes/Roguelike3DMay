@@ -103,6 +103,7 @@
     <ClCompile Include="TestBlinnPhong.cpp" />
     <ClCompile Include="TestDeferredSSAO.cpp" />
     <ClCompile Include="TestModelLoading.cpp" />
+    <ClCompile Include="TestPBR.cpp" />
     <ClCompile Include="TestShadowMapping.cpp" />
     <ClCompile Include="TestSkyboxWithCube.cpp" />
   </ItemGroup>
@@ -113,6 +114,7 @@
     <ClInclude Include="TestBlinnPhong.h" />
     <ClInclude Include="TestDeferredSSAO.h" />
     <ClInclude Include="TestModelLoading.h" />
+    <ClInclude Include="TestPBR.h" />
     <ClInclude Include="TestShadowMapping.h" />
     <ClInclude Include="TestSkyboxWithCube.h" />
   </ItemGroup>
