@@ -35,3 +35,6 @@
 
 # 11.05.2025
 - PipelineDeferredSSAO для рендера Deffered Shading с SSAO
+
+# 12.05.2025
+- новый тест

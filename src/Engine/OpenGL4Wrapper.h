@@ -123,7 +123,7 @@ namespace gl4
 	// Framebuffer
 	//-------------------------------------------------------------------------
 
-	GLuint CreateColorBuffer2D(int width, int height, GLenum formatColor);
+	GLuint CreateColorBuffer2D(int width, int height, GLenum formatColor); // удалить - через создание текстуры
 	GLuint CreateDepthBuffer2D(int width, int height, GLenum formatDepth = GL_DEPTH_COMPONENT32);
 	// TODO: CreateRenderBuffer???
 	GLuint CreateFrameBuffer2D(GLuint colorBuffer, GLuint depthBuffer);

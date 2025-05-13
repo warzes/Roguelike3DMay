@@ -6,6 +6,8 @@
 #include "TestSkyboxWithCube.h"
 #include "TestDeferredSSAO.h"
 #include "TestPBR.h"
+#include "TestTerrain.h"
+#include "TestBloom.h"
 //=============================================================================
 #if defined(_MSC_VER)
 #	pragma comment( lib, "3rdparty.lib" )
@@ -23,7 +25,10 @@ int main(
 	//TestShadowMapping game;
 	//TestSkyboxWithCube game;
 	//TestDeferredSSAO game;
-	TestPBR game;
+	//TestPBR game;
+	//TestBloom game;
+	TestTerrain game;
+
 	game.Run();
 }
 //=============================================================================

@@ -15,6 +15,10 @@ struct MeshVertex final
 	float Weights[MAX_BONE_INFLUENCE]; // Weights from each bone
 };
 
+// TODO:
+// SubMesh - דומלוענטÿ לורא
+// SubMeshGPU - גאמ/גבמ/טבמ
+
 class Mesh final
 {
 public:
