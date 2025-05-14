@@ -41,5 +41,6 @@
 
 # 14.05.2025
 - gl4::GetUniformBlockIndex и тест Uniform Buffer
-- подготовка к созданию Forward+ для игры
+- тест SSBO
 - CreateShaderProgram для вычислительного шейдера
+- первый вариант Forward+ shading для игры

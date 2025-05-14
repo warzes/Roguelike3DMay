@@ -107,6 +107,7 @@
     <ClCompile Include="TestModelLoading.cpp" />
     <ClCompile Include="TestPBR.cpp" />
     <ClCompile Include="TestShadowMapping.cpp" />
+    <ClCompile Include="TestSimple.cpp" />
     <ClCompile Include="TestSkyboxWithCube.cpp" />
     <ClCompile Include="TestTerrain.cpp" />
   </ItemGroup>
@@ -121,6 +122,7 @@
     <ClInclude Include="TestModelLoading.h" />
     <ClInclude Include="TestPBR.h" />
     <ClInclude Include="TestShadowMapping.h" />
+    <ClInclude Include="TestSimple.h" />
     <ClInclude Include="TestSkyboxWithCube.h" />
     <ClInclude Include="TestTerrain.h" />
   </ItemGroup>

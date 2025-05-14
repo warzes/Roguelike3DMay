@@ -8,6 +8,7 @@
 #include "TestPBR.h"
 #include "TestBloom.h"
 // test 2
+#include "TestSimple.h"
 #include "TestTerrain.h"
 #include "TestForwardPlus.h"
 //=============================================================================
@@ -29,8 +30,10 @@ int main(
 	//TestDeferredSSAO game;
 	//TestPBR game;
 	//TestBloom game;
+
+	TestSimple game;
 	//TestTerrain game;
-	TestForwardPlus game;
+	//TestForwardPlus game;
 
 	game.Run();
 }
