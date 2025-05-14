@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "Mesh.h"
 
@@ -13,6 +13,7 @@
                            aiProcess_FindInvalidData |          \
                            aiProcess_GenUVCoords |              \
                            aiProcess_FlipUVs |                  \
+                           aiProcess_MakeLeftHanded |           \
                            aiProcess_CalcTangentSpace)
 
 class Model final

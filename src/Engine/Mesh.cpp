@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "Mesh.h"
 #include "OpenGL4Wrapper.h"
 #include "Log.h"
@@ -68,8 +68,8 @@ void Mesh::setupMesh()
 	};
 
 
-	m_vbo = gl4::CreateBuffer(GL_DYNAMIC_STORAGE_BIT, m_vertices);
-	m_ibo = gl4::CreateBuffer(GL_DYNAMIC_STORAGE_BIT, m_indices);
+	m_vbo = gl4::CreateBuffer(0, m_vertices);
+	m_ibo = gl4::CreateBuffer(0, m_indices);
 	m_vao = gl4::CreateVertexArray(m_vbo, m_ibo, sizeof(MeshVertex), attribs);
 
 #if _DEBUG
