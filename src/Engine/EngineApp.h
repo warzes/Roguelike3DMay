@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "GraphicSystem.h"
 
@@ -17,7 +17,7 @@ struct EngineConfig final
 
 	struct Render final
 	{
-		bool             vsync{ true };
+		bool             vsync{ false };
 		bool             srgb{ false };
 	} render;
 };

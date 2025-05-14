@@ -10,15 +10,15 @@ namespace
 	const char* depthShaderCodeVertex = R"(
 #version 460 core
 
-layout (location = 0) in vec3 aVertexPosition;
+layout (location = 0) in vec3 position;
 
-uniform mat4 model;
-uniform mat4 view;
+// Uniforms
 uniform mat4 projection;
+uniform mat4 view;
+uniform mat4 model;
 
-void main()
-{
-	gl_Position = projection * view * model * vec4(aVertexPosition, 1.0);
+void main() {
+	gl_Position = projection * view * model * vec4(position, 1.0);
 }
 )";
 
@@ -33,9 +33,9 @@ void main()
 	const char* depthDebugShaderCodeVertex = R"(
 #version 460 core
 
-layout (location = 0) in vec3 aVertexPosition;
-layout (location = 1) in vec3 aVertexNormal;
-layout (location = 2) in vec2 aVertexTexCoords;
+layout(location = 0) in vec3 position;
+layout(location = 1) in vec3 normal;
+layout(location = 2) in vec2 texCoords;
 
 uniform mat4 model;
 uniform mat4 view;
@@ -43,10 +43,9 @@ uniform mat4 projection;
 
 out vec2 TexCoords;
 
-void main()
-{
-	gl_Position = projection * view * model * vec4(aVertexPosition, 1.0);
-	TexCoords = aVertexTexCoords;
+void main() {
+	gl_Position = projection * view * model * vec4(position, 1.0);
+	TexCoords = texCoords;
 }
 )";
 
@@ -59,16 +58,14 @@ uniform float far;
 out vec4 fragColor;
 
 // Need to linearize the depth because we are using the projection
-float LinearizeDepth(float depth)
-{
+float LinearizeDepth(float depth) {
 	float z = depth * 2.0 - 1.0;
 	return (2.0 * near * far) / (far + near - z * (far - near));
 }
 
-void main()
-{
+void main() {
 	float depth = LinearizeDepth(gl_FragCoord.z) / far;
-	fragColor = vec4(vec3(depth), 1.0);
+	fragColor = vec4(vec3(depth), 1.0f);
 }
 )";
 
@@ -237,13 +234,13 @@ void main() {
 	vertex_out.ts_view_pos  = vertex_out.TBN * viewPosition;
 	vertex_out.ts_frag_pos = vertex_out.TBN * frag_pos;
 }
-
 )";
 
 	const char* lightingShaderCodeFragment = R"(
 #version 460 core
 
 #define MAX_LIGHTS_PER_TILE 128
+#define TILE_SIZE 16
 
 in VERTEX_OUT{
     vec2 frag_uv;
@@ -255,7 +252,7 @@ in VERTEX_OUT{
 struct PointLight {
 	vec4 position;
 	vec4 color;
-	vec4 paddingAndRadius;
+	vec4 paddingAndRadius; // .w содержит радиус света
 };
 
 // Shader storage buffer objects
@@ -278,64 +275,67 @@ out vec4 fragColor;
 
 void main() {
 	// Determine which tile this pixel belongs to
-	ivec2 location = ivec2(gl_FragCoord.xy);
-	ivec2 tileID = location / ivec2(16, 16);
+	ivec2 tileID = ivec2(gl_FragCoord.xy) / TILE_SIZE;
 	uint index = tileID.y * numberOfTilesX + tileID.x;
     uint offset = index * MAX_LIGHTS_PER_TILE;
 
-    vec4 result = vec4(0.0, 0.0, 0.0, 1.0);
-
 	vec4 base_diffuse = texture(texture_diffuse1, fragment_in.frag_uv);
+	if (base_diffuse.a <= 0.2) discard;
 
-	vec3 normal = texture(texture_normal1, fragment_in.frag_uv).rgb;
-	normal = normalize(normal * 2.0 - 1.0);
+	if (doLightDebug==1)
+	{
+		uint count = 0;
+		for (uint i = 0; i < MAX_LIGHTS_PER_TILE; i++)
+		{
+			if (lights_indices[offset + i] != -1 ) {
+				count++;
+			}
+		}
+		float shade = float(count) / float(MAX_LIGHTS_PER_TILE * 2); 
+		fragColor = vec4(shade);
+		return;
+	}
 
+	vec3 normal = normalize((texture(texture_normal1, fragment_in.frag_uv).rgb * 2.0 - 1.0));
 	float specpower = 60.0f;
+
+	vec3 result = vec3(0.0);
 
 	for (uint i = 0; i < MAX_LIGHTS_PER_TILE; i++)
 	{
-		if (lights_indices[offset + i] != -1) 
-		{
-		    int indices = lights_indices[offset + i];
+		int idx = lights_indices[offset + i];
+		if (idx == -1)
+			continue;
 
-			PointLight light = lightBuffer.data[indices];
+		PointLight light = lightBuffer.data[idx];
 
-			vec3 ts_light_pos = fragment_in.TBN * vec3(light.position);
-			vec3 ts_light_dir = normalize(ts_light_pos - fragment_in.ts_frag_pos);
-			float dist = length(ts_light_pos - fragment_in.ts_frag_pos);
-	
-			vec3 N = normal;
-			vec3 L = ts_light_dir;
-	
-			vec3 R = reflect(-L, N);
-			float NdotR = max(0.0, dot(N, R));
-			float NdotL = max(0.0, dot(N, L));
-	
-			float attenuation = clamp(1.0 - dist * dist / (light.paddingAndRadius.w * light.paddingAndRadius.w), 0.0, 1.0);
-	
-			vec3 diffuse_color  = 1.0 * vec3(light.color.x, light.color.y, light.color.z) * vec3(base_diffuse.r, base_diffuse.g, base_diffuse.b) * NdotL * attenuation;
-			vec3 specular_color = vec3(1.0) * pow(NdotR, specpower) * attenuation;
-	
-			result += vec4(diffuse_color + specular_color, 0.0);	
-		}
+		vec3 lightPosTS = fragment_in.TBN * light.position.xyz;
+		vec3 lightDirTS = lightPosTS - fragment_in.ts_frag_pos;
+		float dist = length(lightDirTS);
+		float attenuation = clamp(1.0 - dist * dist / (light.paddingAndRadius.w * light.paddingAndRadius.w), 0.0, 1.0);
+		if (attenuation == 0.0)
+			continue;
+
+		lightDirTS /= dist; // normalize
+
+		float NdotL = max(0.0, dot(normal, lightDirTS));
+		if (NdotL == 0.0)
+			continue;
+
+		// Диффузное освещение
+		vec3 diffuse = light.color.rgb * base_diffuse.rgb * NdotL * attenuation;
+
+		// Спекулярное освещение
+		vec3 viewDirTS = normalize(fragment_in.ts_view_pos - fragment_in.ts_frag_pos);
+		vec3 reflectDir = reflect(-lightDirTS, normal);
+		float spec = pow(max(dot(viewDirTS, reflectDir), 0.0), specpower);
+		vec3 specular = vec3(1.0) * spec * attenuation;
+
+		result += diffuse + specular;
 	}
 
-	if (base_diffuse.a <= 0.2) {
-		discard;
-	}
 	
-	fragColor = result;
-	
-	if (doLightDebug==1){
-		uint count;
-		for (uint i = 0; i < MAX_LIGHTS_PER_TILE; i++) {
-		    if (lights_indices[offset + i] != -1 ) {
-			count++;
-		    }
-		}
-		float shade = float(count) / float(MAX_LIGHTS_PER_TILE * 2); 
-		fragColor = vec4(shade, shade, shade, 1.0);
-	}
+	fragColor =vec4(result, 1.0);
 }
 )";
 
@@ -381,13 +381,17 @@ void main() {
 	GLuint depthProgram;
 	GLuint depthDebugProgram;
 	GLuint lightCullingProgram;
-	GLuint lightingProgram;
-	GLuint finalProgram;
+	GLuint lightProgram;
+	GLuint renderProgram;
 
-	int numberOfLights{ 35 };
+	int numberOfLights{ 40 };
 
-	GLuint lightBufferSSBO;
-	GLuint lightIndexBufferSSBO;
+	GLuint lightBuffer; // lightBufferSSBO
+	GLuint indexBuffer; // lightIndexBufferSSBO
+
+	float nearPlane = 0.5f;
+	float farPlane = 300.0f;
+
 
 #define MAX_LIGHTS_PER_TILE 128
 #define TILE_SIZE 16
@@ -415,12 +419,12 @@ void main() {
 
 	void SetupLights()
 	{
-		glBufferData(GL_SHADER_STORAGE_BUFFER, numberOfLights * sizeof(Light), NULL, GL_DYNAMIC_DRAW);
+		//glBufferData(GL_SHADER_STORAGE_BUFFER, numberOfLights * sizeof(Light), NULL, GL_DYNAMIC_DRAW);
 
-		if (lightBufferSSBO == 0) return;
+		if (lightBuffer == 0) return;
 
 		//glBufferData(GL_SHADER_STORAGE_BUFFER, numberOfLights * sizeof(LightData), NULL, GL_DYNAMIC_DRAW);
-		glBindBuffer(GL_SHADER_STORAGE_BUFFER, lightBufferSSBO);
+		glBindBuffer(GL_SHADER_STORAGE_BUFFER, lightBuffer);
 		LightData* lights = (LightData*)glMapBuffer(GL_SHADER_STORAGE_BUFFER, GL_READ_WRITE);
 
 		//	LightData* lights = (LightData*)glMapNamedBufferRange(lightBufferSSBO, 0, numberOfLights * sizeof(LightData), GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
@@ -451,7 +455,7 @@ void main() {
 
 	void UpdateLights()
 	{
-		glBindBuffer(GL_SHADER_STORAGE_BUFFER, lightBufferSSBO);
+		glBindBuffer(GL_SHADER_STORAGE_BUFFER, lightBuffer);
 
 		LightData* lights = (LightData*)glMapBuffer(GL_SHADER_STORAGE_BUFFER, GL_READ_WRITE);
 
@@ -500,16 +504,16 @@ bool TestForwardPlus::OnCreate()
 	depthProgram = gl4::CreateShaderProgram(depthShaderCodeVertex, depthShaderCodeFragment);
 	depthDebugProgram = gl4::CreateShaderProgram(depthDebugShaderCodeVertex, depthDebugShaderCodeFragment);
 	lightCullingProgram = gl4::CreateShaderProgram(lightCullingShaderCodeCompute);
-	lightingProgram = gl4::CreateShaderProgram(lightingShaderCodeVertex, lightingShaderCodeFragment);
-	finalProgram = gl4::CreateShaderProgram(finalShaderCodeVertex, finalShaderCodeFragment);
+	lightProgram = gl4::CreateShaderProgram(lightingShaderCodeVertex, lightingShaderCodeFragment);
+	renderProgram = gl4::CreateShaderProgram(finalShaderCodeVertex, finalShaderCodeFragment);
 
 	glUseProgram(depthProgram);
 	glUniformMatrix4fv(glGetUniformLocation(depthProgram, "model"), 1, GL_FALSE, glm::value_ptr(glm::mat4(1.0f)));
 
 	glUseProgram(depthDebugProgram);
 	glUniformMatrix4fv(glGetUniformLocation(depthDebugProgram, "model"), 1, GL_FALSE, glm::value_ptr(glm::mat4(1.0f)));
-	glUniform1f(glGetUniformLocation(depthDebugProgram, "near"), 0.01f);
-	glUniform1f(glGetUniformLocation(depthDebugProgram, "far"), 1000.0f);
+	glUniform1f(glGetUniformLocation(depthDebugProgram, "near"), nearPlane);
+	glUniform1f(glGetUniformLocation(depthDebugProgram, "far"), farPlane);
 
 
 	glUseProgram(lightCullingProgram);
@@ -517,11 +521,11 @@ bool TestForwardPlus::OnCreate()
 	glUniform2fv(glGetUniformLocation(lightCullingProgram, "screenSize"), 1, glm::value_ptr(glm::vec2(GetWidth(), GetHeight())));
 
 
-	glUseProgram(lightingProgram);
-	glUniformMatrix4fv(glGetUniformLocation(lightingProgram, "model"), 1, GL_FALSE, glm::value_ptr(glm::mat4(1.0f)));
-	glUniform1i(glGetUniformLocation(lightingProgram, "numberOfTilesX"), workGroupsX);
-	glUniform1i(glGetUniformLocation(lightingProgram, "doLightDebug"), 0);
-	glUniform3fv(glGetUniformLocation(lightingProgram, "viewPosition"), 1, glm::value_ptr(camera.Position));
+	glUseProgram(lightProgram);
+	glUniformMatrix4fv(glGetUniformLocation(lightProgram, "model"), 1, GL_FALSE, glm::value_ptr(glm::mat4(1.0f)));
+	glUniform1i(glGetUniformLocation(lightProgram, "numberOfTilesX"), workGroupsX);
+	glUniform1i(glGetUniformLocation(lightProgram, "doLightDebug"), 0);
+	glUniform3fv(glGetUniformLocation(lightProgram, "viewPosition"), 1, glm::value_ptr(camera.Position));
 
 	// create light buffer
 	//lightBufferSSBO = gl4::CreateBuffer(GL_DYNAMIC_STORAGE_BIT | GL_MAP_WRITE_BIT | GL_MAP_READ_BIT, numberOfLight * sizeof(LightData), nullptr);
@@ -531,18 +535,18 @@ bool TestForwardPlus::OnCreate()
 	//glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, lightIndexBufferSSBO);
 
 	// Create light buffer
-	glGenBuffers(1, &lightBufferSSBO);
-	glBindBuffer(GL_SHADER_STORAGE_BUFFER, lightBufferSSBO);
+	glGenBuffers(1, &lightBuffer);
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, lightBuffer);
 	glBufferData(GL_SHADER_STORAGE_BUFFER, numberOfLights * sizeof(LightData), 0, GL_DYNAMIC_DRAW);
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, lightBufferSSBO);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, lightBuffer);
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
 
 
 	// Create visible light indices buffer
-	glGenBuffers(1, &lightIndexBufferSSBO);
-	glBindBuffer(GL_SHADER_STORAGE_BUFFER, lightIndexBufferSSBO);
+	glGenBuffers(1, &indexBuffer);
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, indexBuffer);
 	glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(int)* workGroupsX* workGroupsY* MAX_LIGHTS_PER_TILE, NULL, GL_DYNAMIC_DRAW);
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, lightIndexBufferSSBO);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, indexBuffer);
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
 
 	// Generate lights
@@ -595,12 +599,12 @@ bool TestForwardPlus::OnCreate()
 
 	glClearColor(0.7f, 0.8f, 0.9f, 1.0f);
 
-	glEnable(GL_DEPTH_TEST);
+	//glEnable(GL_DEPTH_TEST);
 	glDepthMask(GL_TRUE);
 	glDepthFunc(GL_LESS);
 	//glEnable(GL_CULL_FACE);
 
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	return true;
 }
@@ -635,7 +639,7 @@ void TestForwardPlus::OnUpdate(float deltaTime)
 void TestForwardPlus::OnRender()
 {
 	glm::mat4 view = camera.GetViewMatrix();
-	glm::mat4 projection = glm::perspective(glm::radians(60.0f), GetAspect(), 0.01f, 1000.0f);
+	glm::mat4 projection = glm::perspective(glm::radians(60.0f), GetAspect(), nearPlane, farPlane);
 	
 	// вывод модели используя forward+
 	{
@@ -650,7 +654,7 @@ void TestForwardPlus::OnRender()
 			GLuint workgroup_x = (GetWidth() + (GetWidth() % TILE_SIZE)) / TILE_SIZE;
 			GLuint workgroup_y = (GetHeight() + (GetHeight() % TILE_SIZE)) / TILE_SIZE;
 
-			glBindBuffer(GL_SHADER_STORAGE_BUFFER, lightIndexBufferSSBO);
+			glBindBuffer(GL_SHADER_STORAGE_BUFFER, indexBuffer);
 			glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(int) * workgroup_x * workgroup_y * MAX_LIGHTS_PER_TILE, NULL, GL_DYNAMIC_DRAW);
 			glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
 		}
@@ -667,11 +671,11 @@ void TestForwardPlus::OnRender()
 			glClear(GL_DEPTH_BUFFER_BIT);
 			glDepthFunc(GL_LESS);
 
-			////update depth uniforms
-			//glViewport(0, 0, GetWidth(), GetHeight());
+			//update depth uniforms
+			glViewport(0, 0, GetWidth(), GetHeight());
 
 			glEnable(GL_POLYGON_OFFSET_FILL);
-			//glPolygonOffset(4.0f, 4.0f);
+			glPolygonOffset(4.0f, 4.0f);
 
 			glUseProgram(depthProgram);
 			static const GLenum buffs[] = { GL_COLOR_ATTACHMENT0 };
@@ -726,14 +730,13 @@ void TestForwardPlus::OnRender()
 				glUniformMatrix4fv(glGetUniformLocation(lightCullingProgram, "view"), 1, GL_FALSE, glm::value_ptr(view));
 
 				// Bind shader storage buffer objects for the light and indice buffers
-				glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, lightBufferSSBO);
-				glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, lightIndexBufferSSBO);
+				glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, lightBuffer);
+				glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, indexBuffer);
 
 				// Bind depth map texture to texture location 4 (which will not be used by any model texture)
 				glActiveTexture(GL_TEXTURE4);
 				glUniform1i(glGetUniformLocation(lightCullingProgram, "depthMap"), 4);
 				glBindTexture(GL_TEXTURE_2D, depthMap);
-
 
 				// Dispatch the compute shader, using the workgroup values calculated earlier
 				glDispatchCompute(workGroupsX, workGroupsY, 1);
@@ -753,19 +756,19 @@ void TestForwardPlus::OnRender()
 
 				glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-				glUseProgram(lightingProgram);
-				glUniform3fv(glGetUniformLocation(lightingProgram, "viewPosition"), 1, glm::value_ptr(camera.Position));
-				glUniformMatrix4fv(glGetUniformLocation(lightingProgram, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
-				glUniformMatrix4fv(glGetUniformLocation(lightingProgram, "view"), 1, GL_FALSE, glm::value_ptr(view));
-				glUniformMatrix4fv(glGetUniformLocation(lightingProgram, "model"), 1, GL_FALSE, glm::value_ptr(glm::mat4(1.0f)));
+				glUseProgram(lightProgram);
+				glUniform3fv(glGetUniformLocation(lightProgram, "viewPosition"), 1, glm::value_ptr(camera.Position));
+				glUniformMatrix4fv(glGetUniformLocation(lightProgram, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+				glUniformMatrix4fv(glGetUniformLocation(lightProgram, "view"), 1, GL_FALSE, glm::value_ptr(view));
+				glUniformMatrix4fv(glGetUniformLocation(lightProgram, "model"), 1, GL_FALSE, glm::value_ptr(glm::mat4(1.0f)));
 
 				if (ViewModes == LIGHT)
 				{
-					glUniform1i(glGetUniformLocation(lightingProgram, "doLightDebug"), 1);
+					glUniform1i(glGetUniformLocation(lightProgram, "doLightDebug"), 1);
 				}
-				else glUniform1i(glGetUniformLocation(lightingProgram, "doLightDebug"), 0);
+				else glUniform1i(glGetUniformLocation(lightProgram, "doLightDebug"), 0);
 
-				model->Draw(lightingProgram);
+				model->Draw(lightProgram);
 
 				glBindFramebuffer(GL_FRAMEBUFFER, 0);
 			}
@@ -774,7 +777,7 @@ void TestForwardPlus::OnRender()
 #pragma region RENDER_QUAD
 			{
 				glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Weirdly, moving this call drops performance into the floor
-				glUseProgram(finalProgram);
+				glUseProgram(renderProgram);
 				glActiveTexture(GL_TEXTURE0);
 				glBindTexture(GL_TEXTURE_2D, colorBuffer);
 
@@ -813,7 +816,6 @@ void TestForwardPlus::OnRender()
 #pragma endregion
 		}
 
-
 		glDisable(GL_DEPTH_TEST);
 	}
 }
@@ -822,7 +824,7 @@ void TestForwardPlus::OnImGuiDraw()
 {
 	// Create a simple ImGUI config window.
 	{
-		ImGui::Begin("SweetGL - Forward+ Shading");
+		ImGui::Begin("Forward+ Shading");
 
 		ImGui::TextColored(ImVec4(0.4f, 0.4f, 1.0f, 1.00f), "Vendor: %s", (char*)glGetString(GL_VENDOR));
 		ImGui::TextColored(ImVec4(0.4f, 0.4f, 1.0f, 1.00f), "Version: %s", (char*)glGetString(GL_VERSION));
