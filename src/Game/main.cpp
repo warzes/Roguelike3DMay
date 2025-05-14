@@ -31,9 +31,9 @@ int main(
 	//TestPBR game;
 	//TestBloom game;
 
-	TestSimple game;
+	//TestSimple game;
 	//TestTerrain game;
-	//TestForwardPlus game;
+	TestForwardPlus game;
 
 	game.Run();
 }
