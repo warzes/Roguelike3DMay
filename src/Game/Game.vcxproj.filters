@@ -24,11 +24,14 @@
     <ClCompile Include="TestPBR.cpp">
       <Filter>GameApp\Test</Filter>
     </ClCompile>
-    <ClCompile Include="TestTerrain.cpp">
-      <Filter>GameApp\Test</Filter>
-    </ClCompile>
     <ClCompile Include="TestBloom.cpp">
       <Filter>GameApp\Test</Filter>
+    </ClCompile>
+    <ClCompile Include="TestTerrain.cpp">
+      <Filter>GameApp\Test2</Filter>
+    </ClCompile>
+    <ClCompile Include="TestForwardPlus.cpp">
+      <Filter>GameApp\Test2</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -55,11 +58,14 @@
     <ClInclude Include="TestPBR.h">
       <Filter>GameApp\Test</Filter>
     </ClInclude>
-    <ClInclude Include="TestTerrain.h">
-      <Filter>GameApp\Test</Filter>
-    </ClInclude>
     <ClInclude Include="TestBloom.h">
       <Filter>GameApp\Test</Filter>
+    </ClInclude>
+    <ClInclude Include="TestTerrain.h">
+      <Filter>GameApp\Test2</Filter>
+    </ClInclude>
+    <ClInclude Include="TestForwardPlus.h">
+      <Filter>GameApp\Test2</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -68,6 +74,9 @@
     </Filter>
     <Filter Include="GameApp\Test">
       <UniqueIdentifier>{a4afc0a1-64ea-4061-9112-24639dedacdf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameApp\Test2">
+      <UniqueIdentifier>{6ec12468-041f-4337-b2b4-1980b07aee4f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

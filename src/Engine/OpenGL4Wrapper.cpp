@@ -70,6 +70,30 @@ GLuint gl4::CreateShader(GLenum type, const char* shaderSource)
 	return shader;
 }
 //=============================================================================
+inline void checkProgramStatus(GLuint program)
+{
+	GLint success;
+	glGetProgramiv(program, GL_LINK_STATUS, &success);
+	if (!success)
+	{
+		char  log[512];
+		glGetProgramInfoLog(program, 512, nullptr, log);
+		std::string logError = "OPENGL: Shader program linking failed: " + std::string(log);
+		Error(logError);
+	}
+}
+//=============================================================================
+GLuint gl4::CreateShaderProgram(const char* computeSrc)
+{
+	GLuint program = glCreateProgram();
+	GLuint shader = CreateShader(GL_COMPUTE_SHADER, computeSrc);
+	glAttachShader(program, shader);
+	glLinkProgram(program);
+	glDeleteShader(shader);
+	checkProgramStatus(program);
+	return program;
+}
+//=============================================================================
 GLuint gl4::CreateShaderProgram(const char* vertexSrc, const char* fragmentSrc)
 {
 	return CreateShaderProgram(vertexSrc, nullptr, fragmentSrc);
@@ -100,21 +124,18 @@ GLuint gl4::CreateShaderProgram(const char* vertexSrc, const char* geometrySrc, 
 	for (GLuint shader : createdShaders)
 		glDeleteShader(shader);
 
-	GLint success;
-	glGetProgramiv(program, GL_LINK_STATUS, &success);
-	if (!success)
-	{
-		char  log[512];
-		glGetProgramInfoLog(program, 512, nullptr, log);
-		std::string logError = "OPENGL: Shader program linking failed: " + std::string(log);
-		Error(logError);
-	}
+	checkProgramStatus(program);
 	return program;
 }
 //=============================================================================
 int gl4::GetUniformLocation(GLuint program, const std::string& name)
 {
 	return glGetUniformLocation(program, name.c_str());
+}
+//=============================================================================
+GLuint gl4::GetUniformBlockIndex(GLuint program, const std::string& name)
+{
+	return glGetUniformBlockIndex(program, name.c_str());
 }
 //=============================================================================
 void gl4::SetUniform(int uniformLoc, bool value)

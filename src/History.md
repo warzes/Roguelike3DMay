@@ -38,3 +38,8 @@
 
 # 12.05.2025
 - новый тест
+
+# 14.05.2025
+- gl4::GetUniformBlockIndex и тест Uniform Buffer
+- подготовка к созданию Forward+ для игры
+- CreateShaderProgram для вычислительного шейдера

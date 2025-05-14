@@ -7,10 +7,12 @@ namespace gl4
 	//-------------------------------------------------------------------------
 
 	GLuint CreateShader(GLenum type, const char* shaderSource);
+	GLuint CreateShaderProgram(const char* computeSrc);
 	GLuint CreateShaderProgram(const char* vertexSrc, const char* fragmentSrc);
 	GLuint CreateShaderProgram(const char* vertexSrc, const char* geometrySrc, const char* fragmentSrc);
 
-	int GetUniformLocation(GLuint program, const std::string& name);
+	int GetUniformLocation(GLuint program, const std::string& name);      // TODO: а нужна ли? это просто glGetUniformLocation
+	GLuint GetUniformBlockIndex(GLuint program, const std::string& name); // TODO: а нужна ли? это просто glGetUniformBlockIndex
 
 	void SetUniform(int uniformLoc, bool value);
 	void SetUniform(int uniformLoc, int value);
@@ -84,7 +86,7 @@ namespace gl4
 
 	struct TextureParameter final
 	{
-		GLint   minFilter{ GL_LINEAR };
+		GLint   minFilter{ GL_LINEAR_MIPMAP_LINEAR };
 		GLint   magFilter{ GL_LINEAR };
 		uint8_t maxAnisotropy{ 16 };
 		GLint   wrap{ GL_REPEAT };

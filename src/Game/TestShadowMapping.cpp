@@ -136,7 +136,7 @@ void main()
 }
 )";
 
-	const char* ligthShaderCodeVertex = R"(
+	const char* lightShaderCodeVertex = R"(
 #version 460 core
 #extension GL_ARB_separate_shader_objects : enable
 
@@ -172,7 +172,7 @@ void main()
 	gl_Position = projection * view * vec4(positionWorld, 1.0);
 }
 )";
-	const char* ligthShaderCodeFragment = R"(
+	const char* lightShaderCodeFragment = R"(
 #version 460 core
 #extension GL_ARB_separate_shader_objects : enable
 
@@ -267,7 +267,7 @@ bool TestShadowMapping::OnCreate()
 	mainAmbientPowerLoc = gl4::GetUniformLocation(mainProgram, "ambientPower");
 	mainSpecularPowerLoc = gl4::GetUniformLocation(mainProgram, "specularPower");
 
-	lightProgram = gl4::CreateShaderProgram(ligthShaderCodeVertex, ligthShaderCodeFragment);
+	lightProgram = gl4::CreateShaderProgram(lightShaderCodeVertex, lightShaderCodeFragment);
 	lightProjLoc = gl4::GetUniformLocation(lightProgram, "projection");
 	lightViewLoc = gl4::GetUniformLocation(lightProgram, "view");
 	lightPositionLoc = gl4::GetUniformLocation(lightProgram, "lightPosition");
