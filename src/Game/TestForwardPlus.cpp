@@ -253,7 +253,7 @@ void main() {
 	vec3 B = cross(N, T);
 
 	vertex_out.frag_uv = vert_uv;
-	vertex_out.TBN = transpose(mat3(T, B, N));    
+	vertex_out.TBN = transpose(mat3(T, B, N));
 	vertex_out.ts_view_pos  = vertex_out.TBN * viewPosition;
 	vertex_out.ts_frag_pos = vertex_out.TBN * frag_pos;
 }
@@ -416,8 +416,8 @@ void main() {
 	GLuint lightBuffer; // lightBufferSSBO
 	GLuint indexBuffer; // lightIndexBufferSSBO
 
-	float nearPlane = 0.5f;
-	float farPlane = 300.0f;
+	float nearPlane = 0.1f;
+	float farPlane = 1000.0f;
 
 
 #define MAX_LIGHTS_PER_TILE 128
@@ -881,7 +881,7 @@ void TestForwardPlus::OnImGuiDraw()
 
 		// here i have some bugs when debugging.
 		// prob this is not the proper way to change num of lights dynamically...
-		if (ImGui::SliderInt("Lights count", &numberOfLights, 1, 130))
+		if (ImGui::SliderInt("Lights count", &numberOfLights, 1, MAX_LIGHTS_PER_TILE-1))
 		{
 			SetupLights();
 			glUseProgram(lightCullingProgram);
