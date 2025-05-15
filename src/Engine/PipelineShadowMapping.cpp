@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "PipelineShadowMapping.h"
 #include "OpenGL4Wrapper.h"
 //=============================================================================
@@ -137,7 +137,7 @@ void PipelineShadowMapping::initQuad()
 		{{ 1.0f, -1.0f, 0.0f}, {1.0f, 0.0f}},
 	};
 
-	m_quadVBO = gl4::CreateBuffer(0, sizeof(quadVertices), quadVertices);
+	m_quadVBO = gl4::CreateBufferStorage(0, sizeof(quadVertices), quadVertices);
 	m_quadVAO = gl4::CreateVertexArray(m_quadVBO, sizeof(Vertex), attribs);
 }
 //=============================================================================

@@ -258,7 +258,15 @@ void gl4::SetUniform(GLuint program, const std::string& name, const glm::mat4& m
 	SetUniform(GetUniformLocation(program, name.c_str()), mat);
 }
 //=============================================================================
-GLuint gl4::CreateBuffer(GLbitfield flags, GLsizeiptr size, void* data)
+GLuint gl4::CreateBuffer(GLenum usage, GLsizeiptr size, void* data)
+{
+	GLuint buffer;
+	glCreateBuffers(1, &buffer);
+	glNamedBufferData(buffer, size, data, usage);
+	return buffer;
+}
+//=============================================================================
+GLuint gl4::CreateBufferStorage(GLbitfield flags, GLsizeiptr size, void* data)
 {
 	GLuint buffer;
 	glCreateBuffers(1, &buffer);
@@ -266,9 +274,9 @@ GLuint gl4::CreateBuffer(GLbitfield flags, GLsizeiptr size, void* data)
 	return buffer;
 }
 //=============================================================================
-GLuint gl4::CreateBuffer(GLbitfield flags, GLsizeiptr sizeElement, GLsizeiptr numElement, void* data)
+GLuint gl4::CreateBufferStorage(GLbitfield flags, GLsizeiptr sizeElement, GLsizeiptr numElement, void* data)
 {
-	return CreateBuffer(flags, sizeElement * numElement, data);
+	return CreateBufferStorage(flags, sizeElement * numElement, data);
 }
 //=============================================================================
 void gl4::SetVertexAttrib(GLuint vao, GLuint attribIndex, GLint size, GLenum type, GLboolean normalized, GLuint relativeOffset)

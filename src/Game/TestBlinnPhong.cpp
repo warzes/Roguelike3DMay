@@ -1,4 +1,4 @@
-#include "stdafx.h"
+п»ї#include "stdafx.h"
 #include "TestBlinnPhong.h"
 //=============================================================================
 namespace
@@ -123,7 +123,7 @@ bool TestBlinnPhong::OnCreate()
 	};
 
 
-	vbo = gl4::CreateBuffer(0, sizeof(vertices), vertices);
+	vbo = gl4::CreateBufferStorage(0, sizeof(vertices), vertices);
 	vao = gl4::CreateVertexArray(vbo, sizeof(Vertex), attribs);
 
 	camera.SetPosition(glm::vec3(0.0f, 0.0f, -1.0f));
@@ -174,7 +174,7 @@ void TestBlinnPhong::OnRender()
 	glm::mat4 view = camera.GetViewMatrix();
 	glm::mat4 proj = glm::perspective(glm::radians(60.0f), GetAspect(), 0.01f, 1000.0f);
 
-	// вывод квада
+	// РІС‹РІРѕРґ РєРІР°РґР°
 	{
 		glUseProgram(program);
 		gl4::SetUniform(ViewLoc, view);

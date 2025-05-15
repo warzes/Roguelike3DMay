@@ -46,12 +46,14 @@ namespace gl4
 	//-------------------------------------------------------------------------
 
 	GLuint CreateBuffer(GLbitfield flags, GLsizeiptr size, void* data);
-	GLuint CreateBuffer(GLbitfield flags, GLsizeiptr sizeElement, GLsizeiptr numElement, void* data);
+
+	GLuint CreateBufferStorage(GLbitfield flags, GLsizeiptr size, void* data);
+	GLuint CreateBufferStorage(GLbitfield flags, GLsizeiptr sizeElement, GLsizeiptr numElement, void* data);
 
 	template<typename T>
-	GLuint CreateBuffer(GLbitfield flags, const std::vector<T>& data)
+	GLuint CreateBufferStorage(GLbitfield flags, const std::vector<T>& data)
 	{
-		return CreateBuffer(flags, sizeof(T), data.size(), (void*)data.data());
+		return CreateBufferStorage(flags, sizeof(T), data.size(), (void*)data.data());
 	}
 
 	//-------------------------------------------------------------------------

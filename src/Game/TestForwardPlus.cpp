@@ -256,8 +256,8 @@ layout(std430, binding = 1) buffer visible_lights_indices {
 };
 
 // Uniforms
-uniform sampler2D texture_diffuse1;
-uniform sampler2D texture_normal1;
+layout(binding = 0) uniform sampler2D texture_diffuse1;
+layout(binding = 1) uniform sampler2D texture_normal1;
 
 uniform int doLightDebug;
 uniform int numberOfTilesX;
@@ -375,7 +375,9 @@ void main() {
 	};
 
 	DepthPrepass depthPrepass;
+	
 	GLuint depthDebugProgram;
+	
 	GLuint lightCullingProgram;
 	int lightCullingProjectionLoc;
 	int lightCullingInvProjectionLoc;
@@ -383,17 +385,23 @@ void main() {
 	int lightCullingLightCountLoc;
 	int lightCullingScreenSizeLoc;
 
-
-
-
-
 	GLuint lightProgram;
+	int lightProgramViewPositionLoc;
+	int lightProgramProjectionLoc;
+	int lightProgramViewLoc;
+	int lightProgramModelLoc;
+	int lightProgramLightDebugLoc;
+	int lightProgramNumberOfTilesXLoc;
+
+	GLuint SSBOLights;
+	GLuint SSBOVisibleLights;
+
+
 	GLuint renderProgram;
 
 	int numberOfLights{ 40 };
 
-	GLuint lightBuffer; // lightBufferSSBO
-	GLuint indexBuffer; // lightIndexBufferSSBO
+
 
 	float nearPlane = 0.1f;
 	float farPlane = 1000.0f;
@@ -421,15 +429,9 @@ void main() {
 
 	void SetupLights()
 	{
-		//glBufferData(GL_SHADER_STORAGE_BUFFER, numberOfLights * sizeof(Light), NULL, GL_DYNAMIC_DRAW);
+		if (SSBOLights == 0) return;
 
-		if (lightBuffer == 0) return;
-
-		//glBufferData(GL_SHADER_STORAGE_BUFFER, numberOfLights * sizeof(LightData), NULL, GL_DYNAMIC_DRAW);
-		glBindBuffer(GL_SHADER_STORAGE_BUFFER, lightBuffer);
-		LightData* lights = (LightData*)glMapBuffer(GL_SHADER_STORAGE_BUFFER, GL_READ_WRITE);
-
-		//	LightData* lights = (LightData*)glMapNamedBufferRange(lightBufferSSBO, 0, numberOfLights * sizeof(LightData), GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
+		LightData* lights = (LightData*)glMapNamedBuffer(SSBOLights, GL_WRITE_ONLY);
 
 		for (size_t i = 0; i < numberOfLights; i++)
 		{
@@ -448,16 +450,12 @@ void main() {
 			light.radius = 8.0f;
 		}
 
-		//glUnmapNamedBuffer(lightBufferSSBO);
-		glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
-		glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
+		glUnmapNamedBuffer(SSBOLights);
 	}
 
 	void UpdateLights()
 	{
-		glBindBuffer(GL_SHADER_STORAGE_BUFFER, lightBuffer);
-
-		LightData* lights = (LightData*)glMapBuffer(GL_SHADER_STORAGE_BUFFER, GL_READ_WRITE);
+		LightData* lights = (LightData*)glMapNamedBuffer(SSBOLights, GL_WRITE_ONLY);
 
 		for (int i = 0; i < numberOfLights; i++)
 		{
@@ -474,18 +472,14 @@ void main() {
 			}
 		}
 
-		glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
-		glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
+		glUnmapNamedBuffer(SSBOLights);
 	}
 
 	void UpdateSSBO(int width, int height)
 	{
 		GLuint workgroup_x = (width + (width % TILE_SIZE)) / TILE_SIZE;
 		GLuint workgroup_y = (height + (height % TILE_SIZE)) / TILE_SIZE;
-
-		glBindBuffer(GL_SHADER_STORAGE_BUFFER, indexBuffer);
-		glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(int) * workgroup_x * workgroup_y * MAX_LIGHTS_PER_TILE, NULL, GL_DYNAMIC_DRAW);
-		glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
+		glNamedBufferData(SSBOVisibleLights, sizeof(int) * workgroup_x * workgroup_y * MAX_LIGHTS_PER_TILE, nullptr, GL_DYNAMIC_DRAW);
 	}
 }
 //=============================================================================
@@ -518,35 +512,18 @@ bool TestForwardPlus::OnCreate()
 	lightCullingScreenSizeLoc = gl4::GetUniformLocation(lightCullingProgram, "screenSize");
 
 	lightProgram = gl4::CreateShaderProgram(lightingShaderCodeVertex, lightingShaderCodeFragment);
+	lightProgramViewPositionLoc = gl4::GetUniformLocation(lightProgram, "viewPosition");
+	lightProgramProjectionLoc = gl4::GetUniformLocation(lightProgram, "projection");
+	lightProgramViewLoc = gl4::GetUniformLocation(lightProgram, "view");
+	lightProgramModelLoc = gl4::GetUniformLocation(lightProgram, "model");
+	lightProgramLightDebugLoc = gl4::GetUniformLocation(lightProgram, "doLightDebug");
+	lightProgramNumberOfTilesXLoc = gl4::GetUniformLocation(lightProgram, "numberOfTilesX");
+
 	renderProgram = gl4::CreateShaderProgram(finalShaderCodeVertex, finalShaderCodeFragment);
 
-	glUseProgram(lightProgram);
-	glUniformMatrix4fv(glGetUniformLocation(lightProgram, "model"), 1, GL_FALSE, glm::value_ptr(glm::mat4(1.0f)));
-	glUniform1i(glGetUniformLocation(lightProgram, "numberOfTilesX"), workGroupsX);
-	glUniform1i(glGetUniformLocation(lightProgram, "doLightDebug"), 0);
-	glUniform3fv(glGetUniformLocation(lightProgram, "viewPosition"), 1, glm::value_ptr(camera.Position));
-
 	// create light buffer
-	//lightBufferSSBO = gl4::CreateBuffer(GL_DYNAMIC_STORAGE_BIT | GL_MAP_WRITE_BIT | GL_MAP_READ_BIT, numberOfLight * sizeof(LightData), nullptr);
-	//glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, lightBufferSSBO);
-	//// create visible light indices buffer
-	//lightIndexBufferSSBO = gl4::CreateBuffer(GL_DYNAMIC_STORAGE_BIT | GL_MAP_WRITE_BIT | GL_MAP_READ_BIT, sizeof(int) * tilesCount * MAX_LIGHTS_PER_TILE, nullptr);
-	//glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, lightIndexBufferSSBO);
-
-	// Create light buffer
-	glGenBuffers(1, &lightBuffer);
-	glBindBuffer(GL_SHADER_STORAGE_BUFFER, lightBuffer);
-	glBufferData(GL_SHADER_STORAGE_BUFFER, numberOfLights * sizeof(LightData), 0, GL_DYNAMIC_DRAW);
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, lightBuffer);
-	glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
-
-
-	// Create visible light indices buffer
-	glGenBuffers(1, &indexBuffer);
-	glBindBuffer(GL_SHADER_STORAGE_BUFFER, indexBuffer);
-	glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(int)* workGroupsX* workGroupsY* MAX_LIGHTS_PER_TILE, NULL, GL_DYNAMIC_DRAW);
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, indexBuffer);
-	glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
+	SSBOLights = gl4::CreateBufferStorage(GL_MAP_READ_BIT | GL_MAP_WRITE_BIT, numberOfLights * sizeof(LightData), nullptr);
+	SSBOVisibleLights = gl4::CreateBuffer(GL_DYNAMIC_DRAW, sizeof(int) * workGroupsX * workGroupsY * MAX_LIGHTS_PER_TILE, nullptr);
 
 	// Generate lights
 	SetupLights();
@@ -666,43 +643,33 @@ void TestForwardPlus::OnRender()
 			gl4::SetUniform(lightCullingScreenSizeLoc, glm::vec2(GetWidth(), GetHeight()));
 			depthPrepass.BindTexture(0);
 
-			glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, lightBuffer);
-			glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, indexBuffer);
+			glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, SSBOLights);
+			glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, SSBOVisibleLights);
 
 			glDispatchCompute(workGroupsX, workGroupsY, 1);
 			glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
 		}
 
-#pragma region RENDER_FBO
+		// 3) Light Pass
 		{
+			glEnable(GL_DEPTH_TEST);
 			glDepthFunc(GL_LESS);
-
-			glBindFramebuffer(GL_FRAMEBUFFER, renderFBO);
-
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+			gl4::SetFrameBuffer(renderFBO, GetWidth(), GetHeight(), GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 			glUseProgram(lightProgram);
-			glUniform3fv(glGetUniformLocation(lightProgram, "viewPosition"), 1, glm::value_ptr(camera.Position));
-			glUniformMatrix4fv(glGetUniformLocation(lightProgram, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
-			glUniformMatrix4fv(glGetUniformLocation(lightProgram, "view"), 1, GL_FALSE, glm::value_ptr(view));
-			glUniformMatrix4fv(glGetUniformLocation(lightProgram, "model"), 1, GL_FALSE, glm::value_ptr(glm::mat4(1.0f)));
-
-			if (ViewModes == LIGHT)
-			{
-				glUniform1i(glGetUniformLocation(lightProgram, "doLightDebug"), 1);
-			}
-			else glUniform1i(glGetUniformLocation(lightProgram, "doLightDebug"), 0);
+			gl4::SetUniform(lightProgramViewPositionLoc, camera.Position);
+			gl4::SetUniform(lightProgramProjectionLoc, projection);
+			gl4::SetUniform(lightProgramViewLoc, view);
+			gl4::SetUniform(lightProgramModelLoc, modelMat);
+			gl4::SetUniform(lightProgramNumberOfTilesXLoc, (int)workGroupsX);
+			gl4::SetUniform(lightProgramLightDebugLoc, (ViewModes == LIGHT) ? 1 : 0);
 
 			model->Draw(lightProgram);
-			glActiveTexture(GL_TEXTURE0); // TODO: удалить
-
-			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		}
-#pragma endregion
 
 #pragma region RENDER_QUAD
 		{
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Weirdly, moving this call drops performance into the floor
+			gl4::SetFrameBuffer(0, GetWidth(), GetHeight(), GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			glUseProgram(renderProgram);
 			glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_2D, colorBuffer);

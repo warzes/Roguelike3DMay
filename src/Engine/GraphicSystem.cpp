@@ -1,4 +1,4 @@
-#include "stdafx.h"
+п»ї#include "stdafx.h"
 #include "GraphicSystem.h"
 #include "OpenGL4Wrapper.h"
 //=============================================================================
@@ -104,14 +104,14 @@ void GraphicSystem::createSphere()
 	}
 	m_sphereIndexCount = static_cast<unsigned int>(indices.size());
 
-	m_sphereVBO = gl4::CreateBuffer(0, vertices);
-	m_sphereIBO = gl4::CreateBuffer(0, indices);
+	m_sphereVBO = gl4::CreateBufferStorage(0, vertices);
+	m_sphereIBO = gl4::CreateBufferStorage(0, indices);
 	m_sphereVAO = gl4::CreateVertexArray(m_sphereVBO, m_sphereIBO, sizeof(Vertex), attribs);
 }
 //=============================================================================
 void GraphicSystem::createCube()
 {
-	// TODO: добавить индексный буфер
+	// TODO: РґРѕР±Р°РІРёС‚СЊ РёРЅРґРµРєСЃРЅС‹Р№ Р±СѓС„РµСЂ
 
 	const float vertices[] = {
 		// Back face
@@ -171,7 +171,7 @@ void GraphicSystem::createCube()
 		{2, 2, GL_FLOAT, false, offsetof(Vertex, uv)},
 	};
 
-	m_cubeVBO = gl4::CreateBuffer(0, sizeof(vertices), (void*)vertices);
+	m_cubeVBO = gl4::CreateBufferStorage(0, sizeof(vertices), (void*)vertices);
 	m_cubeVAO = gl4::CreateVertexArray(m_cubeVBO, sizeof(Vertex), attribs);
 }
 //=============================================================================
@@ -200,7 +200,7 @@ void GraphicSystem::createQuad()
 		{{-1.0f, 0.0f, -1.0f}, {0.0f, 1.0f, 0.0f}, {0.0f, 1.0f}},
 		{{1.0f,  0.0f, -1.0f}, {0.0f, 1.0f, 0.0f}, {1.0f, 1.0f}}
 	};
-	m_quadVBO = gl4::CreateBuffer(0, vertices);
+	m_quadVBO = gl4::CreateBufferStorage(0, vertices);
 	m_quadVAO = gl4::CreateVertexArray(m_quadVBO, sizeof(Vertex), attribs);
 }
 //=============================================================================

@@ -1,4 +1,4 @@
-#include "stdafx.h"
+п»ї#include "stdafx.h"
 #include "GameApp.h"
 //=============================================================================
 namespace
@@ -217,8 +217,8 @@ bool GameApp::OnCreate()
 		0, 3, 2
 	};
 
-	vbo = gl4::CreateBuffer(0, sizeof(vertices), vertices);
-	ibo = gl4::CreateBuffer(0, sizeof(indices), indices);
+	vbo = gl4::CreateBufferStorage(0, sizeof(vertices), vertices);
+	ibo = gl4::CreateBufferStorage(0, sizeof(indices), indices);
 	vao = gl4::CreateVertexArray(vbo, ibo, sizeof(Vertex), attribs);
 
 	camera.SetPosition(glm::vec3(0.0f, 0.0f, -1.0f));
@@ -271,7 +271,7 @@ void GameApp::OnRender()
 	glm::mat4 view = camera.GetViewMatrix();
 	glm::mat4 proj = glm::perspective(glm::radians(60.0f), GetAspect(), 0.01f, 1000.0f);
 
-	// вывод квада
+	// РІС‹РІРѕРґ РєРІР°РґР°
 	{
 		glUseProgram(program);
 		gl4::SetUniform(ModelLoc, matmodel);
@@ -284,7 +284,7 @@ void GameApp::OnRender()
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	}
 
-	// вывод меша
+	// РІС‹РІРѕРґ РјРµС€Р°
 	{
 		glUseProgram(modelProgram);
 		gl4::SetUniform(modelModelLoc, matmodel);
@@ -293,7 +293,7 @@ void GameApp::OnRender()
 		model->Draw(modelProgram);
 	}
 
-	// вывод кубов
+	// РІС‹РІРѕРґ РєСѓР±РѕРІ
 	{
 		glUseProgram(cubeProgram);
 		gl4::SetUniform(cubeModelLoc, matmodel);

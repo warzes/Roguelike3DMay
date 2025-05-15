@@ -68,8 +68,8 @@ void Mesh::setupMesh()
 	};
 
 
-	m_vbo = gl4::CreateBuffer(0, m_vertices);
-	m_ibo = gl4::CreateBuffer(0, m_indices);
+	m_vbo = gl4::CreateBufferStorage(0, m_vertices);
+	m_ibo = gl4::CreateBufferStorage(0, m_indices);
 	m_vao = gl4::CreateVertexArray(m_vbo, m_ibo, sizeof(MeshVertex), attribs);
 
 #if _DEBUG

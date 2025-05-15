@@ -47,3 +47,5 @@
 
 # 15.05.2025
 - DepthPrepass - класс рендерящий в буфер глубины
+- CreateBuffer переименован в CreateBufferStorage так как создает буфер неизменяемого размера
+- новый CreateBuffer

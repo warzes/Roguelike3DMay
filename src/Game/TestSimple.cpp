@@ -147,8 +147,8 @@ bool TestSimple::OnCreate()
 {
 	program = gl4::CreateShaderProgram(shaderCodeVertex, shaderCodeFragment);
 
-	mvpUbo = gl4::CreateBuffer(GL_DYNAMIC_STORAGE_BIT, sizeof(MVPData), nullptr);
-	lightUbo = gl4::CreateBuffer(GL_DYNAMIC_STORAGE_BIT, sizeof(Light2Data), nullptr);
+	mvpUbo = gl4::CreateBufferStorage(GL_DYNAMIC_STORAGE_BIT, sizeof(MVPData), nullptr);
+	lightUbo = gl4::CreateBufferStorage(GL_DYNAMIC_STORAGE_BIT, sizeof(Light2Data), nullptr);
 
 	lightDrawProgram = gl4::CreateShaderProgram(lightShaderCodeVertex, lightShaderCodeFragment);
 	lightModelLoc = gl4::GetUniformLocation(lightDrawProgram, "model");
@@ -184,7 +184,7 @@ bool TestSimple::OnCreate()
 		 10.0f, -0.5f, -10.0f,  0.0f, 1.0f, 0.0f,  10.0f, 10.0f
 	};
 
-	vbo = gl4::CreateBuffer(0, sizeof(vertices), vertices);
+	vbo = gl4::CreateBufferStorage(0, sizeof(vertices), vertices);
 	vao = gl4::CreateVertexArray(vbo, sizeof(Vertex), attribs);
 
 	camera.SetPosition(glm::vec3(0.0f, 0.0f, -1.0f));

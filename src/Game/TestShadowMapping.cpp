@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "TestShadowMapping.h"
 //=============================================================================
 namespace
@@ -303,7 +303,7 @@ bool TestShadowMapping::OnCreate()
 		 25.0f, 0.0f, -25.0f,  0.0f, 1.0f, 0.0f,  25.0f, 25.0f
 	};
 
-	planevbo = gl4::CreateBuffer(0, sizeof(planeVertices), planeVertices);
+	planevbo = gl4::CreateBufferStorage(0, sizeof(planeVertices), planeVertices);
 	planevao = gl4::CreateVertexArray(planevbo, sizeof(Vertex), attribs);
 
 
