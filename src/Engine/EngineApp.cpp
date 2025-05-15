@@ -1,4 +1,4 @@
-#include "stdafx.h"
+п»ї#include "stdafx.h"
 #include "EngineApp.h"
 #include "Log.h"
 #include "Profiler.h"
@@ -16,7 +16,7 @@ IEngineApp* thisIEngineApp{ nullptr };
 void ExitApp()
 {
 	IsExitApp = true;
-	// TODO: возможно выходить средствами glfw
+	// TODO: РІРѕР·РјРѕР¶РЅРѕ РІС‹С…РѕРґРёС‚СЊ СЃСЂРµРґСЃС‚РІР°РјРё glfw
 }
 //=============================================================================
 #if defined(_DEBUG)
@@ -151,23 +151,12 @@ void IEngineApp::Run()
 	if (create())
 	{
 		float lastTime = 0.0f;
-		float lastTimeFromShow = 0;
-		unsigned frames = 0;
 		while (!shouldWindowClose())
 		{
-			float currentTime = static_cast<float>(glfwGetTime());
 			// calc deltatime
+			float currentTime = static_cast<float>(glfwGetTime());
 			m_deltaTime = currentTime - lastTime;
 			lastTime = currentTime;
-			// calc fps
-			if ((currentTime - lastTimeFromShow) >= 1)
-			{
-				m_fps = frames;
-				frames = 0;
-				lastTimeFromShow = currentTime;
-				//puts(std::to_string(m_fps).c_str());
-			}
-			else ++frames;
 
 			m_mouseDeltaX = m_currentMousePositionX - m_mouseLastX;
 			m_mouseDeltaY = m_currentMousePositionY - m_mouseLastY;
@@ -249,6 +238,7 @@ void IEngineApp::SetCursorVisible(bool visible)
 {
 	if (m_cursorVisible != visible)
 	{
+		m_cursorVisible = visible;
 		glfwSetInputMode(m_window, GLFW_CURSOR, visible ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_HIDDEN);
 		SetCursorPosition({ m_width / 2, m_height / 2 });
 	}
@@ -380,7 +370,7 @@ void IEngineApp::initImGui()
 	io.FontGlobalScale = xscale > yscale ? xscale : yscale;
 	io.IniFilename = nullptr;
 
-	io.ConfigFlags |= ImGuiConfigFlags_NoMouseCursorChange;// TODO: возможно есть другой способ как имгуи не давать показывать скрытый курсор
+	io.ConfigFlags |= ImGuiConfigFlags_NoMouseCursorChange;// TODO: РІРѕР·РјРѕР¶РЅРѕ РµСЃС‚СЊ РґСЂСѓРіРѕР№ СЃРїРѕСЃРѕР± РєР°Рє РёРјРіСѓРё РЅРµ РґР°РІР°С‚СЊ РїРѕРєР°Р·С‹РІР°С‚СЊ СЃРєСЂС‹С‚С‹Р№ РєСѓСЂСЃРѕСЂ
 }
 //=============================================================================
 bool IEngineApp::shouldWindowClose() const
