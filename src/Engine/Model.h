@@ -2,6 +2,8 @@
 
 #include "Mesh.h"
 
+// TODO: добавить модельную матрицу
+
 #define ASSIMP_LOAD_FLAGS (aiProcess_JoinIdenticalVertices |    \
                            aiProcess_Triangulate |              \
                            aiProcess_GenSmoothNormals |         \

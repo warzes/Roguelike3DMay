@@ -50,6 +50,9 @@
     <ClCompile Include="RenderData.cpp">
       <Filter>Render</Filter>
     </ClCompile>
+    <ClCompile Include="DepthPrepass.cpp">
+      <Filter>Render\RenderPass</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -107,6 +110,9 @@
     <ClInclude Include="RenderData.h">
       <Filter>Render</Filter>
     </ClInclude>
+    <ClInclude Include="DepthPrepass.h">
+      <Filter>Render\RenderPass</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="App">
@@ -132,6 +138,9 @@
     </Filter>
     <Filter Include="Render\Pipelines">
       <UniqueIdentifier>{c688fb09-8a0a-4990-9f32-e7fa1a4414b7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Render\RenderPass">
+      <UniqueIdentifier>{5180e80b-7898-4e76-9a65-b53a9689645c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

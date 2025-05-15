@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "BaseHeader.h"
 
@@ -13,6 +13,7 @@
 #include "OpenGLHelper.h"
 
 // Render
+#include "DepthPrepass.h"
 #include "PipelineBloom.h"
 #include "PipelineShadowMapping.h"
 #include "PipelineDeferredSSAO.h"

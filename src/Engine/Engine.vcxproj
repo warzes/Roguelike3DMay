@@ -94,6 +94,7 @@
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CoreFunc.cpp" />
+    <ClCompile Include="DepthPrepass.cpp" />
     <ClCompile Include="EngineApp.cpp" />
     <ClCompile Include="GraphicSystem.cpp" />
     <ClCompile Include="Light.cpp" />
@@ -117,6 +118,7 @@
     <ClInclude Include="BaseHeader.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CoreFunc.h" />
+    <ClInclude Include="DepthPrepass.h" />
     <ClInclude Include="Engine.h" />
     <ClInclude Include="EngineApp.h" />
     <ClInclude Include="EngineConfig.h" />

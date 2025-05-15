@@ -10,31 +10,6 @@ namespace
 
 #pragma region Forward+
 
-#pragma region DepthShader
-	const char* depthShaderCodeVertex = R"(
-#version 460 core
-
-layout (location = 0) in vec3 aVertexPosition;
-
-// Uniforms
-uniform mat4 projection;
-uniform mat4 view;
-uniform mat4 model;
-
-void main() {
-	gl_Position = projection * view * model * vec4(aVertexPosition, 1.0);
-}
-)";
-
-	const char* depthShaderCodeFragment = R"(
-#version 460 core
-
-void main()
-{
-}
-)";
-#pragma endregion
-
 #pragma region depthDebugShader
 	const char* depthDebugShaderCodeVertex = R"(
 #version 460 core
@@ -405,7 +380,8 @@ void main() {
 		glm::vec4 paddingAndRadius;
 	};
 
-	GLuint depthProgram;
+	DepthPrepass depthPrepass;
+
 	GLuint depthDebugProgram;
 	GLuint lightCullingProgram;
 	GLuint lightProgram;
@@ -429,9 +405,6 @@ void main() {
 	GLuint workGroupsX;
 	GLuint workGroupsY;
 
-
-	GLuint depthMapFBO;
-	GLuint depthMap;
 	GLuint renderFBO;
 	GLuint renderDepthBuffer;
 	GLuint colorBuffer;
@@ -528,20 +501,19 @@ bool TestForwardPlus::OnCreate()
 
 	GLuint tilesCount = workGroupsX * workGroupsY;
 
-	depthProgram = gl4::CreateShaderProgram(depthShaderCodeVertex, depthShaderCodeFragment);
+	depthPrepass.Create(GetWidth(), GetHeight());
+
+
+
 	depthDebugProgram = gl4::CreateShaderProgram(depthDebugShaderCodeVertex, depthDebugShaderCodeFragment);
 	lightCullingProgram = gl4::CreateShaderProgram(lightCullingShaderCodeCompute);
 	lightProgram = gl4::CreateShaderProgram(lightingShaderCodeVertex, lightingShaderCodeFragment);
 	renderProgram = gl4::CreateShaderProgram(finalShaderCodeVertex, finalShaderCodeFragment);
 
-	glUseProgram(depthProgram);
-	glUniformMatrix4fv(glGetUniformLocation(depthProgram, "model"), 1, GL_FALSE, glm::value_ptr(glm::mat4(1.0f)));
-
 	glUseProgram(depthDebugProgram);
 	glUniformMatrix4fv(glGetUniformLocation(depthDebugProgram, "model"), 1, GL_FALSE, glm::value_ptr(glm::mat4(1.0f)));
 	glUniform1f(glGetUniformLocation(depthDebugProgram, "near"), nearPlane);
 	glUniform1f(glGetUniformLocation(depthDebugProgram, "far"), farPlane);
-
 
 	glUseProgram(lightCullingProgram);
 	glUniform1i(glGetUniformLocation(lightCullingProgram, "lightCount"), numberOfLights);
@@ -581,28 +553,6 @@ bool TestForwardPlus::OnCreate()
 	
 	// init framebuffer
 	{
-		// Depth buffer 
-		glGenFramebuffers(1, &depthMapFBO);
-		glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
-
-		glGenTextures(1, &depthMap);
-		glBindTexture(GL_TEXTURE_2D, depthMap);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, GetWidth(), GetHeight(), 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
-
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-		GLfloat borderColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-		glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
-
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMap, 0);
-
-		glDrawBuffer(GL_NONE);
-		glReadBuffer(GL_NONE);
-		glEnable(GL_DEPTH_TEST);
-
 		// Output buffer + color
 		glGenFramebuffers(1, &renderFBO);
 
@@ -638,6 +588,7 @@ bool TestForwardPlus::OnCreate()
 //=============================================================================
 void TestForwardPlus::OnDestroy()
 {
+	depthPrepass.Destroy();
 }
 //=============================================================================
 void TestForwardPlus::OnUpdate(float deltaTime)
@@ -667,6 +618,7 @@ void TestForwardPlus::OnRender()
 {
 	glm::mat4 view = camera.GetViewMatrix();
 	glm::mat4 projection = glm::perspective(glm::radians(60.0f), GetAspect(), nearPlane, farPlane);
+	glm::mat4 VP = projection * view;
 	
 	// вывод модели используя forward+
 	{
@@ -686,39 +638,17 @@ void TestForwardPlus::OnRender()
 			glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
 		}
 
-		glEnable(GL_DEPTH_TEST);
-		glViewport(0, 0, GetWidth(), GetHeight());
-		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
 #pragma region DEPTH_FBO
 		{
-			glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
-			glEnable(GL_DEPTH_TEST);
-			glClear(GL_DEPTH_BUFFER_BIT);
-			glDepthFunc(GL_LESS);
-
-			//update depth uniforms
-			glViewport(0, 0, GetWidth(), GetHeight());
-
 			glEnable(GL_POLYGON_OFFSET_FILL);
 			glPolygonOffset(4.0f, 4.0f);
 
-			glUseProgram(depthProgram);
-			static const GLenum buffs[] = { GL_COLOR_ATTACHMENT0 };
-			glDrawBuffers(1, buffs);
-			glClearBufferfv(GL_COLOR, 0, float_zeros);
-			glClearBufferfv(GL_DEPTH, 0, float_ones);
-
-			glUniformMatrix4fv(glGetUniformLocation(depthProgram, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
-			glUniformMatrix4fv(glGetUniformLocation(depthProgram, "view"), 1, GL_FALSE, glm::value_ptr(view));
-			glUniformMatrix4fv(glGetUniformLocation(depthProgram, "model"), 1, GL_FALSE, glm::value_ptr(glm::mat4(1.0f)));
-
-			model->Draw(depthProgram);
-			glActiveTexture(GL_TEXTURE0); // TODO: удалить
-
-			glDisable(GL_POLYGON_OFFSET_FILL);
+			depthPrepass.Start(GetWidth(), GetHeight(), VP);
+			depthPrepass.DrawModel(model, glm::mat4(1.0f)); // TODO: модельную матрицу добавить в модель
+			
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+			glPolygonOffset(0.0f, 0.0f);
+			glDisable(GL_POLYGON_OFFSET_FILL);
 		}
 #pragma endregion
 
@@ -739,7 +669,7 @@ void TestForwardPlus::OnRender()
 			glUniformMatrix4fv(glGetUniformLocation(depthDebugProgram, "view"), 1, GL_FALSE, glm::value_ptr(view));
 
 			model->Draw(depthDebugProgram);
-			glActiveTexture(GL_TEXTURE0); // TODO: удалить
+			//glActiveTexture(GL_TEXTURE0); // TODO: удалить
 
 #pragma endregion
 		}
@@ -765,7 +695,7 @@ void TestForwardPlus::OnRender()
 				// Bind depth map texture to texture location 4 (which will not be used by any model texture)
 				glActiveTexture(GL_TEXTURE4);
 				glUniform1i(glGetUniformLocation(lightCullingProgram, "depthMap"), 4);
-				glBindTexture(GL_TEXTURE_2D, depthMap);
+				depthPrepass.BindTexture();
 
 				// Dispatch the compute shader, using the workgroup values calculated earlier
 				glDispatchCompute(workGroupsX, workGroupsY, 1);
