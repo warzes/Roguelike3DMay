@@ -276,7 +276,17 @@ void TestSimple::OnRender()
 }
 //=============================================================================
 void TestSimple::OnImGuiDraw()
-{	
+{
+	ImGui::Begin("Simple");
+
+	ImGui::TextColored(ImVec4(0.4f, 0.4f, 1.0f, 1.00f), "Vendor: %s", (char*)glGetString(GL_VENDOR));
+	ImGui::TextColored(ImVec4(0.4f, 0.4f, 1.0f, 1.00f), "Version: %s", (char*)glGetString(GL_VERSION));
+	ImGui::TextColored(ImVec4(0.4f, 0.4f, 1.0f, 1.00f), "Renderer: %s", (char*)glGetString(GL_RENDERER));
+	ImGui::Separator();
+
+	ImGui::Text("Framerate: %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+
+	ImGui::End();
 }
 //=============================================================================
 void TestSimple::OnResize(uint16_t width, uint16_t height)

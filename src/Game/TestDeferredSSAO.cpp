@@ -163,6 +163,13 @@ void TestDeferredSSAO::OnImGuiDraw()
 
 	ImGui::Begin("SSAO");
 
+	ImGui::TextColored(ImVec4(0.4f, 0.4f, 1.0f, 1.00f), "Vendor: %s", (char*)glGetString(GL_VENDOR));
+	ImGui::TextColored(ImVec4(0.4f, 0.4f, 1.0f, 1.00f), "Version: %s", (char*)glGetString(GL_VERSION));
+	ImGui::TextColored(ImVec4(0.4f, 0.4f, 1.0f, 1.00f), "Renderer: %s", (char*)glGetString(GL_RENDERER));
+	ImGui::Separator();
+
+	ImGui::Text("Framerate: %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+
 	ImGui::SliderFloat("Radius", &radius, 0.0f, 50.0f);
 	ImGui::SliderFloat("Bias", &bias, 0.0f, 0.5f);
 

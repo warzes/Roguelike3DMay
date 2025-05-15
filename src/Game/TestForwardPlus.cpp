@@ -1,5 +1,7 @@
 ﻿#include "stdafx.h"
 #include "TestForwardPlus.h"
+
+// TODO: выделить стадию рендера в глубину, так как она универсальна
 //=============================================================================
 namespace
 {
@@ -7,10 +9,12 @@ namespace
 	Model* model;
 
 #pragma region Forward+
+
+#pragma region DepthShader
 	const char* depthShaderCodeVertex = R"(
 #version 460 core
 
-layout (location = 0) in vec3 position;
+layout (location = 0) in vec3 aVertexPosition;
 
 // Uniforms
 uniform mat4 projection;
@@ -18,7 +22,7 @@ uniform mat4 view;
 uniform mat4 model;
 
 void main() {
-	gl_Position = projection * view * model * vec4(position, 1.0);
+	gl_Position = projection * view * model * vec4(aVertexPosition, 1.0);
 }
 )";
 
@@ -29,7 +33,9 @@ void main()
 {
 }
 )";
+#pragma endregion
 
+#pragma region depthDebugShader
 	const char* depthDebugShaderCodeVertex = R"(
 #version 460 core
 
@@ -68,6 +74,9 @@ void main() {
 	fragColor = vec4(vec3(depth), 1.0f);
 }
 )";
+#pragma endregion
+
+#pragma region lightCullingShaderCompute
 
 	const char* lightCullingShaderCodeCompute = R"(
 #version 460 core
@@ -207,6 +216,10 @@ void main() {
 	}
 }
 )";
+#pragma endregion
+
+// TODO: почему тормозит
+#pragma region lightingShader
 
 	const char* lightingShaderCodeVertex = R"(
 #version 460 core
@@ -314,8 +327,7 @@ void main() {
 	for (uint i = 0; i < MAX_LIGHTS_PER_TILE; i++)
 	{
 		int idx = lights_indices[offset + i];
-		if (idx == -1)
-			continue;
+		if (idx == -1) continue;
 
 		PointLight light = lightBuffer.data[idx];
 
@@ -349,7 +361,11 @@ void main() {
 }
 )";
 
-	const char* finalShaderCodeVertex = R"(
+#pragma endregion
+
+#pragma region FinalShader
+
+const char* finalShaderCodeVertex = R"(
 #version 460 core
 
 layout(location = 0) in vec3 position;
@@ -363,7 +379,7 @@ void main() {
 }
 )";
 
-	const char* finalShaderCodeFragment = R"(
+const char* finalShaderCodeFragment = R"(
 #version 460 core
 
 // can be used for HDR
@@ -380,6 +396,7 @@ void main() {
 	fragColor = vec4(color, 1.0);
 }
 )";
+#pragma endregion
 
 	struct alignas(16) LightData final
 	{
@@ -455,7 +472,7 @@ void main() {
 				1.0f
 			};
 
-			light.paddingAndRadius = { 0.0f, 0.0f, 0.0f, 8.0f };
+			light.paddingAndRadius = { 0.0f, 0.0f, 0.0f, 5.0f };
 		}
 
 		//glUnmapNamedBuffer(lightBufferSSBO);
@@ -614,7 +631,7 @@ bool TestForwardPlus::OnCreate()
 	glDepthFunc(GL_LESS);
 	glEnable(GL_CULL_FACE);
 
-	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	return true;
 }

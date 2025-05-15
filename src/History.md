@@ -44,3 +44,5 @@
 - тест SSBO
 - CreateShaderProgram для вычислительного шейдера
 - первый вариант Forward+ shading для игры
+
+# 15.05.2025
