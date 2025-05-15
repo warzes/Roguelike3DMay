@@ -11,7 +11,7 @@ public:
 	void Start(int width, int heigh, const glm::mat4& vp);
 	void DrawModel(Model* model, const glm::mat4& modelMat);
 
-	void BindTexture();
+	void BindTexture(uint32_t index);
 
 private:
 	void resizeFBO(int width, int height);

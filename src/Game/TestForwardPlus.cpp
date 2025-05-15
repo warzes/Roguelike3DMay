@@ -58,10 +58,8 @@ struct PointLight {
 	float intensity;
 };
 
-
-// Shader storage buffer objects
 layout(std430, binding = 0) readonly buffer LightBuffer {
-	PointLight data[];
+	PointLight lights[];
 };
 
 layout(std430, binding = 1) writeonly buffer visible_lights_indices {
@@ -69,18 +67,19 @@ layout(std430, binding = 1) writeonly buffer visible_lights_indices {
 };
 
 // Uniforms
-uniform sampler2D depthMap;
 uniform mat4 view;
 uniform mat4 projection;
-
-uniform vec2 screenSize;
+uniform mat4 invProjection;
 uniform int lightCount;
+uniform vec2 screenSize;
+
+layout(binding = 0) uniform sampler2D depthMap;
 
 // Shared values
 shared uint minDepthInt;
 shared uint maxDepthInt;
-shared uint visibleLightCount;
 shared vec4 frustumPlanes[6];
+shared uint visibleLightCount;
 shared int visibleLightIndices[MAX_LIGHTS_PER_TILE];
 
 layout(local_size_x = TILE_SIZE, local_size_y = TILE_SIZE) in;
@@ -90,9 +89,10 @@ void main() {
 	ivec2 tile_id = ivec2(gl_WorkGroupID.xy);
 
 	// Инициализация разделяемых данных одним потоком
-	if (gl_LocalInvocationIndex == 0) {
+	if (gl_LocalInvocationIndex == 0)
+	{
 		minDepthInt = 0xFFFFFFFF;
-		maxDepthInt = 0;
+		maxDepthInt = 0x0;
 		visibleLightCount = 0;
 
 		uint index = gl_WorkGroupID.y * gl_NumWorkGroups.x + gl_WorkGroupID.x;
@@ -103,8 +103,8 @@ void main() {
 	}
 	barrier();
 
-	// Чтение глубины и обновление мин/макс
-	vec2 screen_uv = (vec2(gl_GlobalInvocationID.xy) + 0.5) / screenSize;
+	// Compute depth min and max of the workgroup
+	vec2 screen_uv = gl_GlobalInvocationID.xy / screenSize;
 	float depth = texture(depthMap, screen_uv).r;
 	uint depth_uint = floatBitsToUint(depth);
 
@@ -113,32 +113,32 @@ void main() {
 
 	barrier();
 
-	// Расчёт фрустума на одном потоке
-	if (gl_LocalInvocationIndex == 0) {
-		float min_z = uintBitsToFloat(minDepthInt);
-		float max_z = uintBitsToFloat(maxDepthInt);
+	// Compute Tile frustrum planes
+	if (gl_LocalInvocationIndex == 0)
+	{
+		float min_group_depth = uintBitsToFloat(minDepthInt);
+		float max_group_depth = uintBitsToFloat(maxDepthInt);
 
-		vec4 vs_min_depth = inverse(projection) * vec4(0.0, 0.0, 2.0 * min_z - 1.0, 1.0);
-		vec4 vs_max_depth = inverse(projection) * vec4(0.0, 0.0, 2.0 * max_z - 1.0, 1.0);
+		vec4 vs_min_depth = invProjection * vec4(0.0, 0.0, 2.0 * min_group_depth - 1.0, 1.0);
+		vec4 vs_max_depth = invProjection * vec4(0.0, 0.0, 2.0 * max_group_depth - 1.0, 1.0);
 		vs_min_depth /= vs_min_depth.w;
 		vs_max_depth /= vs_max_depth.w;
+		min_group_depth = vs_min_depth.z;
+		max_group_depth = vs_max_depth.z;
 
-		float nearZ = vs_min_depth.z;
-		float farZ = vs_max_depth.z;
-
-		vec2 tileScale = screenSize / (2.0 * float(TILE_SIZE));
-		vec2 tileBias = vec2(gl_WorkGroupID.xy) - tileScale;
+		vec2 tileScale = screenSize * (1.0 / float(2.0 * TILE_SIZE));
+		vec2 tileBias = tileScale - vec2(gl_WorkGroupID.xy);
 
 		vec4 col1 = vec4(-projection[0][0] * tileScale.x, projection[0][1], tileBias.x, projection[0][3]);
 		vec4 col2 = vec4(projection[1][0], -projection[1][1] * tileScale.y, tileBias.y, projection[1][3]);
-		vec4 col3 = vec4(projection[3][0], projection[3][1], -1.0, projection[3][3]);
+		vec4 col4 = vec4(projection[3][0], projection[3][1], -1.0, projection[3][3]);
 
-		frustumPlanes[0] = col3 + col1;
-		frustumPlanes[1] = col3 - col1;
-		frustumPlanes[2] = col3 - col2;
-		frustumPlanes[3] = col3 + col2;
-		frustumPlanes[4] = vec4(0.0, 0.0, 1.0, -nearZ);
-		frustumPlanes[5] = vec4(0.0, 0.0, -1.0, farZ);
+		frustumPlanes[0] = col4 + col1;
+		frustumPlanes[1] = col4 - col1;
+		frustumPlanes[2] = col4 - col2;
+		frustumPlanes[3] = col4 + col2;
+		frustumPlanes[4] = vec4(0.0, 0.0, 1.0, -min_group_depth);
+		frustumPlanes[5] = vec4(0.0, 0.0, -1.0, max_group_depth);
 
 		// Нормализация только для плоскостей отсечения
 		for (uint i = 0; i < 4; i++) {
@@ -148,24 +148,23 @@ void main() {
 
 	barrier();
 
-	// Куллинг освещения
+	// Cull lights
 	uint threadCount = TILE_SIZE * TILE_SIZE;
-	for (uint i = gl_LocalInvocationIndex;i < uint(lightCount); i += threadCount)
+	for (uint i = gl_LocalInvocationIndex; i < uint(lightCount); i += threadCount)
 	{
-		PointLight light = data[i];
-		vec4 vs_light_pos = view * vec4(light.position, 1.0);
-
-		bool inFrustum = true;
-		for (uint j = 0; j < 6 && inFrustum; j++)
+		vec4 vs_light_pos = view * vec4(lights[i].position, 1.0);
+		
+		if (visibleLightCount < MAX_LIGHTS_PER_TILE)
 		{
-			float distance = dot(frustumPlanes[j], vs_light_pos);
-			inFrustum = (distance >= -light.radius);
-		}
-		if (inFrustum)
-		{
-			uint idx = atomicAdd(visibleLightCount, 1u);
-			if (idx < MAX_LIGHTS_PER_TILE)
+			bool inFrustum = true;
+			for (uint j = 0; j < 6 && inFrustum; j++)
 			{
+				float distance = dot(frustumPlanes[j], vs_light_pos);
+				inFrustum = (distance >= -lights[i].radius);
+			}
+			if (inFrustum)
+			{
+				uint idx = atomicAdd(visibleLightCount, 1u);
 				visibleLightIndices[idx] = int(i);
 			}
 		}
@@ -173,7 +172,6 @@ void main() {
 
 	barrier();
 
-	// Запись результата
 	if (gl_LocalInvocationIndex == 0)
 	{
 		uint baseIndex = gl_WorkGroupID.y * gl_NumWorkGroups.x + gl_WorkGroupID.x;
@@ -378,17 +376,17 @@ void main() {
 
 	DepthPrepass depthPrepass;
 	GLuint depthDebugProgram;
-
-
-
-
-
-
-
-
-
-
 	GLuint lightCullingProgram;
+	int lightCullingProjectionLoc;
+	int lightCullingInvProjectionLoc;
+	int lightCullingViewLoc;
+	int lightCullingLightCountLoc;
+	int lightCullingScreenSizeLoc;
+
+
+
+
+
 	GLuint lightProgram;
 	GLuint renderProgram;
 
@@ -513,7 +511,11 @@ bool TestForwardPlus::OnCreate()
 	depthPrepass.Create(GetWidth(), GetHeight());
 	depthDebugProgram = gl4::CreateShaderProgram(depthDebugShaderCodeVertex, depthDebugShaderCodeFragment);
 	lightCullingProgram = gl4::CreateShaderProgram(lightCullingShaderCodeCompute);
-
+	lightCullingProjectionLoc = gl4::GetUniformLocation(lightCullingProgram, "projection");
+	lightCullingInvProjectionLoc = gl4::GetUniformLocation(lightCullingProgram, "invProjection");
+	lightCullingViewLoc = gl4::GetUniformLocation(lightCullingProgram, "view");
+	lightCullingLightCountLoc = gl4::GetUniformLocation(lightCullingProgram, "lightCount");
+	lightCullingScreenSizeLoc = gl4::GetUniformLocation(lightCullingProgram, "screenSize");
 
 	lightProgram = gl4::CreateShaderProgram(lightingShaderCodeVertex, lightingShaderCodeFragment);
 	renderProgram = gl4::CreateShaderProgram(finalShaderCodeVertex, finalShaderCodeFragment);
@@ -616,6 +618,7 @@ void TestForwardPlus::OnRender()
 {
 	glm::mat4 view = camera.GetViewMatrix();
 	glm::mat4 projection = glm::perspective(glm::radians(60.0f), GetAspect(), nearPlane, farPlane);
+	glm::mat4 invProjection = glm::inverse(projection);
 	glm::mat4 VP = projection * view;
 	glm::mat4 modelMat = glm::mat4(1.0f);
 
@@ -629,15 +632,15 @@ void TestForwardPlus::OnRender()
 
 	// 1) Depth prepass
 	{
-		glEnable(GL_POLYGON_OFFSET_FILL);
-		glPolygonOffset(4.0f, 4.0f);
+		//glEnable(GL_POLYGON_OFFSET_FILL);
+		//glPolygonOffset(4.0f, 4.0f);
 
 		depthPrepass.Start(GetWidth(), GetHeight(), VP);
 		depthPrepass.DrawModel(model, modelMat); // TODO: модельную матрицу добавить в модель
 			
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		glPolygonOffset(0.0f, 0.0f);
-		glDisable(GL_POLYGON_OFFSET_FILL);
+		//glPolygonOffset(0.0f, 0.0f);
+		//glDisable(GL_POLYGON_OFFSET_FILL);
 	}
 
 	// 1.1) Depth debug
@@ -656,27 +659,18 @@ void TestForwardPlus::OnRender()
 		// 2) Light Culling Compute
 		{
 			glUseProgram(lightCullingProgram);
-			glUniformMatrix4fv(glGetUniformLocation(lightCullingProgram, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
-			glUniformMatrix4fv(glGetUniformLocation(lightCullingProgram, "view"), 1, GL_FALSE, glm::value_ptr(view));
-			glUniform1i(glGetUniformLocation(lightCullingProgram, "lightCount"), numberOfLights);
-			glUniform2fv(glGetUniformLocation(lightCullingProgram, "screenSize"), 1, glm::value_ptr(glm::vec2(GetWidth(), GetHeight())));
+			gl4::SetUniform(lightCullingProjectionLoc, projection);
+			gl4::SetUniform(lightCullingInvProjectionLoc, invProjection);
+			gl4::SetUniform(lightCullingViewLoc, view);
+			gl4::SetUniform(lightCullingLightCountLoc, numberOfLights);
+			gl4::SetUniform(lightCullingScreenSizeLoc, glm::vec2(GetWidth(), GetHeight()));
+			depthPrepass.BindTexture(0);
 
-			// Bind shader storage buffer objects for the light and indice buffers
 			glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, lightBuffer);
 			glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, indexBuffer);
 
-			// Bind depth map texture to texture location 4 (which will not be used by any model texture)
-			glActiveTexture(GL_TEXTURE4);
-			glUniform1i(glGetUniformLocation(lightCullingProgram, "depthMap"), 4);
-			depthPrepass.BindTexture();
-
-			// Dispatch the compute shader, using the workgroup values calculated earlier
 			glDispatchCompute(workGroupsX, workGroupsY, 1);
 			glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
-
-			// Unbind the depth map
-			glActiveTexture(GL_TEXTURE4);
-			glBindTexture(GL_TEXTURE_2D, 0);
 		}
 
 #pragma region RENDER_FBO

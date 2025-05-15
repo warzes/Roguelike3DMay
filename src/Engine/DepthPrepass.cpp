@@ -64,9 +64,9 @@ void DepthPrepass::DrawModel(Model* model, const glm::mat4& modelMat)
 	model->Draw(m_program, true);
 }
 //=============================================================================
-void DepthPrepass::BindTexture()
+void DepthPrepass::BindTexture(uint32_t index)
 {
-	glBindTextureUnit(0, m_depthpassTextureDepth);
+	glBindTextureUnit(index, m_depthpassTextureDepth);
 }
 //=============================================================================
 void DepthPrepass::resizeFBO(int width, int height)
