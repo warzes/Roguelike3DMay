@@ -8,25 +8,17 @@ namespace
 	Camera camera;
 	Model* model;
 
-#pragma region Forward+
-
 #pragma region depthDebugShader
 	const char* depthDebugShaderCodeVertex = R"(
 #version 460 core
 
 layout(location = 0) in vec3 position;
-layout(location = 1) in vec3 normal;
-layout(location = 2) in vec2 texCoords;
 
+uniform mat4 VP;
 uniform mat4 model;
-uniform mat4 view;
-uniform mat4 projection;
-
-out vec2 TexCoords;
 
 void main() {
-	gl_Position = projection * view * model * vec4(position, 1.0);
-	TexCoords = texCoords;
+	gl_Position = VP * model * vec4(position, 1.0);
 }
 )";
 
@@ -60,10 +52,12 @@ void main() {
 #define TILE_SIZE 16
 
 struct PointLight {
-	vec4 position;
-	vec4 color;
-	vec4 paddingAndRadius; // .w содержит радиус
+	vec3 position;
+	float radius;
+	vec3 color;
+	float intensity;
 };
+
 
 // Shader storage buffer objects
 layout(std430, binding = 0) readonly buffer LightBuffer {
@@ -159,13 +153,13 @@ void main() {
 	for (uint i = gl_LocalInvocationIndex;i < uint(lightCount); i += threadCount)
 	{
 		PointLight light = data[i];
-		vec4 vs_light_pos = view * vec4(light.position.xyz, 1.0);
+		vec4 vs_light_pos = view * vec4(light.position, 1.0);
 
 		bool inFrustum = true;
 		for (uint j = 0; j < 6 && inFrustum; j++)
 		{
 			float distance = dot(frustumPlanes[j], vs_light_pos);
-			inFrustum = (distance >= -light.paddingAndRadius.w);
+			inFrustum = (distance >= -light.radius);
 		}
 		if (inFrustum)
 		{
@@ -248,9 +242,10 @@ in VERTEX_OUT{
 } fragment_in;
 
 struct PointLight {
-	vec4 position;
-	vec4 color;
-	vec4 paddingAndRadius; // .w содержит радиус света
+	vec3 position;
+	float radius;
+	vec3 color;
+	float intensity;
 };
 
 // Shader storage buffer objects
@@ -306,10 +301,10 @@ void main() {
 
 		PointLight light = lightBuffer.data[idx];
 
-		vec3 lightPosTS = fragment_in.TBN * light.position.xyz;
+		vec3 lightPosTS = fragment_in.TBN * light.position;
 		vec3 lightDirTS = lightPosTS - fragment_in.ts_frag_pos;
 		float dist = length(lightDirTS);
-		float attenuation = clamp(1.0 - dist * dist / (light.paddingAndRadius.w * light.paddingAndRadius.w), 0.0, 1.0);
+		float attenuation = clamp(1.0 - dist * dist / (light.radius * light.radius), 0.0, 1.0);
 		if (attenuation == 0.0)
 			continue;
 
@@ -320,7 +315,7 @@ void main() {
 			continue;
 
 		// Диффузное освещение
-		vec3 diffuse = light.color.rgb * base_diffuse.rgb * NdotL * attenuation;
+		vec3 diffuse = light.color * base_diffuse.rgb * NdotL * attenuation;
 
 		// Спекулярное освещение
 		vec3 viewDirTS = normalize(fragment_in.ts_view_pos - fragment_in.ts_frag_pos);
@@ -375,14 +370,24 @@ void main() {
 
 	struct alignas(16) LightData final
 	{
-		glm::vec4 position;
-		glm::vec4 color;
-		glm::vec4 paddingAndRadius;
+		glm::vec3 position;
+		float radius;
+		glm::vec3 color;
+		float intensity;
 	};
 
 	DepthPrepass depthPrepass;
-
 	GLuint depthDebugProgram;
+
+
+
+
+
+
+
+
+
+
 	GLuint lightCullingProgram;
 	GLuint lightProgram;
 	GLuint renderProgram;
@@ -416,7 +421,6 @@ void main() {
 		LIGHT
 	} ViewModes;
 
-
 	void SetupLights()
 	{
 		//glBufferData(GL_SHADER_STORAGE_BUFFER, numberOfLights * sizeof(Light), NULL, GL_DYNAMIC_DRAW);
@@ -436,16 +440,14 @@ void main() {
 			light.position.x = minLightBoundaries.x + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX / (maxLightBoundaries.x - minLightBoundaries.x)));
 			light.position.y = minLightBoundaries.y + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX / (maxLightBoundaries.y - minLightBoundaries.y)));
 			light.position.z = minLightBoundaries.z + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX / (maxLightBoundaries.z - minLightBoundaries.z)));
-			light.position.w = 1.0f;
 
 			light.color = {
 				static_cast<float>(rand()) / static_cast<float>(RAND_MAX),
 				static_cast<float>(rand()) / static_cast<float>(RAND_MAX),
 				static_cast<float>(rand()) / static_cast<float>(RAND_MAX),
-				1.0f
 			};
 
-			light.paddingAndRadius = { 0.0f, 0.0f, 0.0f, 8.0f };
+			light.radius = 8.0f;
 		}
 
 		//glUnmapNamedBuffer(lightBufferSSBO);
@@ -487,9 +489,6 @@ void main() {
 		glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(int) * workgroup_x * workgroup_y * MAX_LIGHTS_PER_TILE, NULL, GL_DYNAMIC_DRAW);
 		glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
 	}
-
-#pragma endregion
-
 }
 //=============================================================================
 EngineConfig TestForwardPlus::GetConfig() const
@@ -512,23 +511,12 @@ bool TestForwardPlus::OnCreate()
 	GLuint tilesCount = workGroupsX * workGroupsY;
 
 	depthPrepass.Create(GetWidth(), GetHeight());
-
-
-
 	depthDebugProgram = gl4::CreateShaderProgram(depthDebugShaderCodeVertex, depthDebugShaderCodeFragment);
 	lightCullingProgram = gl4::CreateShaderProgram(lightCullingShaderCodeCompute);
+
+
 	lightProgram = gl4::CreateShaderProgram(lightingShaderCodeVertex, lightingShaderCodeFragment);
 	renderProgram = gl4::CreateShaderProgram(finalShaderCodeVertex, finalShaderCodeFragment);
-
-	glUseProgram(depthDebugProgram);
-	glUniformMatrix4fv(glGetUniformLocation(depthDebugProgram, "model"), 1, GL_FALSE, glm::value_ptr(glm::mat4(1.0f)));
-	glUniform1f(glGetUniformLocation(depthDebugProgram, "near"), nearPlane);
-	glUniform1f(glGetUniformLocation(depthDebugProgram, "far"), farPlane);
-
-	glUseProgram(lightCullingProgram);
-	glUniform1i(glGetUniformLocation(lightCullingProgram, "lightCount"), numberOfLights);
-	glUniform2fv(glGetUniformLocation(lightCullingProgram, "screenSize"), 1, glm::value_ptr(glm::vec2(GetWidth(), GetHeight())));
-
 
 	glUseProgram(lightProgram);
 	glUniformMatrix4fv(glGetUniformLocation(lightProgram, "model"), 1, GL_FALSE, glm::value_ptr(glm::mat4(1.0f)));
@@ -629,60 +617,49 @@ void TestForwardPlus::OnRender()
 	glm::mat4 view = camera.GetViewMatrix();
 	glm::mat4 projection = glm::perspective(glm::radians(60.0f), GetAspect(), nearPlane, farPlane);
 	glm::mat4 VP = projection * view;
+	glm::mat4 modelMat = glm::mat4(1.0f);
+
+	workGroupsX = (GetWidth() + (GetWidth() % TILE_SIZE)) / TILE_SIZE;
+	workGroupsY = (GetHeight() + (GetHeight() % TILE_SIZE)) / TILE_SIZE;
 
 	UpdateLights();
 	UpdateSSBO(GetWidth(), GetHeight());
 	
 	static const GLenum attachments[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
 
-	// Depth prepass
+	// 1) Depth prepass
 	{
 		glEnable(GL_POLYGON_OFFSET_FILL);
 		glPolygonOffset(4.0f, 4.0f);
 
 		depthPrepass.Start(GetWidth(), GetHeight(), VP);
-		depthPrepass.DrawModel(model, glm::mat4(1.0f)); // TODO: модельную матрицу добавить в модель
+		depthPrepass.DrawModel(model, modelMat); // TODO: модельную матрицу добавить в модель
 			
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glPolygonOffset(0.0f, 0.0f);
 		glDisable(GL_POLYGON_OFFSET_FILL);
 	}
 
+	// 1.1) Depth debug
 	if (ViewModes == DEPTH)
 	{
-#pragma region  DEBUG_DEPTH
-
-		//Depth debug
-		glViewport(0, 0, GetWidth(), GetHeight());
-
-		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, 0);
-		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, 0);
-
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
 		glUseProgram(depthDebugProgram);
-		glUniformMatrix4fv(glGetUniformLocation(depthDebugProgram, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
-		glUniformMatrix4fv(glGetUniformLocation(depthDebugProgram, "view"), 1, GL_FALSE, glm::value_ptr(view));
-
-		model->Draw(depthDebugProgram);
-		//glActiveTexture(GL_TEXTURE0); // TODO: удалить
-
-#pragma endregion
+		gl4::SetUniform(depthDebugProgram, "VP", VP);
+		gl4::SetUniform(depthDebugProgram, "model", modelMat);
+		gl4::SetUniform(depthDebugProgram, "near", nearPlane);
+		gl4::SetUniform(depthDebugProgram, "far", farPlane);
+		gl4::SetFrameBuffer(0, GetWidth(), GetHeight(), GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		model->Draw(depthDebugProgram, true);
 	}
 	else
 	{
-#pragma region LIGHT_CULLING_COMPUTE
+		// 2) Light Culling Compute
 		{
-			glDepthFunc(GL_EQUAL);
-			glClear(GL_COLOR_BUFFER_BIT);
-
-			workGroupsX = (GetWidth() + (GetWidth() % TILE_SIZE)) / TILE_SIZE;
-			workGroupsY = (GetHeight() + (GetHeight() % TILE_SIZE)) / TILE_SIZE;
-
 			glUseProgram(lightCullingProgram);
-
 			glUniformMatrix4fv(glGetUniformLocation(lightCullingProgram, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 			glUniformMatrix4fv(glGetUniformLocation(lightCullingProgram, "view"), 1, GL_FALSE, glm::value_ptr(view));
+			glUniform1i(glGetUniformLocation(lightCullingProgram, "lightCount"), numberOfLights);
+			glUniform2fv(glGetUniformLocation(lightCullingProgram, "screenSize"), 1, glm::value_ptr(glm::vec2(GetWidth(), GetHeight())));
 
 			// Bind shader storage buffer objects for the light and indice buffers
 			glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, lightBuffer);
@@ -701,7 +678,6 @@ void TestForwardPlus::OnRender()
 			glActiveTexture(GL_TEXTURE4);
 			glBindTexture(GL_TEXTURE_2D, 0);
 		}
-#pragma endregion
 
 #pragma region RENDER_FBO
 		{
