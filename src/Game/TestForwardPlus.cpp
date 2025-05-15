@@ -478,6 +478,16 @@ void main() {
 		glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
 	}
 
+	void UpdateSSBO(int width, int height)
+	{
+		GLuint workgroup_x = (width + (width % TILE_SIZE)) / TILE_SIZE;
+		GLuint workgroup_y = (height + (height % TILE_SIZE)) / TILE_SIZE;
+
+		glBindBuffer(GL_SHADER_STORAGE_BUFFER, indexBuffer);
+		glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(int) * workgroup_x * workgroup_y * MAX_LIGHTS_PER_TILE, NULL, GL_DYNAMIC_DRAW);
+		glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
+	}
+
 #pragma endregion
 
 }
@@ -619,165 +629,150 @@ void TestForwardPlus::OnRender()
 	glm::mat4 view = camera.GetViewMatrix();
 	glm::mat4 projection = glm::perspective(glm::radians(60.0f), GetAspect(), nearPlane, farPlane);
 	glm::mat4 VP = projection * view;
+
+	UpdateLights();
+	UpdateSSBO(GetWidth(), GetHeight());
 	
-	// вывод модели используя forward+
+	static const GLenum attachments[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
+
+	// Depth prepass
 	{
-		static const GLuint uint_zeros[] = { 0, 0, 0, 0 };
-		static const GLfloat float_zeros[] = { 0.0f, 0.0f, 0.0f, 0.0f };
-		static const GLfloat float_ones[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-		static const GLenum attachments[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
+		glEnable(GL_POLYGON_OFFSET_FILL);
+		glPolygonOffset(4.0f, 4.0f);
 
-		UpdateLights();
-		//UpdateSSBO();
-		{
-			GLuint workgroup_x = (GetWidth() + (GetWidth() % TILE_SIZE)) / TILE_SIZE;
-			GLuint workgroup_y = (GetHeight() + (GetHeight() % TILE_SIZE)) / TILE_SIZE;
-
-			glBindBuffer(GL_SHADER_STORAGE_BUFFER, indexBuffer);
-			glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(int) * workgroup_x * workgroup_y * MAX_LIGHTS_PER_TILE, NULL, GL_DYNAMIC_DRAW);
-			glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
-		}
-
-#pragma region DEPTH_FBO
-		{
-			glEnable(GL_POLYGON_OFFSET_FILL);
-			glPolygonOffset(4.0f, 4.0f);
-
-			depthPrepass.Start(GetWidth(), GetHeight(), VP);
-			depthPrepass.DrawModel(model, glm::mat4(1.0f)); // TODO: модельную матрицу добавить в модель
+		depthPrepass.Start(GetWidth(), GetHeight(), VP);
+		depthPrepass.DrawModel(model, glm::mat4(1.0f)); // TODO: модельную матрицу добавить в модель
 			
-			glBindFramebuffer(GL_FRAMEBUFFER, 0);
-			glPolygonOffset(0.0f, 0.0f);
-			glDisable(GL_POLYGON_OFFSET_FILL);
-		}
-#pragma endregion
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glPolygonOffset(0.0f, 0.0f);
+		glDisable(GL_POLYGON_OFFSET_FILL);
+	}
 
-		if (ViewModes == DEPTH)
-		{
+	if (ViewModes == DEPTH)
+	{
 #pragma region  DEBUG_DEPTH
 
-			//Depth debug
-			glViewport(0, 0, GetWidth(), GetHeight());
+		//Depth debug
+		glViewport(0, 0, GetWidth(), GetHeight());
 
-			glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, 0);
-			glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, 0);
+		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, 0);
+		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, 0);
 
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-			glUseProgram(depthDebugProgram);
-			glUniformMatrix4fv(glGetUniformLocation(depthDebugProgram, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
-			glUniformMatrix4fv(glGetUniformLocation(depthDebugProgram, "view"), 1, GL_FALSE, glm::value_ptr(view));
+		glUseProgram(depthDebugProgram);
+		glUniformMatrix4fv(glGetUniformLocation(depthDebugProgram, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+		glUniformMatrix4fv(glGetUniformLocation(depthDebugProgram, "view"), 1, GL_FALSE, glm::value_ptr(view));
 
-			model->Draw(depthDebugProgram);
-			//glActiveTexture(GL_TEXTURE0); // TODO: удалить
+		model->Draw(depthDebugProgram);
+		//glActiveTexture(GL_TEXTURE0); // TODO: удалить
 
 #pragma endregion
-		}
-		else
-		{
+	}
+	else
+	{
 #pragma region LIGHT_CULLING_COMPUTE
-			{
-				glDepthFunc(GL_EQUAL);
-				glClear(GL_COLOR_BUFFER_BIT);
+		{
+			glDepthFunc(GL_EQUAL);
+			glClear(GL_COLOR_BUFFER_BIT);
 
-				workGroupsX = (GetWidth() + (GetWidth() % TILE_SIZE)) / TILE_SIZE;
-				workGroupsY = (GetHeight() + (GetHeight() % TILE_SIZE)) / TILE_SIZE;
+			workGroupsX = (GetWidth() + (GetWidth() % TILE_SIZE)) / TILE_SIZE;
+			workGroupsY = (GetHeight() + (GetHeight() % TILE_SIZE)) / TILE_SIZE;
 
-				glUseProgram(lightCullingProgram);
+			glUseProgram(lightCullingProgram);
 
-				glUniformMatrix4fv(glGetUniformLocation(lightCullingProgram, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
-				glUniformMatrix4fv(glGetUniformLocation(lightCullingProgram, "view"), 1, GL_FALSE, glm::value_ptr(view));
+			glUniformMatrix4fv(glGetUniformLocation(lightCullingProgram, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+			glUniformMatrix4fv(glGetUniformLocation(lightCullingProgram, "view"), 1, GL_FALSE, glm::value_ptr(view));
 
-				// Bind shader storage buffer objects for the light and indice buffers
-				glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, lightBuffer);
-				glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, indexBuffer);
+			// Bind shader storage buffer objects for the light and indice buffers
+			glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, lightBuffer);
+			glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, indexBuffer);
 
-				// Bind depth map texture to texture location 4 (which will not be used by any model texture)
-				glActiveTexture(GL_TEXTURE4);
-				glUniform1i(glGetUniformLocation(lightCullingProgram, "depthMap"), 4);
-				depthPrepass.BindTexture();
+			// Bind depth map texture to texture location 4 (which will not be used by any model texture)
+			glActiveTexture(GL_TEXTURE4);
+			glUniform1i(glGetUniformLocation(lightCullingProgram, "depthMap"), 4);
+			depthPrepass.BindTexture();
 
-				// Dispatch the compute shader, using the workgroup values calculated earlier
-				glDispatchCompute(workGroupsX, workGroupsY, 1);
-				glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
+			// Dispatch the compute shader, using the workgroup values calculated earlier
+			glDispatchCompute(workGroupsX, workGroupsY, 1);
+			glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
 
-				// Unbind the depth map
-				glActiveTexture(GL_TEXTURE4);
-				glBindTexture(GL_TEXTURE_2D, 0);
-			}
+			// Unbind the depth map
+			glActiveTexture(GL_TEXTURE4);
+			glBindTexture(GL_TEXTURE_2D, 0);
+		}
 #pragma endregion
 
 #pragma region RENDER_FBO
+		{
+			glDepthFunc(GL_LESS);
+
+			glBindFramebuffer(GL_FRAMEBUFFER, renderFBO);
+
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+			glUseProgram(lightProgram);
+			glUniform3fv(glGetUniformLocation(lightProgram, "viewPosition"), 1, glm::value_ptr(camera.Position));
+			glUniformMatrix4fv(glGetUniformLocation(lightProgram, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+			glUniformMatrix4fv(glGetUniformLocation(lightProgram, "view"), 1, GL_FALSE, glm::value_ptr(view));
+			glUniformMatrix4fv(glGetUniformLocation(lightProgram, "model"), 1, GL_FALSE, glm::value_ptr(glm::mat4(1.0f)));
+
+			if (ViewModes == LIGHT)
 			{
-				glDepthFunc(GL_LESS);
-
-				glBindFramebuffer(GL_FRAMEBUFFER, renderFBO);
-
-				glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-				glUseProgram(lightProgram);
-				glUniform3fv(glGetUniformLocation(lightProgram, "viewPosition"), 1, glm::value_ptr(camera.Position));
-				glUniformMatrix4fv(glGetUniformLocation(lightProgram, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
-				glUniformMatrix4fv(glGetUniformLocation(lightProgram, "view"), 1, GL_FALSE, glm::value_ptr(view));
-				glUniformMatrix4fv(glGetUniformLocation(lightProgram, "model"), 1, GL_FALSE, glm::value_ptr(glm::mat4(1.0f)));
-
-				if (ViewModes == LIGHT)
-				{
-					glUniform1i(glGetUniformLocation(lightProgram, "doLightDebug"), 1);
-				}
-				else glUniform1i(glGetUniformLocation(lightProgram, "doLightDebug"), 0);
-
-				model->Draw(lightProgram);
-				glActiveTexture(GL_TEXTURE0); // TODO: удалить
-
-				glBindFramebuffer(GL_FRAMEBUFFER, 0);
+				glUniform1i(glGetUniformLocation(lightProgram, "doLightDebug"), 1);
 			}
+			else glUniform1i(glGetUniformLocation(lightProgram, "doLightDebug"), 0);
+
+			model->Draw(lightProgram);
+			glActiveTexture(GL_TEXTURE0); // TODO: удалить
+
+			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		}
 #pragma endregion
 
 #pragma region RENDER_QUAD
+		{
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Weirdly, moving this call drops performance into the floor
+			glUseProgram(renderProgram);
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, colorBuffer);
+
+			//Quad Render // TODO: переделать
 			{
-				glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Weirdly, moving this call drops performance into the floor
-				glUseProgram(renderProgram);
-				glActiveTexture(GL_TEXTURE0);
-				glBindTexture(GL_TEXTURE_2D, colorBuffer);
-
-				//Quad Render // TODO: переделать
+				static GLuint      mQuadVAO = 0;
+				static GLuint      mQuadVBO = 0;
+				if (mQuadVAO == 0)
 				{
-					static GLuint      mQuadVAO = 0;
-					static GLuint      mQuadVBO = 0;
-					if (mQuadVAO == 0)
-					{
-						GLfloat quadVertices[] = {
-							-1.0f, 1.0f, 0.0f, 0.0f, 1.0f,
-							-1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
-							1.0f, 1.0f, 0.0f, 1.0f, 1.0f,
-							1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
-						};
+					GLfloat quadVertices[] = {
+						-1.0f, 1.0f, 0.0f, 0.0f, 1.0f,
+						-1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
+						1.0f, 1.0f, 0.0f, 1.0f, 1.0f,
+						1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
+					};
 
-						glGenVertexArrays(1, &mQuadVAO);
-						glGenBuffers(1, &mQuadVBO);
-						glBindVertexArray(mQuadVAO);
-						glBindBuffer(GL_ARRAY_BUFFER, mQuadVBO);
-						glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
-						glEnableVertexAttribArray(0);
-						glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)0);
-						glEnableVertexAttribArray(1);
-						glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
-					}
-
+					glGenVertexArrays(1, &mQuadVAO);
+					glGenBuffers(1, &mQuadVBO);
 					glBindVertexArray(mQuadVAO);
-					glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-					glBindVertexArray(0);
+					glBindBuffer(GL_ARRAY_BUFFER, mQuadVBO);
+					glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
+					glEnableVertexAttribArray(0);
+					glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)0);
+					glEnableVertexAttribArray(1);
+					glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
 				}
 
-				glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, 0);
-				glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, 0);
+				glBindVertexArray(mQuadVAO);
+				glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+				glBindVertexArray(0);
 			}
-#pragma endregion
-		}
 
-		glDisable(GL_DEPTH_TEST);
+			glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, 0);
+			glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, 0);
+		}
+#pragma endregion
 	}
+
+	glDisable(GL_DEPTH_TEST);
 }
 //=============================================================================
 void TestForwardPlus::OnImGuiDraw()

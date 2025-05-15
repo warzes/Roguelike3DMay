@@ -53,16 +53,7 @@ void DepthPrepass::Start(int width, int height, const glm::mat4& vp)
 
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
-
-	glBindFramebuffer(GL_FRAMEBUFFER, m_depthpassFBO);
-	glViewport(0, 0, width, height);
-	glClear(GL_DEPTH_BUFFER_BIT);
-
-	static const GLenum buffs[] = { GL_COLOR_ATTACHMENT0 };
-	static const GLfloat float_ones[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-	glDrawBuffers(1, buffs);
-	glClearBufferfv(GL_DEPTH, 0, float_ones);
-
+	gl4::SetFrameBuffer(m_depthpassFBO, width, height, GL_DEPTH_BUFFER_BIT);
 	glUseProgram(m_program);
 	gl4::SetUniform(m_uniformVPLoc, vp);
 }
