@@ -1,2 +1,3 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "OpenGLHelper.h"
+//=============================================================================

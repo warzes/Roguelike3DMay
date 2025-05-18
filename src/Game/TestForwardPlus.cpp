@@ -43,41 +43,6 @@ void main() {
 )";
 #pragma endregion
 
-#pragma region FinalShader
-
-const char* finalShaderCodeVertex = R"(
-#version 460 core
-
-layout(location = 0) in vec3 position;
-layout(location = 1) in vec2 textureCoordinates;
-
-out vec2 TextureCoordinates;
-
-void main() {
-	gl_Position = vec4(position, 1.0);
-	TextureCoordinates = textureCoordinates;
-}
-)";
-
-const char* finalShaderCodeFragment = R"(
-#version 460 core
-
-// can be used for HDR
-
-in vec2 TextureCoordinates;
-
-uniform sampler2D colorBuffer;
-
-out vec4 fragColor;
-
-
-void main() {
-	vec3 color = texture(colorBuffer, TextureCoordinates).rgb;
-	fragColor = vec4(color, 1.0);
-}
-)";
-#pragma endregion
-
 	struct alignas(16) LightData final
 	{
 		glm::vec3 position;
@@ -108,16 +73,10 @@ void main() {
 	GLuint SSBOLights;
 	GLuint SSBOVisibleLights;
 
-
-	GLuint renderProgram;
-
 	int numberOfLights{ 40 };
-
-
 
 	float nearPlane = 0.1f;
 	float farPlane = 1000.0f;
-
 
 #define MAX_LIGHTS_PER_TILE 128
 #define TILE_SIZE 16
@@ -129,8 +88,9 @@ void main() {
 	GLuint workGroupsY;
 
 	GLuint renderFBO;
-	GLuint renderDepthBuffer;
-	GLuint colorBuffer;
+	GLuint rboColorBuffer;
+	GLuint rboDepthBuffer;
+
 
 	enum Modes
 	{
@@ -138,6 +98,29 @@ void main() {
 		DEPTH,
 		LIGHT
 	} ViewModes;
+
+	void ReCreateForwardPlusFBO(uint16_t width, uint16_t height)
+	{
+		if (rboColorBuffer) glDeleteRenderbuffers(1, &rboColorBuffer);
+		if (rboDepthBuffer) glDeleteRenderbuffers(1, &rboDepthBuffer);
+		if (renderFBO) glDeleteFramebuffers(1, &renderFBO);
+
+		glCreateRenderbuffers(1, &rboColorBuffer);
+		glNamedRenderbufferStorage(rboColorBuffer, GL_RGB16F, width, height);
+
+		glCreateRenderbuffers(1, &rboDepthBuffer);
+		glNamedRenderbufferStorage(rboDepthBuffer, GL_DEPTH_COMPONENT16, width, height);
+
+		glCreateFramebuffers(1, &renderFBO);
+		glNamedFramebufferRenderbuffer(renderFBO, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, rboColorBuffer);
+		glNamedFramebufferRenderbuffer(renderFBO, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rboDepthBuffer);
+
+		const GLenum status = glCheckNamedFramebufferStatus(renderFBO, GL_FRAMEBUFFER);
+		if (status != GL_FRAMEBUFFER_COMPLETE)
+		{
+			// TODO: error
+		}
+	}
 
 	void SetupLights()
 	{
@@ -165,7 +148,7 @@ void main() {
 		glUnmapNamedBuffer(SSBOLights);
 	}
 
-	void UpdateLights()
+	void UpdateLights(float deltaTime)
 	{
 		LightData* lights = (LightData*)glMapNamedBuffer(SSBOLights, GL_WRITE_ONLY);
 
@@ -176,7 +159,7 @@ void main() {
 			float min = minLightBoundaries[1];
 			float max = maxLightBoundaries[1];
 
-			light.position += glm::vec4(0, 0.2f, 0, 0);
+			light.position += glm::vec4(0, 7.0f * deltaTime, 0, 0);
 
 			if (light.position[1] > maxLightBoundaries[1])
 			{
@@ -185,13 +168,6 @@ void main() {
 		}
 
 		glUnmapNamedBuffer(SSBOLights);
-	}
-
-	void UpdateSSBO(int width, int height)
-	{
-		GLuint workgroup_x = (width + (width % TILE_SIZE)) / TILE_SIZE;
-		GLuint workgroup_y = (height + (height % TILE_SIZE)) / TILE_SIZE;
-		glNamedBufferData(SSBOVisibleLights, sizeof(int) * workgroup_x * workgroup_y * MAX_LIGHTS_PER_TILE, nullptr, GL_DYNAMIC_DRAW);
 	}
 }
 //=============================================================================
@@ -204,8 +180,6 @@ bool TestForwardPlus::OnCreate()
 {
 	model = new Model("ExampleData/mesh/Sponza/Sponza.gltf");
 	camera.SetPosition(glm::vec3(0.0f, 0.0f, -1.0f));
-
-#pragma region Forward+
 
 	ViewModes = Modes::SHADED;
 
@@ -231,8 +205,6 @@ bool TestForwardPlus::OnCreate()
 	lightProgramLightDebugLoc = gl4::GetUniformLocation(lightProgram, "doLightDebug");
 	lightProgramNumberOfTilesXLoc = gl4::GetUniformLocation(lightProgram, "workgroupX");
 
-	renderProgram = gl4::CreateShaderProgram(finalShaderCodeVertex, finalShaderCodeFragment);
-
 	// create light buffer
 	SSBOLights = gl4::CreateBufferStorage(GL_MAP_READ_BIT | GL_MAP_WRITE_BIT, numberOfLights * sizeof(LightData), nullptr);
 	SSBOVisibleLights = gl4::CreateBuffer(GL_DYNAMIC_DRAW, sizeof(int) * workGroupsX * workGroupsY * MAX_LIGHTS_PER_TILE, nullptr);
@@ -240,28 +212,8 @@ bool TestForwardPlus::OnCreate()
 	// Generate lights
 	SetupLights();
 	
-	// init framebuffer
-	{
-		// Output buffer + color
-		glGenFramebuffers(1, &renderFBO);
-
-		glGenTextures(1, &colorBuffer);
-		glBindTexture(GL_TEXTURE_2D, colorBuffer);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, GetWidth(), GetHeight(), 0, GL_RGB, GL_FLOAT, NULL);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-		// render depth
-		glGenRenderbuffers(1, &renderDepthBuffer);
-		glBindRenderbuffer(GL_RENDERBUFFER, renderDepthBuffer);
-		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, GetWidth(), GetHeight());
-
-		glBindFramebuffer(GL_FRAMEBUFFER, renderFBO);
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorBuffer, 0);
-		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, renderDepthBuffer);
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	}
-#pragma endregion
+	// Output buffer + color
+	ReCreateForwardPlusFBO(GetWidth(), GetHeight());
 
 	glClearColor(0.7f, 0.8f, 0.9f, 1.0f);
 
@@ -311,25 +263,19 @@ void TestForwardPlus::OnRender()
 	glm::mat4 VP = projection * view;
 	glm::mat4 modelMat = glm::mat4(1.0f);
 
-	workGroupsX = (GetWidth() + (GetWidth() % TILE_SIZE)) / TILE_SIZE;
-	workGroupsY = (GetHeight() + (GetHeight() % TILE_SIZE)) / TILE_SIZE;
-
-	UpdateLights();
-	UpdateSSBO(GetWidth(), GetHeight());
-	
-	static const GLenum attachments[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
+	UpdateLights(GetDeltaTime());
 
 	// 1) Depth prepass
 	{
-		//glEnable(GL_POLYGON_OFFSET_FILL);
-		//glPolygonOffset(4.0f, 4.0f);
+		glEnable(GL_POLYGON_OFFSET_FILL);
+		glPolygonOffset(4.0f, 4.0f);
 
 		depthPrepass.Start(GetWidth(), GetHeight(), VP);
 		depthPrepass.DrawModel(model, modelMat); // TODO: модельную матрицу добавить в модель
 			
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		//glPolygonOffset(0.0f, 0.0f);
-		//glDisable(GL_POLYGON_OFFSET_FILL);
+		glPolygonOffset(0.0f, 0.0f);
+		glDisable(GL_POLYGON_OFFSET_FILL);
 	}
 
 	// 1.1) Depth debug
@@ -377,50 +323,17 @@ void TestForwardPlus::OnRender()
 			gl4::SetUniform(lightProgramLightDebugLoc, (ViewModes == LIGHT) ? 1 : 0);
 
 			model->Draw(lightProgram);
+
 		}
 
-#pragma region RENDER_QUAD
+		// 4) final draw
 		{
-			gl4::SetFrameBuffer(0, GetWidth(), GetHeight(), GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-			glUseProgram(renderProgram);
-			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, colorBuffer);
-
-			//Quad Render // TODO: переделать
-			{
-				static GLuint      mQuadVAO = 0;
-				static GLuint      mQuadVBO = 0;
-				if (mQuadVAO == 0)
-				{
-					GLfloat quadVertices[] = {
-						-1.0f, 1.0f, 0.0f, 0.0f, 1.0f,
-						-1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
-						1.0f, 1.0f, 0.0f, 1.0f, 1.0f,
-						1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
-					};
-
-					glGenVertexArrays(1, &mQuadVAO);
-					glGenBuffers(1, &mQuadVBO);
-					glBindVertexArray(mQuadVAO);
-					glBindBuffer(GL_ARRAY_BUFFER, mQuadVBO);
-					glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
-					glEnableVertexAttribArray(0);
-					glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)0);
-					glEnableVertexAttribArray(1);
-					glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
-				}
-
-				glBindVertexArray(mQuadVAO);
-				glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-				glBindVertexArray(0);
-			}
-
-			glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, 0);
-			glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, 0);
+			glBlitNamedFramebuffer(renderFBO, 0, 0, 0, GetWidth(), GetHeight(), 0, 0, GetWidth(), GetHeight(), GL_COLOR_BUFFER_BIT, GL_NEAREST);
 		}
-#pragma endregion
 	}
-
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, 0);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, 0);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glDisable(GL_DEPTH_TEST);
 }
 //=============================================================================
@@ -453,8 +366,6 @@ void TestForwardPlus::OnImGuiDraw()
 
 		}
 
-		// here i have some bugs when debugging.
-		// prob this is not the proper way to change num of lights dynamically...
 		if (ImGui::SliderInt("Lights count", &numberOfLights, 1, MAX_LIGHTS_PER_TILE-1))
 		{
 			SetupLights();
@@ -464,12 +375,11 @@ void TestForwardPlus::OnImGuiDraw()
 
 		if (ImGui::Button("Recalculate lights"))
 		{
-			UpdateLights();
+			UpdateLights(GetDeltaTime());
 			SetupLights();
 			glUseProgram(lightCullingProgram);
 			glUniform1i(glGetUniformLocation(lightCullingProgram, "lightCount"), numberOfLights);
 		}
-		//ImGui::ListBox
 
 		ImGui::End();
 	}
@@ -477,5 +387,9 @@ void TestForwardPlus::OnImGuiDraw()
 //=============================================================================
 void TestForwardPlus::OnResize(uint16_t width, uint16_t height)
 {
+	ReCreateForwardPlusFBO(width, height);
+	workGroupsX = (width + (width % TILE_SIZE)) / TILE_SIZE;
+	workGroupsY = (height + (height % TILE_SIZE)) / TILE_SIZE;
+	glNamedBufferData(SSBOVisibleLights, sizeof(int) * workGroupsX * workGroupsY * MAX_LIGHTS_PER_TILE, nullptr, GL_DYNAMIC_DRAW);
 }
 //=============================================================================

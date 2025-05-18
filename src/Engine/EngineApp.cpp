@@ -320,7 +320,8 @@ bool IEngineApp::createWindow(const EngineConfig& config)
 
 	int displayW, displayH;
 	glfwGetFramebufferSize(m_window, &displayW, &displayH);
-	windowResize(displayW, displayH);
+	m_width = static_cast<uint32_t>(displayW);
+	m_height = static_cast<uint32_t>(displayH);
 
 	Info("Created window");
 
