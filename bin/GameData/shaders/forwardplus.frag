@@ -1,118 +1,152 @@
 ﻿#version 460 core
 
-#define MAX_LIGHTS_PER_TILE 128
-#define TILE_SIZE 16
+#define MAX_POINT_LIGHT_PER_TILE 1023
+const int TILE_SIZE = 16;
 
 in VERTEX_OUT{
 	vec2 frag_uv;
-	mat3 TBN;
-	vec3 ts_frag_pos;
-	vec3 ts_view_pos;
+	vec3 fragNormal;
+	vec3 fragPos;
 } fragment_in;
 
 struct PointLight {
 	vec3 position;
 	float radius;
 	vec3 color;
-	float intensity;
 };
 
 layout(std430, binding = 0) readonly buffer LightData {
-	PointLight lights[];
+	PointLight pointLights[];
 };
 
-layout(std430, binding = 1) readonly buffer VisibleLightsIndices {
-	int lights_indices[];
+struct LightVisibility {
+	uint count;
+	uint lightIndices[MAX_POINT_LIGHT_PER_TILE];
 };
 
-uniform int doLightDebug;
-uniform int workgroupX; // numberOfTilesX
+layout(std430, binding = 1) readonly buffer TileLightVisibilities {
+	LightVisibility light_visiblities[];
+};
+
+//layout(stb430, binding = 0) uniform MaterialUbo
+//{
+//	int hasAlbedoMap;
+//	int hasNormalMap;
+//} material;
+
+uniform ivec2 viewportSize;
+uniform ivec2 tileNums;		// tileNums.x = workgroupX; tileNums.y = workgroupY
+uniform int debugViewIndex;
+
+uniform vec3 viewPosition;
 
 layout(binding = 0) uniform sampler2D texture_diffuse1;
 layout(binding = 1) uniform sampler2D texture_normal1;
 
 layout(location = 0) out vec4 outFragColor;
 
-float getAttenuation(float lightRadius, float dist)
+layout(early_fragment_tests) in; // for early depth test
+
+vec3 applyNormalMap(vec3 geomnor, vec3 normap)
 {
-	return clamp(1.0 - dist * dist / (lightRadius * lightRadius), 0.0, 1.0);
-//	float cutoff = 0.3;
-//	float denom = dist / lightRadius + 1.0;
-//	float attenuation = 1.0 / (denom * denom);
-//
-//	attenuation = (attenuation - cutoff) / (1 - cutoff);
-//	attenuation = max(attenuation, 0.0);
-//	return attenuation;
+	normap = normap * 2.0 - 1.0;
+	vec3 up = normalize(vec3(0.001, 1, 0.001));
+	vec3 surftan = normalize(cross(geomnor, up));
+	vec3 surfbinor = cross(geomnor, surftan);
+	return normalize(normap.y * surftan + normap.x * surfbinor + normap.z * geomnor);
 }
 
 void main()
 {
-	// Determine which tile this pixel belongs to
-	ivec2 loc = ivec2(gl_FragCoord.xy);
-	ivec2 tileID = loc / ivec2(TILE_SIZE, TILE_SIZE);
-	uint tileIndex = tileID.y * workgroupX + tileID.x;
-    uint offset = tileIndex * MAX_LIGHTS_PER_TILE;
+	vec3 diffuse;
+	float alphaDiffuse;
+	// if (material.hasAlbedoMap > 0)
+	{
+		vec4 diffuse4 = texture(texture_diffuse1, fragment_in.frag_uv);
+		if (diffuse4.a <= 0.2) discard;
+		diffuse = diffuse4.rgb;
+		alphaDiffuse = diffuse4.a;
+	}
+	// else
+	//{
+	//	diffuse = vec3(1.0);
+	//	alphaDiffuse = 1.0f;
+	//}
+
+	vec3 normal;
+	// if (material.hasNormalMap > 0)
+	{
+		normal = applyNormalMap(fragment_in.fragNormal, texture(texture_normal1, fragment_in.frag_uv).rgb);
+	}
+	// else
+	//{
+	//	normal = fragment_in.fragNormal;
+	//}
+
+	ivec2 tileID = ivec2(gl_FragCoord.xy / TILE_SIZE);
+	uint tileIndex = tileID.y * tileNums.x + tileID.x;
 
 	// debug view
-	if (doLightDebug>0)
+	if (debugViewIndex > 1)
 	{
-		uint count = 0;
-		for (uint i = 0; i < MAX_LIGHTS_PER_TILE; i++)
+		if (debugViewIndex == 2)
 		{
-			if (lights_indices[offset + i] != -1 ) {
-				count++;
-			}
+			//heat map debug view
+			float intensity = float(light_visiblities[tileIndex].count) / 64;
+			outFragColor = vec4(vec3(intensity), 1.0) ; //light culling debug
+			//out_color = vec4(vec3(intensity * 0.62, intensity * 0.13, intensity * 0.94), 1.0) ; //light culling debug
+			//float minimum = 0.0;
+			//float maximum = 1.0;
+			//float ratio = 2 * (intensity - minimum) / (maximum - minimum);
+			//float b = max(0, 1 - ratio);
+			//float r = max(0, ratio - 1);
+			//float g = max(0, 1.0 - b - r);
+			//out_color = vec4(vec3(r,g,b), 1.0);
 		}
-		float shade = float(count) / float(MAX_LIGHTS_PER_TILE * 2); 
-		outFragColor = vec4(shade);
+		else if (debugViewIndex == 3)
+		{
+			// depth debug view
+			//float preDepth = texture(depth_sampler, (gl_FragCoord.xy/push_constants.viewport_size) ).x;
+			//out_color = vec4(vec3( pre_depth ),1.0);
+		}
+		else if (debugViewIndex == 4)
+		{
+			// normal debug view
+			outFragColor = vec4(abs(normal), 1.0);
+		}
 		return;
 	}
 
-	vec4 albedo4 = texture(texture_diffuse1, fragment_in.frag_uv);
-	if (albedo4.a <= 0.2) discard;
-	//vec3 albedo = pow(albedo4.rgb, vec3(2.2));
-	vec3 albedo = albedo4.rgb;	
-	float alpha = albedo4.a;
-
-	vec3 normal = texture(texture_normal1, fragment_in.frag_uv).rgb;
-	normal = normalize(normal * 2.0 - 1.0);
-
-	vec3 viewDirTS = normalize(fragment_in.ts_view_pos - fragment_in.ts_frag_pos);
-	float specpower = 60.0f;
-
-	vec3 result = vec3(0.0);
-	for (uint i = 0; i < MAX_LIGHTS_PER_TILE; i++)
+	vec3 illuminance = vec3(0.0);
+	uint tileLightNum = light_visiblities[tileIndex].count;
+	for (int i = 0; i < tileLightNum; i++)
 	{
-		if (lights_indices[offset + i] != -1)
+		PointLight light = pointLights[light_visiblities[tileIndex].lightIndices[i]];
+		vec3 lightDir = normalize(light.position - fragment_in.fragPos);
+		float lambertian = max(dot(lightDir, normal), 0.0);
+
+		if (lambertian > 0.0)
 		{
-			// TODO: возможно надо break чтобы не перебирать все
-			int indices = lights_indices[offset + i];
-			PointLight light = lights[indices]; // почему-то так работает эффективнее - дает больше фпс wtf
+			float lightDistance = distance(light.position, fragment_in.fragPos);
+			if (lightDistance > light.radius) continue;
 
-			vec3 lightPosTS = fragment_in.TBN * light.position;
-			vec3 lightDirTS = lightPosTS - fragment_in.ts_frag_pos;
-			float dist = length(lightDirTS);
-			lightDirTS /= dist; // normalize
-			
-			float attenuation = getAttenuation(light.radius, dist);	
-			if (attenuation == 0.0) continue;
+			vec3 viewDir = normalize(viewPosition - fragment_in.fragPos);
+			vec3 halfDir = normalize(lightDir + viewDir);
+			float specAngle = max(dot(halfDir, normal), 0.0);
+			float specular = pow(specAngle, 32.0); // TODO: spec color & power in gbuffer?
 
-			vec3 radiance = light.color * attenuation;
-
-			float NdotL = max(0.0, dot(normal, lightDirTS));
-			if (NdotL == 0.0) continue;
-
-			// Диффузное освещение
-			vec3 diffuse = albedo * NdotL * radiance;
-
-			// Спекулярное освещение
-			vec3 reflectDir = reflect(-lightDirTS, normal);
-			float spec = pow(max(dot(viewDirTS, reflectDir), 0.0), specpower);
-			vec3 specular = vec3(1.0) * spec * attenuation;
-
-			result += diffuse + specular;
+			float att = clamp(1.0 - lightDistance * lightDistance / (light.radius * light.radius), 0.0, 1.0);
+			illuminance += light.color * att * (lambertian * diffuse + specular);
 		}
 	}
-	
-	outFragColor = vec4(result, alpha);
+
+	// heat map with render debug view
+	if (debugViewIndex == 1)
+	{
+		float intensity = float(light_visiblities[tileIndex].count) / (64 / 2.0);
+		outFragColor = vec4(vec3(intensity, intensity * 0.5, intensity * 0.5) + illuminance * 0.25, 1.0) ; //light culling debug
+		return;
+	}
+
+	outFragColor = vec4(illuminance, alphaDiffuse);
 }

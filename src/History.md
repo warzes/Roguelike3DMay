@@ -45,7 +45,7 @@
 - CreateShaderProgram для вычислительного шейдера
 - первый вариант Forward+ shading для игры
 
-# 15.05.2025 - 19.05.2025 - разработка Forward+ shading для игры
+# 15.05.2025 - 20.05.2025 - разработка Forward+ shading для игры
 - DepthPrepass - класс рендерящий в буфер глубины
 - CreateBuffer переименован в CreateBufferStorage так как создает буфер неизменяемого размера
 - новый CreateBuffer

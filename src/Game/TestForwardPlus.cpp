@@ -8,6 +8,9 @@ namespace
 	Camera camera;
 	Model* model;
 
+#define MAX_POINT_LIGHT_PER_TILE 1023
+#define TILE_SIZE 16
+
 #pragma region depthDebugShader
 	const char* depthDebugShaderCodeVertex = R"(
 #version 460 core
@@ -43,12 +46,18 @@ void main() {
 )";
 #pragma endregion
 
-	struct alignas(16) LightData final
+	struct alignas(16) PointLight final
 	{
 		glm::vec3 position;
 		float radius;
 		glm::vec3 color;
-		float intensity;
+		float padding;
+	};
+
+	struct DummyVisibleLightsForTile final
+	{
+		uint32_t count;
+		std::array<uint32_t, MAX_POINT_LIGHT_PER_TILE> lightIndices;
 	};
 
 	DepthPrepass depthPrepass;
@@ -56,36 +65,37 @@ void main() {
 	GLuint depthDebugProgram;
 	
 	GLuint lightCullingProgram;
-	int lightCullingProjectionLoc;
-	int lightCullingInvProjectionLoc;
-	int lightCullingViewLoc;
+	int lightCullingInvViewProjectionLoc;
+	int lightCullingCamPosLoc;
 	int lightCullingLightCountLoc;
-	int lightCullingScreenSizeLoc;
+	int lightCullingViewportSizeLoc;
+	int lightCullingTileNumsLoc;
+
 
 	GLuint lightProgram;
-	int lightProgramViewPositionLoc;
 	int lightProgramProjectionLoc;
 	int lightProgramViewLoc;
 	int lightProgramModelLoc;
+	int lightProgramProjViewLoc;
+	int lightProgramViewPositionLoc;
+	int lightProgramViewportSizeLoc;
+	int lightProgramTileNumsLoc;
 	int lightProgramLightDebugLoc;
-	int lightProgramNumberOfTilesXLoc;
+
 
 	GLuint SSBOLights;
 	GLuint SSBOVisibleLights;
 
-	int numberOfLights{ 40 };
+	uint32_t numberOfLights{ 500 };
 
 	float nearPlane = 0.1f;
 	float farPlane = 1000.0f;
 
-#define MAX_LIGHTS_PER_TILE 128
-#define TILE_SIZE 16
+	const glm::vec3 minLightBoundaries{ -15.0f, -5.0f, -25.0f };
+	const glm::vec3 maxLightBoundaries{ 15.0f, 20.0f, 25.0f };
 
-	const glm::vec3 minLightBoundaries{ -5.0f, -5.0f, -25.0f };
-	const glm::vec3 maxLightBoundaries{ 5.0f, 10.0f, 25.0f };
-
-	GLuint workGroupsX;
-	GLuint workGroupsY;
+	GLuint tileCountPerRow;
+	GLuint tileCountPerCol;
 
 	GLuint renderFBO;
 	GLuint rboColorBuffer;
@@ -106,10 +116,10 @@ void main() {
 		if (renderFBO) glDeleteFramebuffers(1, &renderFBO);
 
 		glCreateRenderbuffers(1, &rboColorBuffer);
-		glNamedRenderbufferStorage(rboColorBuffer, GL_RGB16F, width, height);
+		glNamedRenderbufferStorage(rboColorBuffer, GL_RGB32F, width, height);
 
 		glCreateRenderbuffers(1, &rboDepthBuffer);
-		glNamedRenderbufferStorage(rboDepthBuffer, GL_DEPTH_COMPONENT16, width, height);
+		glNamedRenderbufferStorage(rboDepthBuffer, GL_DEPTH_COMPONENT32, width, height);
 
 		glCreateFramebuffers(1, &renderFBO);
 		glNamedFramebufferRenderbuffer(renderFBO, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, rboColorBuffer);
@@ -126,11 +136,11 @@ void main() {
 	{
 		if (SSBOLights == 0) return;
 
-		LightData* lights = (LightData*)glMapNamedBuffer(SSBOLights, GL_WRITE_ONLY);
+		PointLight* lights = (PointLight*)glMapNamedBuffer(SSBOLights, GL_WRITE_ONLY);
 
 		for (size_t i = 0; i < numberOfLights; i++)
 		{
-			LightData& light = lights[i];
+			PointLight& light = lights[i];
 
 			light.position.x = minLightBoundaries.x + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX / (maxLightBoundaries.x - minLightBoundaries.x)));
 			light.position.y = minLightBoundaries.y + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX / (maxLightBoundaries.y - minLightBoundaries.y)));
@@ -142,7 +152,7 @@ void main() {
 				static_cast<float>(rand()) / static_cast<float>(RAND_MAX),
 			};
 
-			light.radius = 8.0f;
+			light.radius = 5.0f;
 		}
 
 		glUnmapNamedBuffer(SSBOLights);
@@ -150,20 +160,15 @@ void main() {
 
 	void UpdateLights(float deltaTime)
 	{
-		LightData* lights = (LightData*)glMapNamedBuffer(SSBOLights, GL_WRITE_ONLY);
+		PointLight* lights = (PointLight*)glMapNamedBuffer(SSBOLights, GL_WRITE_ONLY);
 
 		for (int i = 0; i < numberOfLights; i++)
 		{
-			LightData& light = lights[i];
-
-			float min = minLightBoundaries[1];
-			float max = maxLightBoundaries[1];
-
-			light.position += glm::vec4(0, 7.0f * deltaTime, 0, 0);
-
-			if (light.position[1] > maxLightBoundaries[1])
+			PointLight& light = lights[i];
+			light.position += glm::vec3(0, 3.0f, 0) * deltaTime;
+			if (light.position.y > maxLightBoundaries.y)
 			{
-				light.position[1] -= (maxLightBoundaries[1] - minLightBoundaries[1]);
+				light.position.y -= (maxLightBoundaries.y- minLightBoundaries.y);
 			}
 		}
 
@@ -183,31 +188,35 @@ bool TestForwardPlus::OnCreate()
 
 	ViewModes = Modes::SHADED;
 
-	workGroupsX = (GetWidth() + (GetWidth() % TILE_SIZE)) / TILE_SIZE;
-	workGroupsY = (GetHeight() + (GetHeight() % TILE_SIZE)) / TILE_SIZE;
+	tileCountPerRow = (GetWidth() - 1) / TILE_SIZE + 1;
+	tileCountPerCol = (GetHeight() - 1) / TILE_SIZE + 1;
 
-	GLuint tilesCount = workGroupsX * workGroupsY;
+	GLuint tilesCount = tileCountPerRow * tileCountPerCol;
 
 	depthPrepass.Create(GetWidth(), GetHeight());
 	depthDebugProgram = gl4::CreateShaderProgram(depthDebugShaderCodeVertex, depthDebugShaderCodeFragment);
 	lightCullingProgram = gl4::CreateShaderProgram(ReadShaderCode("GameData/shaders/lightculling.comp", {}).c_str());
-	lightCullingProjectionLoc = gl4::GetUniformLocation(lightCullingProgram, "projection");
-	lightCullingInvProjectionLoc = gl4::GetUniformLocation(lightCullingProgram, "invProjection");
-	lightCullingViewLoc = gl4::GetUniformLocation(lightCullingProgram, "view");
-	lightCullingLightCountLoc = gl4::GetUniformLocation(lightCullingProgram, "lightCount");
-	lightCullingScreenSizeLoc = gl4::GetUniformLocation(lightCullingProgram, "screenSize");
+
+	lightCullingInvViewProjectionLoc = gl4::GetUniformLocation(lightCullingProgram, "invViewProjection");
+	lightCullingCamPosLoc = gl4::GetUniformLocation(lightCullingProgram, "cameraPosition");
+	lightCullingLightCountLoc = gl4::GetUniformLocation(lightCullingProgram, "lightNum");
+	lightCullingViewportSizeLoc = gl4::GetUniformLocation(lightCullingProgram, "viewportSize");
+	lightCullingTileNumsLoc = gl4::GetUniformLocation(lightCullingProgram, "tileNums");
 
 	lightProgram = gl4::CreateShaderProgram(ReadShaderCode("GameData/shaders/forwardplus.vert", {}).c_str(), ReadShaderCode("GameData/shaders/forwardplus.frag", {}).c_str());
-	lightProgramViewPositionLoc = gl4::GetUniformLocation(lightProgram, "viewPosition");
+
 	lightProgramProjectionLoc = gl4::GetUniformLocation(lightProgram, "projection");
 	lightProgramViewLoc = gl4::GetUniformLocation(lightProgram, "view");
 	lightProgramModelLoc = gl4::GetUniformLocation(lightProgram, "model");
-	lightProgramLightDebugLoc = gl4::GetUniformLocation(lightProgram, "doLightDebug");
-	lightProgramNumberOfTilesXLoc = gl4::GetUniformLocation(lightProgram, "workgroupX");
+	lightProgramProjViewLoc = gl4::GetUniformLocation(lightProgram, "projView");
+	lightProgramViewPositionLoc = gl4::GetUniformLocation(lightProgram, "viewPosition");
+	lightProgramViewportSizeLoc = gl4::GetUniformLocation(lightProgram, "viewportSize");
+	lightProgramTileNumsLoc = gl4::GetUniformLocation(lightProgram, "tileNums");
+	lightProgramLightDebugLoc = gl4::GetUniformLocation(lightProgram, "debugViewIndex");
 
 	// create light buffer
-	SSBOLights = gl4::CreateBufferStorage(GL_MAP_READ_BIT | GL_MAP_WRITE_BIT, numberOfLights * sizeof(LightData), nullptr);
-	SSBOVisibleLights = gl4::CreateBuffer(GL_DYNAMIC_DRAW, sizeof(int) * workGroupsX * workGroupsY * MAX_LIGHTS_PER_TILE, nullptr);
+	SSBOLights = gl4::CreateBufferStorage(GL_MAP_READ_BIT | GL_MAP_WRITE_BIT, MAX_POINT_LIGHT_PER_TILE * sizeof(PointLight), nullptr);
+	SSBOVisibleLights = gl4::CreateBuffer(GL_DYNAMIC_DRAW, tileCountPerRow * tileCountPerCol * sizeof(DummyVisibleLightsForTile), nullptr);
 
 	// Generate lights
 	SetupLights();
@@ -259,30 +268,30 @@ void TestForwardPlus::OnRender()
 {
 	glm::mat4 view = camera.GetViewMatrix();
 	glm::mat4 projection = glm::perspective(glm::radians(60.0f), GetAspect(), nearPlane, farPlane);
-	glm::mat4 invProjection = glm::inverse(projection);
-	glm::mat4 VP = projection * view;
+	glm::mat4 viewProjection = projection * view;
+	glm::mat4 invViewProjection = glm::inverse(viewProjection);
 	glm::mat4 modelMat = glm::mat4(1.0f);
 
 	UpdateLights(GetDeltaTime());
 
 	// 1) Depth prepass
 	{
-		glEnable(GL_POLYGON_OFFSET_FILL);
-		glPolygonOffset(4.0f, 4.0f);
+		//glEnable(GL_POLYGON_OFFSET_FILL);
+		//glPolygonOffset(4.0f, 4.0f);
 
-		depthPrepass.Start(GetWidth(), GetHeight(), VP);
+		depthPrepass.Start(GetWidth(), GetHeight(), viewProjection);
 		depthPrepass.DrawModel(model, modelMat); // TODO: модельную матрицу добавить в модель
 			
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		glPolygonOffset(0.0f, 0.0f);
-		glDisable(GL_POLYGON_OFFSET_FILL);
+		//glPolygonOffset(0.0f, 0.0f);
+		//glDisable(GL_POLYGON_OFFSET_FILL);
 	}
 
 	// 1.1) Depth debug
 	if (ViewModes == DEPTH)
 	{
 		glUseProgram(depthDebugProgram);
-		gl4::SetUniform(depthDebugProgram, "VP", VP);
+		gl4::SetUniform(depthDebugProgram, "VP", viewProjection);
 		gl4::SetUniform(depthDebugProgram, "model", modelMat);
 		gl4::SetUniform(depthDebugProgram, "near", nearPlane);
 		gl4::SetUniform(depthDebugProgram, "far", farPlane);
@@ -294,17 +303,19 @@ void TestForwardPlus::OnRender()
 		// 2) Light Culling Compute
 		{
 			glUseProgram(lightCullingProgram);
-			gl4::SetUniform(lightCullingProjectionLoc, projection);
-			gl4::SetUniform(lightCullingInvProjectionLoc, invProjection);
-			gl4::SetUniform(lightCullingViewLoc, view);
+
+			gl4::SetUniform(lightCullingInvViewProjectionLoc, invViewProjection);
+			gl4::SetUniform(lightCullingCamPosLoc, camera.Position);
 			gl4::SetUniform(lightCullingLightCountLoc, numberOfLights);
-			gl4::SetUniform(lightCullingScreenSizeLoc, glm::vec2(GetWidth(), GetHeight()));
+			gl4::SetUniform(lightCullingViewportSizeLoc, glm::ivec2(GetWidth(), GetHeight()));
+			gl4::SetUniform(lightCullingTileNumsLoc, glm::ivec2(tileCountPerRow, tileCountPerCol));
+
 			depthPrepass.BindTexture(0);
 
 			glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, SSBOLights);
 			glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, SSBOVisibleLights);
 
-			glDispatchCompute(workGroupsX, workGroupsY, 1);
+			glDispatchCompute(tileCountPerRow, tileCountPerCol, 1);
 			glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
 		}
 
@@ -315,15 +326,16 @@ void TestForwardPlus::OnRender()
 			gl4::SetFrameBuffer(renderFBO, GetWidth(), GetHeight(), GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 			glUseProgram(lightProgram);
-			gl4::SetUniform(lightProgramViewPositionLoc, camera.Position);
 			gl4::SetUniform(lightProgramProjectionLoc, projection);
 			gl4::SetUniform(lightProgramViewLoc, view);
 			gl4::SetUniform(lightProgramModelLoc, modelMat);
-			gl4::SetUniform(lightProgramNumberOfTilesXLoc, (int)workGroupsX);
+			gl4::SetUniform(lightProgramProjViewLoc, viewProjection);
+			gl4::SetUniform(lightProgramViewPositionLoc, camera.Position);
+			gl4::SetUniform(lightProgramViewportSizeLoc, glm::ivec2(GetWidth(), GetHeight()));
+			gl4::SetUniform(lightProgramTileNumsLoc, glm::ivec2(tileCountPerRow, tileCountPerCol));
 			gl4::SetUniform(lightProgramLightDebugLoc, (ViewModes == LIGHT) ? 1 : 0);
 
 			model->Draw(lightProgram);
-
 		}
 
 		// 4) final draw
@@ -353,7 +365,7 @@ void TestForwardPlus::OnImGuiDraw()
 		ImGui::Separator();
 
 		ImGui::Text("Tile size: %ix%i", TILE_SIZE, TILE_SIZE);
-		ImGui::Text("Max lights per tile: %i", MAX_LIGHTS_PER_TILE);
+		ImGui::Text("Max lights per tile: %i", MAX_POINT_LIGHT_PER_TILE);
 
 		if (ImGui::CollapsingHeader("View Mode"))
 		{
@@ -366,11 +378,12 @@ void TestForwardPlus::OnImGuiDraw()
 
 		}
 
-		if (ImGui::SliderInt("Lights count", &numberOfLights, 1, MAX_LIGHTS_PER_TILE-1))
+		int numLight = numberOfLights;
+		if (ImGui::SliderInt("Lights count", &numLight, 1, MAX_POINT_LIGHT_PER_TILE -1))
 		{
 			SetupLights();
 			glUseProgram(lightCullingProgram);
-			glUniform1i(glGetUniformLocation(lightCullingProgram, "lightCount"), numberOfLights);
+			glUniform1ui(glGetUniformLocation(lightCullingProgram, "lightCount"), numberOfLights);
 		}
 
 		if (ImGui::Button("Recalculate lights"))
@@ -378,7 +391,7 @@ void TestForwardPlus::OnImGuiDraw()
 			UpdateLights(GetDeltaTime());
 			SetupLights();
 			glUseProgram(lightCullingProgram);
-			glUniform1i(glGetUniformLocation(lightCullingProgram, "lightCount"), numberOfLights);
+			glUniform1ui(glGetUniformLocation(lightCullingProgram, "lightCount"), numberOfLights);
 		}
 
 		ImGui::End();
@@ -388,8 +401,9 @@ void TestForwardPlus::OnImGuiDraw()
 void TestForwardPlus::OnResize(uint16_t width, uint16_t height)
 {
 	ReCreateForwardPlusFBO(width, height);
-	workGroupsX = (width + (width % TILE_SIZE)) / TILE_SIZE;
-	workGroupsY = (height + (height % TILE_SIZE)) / TILE_SIZE;
-	glNamedBufferData(SSBOVisibleLights, sizeof(int) * workGroupsX * workGroupsY * MAX_LIGHTS_PER_TILE, nullptr, GL_DYNAMIC_DRAW);
+	tileCountPerRow = (width - 1) / TILE_SIZE + 1;
+	tileCountPerCol = (height - 1) / TILE_SIZE + 1;
+
+	glNamedBufferData(SSBOVisibleLights, tileCountPerRow * tileCountPerCol * sizeof(DummyVisibleLightsForTile), nullptr, GL_DYNAMIC_DRAW);
 }
 //=============================================================================

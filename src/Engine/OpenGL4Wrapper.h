@@ -16,8 +16,10 @@ namespace gl4
 
 	void SetUniform(int uniformLoc, bool value);
 	void SetUniform(int uniformLoc, int value);
+	void SetUniform(int uniformLoc, uint32_t value);
 	void SetUniform(int uniformLoc, float value);
 	void SetUniform(int uniformLoc, const glm::vec2& value);
+	void SetUniform(int uniformLoc, const glm::ivec2& value);
 	void SetUniform(int uniformLoc, float x, float y);
 	void SetUniform(int uniformLoc, const glm::vec3& value);
 	void SetUniform(int uniformLoc, float x, float y, float z);
@@ -30,8 +32,10 @@ namespace gl4
 	// Временные для демок, использовать нежелательно
 	void SetUniform(GLuint program, const std::string& name, bool value);
 	void SetUniform(GLuint program, const std::string& name, int value);
+	void SetUniform(GLuint program, const std::string& name, uint32_t value);
 	void SetUniform(GLuint program, const std::string& name, float value);
 	void SetUniform(GLuint program, const std::string& name, const glm::vec2& value);
+	void SetUniform(GLuint program, const std::string& name, const glm::ivec2& value);
 	void SetUniform(GLuint program, const std::string& name, float x, float y);
 	void SetUniform(GLuint program, const std::string& name, const glm::vec3& value);
 	void SetUniform(GLuint program, const std::string& name, float x, float y, float z);

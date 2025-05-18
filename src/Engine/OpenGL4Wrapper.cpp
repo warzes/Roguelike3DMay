@@ -149,6 +149,11 @@ void gl4::SetUniform(int uniformLoc, int value)
 	glUniform1i(uniformLoc, value);
 }
 //=============================================================================
+void gl4::SetUniform(int uniformLoc, uint32_t value)
+{
+	glUniform1ui(uniformLoc, value);
+}
+//=============================================================================
 void gl4::SetUniform(int uniformLoc, float value)
 {
 	glUniform1f(uniformLoc, value);
@@ -157,6 +162,11 @@ void gl4::SetUniform(int uniformLoc, float value)
 void gl4::SetUniform(int uniformLoc, const glm::vec2& value)
 {
 	glUniform2fv(uniformLoc, 1, &value[0]);
+}
+//=============================================================================
+void gl4::SetUniform(int uniformLoc, const glm::ivec2& value)
+{
+	glUniform2iv(uniformLoc, 1, &value[0]);
 }
 //=============================================================================
 void gl4::SetUniform(int uniformLoc, float x, float y)
@@ -209,12 +219,22 @@ void gl4::SetUniform(GLuint program, const std::string& name, int value)
 	SetUniform(GetUniformLocation(program, name.c_str()), value);
 }
 //=============================================================================
+void gl4::SetUniform(GLuint program, const std::string& name, uint32_t value)
+{
+	SetUniform(GetUniformLocation(program, name.c_str()), value);
+}
+//=============================================================================
 void gl4::SetUniform(GLuint program, const std::string& name, float value)
 {
 	SetUniform(GetUniformLocation(program, name.c_str()), value);
 }
 //=============================================================================
 void gl4::SetUniform(GLuint program, const std::string& name, const glm::vec2& value)
+{
+	SetUniform(GetUniformLocation(program, name.c_str()), value);
+}
+//=============================================================================
+void gl4::SetUniform(GLuint program, const std::string& name, const glm::ivec2& value)
 {
 	SetUniform(GetUniformLocation(program, name.c_str()), value);
 }

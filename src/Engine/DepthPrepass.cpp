@@ -80,7 +80,7 @@ void DepthPrepass::resizeFBO(int width, int height)
 	param.wrap = GL_CLAMP_TO_BORDER;
 	param.genMipMap = false;
 	param.dataType = GL_FLOAT;
-	m_depthpassTextureDepth = gl4::CreateTexture2D(GL_DEPTH_COMPONENT32, width, height, nullptr, param);
+	m_depthpassTextureDepth = gl4::CreateTexture2D(GL_DEPTH_COMPONENT32F, width, height, nullptr, param);
 	constexpr GLfloat border[]{ 1.0f, 1.0f, 1.0f, 1.0f };
 	glTextureParameterfv(m_depthpassTextureDepth, GL_TEXTURE_BORDER_COLOR, border);
 
