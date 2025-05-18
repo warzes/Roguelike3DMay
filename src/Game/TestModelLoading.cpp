@@ -1,4 +1,4 @@
-#include "stdafx.h"
+п»ї#include "stdafx.h"
 #include "TestModelLoading.h"
 //=============================================================================
 namespace
@@ -138,7 +138,7 @@ bool TestModelLoading::OnCreate()
 	lightProjLoc = gl4::GetUniformLocation(lightProgram, "projection");
 
 
-	model = new Model("data/mesh/Tachikoma/Tachikoma.gltf");
+	model = new Model("ExampleData/mesh/Tachikoma/Tachikoma.gltf");
 
 	camera.SetPosition(glm::vec3(0.0f, 0.0f, -1.0f));
 
@@ -182,7 +182,7 @@ void TestModelLoading::OnRender()
 	glm::mat4 view = camera.GetViewMatrix();
 	glm::mat4 proj = glm::perspective(glm::radians(60.0f), GetAspect(), 0.01f, 1000.0f);
 
-	// вывод модели
+	// РІС‹РІРѕРґ РјРѕРґРµР»Рё
 	{
 		glUseProgram(modelProgram);
 		gl4::SetUniform(modelProjLoc, proj);
@@ -199,7 +199,7 @@ void TestModelLoading::OnRender()
 		model->Draw(modelProgram);
 	}
 
-	// рендер источника света
+	// СЂРµРЅРґРµСЂ РёСЃС‚РѕС‡РЅРёРєР° СЃРІРµС‚Р°
 	{
 		glUseProgram(lightProgram);
 		gl4::SetUniform(lightProjLoc, proj);

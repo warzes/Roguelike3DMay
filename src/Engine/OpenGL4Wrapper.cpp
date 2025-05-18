@@ -48,10 +48,11 @@ inline std::string printShaderSource(const char* text)
 	return formatText;
 }
 //=============================================================================
-GLuint gl4::CreateShader(GLenum type, const char* shaderSource)
+GLuint gl4::CreateShader(GLenum type, const std::string& shaderSource)
 {
 	GLuint shader = glCreateShader(type);
-	glShaderSource(shader, 1, &shaderSource, nullptr);
+	const char* shaderText = shaderSource.c_str();
+	glShaderSource(shader, 1, &shaderText, nullptr);
 	glCompileShader(shader);
 
 	GLint success;
@@ -63,7 +64,7 @@ GLuint gl4::CreateShader(GLenum type, const char* shaderSource)
 
 		const std::string logError
 			= "OPENGL " + shaderTypeToString(type) + ": Shader compilation failed : "
-			+ std::string(log) + ", Source: \n" + printShaderSource(shaderSource);
+			+ std::string(log) + ", Source: \n" + printShaderSource(shaderText);
 		Error(logError);
 	}
 
@@ -83,7 +84,7 @@ inline void checkProgramStatus(GLuint program)
 	}
 }
 //=============================================================================
-GLuint gl4::CreateShaderProgram(const char* computeSrc)
+GLuint gl4::CreateShaderProgram(const std::string& computeSrc)
 {
 	GLuint program = glCreateProgram();
 	GLuint shader = CreateShader(GL_COMPUTE_SHADER, computeSrc);
@@ -94,16 +95,16 @@ GLuint gl4::CreateShaderProgram(const char* computeSrc)
 	return program;
 }
 //=============================================================================
-GLuint gl4::CreateShaderProgram(const char* vertexSrc, const char* fragmentSrc)
+GLuint gl4::CreateShaderProgram(const std::string& vertexSrc, const std::string& fragmentSrc)
 {
-	return CreateShaderProgram(vertexSrc, nullptr, fragmentSrc);
+	return CreateShaderProgram(vertexSrc, {}, fragmentSrc);
 }
 //=============================================================================
-GLuint gl4::CreateShaderProgram(const char* vertexSrc, const char* geometrySrc, const char* fragmentSrc)
+GLuint gl4::CreateShaderProgram(const std::string& vertexSrc, const std::string& geometrySrc, const std::string& fragmentSrc)
 {
 	GLuint program = glCreateProgram();
 
-	std::pair<GLenum, const char*> shaders[] = {
+	std::pair<GLenum, const std::string&> shaders[] = {
 		{GL_VERTEX_SHADER,          vertexSrc},
 		{GL_GEOMETRY_SHADER,        geometrySrc},
 		{GL_FRAGMENT_SHADER,        fragmentSrc}
@@ -111,7 +112,7 @@ GLuint gl4::CreateShaderProgram(const char* vertexSrc, const char* geometrySrc, 
 	std::vector<GLuint> createdShaders;
 	for (const auto& [type, source] : shaders)
 	{
-		if (source)
+		if (!source.empty())
 		{
 			GLuint shader = CreateShader(type, source);
 			glAttachShader(program, shader);

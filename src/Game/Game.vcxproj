@@ -100,6 +100,10 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="temp.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="TestBlinnPhong.cpp" />
     <ClCompile Include="TestBloom.cpp" />
     <ClCompile Include="TestDeferredSSAO.cpp" />
@@ -125,6 +129,11 @@
     <ClInclude Include="TestSimple.h" />
     <ClInclude Include="TestSkyboxWithCube.h" />
     <ClInclude Include="TestTerrain.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\bin\GameData\shaders\forwardplus.frag" />
+    <None Include="..\..\bin\GameData\shaders\forwardplus.vert" />
+    <None Include="..\..\bin\GameData\shaders\lightculling.comp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

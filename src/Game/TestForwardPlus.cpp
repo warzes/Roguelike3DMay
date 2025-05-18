@@ -43,294 +43,6 @@ void main() {
 )";
 #pragma endregion
 
-#pragma region lightCullingShaderCompute
-
-	const char* lightCullingShaderCodeCompute = R"(
-#version 460 core
-
-#define MAX_LIGHTS_PER_TILE 128
-#define TILE_SIZE 16
-
-struct PointLight {
-	vec3 position;
-	float radius;
-	vec3 color;
-	float intensity;
-};
-
-layout(std430, binding = 0) readonly buffer LightBuffer {
-	PointLight lights[];
-};
-
-layout(std430, binding = 1) writeonly buffer visible_lights_indices {
-	int lights_indices[];
-};
-
-// Uniforms
-uniform mat4 view;
-uniform mat4 projection;
-uniform mat4 invProjection;
-uniform int lightCount;
-uniform vec2 screenSize;
-
-layout(binding = 0) uniform sampler2D depthMap;
-
-// Shared values
-shared uint minDepthInt;
-shared uint maxDepthInt;
-shared vec4 frustumPlanes[6];
-shared uint visibleLightCount;
-shared int visibleLightIndices[MAX_LIGHTS_PER_TILE];
-
-layout(local_size_x = TILE_SIZE, local_size_y = TILE_SIZE) in;
-
-void main() {
-
-	ivec2 tile_id = ivec2(gl_WorkGroupID.xy);
-
-	// Инициализация разделяемых данных одним потоком
-	if (gl_LocalInvocationIndex == 0)
-	{
-		minDepthInt = 0xFFFFFFFF;
-		maxDepthInt = 0x0;
-		visibleLightCount = 0;
-
-		uint index = gl_WorkGroupID.y * gl_NumWorkGroups.x + gl_WorkGroupID.x;
-		uint offset = index * MAX_LIGHTS_PER_TILE;
-		for (uint i = 0; i < MAX_LIGHTS_PER_TILE; i++) {
-			lights_indices[offset + i] = -1;
-		}
-	}
-	barrier();
-
-	// Compute depth min and max of the workgroup
-	vec2 screen_uv = gl_GlobalInvocationID.xy / screenSize;
-	float depth = texture(depthMap, screen_uv).r;
-	uint depth_uint = floatBitsToUint(depth);
-
-	atomicMin(minDepthInt, depth_uint);
-	atomicMax(maxDepthInt, depth_uint);
-
-	barrier();
-
-	// Compute Tile frustrum planes
-	if (gl_LocalInvocationIndex == 0)
-	{
-		float min_group_depth = uintBitsToFloat(minDepthInt);
-		float max_group_depth = uintBitsToFloat(maxDepthInt);
-
-		vec4 vs_min_depth = invProjection * vec4(0.0, 0.0, 2.0 * min_group_depth - 1.0, 1.0);
-		vec4 vs_max_depth = invProjection * vec4(0.0, 0.0, 2.0 * max_group_depth - 1.0, 1.0);
-		vs_min_depth /= vs_min_depth.w;
-		vs_max_depth /= vs_max_depth.w;
-		min_group_depth = vs_min_depth.z;
-		max_group_depth = vs_max_depth.z;
-
-		vec2 tileScale = screenSize * (1.0 / float(2.0 * TILE_SIZE));
-		vec2 tileBias = tileScale - vec2(gl_WorkGroupID.xy);
-
-		vec4 col1 = vec4(-projection[0][0] * tileScale.x, projection[0][1], tileBias.x, projection[0][3]);
-		vec4 col2 = vec4(projection[1][0], -projection[1][1] * tileScale.y, tileBias.y, projection[1][3]);
-		vec4 col4 = vec4(projection[3][0], projection[3][1], -1.0, projection[3][3]);
-
-		frustumPlanes[0] = col4 + col1;
-		frustumPlanes[1] = col4 - col1;
-		frustumPlanes[2] = col4 - col2;
-		frustumPlanes[3] = col4 + col2;
-		frustumPlanes[4] = vec4(0.0, 0.0, 1.0, -min_group_depth);
-		frustumPlanes[5] = vec4(0.0, 0.0, -1.0, max_group_depth);
-
-		// Нормализация только для плоскостей отсечения
-		for (uint i = 0; i < 4; i++) {
-			frustumPlanes[i] *= 1.0f / length(frustumPlanes[i].xyz);
-		}
-	}
-
-	barrier();
-
-	// Cull lights
-	uint threadCount = TILE_SIZE * TILE_SIZE;
-	for (uint i = gl_LocalInvocationIndex; i < uint(lightCount); i += threadCount)
-	{
-		vec4 vs_light_pos = view * vec4(lights[i].position, 1.0);
-		
-		if (visibleLightCount < MAX_LIGHTS_PER_TILE)
-		{
-			bool inFrustum = true;
-			for (uint j = 0; j < 6 && inFrustum; j++)
-			{
-				float distance = dot(frustumPlanes[j], vs_light_pos);
-				inFrustum = (distance >= -lights[i].radius);
-			}
-			if (inFrustum)
-			{
-				uint idx = atomicAdd(visibleLightCount, 1u);
-				visibleLightIndices[idx] = int(i);
-			}
-		}
-	}
-
-	barrier();
-
-	if (gl_LocalInvocationIndex == 0)
-	{
-		uint baseIndex = gl_WorkGroupID.y * gl_NumWorkGroups.x + gl_WorkGroupID.x;
-		uint offset = baseIndex * MAX_LIGHTS_PER_TILE;
-		for (uint i = 0; i < visibleLightCount; i++)
-		{
-			lights_indices[offset + i] = visibleLightIndices[i];
-		}
-	}
-}
-)";
-#pragma endregion
-
-// TODO: почему тормозит
-#pragma region lightingShader
-
-	const char* lightingShaderCodeVertex = R"(
-#version 460 core
-
-layout (location = 0) in vec3 vert_pos;
-layout (location = 1) in vec3 vert_normal;
-layout (location = 2) in vec2 vert_uv;
-layout (location = 3) in vec3 vert_tangent;
-
-out VERTEX_OUT {
-  vec2 frag_uv;
-  mat3 TBN;
-  vec3 ts_frag_pos;
-  vec3 ts_view_pos;
-} vertex_out;
-
-// Uniforms
-uniform mat4 projection;
-uniform mat4 view;
-uniform mat4 model;
-uniform vec3 viewPosition;
-
-void main() {
-	gl_Position = projection * view* model * vec4(vert_pos, 1.0);
-	vec3 frag_pos = vec3(model * vec4(vert_pos, 1.0));
-
-	mat3 normal_matrix = transpose(inverse(mat3(model)));
-	vec3 N = normalize(vec3(normal_matrix * vert_normal));
-	vec3 T = normalize(vec3(normal_matrix * vert_tangent));
-	T = normalize(T - dot(T, N) * N);
-	vec3 B = cross(N, T);
-
-	vertex_out.frag_uv = vert_uv;
-	vertex_out.TBN = transpose(mat3(T, B, N));
-	vertex_out.ts_view_pos  = vertex_out.TBN * viewPosition;
-	vertex_out.ts_frag_pos = vertex_out.TBN * frag_pos;
-}
-)";
-
-	const char* lightingShaderCodeFragment = R"(
-#version 460 core
-
-#define MAX_LIGHTS_PER_TILE 128
-#define TILE_SIZE 16
-
-in VERTEX_OUT{
-	vec2 frag_uv;
-	mat3 TBN;
-	vec3 ts_frag_pos;
-	vec3 ts_view_pos;
-} fragment_in;
-
-struct PointLight {
-	vec3 position;
-	float radius;
-	vec3 color;
-	float intensity;
-};
-
-// Shader storage buffer objects
-layout(std430, binding = 0) buffer LightBuffer {
-	PointLight data[];
-} lightBuffer;
-
-layout(std430, binding = 1) buffer visible_lights_indices {
-	int lights_indices[];
-};
-
-// Uniforms
-layout(binding = 0) uniform sampler2D texture_diffuse1;
-layout(binding = 1) uniform sampler2D texture_normal1;
-
-uniform int doLightDebug;
-uniform int numberOfTilesX;
-
-out vec4 fragColor;
-
-void main() {
-	// Determine which tile this pixel belongs to
-	ivec2 tileID = ivec2(gl_FragCoord.xy) / TILE_SIZE;
-	uint index = tileID.y * numberOfTilesX + tileID.x;
-    uint offset = index * MAX_LIGHTS_PER_TILE;
-
-	vec4 base_diffuse = texture(texture_diffuse1, fragment_in.frag_uv);
-	if (base_diffuse.a <= 0.2) discard;
-
-	if (doLightDebug==1)
-	{
-		uint count = 0;
-		for (uint i = 0; i < MAX_LIGHTS_PER_TILE; i++)
-		{
-			if (lights_indices[offset + i] != -1 ) {
-				count++;
-			}
-		}
-		float shade = float(count) / float(MAX_LIGHTS_PER_TILE * 2); 
-		fragColor = vec4(shade);
-		return;
-	}
-
-	vec3 normal = normalize((texture(texture_normal1, fragment_in.frag_uv).rgb * 2.0 - 1.0));
-	float specpower = 60.0f;
-
-	vec3 result = vec3(0.0);
-
-	for (uint i = 0; i < MAX_LIGHTS_PER_TILE; i++)
-	{
-		int idx = lights_indices[offset + i];
-		if (idx == -1) continue;
-
-		PointLight light = lightBuffer.data[idx];
-
-		vec3 lightPosTS = fragment_in.TBN * light.position;
-		vec3 lightDirTS = lightPosTS - fragment_in.ts_frag_pos;
-		float dist = length(lightDirTS);
-		float attenuation = clamp(1.0 - dist * dist / (light.radius * light.radius), 0.0, 1.0);
-		if (attenuation == 0.0)
-			continue;
-
-		lightDirTS /= dist; // normalize
-
-		float NdotL = max(0.0, dot(normal, lightDirTS));
-		if (NdotL == 0.0)
-			continue;
-
-		// Диффузное освещение
-		vec3 diffuse = light.color * base_diffuse.rgb * NdotL * attenuation;
-
-		// Спекулярное освещение
-		vec3 viewDirTS = normalize(fragment_in.ts_view_pos - fragment_in.ts_frag_pos);
-		vec3 reflectDir = reflect(-lightDirTS, normal);
-		float spec = pow(max(dot(viewDirTS, reflectDir), 0.0), specpower);
-		vec3 specular = vec3(1.0) * spec * attenuation;
-
-		result += diffuse + specular;
-	}
-
-	
-	fragColor =vec4(result, 1.0);
-}
-)";
-
-#pragma endregion
-
 #pragma region FinalShader
 
 const char* finalShaderCodeVertex = R"(
@@ -490,7 +202,7 @@ EngineConfig TestForwardPlus::GetConfig() const
 //=============================================================================
 bool TestForwardPlus::OnCreate()
 {
-	model = new Model("data/mesh/Sponza/Sponza.gltf");
+	model = new Model("ExampleData/mesh/Sponza/Sponza.gltf");
 	camera.SetPosition(glm::vec3(0.0f, 0.0f, -1.0f));
 
 #pragma region Forward+
@@ -504,20 +216,20 @@ bool TestForwardPlus::OnCreate()
 
 	depthPrepass.Create(GetWidth(), GetHeight());
 	depthDebugProgram = gl4::CreateShaderProgram(depthDebugShaderCodeVertex, depthDebugShaderCodeFragment);
-	lightCullingProgram = gl4::CreateShaderProgram(lightCullingShaderCodeCompute);
+	lightCullingProgram = gl4::CreateShaderProgram(ReadShaderCode("GameData/shaders/lightculling.comp", {}).c_str());
 	lightCullingProjectionLoc = gl4::GetUniformLocation(lightCullingProgram, "projection");
 	lightCullingInvProjectionLoc = gl4::GetUniformLocation(lightCullingProgram, "invProjection");
 	lightCullingViewLoc = gl4::GetUniformLocation(lightCullingProgram, "view");
 	lightCullingLightCountLoc = gl4::GetUniformLocation(lightCullingProgram, "lightCount");
 	lightCullingScreenSizeLoc = gl4::GetUniformLocation(lightCullingProgram, "screenSize");
 
-	lightProgram = gl4::CreateShaderProgram(lightingShaderCodeVertex, lightingShaderCodeFragment);
+	lightProgram = gl4::CreateShaderProgram(ReadShaderCode("GameData/shaders/forwardplus.vert", {}).c_str(), ReadShaderCode("GameData/shaders/forwardplus.frag", {}).c_str());
 	lightProgramViewPositionLoc = gl4::GetUniformLocation(lightProgram, "viewPosition");
 	lightProgramProjectionLoc = gl4::GetUniformLocation(lightProgram, "projection");
 	lightProgramViewLoc = gl4::GetUniformLocation(lightProgram, "view");
 	lightProgramModelLoc = gl4::GetUniformLocation(lightProgram, "model");
 	lightProgramLightDebugLoc = gl4::GetUniformLocation(lightProgram, "doLightDebug");
-	lightProgramNumberOfTilesXLoc = gl4::GetUniformLocation(lightProgram, "numberOfTilesX");
+	lightProgramNumberOfTilesXLoc = gl4::GetUniformLocation(lightProgram, "workgroupX");
 
 	renderProgram = gl4::CreateShaderProgram(finalShaderCodeVertex, finalShaderCodeFragment);
 

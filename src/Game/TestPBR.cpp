@@ -1,4 +1,4 @@
-#include "stdafx.h"
+п»ї#include "stdafx.h"
 #include "TestPBR.h"
 //=============================================================================
 namespace
@@ -296,8 +296,8 @@ bool TestPBR::OnCreate()
 
 	camera.SetPosition(glm::vec3(0.0f, 0.0f, -1.0f));
 
-	renderModel1 = new Model("data/mesh/DamagedHelmet/DamagedHelmet.gltf");
-	renderModel2 = new Model("data/mesh/Tachikoma/Tachikoma.gltf");
+	renderModel1 = new Model("ExampleData/mesh/DamagedHelmet/DamagedHelmet.gltf");
+	renderModel2 = new Model("ExampleData/mesh/Tachikoma/Tachikoma.gltf");
 
 	glClearColor(0.7f, 0.8f, 0.9f, 1.0f);
 	glEnable(GL_DEPTH_TEST);
@@ -340,7 +340,7 @@ void TestPBR::OnRender()
 	glm::mat4 view = camera.GetViewMatrix();
 	glm::mat4 proj = glm::perspective(glm::radians(60.0f), GetAspect(), 0.01f, 1000.0f);
 
-	// вывод квада
+	// РІС‹РІРѕРґ РєРІР°РґР°
 	{
 		glUseProgram(shader);
 		gl4::SetUniform(shader, "projection", proj);

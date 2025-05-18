@@ -18,17 +18,19 @@ out VS_DATA
 } vsOut;
 
 layout(std140, binding = 0) uniform MVPData {
-	mat4 model;
-	mat4 view;
-	mat4 projection;
+	mat4 modelMatrix;
+	mat4 viewMatrix;
+	mat4 projectionMatrix;
 };
 
 void main()
 {
-	vsOut.FragPos = mat3(model) * aVertexPosition;
-	vsOut.Normal = transpose(inverse(mat3(model))) * aVertexNormal;
+	vec4 worldSpacePosition = modelMatrix * vec4(aVertexPosition, 1.0);
+	gl_Position = projectionMatrix * viewMatrix * worldSpacePosition;
+
+	vsOut.FragPos = worldSpacePosition.xyz;
+	vsOut.Normal = transpose(inverse(mat3(modelMatrix))) * aVertexNormal;
 	vsOut.TexCoords = aVertexTexCoords;
-	gl_Position = projection * view * model * vec4(aVertexPosition, 1.0);
 }
 )";
 
@@ -78,7 +80,7 @@ void main()
 }
 )";
 
-	const char* lightShaderCodeVertex = R"(
+	const char* lampShaderCodeVertex = R"(
 #version 460 core
 layout (location = 0) in vec3 aPos;
 
@@ -91,7 +93,7 @@ void main()
 	gl_Position = projection * view * model * vec4(aPos, 1.0);
 }
 )";
-	const char* lightShaderCodeFragment = R"(
+	const char* lampShaderCodeFragment = R"(
 #version 460 core
 out vec4 FragColor;
 
@@ -122,10 +124,10 @@ void main()
 	Light2Data lightData;
 	GLuint lightUbo;
 
-	GLuint lightDrawProgram;
-	int lightModelLoc;
-	int lightViewLoc;
-	int lightProjLoc;
+	GLuint lampDrawProgram;
+	int lampModelLoc;
+	int lampViewLoc;
+	int lampProjLoc;
 
 	GLuint texture;
 	GLuint vbo;
@@ -150,14 +152,14 @@ bool TestSimple::OnCreate()
 	mvpUbo = gl4::CreateBufferStorage(GL_DYNAMIC_STORAGE_BIT, sizeof(MVPData), nullptr);
 	lightUbo = gl4::CreateBufferStorage(GL_DYNAMIC_STORAGE_BIT, sizeof(Light2Data), nullptr);
 
-	lightDrawProgram = gl4::CreateShaderProgram(lightShaderCodeVertex, lightShaderCodeFragment);
-	lightModelLoc = gl4::GetUniformLocation(lightDrawProgram, "model");
-	lightViewLoc = gl4::GetUniformLocation(lightDrawProgram, "view");
-	lightProjLoc = gl4::GetUniformLocation(lightDrawProgram, "projection");
+	lampDrawProgram = gl4::CreateShaderProgram(lampShaderCodeVertex, lampShaderCodeFragment);
+	lampModelLoc = gl4::GetUniformLocation(lampDrawProgram, "model");
+	lampViewLoc = gl4::GetUniformLocation(lampDrawProgram, "view");
+	lampProjLoc = gl4::GetUniformLocation(lampDrawProgram, "projection");
 
-	texture = gl4::LoadTexture2D("data/textures/wood.png", false);
+	texture = gl4::LoadTexture2D("ExampleData/textures/wood.png", false);
 
-	model = new Model("data/mesh/Sponza/Sponza.gltf");
+	model = new Model("ExampleData/mesh/Sponza/Sponza.gltf");
 
 	struct Vertex
 	{
@@ -262,14 +264,14 @@ void TestSimple::OnRender()
 
 	// рендер источника света
 	{
-		glUseProgram(lightDrawProgram);
-		gl4::SetUniform(lightProjLoc, mvpData.projection);
-		gl4::SetUniform(lightViewLoc, mvpData.view);
+		glUseProgram(lampDrawProgram);
+		gl4::SetUniform(lampProjLoc, mvpData.projection);
+		gl4::SetUniform(lampViewLoc, mvpData.view);
 
 		glm::mat4 modelMat = glm::mat4(1.0f);
 		modelMat = glm::translate(modelMat, lightPos);
 		modelMat = glm::scale(modelMat, glm::vec3(0.2f));
-		gl4::SetUniform(lightModelLoc, modelMat);
+		gl4::SetUniform(lampModelLoc, modelMat);
 
 		GetGraphicSystem().DrawCube();
 	}

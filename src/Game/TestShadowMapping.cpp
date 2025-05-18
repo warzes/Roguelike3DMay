@@ -274,9 +274,9 @@ bool TestShadowMapping::OnCreate()
 	radiusLoc = gl4::GetUniformLocation(lightProgram, "radius");
 	lightColorLoc = gl4::GetUniformLocation(lightProgram, "lightColor");
 
-	texture = gl4::LoadTexture2D("data/textures/White1x1.png");
+	texture = gl4::LoadTexture2D("CoreData/textures/White1x1.png");
 
-	model = new Model("data/mesh/Zaku/scene.gltf");
+	model = new Model("ExampleData/mesh/Zaku/scene.gltf");
 
 	struct Vertex
 	{

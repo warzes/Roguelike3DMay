@@ -95,7 +95,7 @@ bool TestBlinnPhong::OnCreate()
 	lightPosLoc = gl4::GetUniformLocation(program, "lightPos");
 	viewPosLoc = gl4::GetUniformLocation(program, "viewPos");
 
-	texture = gl4::LoadTexture2D("data/textures/wood.png", false);
+	texture = gl4::LoadTexture2D("ExampleData/textures/wood.png", false);
 
 	struct Vertex
 	{

@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "TestSkyboxWithCube.h"
 //=============================================================================
 namespace
@@ -117,7 +117,7 @@ bool TestSkyboxWithCube::OnCreate()
 	skyViewLoc = gl4::GetUniformLocation(skyboxProgram, "view");
 	skyProjectionLoc = gl4::GetUniformLocation(skyboxProgram, "projection");
 
-	cubeTexture = gl4::LoadTexture2D("data/textures/colorful.png", true);
+	cubeTexture = gl4::LoadTexture2D("CoreData/textures/colorful.png", true);
 
 	const std::vector<std::string> files
 	{
@@ -128,7 +128,7 @@ bool TestSkyboxWithCube::OnCreate()
 		"front.png",
 		"back.png"
 	};
-	skyboxTexture = gl4::LoadCubeMap(files, "data/textures/skybox_blue_space/");
+	skyboxTexture = gl4::LoadCubeMap(files, "ExampleData/textures/skybox_blue_space/");
 	
 	camera.SetPosition(glm::vec3(0.0f, 0.0f, -1.0f));
 

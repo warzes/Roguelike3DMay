@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "TestBloom.h"
 //=============================================================================
 namespace
@@ -91,7 +91,7 @@ bool TestBloom::OnCreate()
 	radiusLoc = gl4::GetUniformLocation(program, "radius");
 	lightColorLoc = gl4::GetUniformLocation(program, "lightColor");
 
-	model = new Model("data/mesh/Zaku/scene.gltf");
+	model = new Model("ExampleData/mesh/Zaku/scene.gltf");
 
 	pipeline = new PipelineBloom(blurIter);
 

@@ -36,6 +36,7 @@
     <ClCompile Include="TestSimple.cpp">
       <Filter>GameApp\Test2</Filter>
     </ClCompile>
+    <ClCompile Include="temp.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -84,5 +85,19 @@
     <Filter Include="GameApp\Test2">
       <UniqueIdentifier>{6ec12468-041f-4337-b2b4-1980b07aee4f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="shaders">
+      <UniqueIdentifier>{e9433f5d-1e2e-4389-88a1-81bfb14e769e}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\bin\GameData\shaders\forwardplus.frag">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="..\..\bin\GameData\shaders\forwardplus.vert">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="..\..\bin\GameData\shaders\lightculling.comp">
+      <Filter>shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

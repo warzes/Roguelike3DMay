@@ -188,7 +188,7 @@ bool GameApp::OnCreate()
 	cubeViewLoc = gl4::GetUniformLocation(cubeProgram, "view");
 	cubeProjLoc = gl4::GetUniformLocation(cubeProgram, "projection");
 
-	texture = gl4::LoadTexture2D("data/textures/colorful.png", true);
+	texture = gl4::LoadTexture2D("CoreData/textures/colorful.png", true);
 
 	struct Vertex
 	{
@@ -223,7 +223,7 @@ bool GameApp::OnCreate()
 
 	camera.SetPosition(glm::vec3(0.0f, 0.0f, -1.0f));
 
-	model = new Model("data/mesh/Sponza/Sponza.gltf");
+	model = new Model("ExampleData/mesh/Sponza/Sponza.gltf");
 
 	glClearColor(0.7f, 0.8f, 0.9f, 1.0f);
 	glEnable(GL_DEPTH_TEST);

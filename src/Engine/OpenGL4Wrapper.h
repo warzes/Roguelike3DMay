@@ -6,10 +6,10 @@ namespace gl4
 	// Shader
 	//-------------------------------------------------------------------------
 
-	GLuint CreateShader(GLenum type, const char* shaderSource);
-	GLuint CreateShaderProgram(const char* computeSrc);
-	GLuint CreateShaderProgram(const char* vertexSrc, const char* fragmentSrc);
-	GLuint CreateShaderProgram(const char* vertexSrc, const char* geometrySrc, const char* fragmentSrc);
+	GLuint CreateShader(GLenum type, const std::string& shaderSource);
+	GLuint CreateShaderProgram(const std::string& computeSrc);
+	GLuint CreateShaderProgram(const std::string& vertexSrc, const std::string& fragmentSrc);
+	GLuint CreateShaderProgram(const std::string& vertexSrc, const std::string& geometrySrc, const std::string& fragmentSrc);
 
 	int GetUniformLocation(GLuint program, const std::string& name);      // TODO: а нужна ли? это просто glGetUniformLocation
 	GLuint GetUniformBlockIndex(GLuint program, const std::string& name); // TODO: а нужна ли? это просто glGetUniformBlockIndex
@@ -45,7 +45,7 @@ namespace gl4
 	// Buffer
 	//-------------------------------------------------------------------------
 
-	GLuint CreateBuffer(GLbitfield flags, GLsizeiptr size, void* data);
+	GLuint CreateBuffer(GLenum usage, GLsizeiptr size, void* data);
 
 	GLuint CreateBufferStorage(GLbitfield flags, GLsizeiptr size, void* data);
 	GLuint CreateBufferStorage(GLbitfield flags, GLsizeiptr sizeElement, GLsizeiptr numElement, void* data);

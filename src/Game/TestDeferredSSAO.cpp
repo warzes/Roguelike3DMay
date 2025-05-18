@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "TestDeferredSSAO.h"
 //=============================================================================
 namespace
@@ -182,7 +182,7 @@ void TestDeferredSSAO::OnResize(uint16_t width, uint16_t height)
 //=============================================================================
 void TestDeferredSSAO::InitScene()
 {
-	model = new Model("data/mesh/Sponza/Sponza.gltf");
+	model = new Model("ExampleData/mesh/Sponza/Sponza.gltf");
 }
 //=============================================================================
 void TestDeferredSSAO::UpdateLightPositions()
