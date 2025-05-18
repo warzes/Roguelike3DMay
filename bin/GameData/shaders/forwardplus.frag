@@ -50,10 +50,11 @@ void main()
 	// Determine which tile this pixel belongs to
 	ivec2 loc = ivec2(gl_FragCoord.xy);
 	ivec2 tileID = loc / ivec2(TILE_SIZE, TILE_SIZE);
-	uint index = tileID.y * workgroupX + tileID.x;
-    uint offset = index * MAX_LIGHTS_PER_TILE;
+	uint tileIndex = tileID.y * workgroupX + tileID.x;
+    uint offset = tileIndex * MAX_LIGHTS_PER_TILE;
 
-	if (doLightDebug==1)
+	// debug view
+	if (doLightDebug>0)
 	{
 		uint count = 0;
 		for (uint i = 0; i < MAX_LIGHTS_PER_TILE; i++)
