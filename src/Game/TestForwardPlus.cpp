@@ -8,7 +8,7 @@ namespace
 	Camera camera;
 	Model* model;
 
-#define MAX_POINT_LIGHT_PER_TILE 1023
+#define MAX_POINT_LIGHT_PER_TILE 2049
 #define TILE_SIZE 16
 
 #pragma region depthDebugShader
@@ -86,7 +86,7 @@ void main() {
 	GLuint SSBOLights;
 	GLuint SSBOVisibleLights;
 
-	uint32_t numberOfLights{ 500 };
+	uint32_t numberOfLights{ 1000 };
 
 	float nearPlane = 0.1f;
 	float farPlane = 1000.0f;

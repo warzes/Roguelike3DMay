@@ -1,6 +1,6 @@
 ﻿#version 460 core
 
-#define MAX_POINT_LIGHT_PER_TILE 1023
+#define MAX_POINT_LIGHT_PER_TILE 2049
 const int TILE_SIZE = 16;
 
 in VERTEX_OUT{
