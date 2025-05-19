@@ -384,6 +384,7 @@ void TestForwardPlus::OnImGuiDraw()
 			SetupLights();
 			glUseProgram(lightCullingProgram);
 			glUniform1ui(glGetUniformLocation(lightCullingProgram, "lightCount"), numberOfLights);
+			numberOfLights = numLight;
 		}
 
 		if (ImGui::Button("Recalculate lights"))

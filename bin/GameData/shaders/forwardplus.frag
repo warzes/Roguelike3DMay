@@ -63,7 +63,7 @@ void main()
 	// if (material.hasAlbedoMap > 0)
 	{
 		vec4 diffuse4 = texture(texture_diffuse1, fragment_in.frag_uv);
-		if (diffuse4.a <= 0.2) discard;
+		//if (diffuse4.a <= 0.2) discard;
 		diffuse = diffuse4.rgb;
 		alphaDiffuse = diffuse4.a;
 	}
