@@ -4,12 +4,12 @@
 //=============================================================================
 namespace
 {
-	GLuint currentFBO{ 0 };
+	gl4::FrameBuffer currentFBO{ 0 };
 }
 //=============================================================================
 void ClearOpenGLState()
 {
-	currentFBO = 0;
+	currentFBO = { 0 };
 }
 //=============================================================================
 inline std::string shaderTypeToString(GLenum shaderType)
@@ -447,15 +447,14 @@ inline int getNumMipMapLevels2D(int width, int height)
 	return static_cast<int>(floor(log2(std::max(width, height)))) + 1;
 }
 //=============================================================================
-GLuint gl4::CreateTexture2D(GLenum internalFormat, GLsizei width, GLsizei height, void* data, const TextureParameter& param)
+gl4::Texture2D gl4::CreateTexture2D(GLenum internalFormat, GLsizei width, GLsizei height, void* data, const TextureParameter& param)
 {
 	const int numMipmaps = param.genMipMap ? getNumMipMapLevels2D(width, height) : 1;
 
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
-	GLuint texture;
-	glCreateTextures(GL_TEXTURE_2D, 1, &texture);
-
+	gl4::Texture2D texture;
+	gl4::Create(texture);
 	glTextureParameteri(texture, GL_TEXTURE_MAX_LEVEL, numMipmaps - 1);
 	glTextureParameteri(texture, GL_TEXTURE_MIN_FILTER, param.minFilter);
 	glTextureParameteri(texture, GL_TEXTURE_MAG_FILTER, param.magFilter);
@@ -494,7 +493,7 @@ inline uint8_t* genDefaultCheckerboardImage(int* width, int* height, int* nrChan
 	return imgData;
 }
 //=============================================================================
-GLuint gl4::LoadTexture2D(const char* texturePath, bool flipVertical, const TextureParameter& param)
+gl4::Texture2D gl4::LoadTexture2D(const char* texturePath, bool flipVertical, const TextureParameter& param)
 {
 	stbi_set_flip_vertically_on_load(flipVertical);
 
@@ -507,7 +506,7 @@ GLuint gl4::LoadTexture2D(const char* texturePath, bool flipVertical, const Text
 		if (!data)
 		{
 			Fatal("out of memory allocating image for fallback texture");
-			return 0;
+			return { 0 };
 		}
 	}
 
@@ -516,13 +515,13 @@ GLuint gl4::LoadTexture2D(const char* texturePath, bool flipVertical, const Text
 	else if (nrChannels == 2) internalFormat = GL_RG8;
 	else if (nrChannels == 3) internalFormat = GL_RGB8;
 
-	GLuint texture = CreateTexture2D(internalFormat, width, height, data, param);
+	gl4::Texture2D texture = CreateTexture2D(internalFormat, width, height, data, param);
 
 	stbi_image_free(data);
 	return texture;
 }
 //=============================================================================
-GLuint gl4::LoadTexture2DHDR(const char* texturePath, bool flipVertical, const TextureParameter& param)
+gl4::Texture2D gl4::LoadTexture2DHDR(const char* texturePath, bool flipVertical, const TextureParameter& param)
 {
 	// TODO: возможно объединить с LoadTexture2D
 
@@ -534,21 +533,21 @@ GLuint gl4::LoadTexture2DHDR(const char* texturePath, bool flipVertical, const T
 	{
 		Error((std::string("Texture: ") + texturePath + " not find").c_str());
 		// TODO: создание дефолтной текстуры
-		return 0;
+		return { 0 };
 	}
-	GLuint texture = CreateTexture2D(GL_RGB32F, width, height, data, param);
+	gl4::Texture2D texture = CreateTexture2D(GL_RGB32F, width, height, data, param);
 	stbi_image_free(data);
 	return texture;
 }
 //=============================================================================
-GLuint gl4::LoadCubeMap(const std::vector<std::string>& files, const std::string& directory)
+gl4::TextureCube gl4::LoadCubeMap(const std::vector<std::string>& files, const std::string& directory)
 {
 	// TODO: возможность настроить через TextureParameter
 
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
-	GLuint texture;
-	glCreateTextures(GL_TEXTURE_CUBE_MAP, 1, &texture);
+	gl4::TextureCube texture;
+	gl4::Create(texture);
 
 	stbi_set_flip_vertically_on_load(false);
 	int width, height;
@@ -580,7 +579,7 @@ GLuint gl4::LoadCubeMap(const std::vector<std::string>& files, const std::string
 		{
 			stbi_image_free(data);
 			Error("Cubemap texture failed to load: " + files[i]);
-			return 0;
+			return { 0 };
 		}
 		stbi_image_free(data);
 	}
@@ -594,7 +593,7 @@ GLuint gl4::LoadCubeMap(const std::vector<std::string>& files, const std::string
 	return texture;
 }
 //=============================================================================
-void gl4::BindTextureSampler(GLuint unit, GLuint texture, GLuint sampler)
+void gl4::BindTextureSampler(GLuint unit, gl4::Texture2D texture, GLuint sampler)
 {
 	glBindTextureUnit(unit, texture);
 	glBindSampler(unit, sampler);
@@ -623,10 +622,10 @@ GLuint gl4::CreateDepthBuffer2D(int width, int height, GLenum formatDepth)
 	return texture;
 }
 //=============================================================================
-GLuint gl4::CreateFrameBuffer2D(GLuint colorBuffer, GLuint depthBuffer)
+gl4::FrameBuffer gl4::CreateFrameBuffer2D(GLuint colorBuffer, GLuint depthBuffer)
 {
-	GLuint framebuffer;
-	glCreateFramebuffers(1, &framebuffer);
+	gl4::FrameBuffer framebuffer;
+	gl4::Create(framebuffer);
 
 	if (colorBuffer > 0)
 		glNamedFramebufferTexture(framebuffer, GL_COLOR_ATTACHMENT0, colorBuffer, 0);
@@ -643,7 +642,7 @@ GLuint gl4::CreateFrameBuffer2D(GLuint colorBuffer, GLuint depthBuffer)
 	return framebuffer;
 }
 //=============================================================================
-void gl4::SetFrameBuffer(GLuint fbo, int width, int height, GLbitfield clearMask)
+void gl4::SetFrameBuffer(gl4::FrameBuffer fbo, int width, int height, GLbitfield clearMask)
 {
 	if (currentFBO != fbo)
 	{

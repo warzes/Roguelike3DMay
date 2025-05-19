@@ -12,31 +12,31 @@ namespace gl4
 
 		GLuint id{ 0 };
 	};
-	struct ShaderProgramTag {};
-	struct BufferTag {};
-	struct VertexArrayTag {};
-	struct Texture1DTag {};
-	struct Texture2DTag {};
-	struct Texture3DTag {};
-	struct TextureCubeTag {};
-	struct Texture1DArrayTag {};
-	struct Texture2DArrayTag {};
-	struct TextureCubeArrayTag {};
-	struct RenderBufferTag {};
-	struct FrameBufferTag {};
+	struct __ShaderProgramTag;
+	struct __BufferTag;
+	struct __VertexArrayTag;
+	struct __Texture1DTag;
+	struct __Texture2DTag;
+	struct __Texture3DTag;
+	struct __TextureCubeTag;
+	struct __Texture1DArrayTag;
+	struct __Texture2DArrayTag;
+	struct __TextureCubeArrayTag;
+	struct __RenderBufferTag;
+	struct __FrameBufferTag;
 
-	using ShaderProgram = GLObject<ShaderProgramTag>;
-	using Buffer = GLObject<BufferTag>;
-	using VertexArray = GLObject<VertexArrayTag>;
-	using Texture1D = GLObject<Texture1DTag>;
-	using Texture2D = GLObject<Texture2DTag>;
-	using Texture3D = GLObject<Texture3DTag>;
-	using TextureCube = GLObject<TextureCubeTag>;
-	using Texture1DArray = GLObject<Texture1DArrayTag>;
-	using Texture2DArray = GLObject<Texture2DArrayTag>;
-	using TextureCubeArray = GLObject<TextureCubeArrayTag>;
-	using RenderBuffer = GLObject<RenderBufferTag>;
-	using FrameBuffer = GLObject<FrameBufferTag>;
+	using ShaderProgram = GLObject<__ShaderProgramTag>;
+	using Buffer = GLObject<__BufferTag>;
+	using VertexArray = GLObject<__VertexArrayTag>;
+	using Texture1D = GLObject<__Texture1DTag>;
+	using Texture2D = GLObject<__Texture2DTag>;
+	using Texture3D = GLObject<__Texture3DTag>;
+	using TextureCube = GLObject<__TextureCubeTag>;
+	using Texture1DArray = GLObject<__Texture1DArrayTag>;
+	using Texture2DArray = GLObject<__Texture2DArrayTag>;
+	using TextureCubeArray = GLObject<__TextureCubeArrayTag>;
+	using RenderBuffer = GLObject<__RenderBufferTag>;
+	using FrameBuffer = GLObject<__FrameBufferTag>;
 	
 	template<typename T>
 	bool IsValid(const T& res) { return res.id > 0; }
@@ -216,12 +216,12 @@ namespace gl4
 		.genMipMap = true
 	};
 
-	GLuint CreateTexture2D(GLenum internalFormat, GLsizei width, GLsizei height, void* data, const TextureParameter& param = defaultTextureParameter2D);
-	GLuint LoadTexture2D(const char* texturePath, bool flipVertical = false, const TextureParameter& param = defaultTextureParameter2D);
-	GLuint LoadTexture2DHDR(const char* texturePath, bool flipVertical = false, const TextureParameter& param = defaultTextureParameter2DHDR);
-	GLuint LoadCubeMap(const std::vector<std::string>& files, const std::string& directory);
+	Texture2D CreateTexture2D(GLenum internalFormat, GLsizei width, GLsizei height, void* data, const TextureParameter& param = defaultTextureParameter2D);
+	Texture2D LoadTexture2D(const char* texturePath, bool flipVertical = false, const TextureParameter& param = defaultTextureParameter2D);
+	Texture2D LoadTexture2DHDR(const char* texturePath, bool flipVertical = false, const TextureParameter& param = defaultTextureParameter2DHDR);
+	TextureCube LoadCubeMap(const std::vector<std::string>& files, const std::string& directory);
 
-	void BindTextureSampler(GLuint unit, GLuint texture, GLuint sampler);
+	void BindTextureSampler(GLuint unit, Texture2D texture, GLuint sampler);
 
 
 	//-------------------------------------------------------------------------
@@ -230,13 +230,13 @@ namespace gl4
 	GLuint CreateColorBuffer2D(int width, int height, GLenum formatColor); // удалить - через создание текстуры
 	GLuint CreateDepthBuffer2D(int width, int height, GLenum formatDepth = GL_DEPTH_COMPONENT32);
 	// TODO: CreateRenderBuffer???
-	GLuint CreateFrameBuffer2D(GLuint colorBuffer, GLuint depthBuffer);
+	FrameBuffer CreateFrameBuffer2D(GLuint colorBuffer, GLuint depthBuffer);
 
 
 	//-------------------------------------------------------------------------
 	// Commands
 	//-------------------------------------------------------------------------
 
-	void SetFrameBuffer(GLuint fbo, int width, int height, GLbitfield clearMask);
+	void SetFrameBuffer(gl4::FrameBuffer fbo, int width, int height, GLbitfield clearMask);
 
 }

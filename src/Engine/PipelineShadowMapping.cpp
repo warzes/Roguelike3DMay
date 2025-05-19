@@ -12,10 +12,10 @@ PipelineShadowMapping::PipelineShadowMapping(int depthWidth, int depthHeight)
 //=============================================================================
 PipelineShadowMapping::~PipelineShadowMapping()
 {
-	glDeleteProgram(m_depthShader);
-	glDeleteProgram(m_debugShader);
+	gl4::Destroy(m_depthShader);
+	gl4::Destroy(m_debugShader);
 	glDeleteTextures(1, &m_depthTexture);
-	glDeleteFramebuffers(1, &m_depthFBO);
+	gl4::Destroy(m_depthFBO);
 
 	gl4::Destroy(m_quadVBO);
 	gl4::Destroy(m_quadVAO);

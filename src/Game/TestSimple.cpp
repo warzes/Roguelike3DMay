@@ -231,7 +231,7 @@ void TestSimple::OnUpdate(float deltaTime)
 //=============================================================================
 void TestSimple::OnRender()
 {
-	gl4::SetFrameBuffer(0, GetWidth(), GetHeight(), GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	gl4::SetFrameBuffer({ 0 }, GetWidth(), GetHeight(), GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	mvpData.model = glm::mat4(1.0f);
 	mvpData.view = camera.GetViewMatrix();

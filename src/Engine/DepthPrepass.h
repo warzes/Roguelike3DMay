@@ -22,7 +22,7 @@ private:
 	int    m_uniformVPLoc{ -1 };
 	int    m_uniformModelLoc{ -1 };
 
-	GLuint m_depthpassFBO{ 0 };
+	gl4::FrameBuffer m_depthpassFBO{ 0 };
 	GLuint m_depthpassTextureDepth{ 0 };
 	int    m_width{ 0 };
 	int    m_height{ 0 };

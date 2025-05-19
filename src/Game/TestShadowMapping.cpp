@@ -369,7 +369,7 @@ void TestShadowMapping::OnRender()
 	RenderScene(depthShader, depthModelLoc);
 
 	// Render Scene
-	gl4::SetFrameBuffer(0, GetWidth(), GetHeight(), GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	gl4::SetFrameBuffer({ 0 }, GetWidth(), GetHeight(), GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glUseProgram(mainProgram);
 	gl4::SetUniform(mainTextureDiffuse1Loc, 0);
 	gl4::SetUniform(mainShadowMapLoc, 1);

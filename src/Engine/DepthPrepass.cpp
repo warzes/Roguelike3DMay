@@ -37,8 +37,7 @@ void main()
 void DepthPrepass::Destroy()
 {
 	gl4::Destroy(m_program);
-	glDeleteFramebuffers(1, &m_depthpassFBO);
-	m_depthpassFBO = 0;
+	gl4::Destroy(m_depthpassFBO);
 	glDeleteTextures(1, &m_depthpassTextureDepth);
 	m_depthpassTextureDepth = 0;
 }
@@ -70,7 +69,7 @@ void DepthPrepass::BindTexture(uint32_t index)
 //=============================================================================
 void DepthPrepass::resizeFBO(int width, int height)
 {
-	if (m_depthpassFBO) glDeleteFramebuffers(1, &m_depthpassFBO);
+	if (gl4::IsValid(m_depthpassFBO)) gl4::Destroy(m_depthpassFBO);
 	if (m_depthpassTextureDepth) glDeleteTextures(1, &m_depthpassTextureDepth);
 
 	gl4::TextureParameter param = {};

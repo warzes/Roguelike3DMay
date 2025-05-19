@@ -33,7 +33,7 @@ private:
 	int m_shadowMapLoc{ -1 };
 
 	GLuint m_depthTexture{ 0 };
-	GLuint m_depthFBO{ 0 };
+	gl4::FrameBuffer m_depthFBO{ 0 };
 
 	gl4::Buffer m_quadVBO{ 0 };
 	gl4::VertexArray m_quadVAO{ 0 };

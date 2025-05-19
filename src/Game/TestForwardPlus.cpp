@@ -97,7 +97,7 @@ void main() {
 	GLuint tileCountPerRow;
 	GLuint tileCountPerCol;
 
-	GLuint renderFBO;
+	gl4::FrameBuffer renderFBO;
 	GLuint rboColorBuffer;
 	GLuint rboDepthBuffer;
 
@@ -113,7 +113,7 @@ void main() {
 	{
 		if (rboColorBuffer) glDeleteRenderbuffers(1, &rboColorBuffer);
 		if (rboDepthBuffer) glDeleteRenderbuffers(1, &rboDepthBuffer);
-		if (renderFBO) glDeleteFramebuffers(1, &renderFBO);
+		if (renderFBO) gl4::Destroy(renderFBO);
 
 		glCreateRenderbuffers(1, &rboColorBuffer);
 		glNamedRenderbufferStorage(rboColorBuffer, GL_RGB32F, width, height);
@@ -121,7 +121,7 @@ void main() {
 		glCreateRenderbuffers(1, &rboDepthBuffer);
 		glNamedRenderbufferStorage(rboDepthBuffer, GL_DEPTH_COMPONENT32, width, height);
 
-		glCreateFramebuffers(1, &renderFBO);
+		gl4::Create(renderFBO);
 		glNamedFramebufferRenderbuffer(renderFBO, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, rboColorBuffer);
 		glNamedFramebufferRenderbuffer(renderFBO, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rboDepthBuffer);
 
@@ -295,7 +295,7 @@ void TestForwardPlus::OnRender()
 		gl4::SetUniform(depthDebugProgram, "model", modelMat);
 		gl4::SetUniform(depthDebugProgram, "near", nearPlane);
 		gl4::SetUniform(depthDebugProgram, "far", farPlane);
-		gl4::SetFrameBuffer(0, GetWidth(), GetHeight(), GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		gl4::SetFrameBuffer({ 0 }, GetWidth(), GetHeight(), GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		model->Draw(depthDebugProgram, true);
 	}
 	else
