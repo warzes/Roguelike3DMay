@@ -221,8 +221,8 @@ void main()
 
 	Model* model;
 
-	GLuint planevbo;
-	GLuint planevao;
+	gl4::Buffer planevbo;
+	gl4::VertexArray planevao;
 
 	PipelineShadowMapping* pipeline;
 

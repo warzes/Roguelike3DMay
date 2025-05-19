@@ -130,8 +130,8 @@ void main()
 	int lampProjLoc;
 
 	GLuint texture;
-	GLuint vbo;
-	GLuint vao;
+	gl4::Buffer vbo;
+	gl4::VertexArray vao;
 
 	Camera camera;
 
@@ -201,9 +201,9 @@ bool TestSimple::OnCreate()
 void TestSimple::OnDestroy()
 {
 	glDeleteTextures(1, &texture);
-	glDeleteProgram(program);
-	glDeleteBuffers(1, &vbo);
-	glDeleteVertexArrays(1, &vao);
+	gl4::Destroy(program);
+	gl4::Destroy(vbo);
+	gl4::Destroy(vao);
 }
 //=============================================================================
 void TestSimple::OnUpdate(float deltaTime)

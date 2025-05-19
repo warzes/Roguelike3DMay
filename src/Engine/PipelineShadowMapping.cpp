@@ -16,8 +16,9 @@ PipelineShadowMapping::~PipelineShadowMapping()
 	glDeleteProgram(m_debugShader);
 	glDeleteTextures(1, &m_depthTexture);
 	glDeleteFramebuffers(1, &m_depthFBO);
-	glDeleteBuffers(1, &m_quadVBO);
-	glDeleteVertexArrays(1, &m_quadVAO);
+
+	gl4::Destroy(m_quadVBO);
+	gl4::Destroy(m_quadVAO);
 }
 //=============================================================================
 void PipelineShadowMapping::StartRenderDepth(float nearPlane, float farPlane, const glm::vec3& lightPosition, const glm::vec3& target)

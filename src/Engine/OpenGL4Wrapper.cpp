@@ -281,23 +281,23 @@ void gl4::SetUniform(gl4::ShaderProgram program, const std::string& name, const 
 	SetUniform(GetUniformLocation(program, name.c_str()), mat);
 }
 //=============================================================================
-GLuint gl4::CreateBuffer(GLenum usage, GLsizeiptr size, void* data)
+gl4::Buffer gl4::CreateBuffer(GLenum usage, GLsizeiptr size, void* data)
 {
-	GLuint buffer;
-	glCreateBuffers(1, &buffer);
+	gl4::Buffer buffer;
+	gl4::Create(buffer);
 	glNamedBufferData(buffer, size, data, usage);
 	return buffer;
 }
 //=============================================================================
-GLuint gl4::CreateBufferStorage(GLbitfield flags, GLsizeiptr size, void* data)
+gl4::Buffer gl4::CreateBufferStorage(GLbitfield flags, GLsizeiptr size, void* data)
 {
-	GLuint buffer;
-	glCreateBuffers(1, &buffer);
+	gl4::Buffer buffer;
+	gl4::Create(buffer);
 	glNamedBufferStorage(buffer, size, data, flags);
 	return buffer;
 }
 //=============================================================================
-GLuint gl4::CreateBufferStorage(GLbitfield flags, GLsizeiptr sizeElement, GLsizeiptr numElement, void* data)
+gl4::Buffer gl4::CreateBufferStorage(GLbitfield flags, GLsizeiptr sizeElement, GLsizeiptr numElement, void* data)
 {
 	return CreateBufferStorage(flags, sizeElement * numElement, data);
 }
@@ -326,30 +326,30 @@ void gl4::SetVertexAttrib(GLuint vao, const std::vector<VertexAttribute>& attrib
 	}
 }
 //=============================================================================
-GLuint gl4::CreateVertexArray()
+gl4::VertexArray gl4::CreateVertexArray()
 {
-	GLuint vao;
-	glCreateVertexArrays(1, &vao);
+	gl4::VertexArray vao;
+	gl4::Create(vao);
 	return vao;
 }
 //=============================================================================
-GLuint gl4::CreateVertexArray(const std::vector<VertexAttribute>& attributes)
+gl4::VertexArray gl4::CreateVertexArray(const std::vector<VertexAttribute>& attributes)
 {
-	GLuint vao = CreateVertexArray();
+	gl4::VertexArray vao = CreateVertexArray();
 	SetVertexAttrib(vao, attributes);
 	return vao;
 }
 //=============================================================================
-GLuint gl4::CreateVertexArray(GLuint vbo, size_t vertexSize, const std::vector<VertexAttribute>& attributes)
+gl4::VertexArray gl4::CreateVertexArray(gl4::Buffer vbo, size_t vertexSize, const std::vector<VertexAttribute>& attributes)
 {
-	return CreateVertexArray(vbo, 0, vertexSize, attributes);
+	return CreateVertexArray(vbo, { 0 }, vertexSize, attributes);
 }
 //=============================================================================
-GLuint gl4::CreateVertexArray(GLuint vbo, GLuint ibo, size_t vertexSize, const std::vector<VertexAttribute>& attributes)
+gl4::VertexArray gl4::CreateVertexArray(gl4::Buffer vbo, gl4::Buffer ibo, size_t vertexSize, const std::vector<VertexAttribute>& attributes)
 {
-	GLuint vao = CreateVertexArray(attributes);
-	if (vbo > 0) glVertexArrayVertexBuffer(vao, 0, vbo, 0, vertexSize);
-	if (ibo > 0) glVertexArrayElementBuffer(vao, ibo);
+	gl4::VertexArray vao = CreateVertexArray(attributes);
+	if (vbo.id > 0) glVertexArrayVertexBuffer(vao, 0, vbo, 0, vertexSize);
+	if (ibo.id > 0) glVertexArrayElementBuffer(vao, ibo);
 	return vao;
 }
 //=============================================================================

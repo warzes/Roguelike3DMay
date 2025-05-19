@@ -11,11 +11,11 @@ Mesh::Mesh(std::vector<MeshVertex>&& vertices, std::vector<unsigned int>&& indic
 	setupMesh();
 }
 //=============================================================================
-void Mesh::Delete() const
+void Mesh::Delete()
 {
-	glDeleteVertexArrays(1, &m_vao);
-	glDeleteBuffers(1, &m_vbo);
-	glDeleteBuffers(1, &m_ibo);
+	gl4::Destroy(m_vao);
+	gl4::Destroy(m_vbo);
+	gl4::Destroy(m_ibo);
 }
 //=============================================================================
 void Mesh::AddTextureIfEmpty(TextureType tType, const std::string& filePath)

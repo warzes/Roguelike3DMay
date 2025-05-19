@@ -35,8 +35,8 @@ private:
 	GLuint m_depthTexture{ 0 };
 	GLuint m_depthFBO{ 0 };
 
-	GLuint m_quadVBO{ 0 };
-	GLuint m_quadVAO{ 0 };
+	gl4::Buffer m_quadVBO{ 0 };
+	gl4::VertexArray m_quadVAO{ 0 };
 
 	glm::mat4 m_lightSpaceMatrix{};
 };

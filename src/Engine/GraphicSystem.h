@@ -1,4 +1,6 @@
-#pragma once
+﻿#pragma once
+
+#include "OpenGL4Wrapper.h"
 
 class GraphicSystem final
 {
@@ -15,15 +17,15 @@ private:
 	void createCube();
 	void createQuad();
 
-	GLuint m_sphereVBO;
-	GLuint m_sphereIBO;
-	GLuint m_sphereVAO;
+	gl4::Buffer m_sphereVBO;
+	gl4::Buffer m_sphereIBO;
+	gl4::VertexArray m_sphereVAO;
 	unsigned int m_sphereIndexCount{};
 
-	GLuint m_cubeVBO;
-	//GLuint m_cubeIBO;
-	GLuint m_cubeVAO;
+	gl4::Buffer m_cubeVBO;
+	//gl4::Buffer m_cubeIBO;
+	gl4::VertexArray m_cubeVAO;
 
-	GLuint m_quadVBO;
-	GLuint m_quadVAO;
+	gl4::Buffer m_quadVBO;
+	gl4::VertexArray m_quadVAO;
 };

@@ -13,15 +13,13 @@ bool GraphicSystem::Create()
 //=============================================================================
 void GraphicSystem::Destroy()
 {
-	glDeleteBuffers(1, &m_sphereVBO);
-	glDeleteBuffers(1, &m_sphereIBO);
-	glDeleteVertexArrays(1, &m_sphereVAO);
-	
-	glDeleteBuffers(1, &m_cubeVBO);
-	glDeleteVertexArrays(1, &m_cubeVAO);
-
-	glDeleteBuffers(1, &m_quadVBO);
-	glDeleteVertexArrays(1, &m_quadVAO);
+	gl4::Destroy(m_sphereVBO);
+	gl4::Destroy(m_sphereIBO);
+	gl4::Destroy(m_sphereVAO);
+	gl4::Destroy(m_cubeVBO);
+	gl4::Destroy(m_cubeVAO);
+	gl4::Destroy(m_quadVBO);
+	gl4::Destroy(m_quadVAO);
 }
 //=============================================================================
 void GraphicSystem::DrawSphere()

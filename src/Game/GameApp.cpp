@@ -143,9 +143,9 @@ void main()
 	int cubeProjLoc;
 
 	GLuint texture;
-	GLuint vbo;
-	GLuint ibo;
-	GLuint vao;
+	gl4::Buffer vbo;
+	gl4::Buffer ibo;
+	gl4::VertexArray vao;
 
 	Camera camera;
 
@@ -234,10 +234,10 @@ bool GameApp::OnCreate()
 void GameApp::OnDestroy()
 {
 	glDeleteTextures(1, &texture);
-	glDeleteProgram(program);
-	glDeleteBuffers(1, &vbo);
-	glDeleteBuffers(1, &ibo);
-	glDeleteVertexArrays(1, &vao);
+	gl4::Destroy(program);
+	gl4::Destroy(vbo);
+	gl4::Destroy(ibo);
+	gl4::Destroy(vao);
 }
 //=============================================================================
 void GameApp::OnUpdate(float deltaTime)

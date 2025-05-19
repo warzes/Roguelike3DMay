@@ -1,6 +1,7 @@
-#pragma once
+п»ї#pragma once
 
 #include "Material.h"
+#include "OpenGL4Wrapper.h"
 
 #define MAX_BONE_INFLUENCE 4
 
@@ -16,8 +17,8 @@ struct MeshVertex final
 };
 
 // TODO:
-// SubMesh - геометрия меша
-// SubMeshGPU - вао/вбо/ибо
+// SubMesh - РіРµРѕРјРµС‚СЂРёСЏ РјРµС€Р°
+// SubMeshGPU - РІР°Рѕ/РІР±Рѕ/РёР±Рѕ
 
 class Mesh final
 {
@@ -28,7 +29,7 @@ public:
 		std::vector<unsigned int>&& indices,
 		std::unordered_map<TextureType, TextureFile>&& textures);
 	
-	void Delete() const;
+	void Delete();
 
 	void AddTextureIfEmpty(TextureType tType, const std::string& filePath);
 
@@ -45,7 +46,7 @@ private:
 	std::unordered_map<TextureType, TextureFile> m_textureMap{};
 
 	// Render data 
-	GLuint m_vao{0}; // TODO: возможно vao должно быть одно для всех моделей, а буферы размещать за счет glVertexArrayVertexBuffer/glVertexArrayElementBuffer
-	GLuint m_vbo{0};
-	GLuint m_ibo{0};
+	gl4::VertexArray m_vao{0}; // TODO: РІРѕР·РјРѕР¶РЅРѕ vao РґРѕР»Р¶РЅРѕ Р±С‹С‚СЊ РѕРґРЅРѕ РґР»СЏ РІСЃРµС… РјРѕРґРµР»РµР№, Р° Р±СѓС„РµСЂС‹ СЂР°Р·РјРµС‰Р°С‚СЊ Р·Р° СЃС‡РµС‚ glVertexArrayVertexBuffer/glVertexArrayElementBuffer
+	gl4::Buffer m_vbo{0};
+	gl4::Buffer m_ibo{0};
 };

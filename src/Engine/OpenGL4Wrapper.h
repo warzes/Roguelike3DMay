@@ -146,13 +146,13 @@ namespace gl4
 	// Buffer
 	//-------------------------------------------------------------------------
 
-	GLuint CreateBuffer(GLenum usage, GLsizeiptr size, void* data);
+	Buffer CreateBuffer(GLenum usage, GLsizeiptr size, void* data);
 
-	GLuint CreateBufferStorage(GLbitfield flags, GLsizeiptr size, void* data);
-	GLuint CreateBufferStorage(GLbitfield flags, GLsizeiptr sizeElement, GLsizeiptr numElement, void* data);
+	Buffer CreateBufferStorage(GLbitfield flags, GLsizeiptr size, void* data);
+	Buffer CreateBufferStorage(GLbitfield flags, GLsizeiptr sizeElement, GLsizeiptr numElement, void* data);
 
 	template<typename T>
-	GLuint CreateBufferStorage(GLbitfield flags, const std::vector<T>& data)
+	Buffer CreateBufferStorage(GLbitfield flags, const std::vector<T>& data)
 	{
 		return CreateBufferStorage(flags, sizeof(T), data.size(), (void*)data.data());
 	}
@@ -178,10 +178,10 @@ namespace gl4
 	void SetVertexAttrib(GLuint vao, const VertexAttribute& attribute);
 	void SetVertexAttrib(GLuint vao, const std::vector<VertexAttribute>& attributes);
 
-	GLuint CreateVertexArray();
-	GLuint CreateVertexArray(const std::vector<VertexAttribute>& attributes);
-	GLuint CreateVertexArray(GLuint vbo, size_t vertexSize, const std::vector<VertexAttribute>& attributes);
-	GLuint CreateVertexArray(GLuint vbo, GLuint ibo, size_t vertexSize, const std::vector<VertexAttribute>& attributes);
+	VertexArray CreateVertexArray();
+	VertexArray CreateVertexArray(const std::vector<VertexAttribute>& attributes);
+	VertexArray CreateVertexArray(Buffer vbo, size_t vertexSize, const std::vector<VertexAttribute>& attributes);
+	VertexArray CreateVertexArray(Buffer vbo, Buffer ibo, size_t vertexSize, const std::vector<VertexAttribute>& attributes);
 
 	//-------------------------------------------------------------------------
 	// Texture
