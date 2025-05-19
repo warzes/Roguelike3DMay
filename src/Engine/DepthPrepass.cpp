@@ -36,8 +36,7 @@ void main()
 //=============================================================================
 void DepthPrepass::Destroy()
 {
-	glDeleteProgram(m_program);
-	m_program = 0;
+	gl4::Destroy(m_program);
 	glDeleteFramebuffers(1, &m_depthpassFBO);
 	m_depthpassFBO = 0;
 	glDeleteTextures(1, &m_depthpassTextureDepth);

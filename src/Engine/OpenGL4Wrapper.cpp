@@ -84,9 +84,10 @@ inline void checkProgramStatus(GLuint program)
 	}
 }
 //=============================================================================
-GLuint gl4::CreateShaderProgram(const std::string& computeSrc)
+gl4::ShaderProgram gl4::CreateShaderProgram(const std::string& computeSrc)
 {
-	GLuint program = glCreateProgram();
+	gl4::ShaderProgram program;
+	Create(program);
 	GLuint shader = CreateShader(GL_COMPUTE_SHADER, computeSrc);
 	glAttachShader(program, shader);
 	glLinkProgram(program);
@@ -95,14 +96,15 @@ GLuint gl4::CreateShaderProgram(const std::string& computeSrc)
 	return program;
 }
 //=============================================================================
-GLuint gl4::CreateShaderProgram(const std::string& vertexSrc, const std::string& fragmentSrc)
+gl4::ShaderProgram gl4::CreateShaderProgram(const std::string& vertexSrc, const std::string& fragmentSrc)
 {
 	return CreateShaderProgram(vertexSrc, {}, fragmentSrc);
 }
 //=============================================================================
-GLuint gl4::CreateShaderProgram(const std::string& vertexSrc, const std::string& geometrySrc, const std::string& fragmentSrc)
+gl4::ShaderProgram gl4::CreateShaderProgram(const std::string& vertexSrc, const std::string& geometrySrc, const std::string& fragmentSrc)
 {
-	GLuint program = glCreateProgram();
+	gl4::ShaderProgram program;
+	Create(program);
 
 	std::pair<GLenum, const std::string&> shaders[] = {
 		{GL_VERTEX_SHADER,          vertexSrc},
@@ -129,12 +131,12 @@ GLuint gl4::CreateShaderProgram(const std::string& vertexSrc, const std::string&
 	return program;
 }
 //=============================================================================
-int gl4::GetUniformLocation(GLuint program, const std::string& name)
+int gl4::GetUniformLocation(gl4::ShaderProgram program, const std::string& name)
 {
 	return glGetUniformLocation(program, name.c_str());
 }
 //=============================================================================
-GLuint gl4::GetUniformBlockIndex(GLuint program, const std::string& name)
+GLuint gl4::GetUniformBlockIndex(gl4::ShaderProgram program, const std::string& name)
 {
 	return glGetUniformBlockIndex(program, name.c_str());
 }
@@ -209,72 +211,72 @@ void gl4::SetUniform(int uniformLoc, const glm::mat4& mat)
 	glUniformMatrix4fv(uniformLoc, 1, GL_FALSE, &mat[0][0]);
 }
 //=============================================================================
-void gl4::SetUniform(GLuint program, const std::string& name, bool value)
+void gl4::SetUniform(gl4::ShaderProgram program, const std::string& name, bool value)
 {
 	SetUniform(GetUniformLocation(program, name.c_str()), value);
 }
 //=============================================================================
-void gl4::SetUniform(GLuint program, const std::string& name, int value)
+void gl4::SetUniform(gl4::ShaderProgram program, const std::string& name, int value)
 {
 	SetUniform(GetUniformLocation(program, name.c_str()), value);
 }
 //=============================================================================
-void gl4::SetUniform(GLuint program, const std::string& name, uint32_t value)
+void gl4::SetUniform(gl4::ShaderProgram program, const std::string& name, uint32_t value)
 {
 	SetUniform(GetUniformLocation(program, name.c_str()), value);
 }
 //=============================================================================
-void gl4::SetUniform(GLuint program, const std::string& name, float value)
+void gl4::SetUniform(gl4::ShaderProgram program, const std::string& name, float value)
 {
 	SetUniform(GetUniformLocation(program, name.c_str()), value);
 }
 //=============================================================================
-void gl4::SetUniform(GLuint program, const std::string& name, const glm::vec2& value)
+void gl4::SetUniform(gl4::ShaderProgram program, const std::string& name, const glm::vec2& value)
 {
 	SetUniform(GetUniformLocation(program, name.c_str()), value);
 }
 //=============================================================================
-void gl4::SetUniform(GLuint program, const std::string& name, const glm::ivec2& value)
+void gl4::SetUniform(gl4::ShaderProgram program, const std::string& name, const glm::ivec2& value)
 {
 	SetUniform(GetUniformLocation(program, name.c_str()), value);
 }
 //=============================================================================
-void gl4::SetUniform(GLuint program, const std::string& name, float x, float y)
+void gl4::SetUniform(gl4::ShaderProgram program, const std::string& name, float x, float y)
 {
 	SetUniform(GetUniformLocation(program, name.c_str()), x, y);
 }
 //=============================================================================
-void gl4::SetUniform(GLuint program, const std::string& name, const glm::vec3& value)
+void gl4::SetUniform(gl4::ShaderProgram program, const std::string& name, const glm::vec3& value)
 {
 	SetUniform(GetUniformLocation(program, name.c_str()), value);
 }
 //=============================================================================
-void gl4::SetUniform(GLuint program, const std::string& name, float x, float y, float z)
+void gl4::SetUniform(gl4::ShaderProgram program, const std::string& name, float x, float y, float z)
 {
 	SetUniform(GetUniformLocation(program, name.c_str()), x, y, z);
 }
 //=============================================================================
-void gl4::SetUniform(GLuint program, const std::string& name, const glm::vec4& value)
+void gl4::SetUniform(gl4::ShaderProgram program, const std::string& name, const glm::vec4& value)
 {
 	SetUniform(GetUniformLocation(program, name.c_str()), value);
 }
 //=============================================================================
-void gl4::SetUniform(GLuint program, const std::string& name, float x, float y, float z, float w)
+void gl4::SetUniform(gl4::ShaderProgram program, const std::string& name, float x, float y, float z, float w)
 {
 	SetUniform(GetUniformLocation(program, name.c_str()), x, y, z, w);
 }
 //=============================================================================
-void gl4::SetUniform(GLuint program, const std::string& name, const glm::mat2& mat)
+void gl4::SetUniform(gl4::ShaderProgram program, const std::string& name, const glm::mat2& mat)
 {
 	SetUniform(GetUniformLocation(program, name.c_str()), mat);
 }
 //=============================================================================
-void gl4::SetUniform(GLuint program, const std::string& name, const glm::mat3& mat)
+void gl4::SetUniform(gl4::ShaderProgram program, const std::string& name, const glm::mat3& mat)
 {
 	SetUniform(GetUniformLocation(program, name.c_str()), mat);
 }
 //=============================================================================
-void gl4::SetUniform(GLuint program, const std::string& name, const glm::mat4& mat)
+void gl4::SetUniform(gl4::ShaderProgram program, const std::string& name, const glm::mat4& mat)
 {
 	SetUniform(GetUniformLocation(program, name.c_str()), mat);
 }

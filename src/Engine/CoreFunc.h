@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 template <typename T>
 bool Contains(const std::vector<T>& vec, const T& obj)
@@ -31,12 +31,3 @@ template <typename T>
 {
 	return min + (max - min) * RandomNumber<T>();
 }
-
-std::string GetFileExtension(const std::string& filePath);
-std::string GetFileName(const std::string& filePath);
-std::string GetFileNameWithoutExtension(const std::string& filePath);
-std::string GetFileDirectory(const std::string& filePath);
-
-std::string ReadTextFile(const std::string& filename);
-std::string ReadShaderCode(const std::string& filename, const std::vector<std::string>& defines = {});
-

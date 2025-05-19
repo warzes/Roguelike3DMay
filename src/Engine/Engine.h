@@ -4,9 +4,12 @@
 
 // Core
 #include "Log.h"
+#include "StrUtils.h"
+#include "FileUtils.h"
 #include "CoreFunc.h"
 
 // Math
+#include "CoreMath.h"
 
 // RHI
 #include "OpenGL4Wrapper.h"
@@ -29,4 +32,5 @@
 
 // App
 #include "Profiler.h"
+#include "Input.h"
 #include "EngineApp.h"

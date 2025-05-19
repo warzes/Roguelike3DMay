@@ -36,17 +36,18 @@
 # 11.05.2025
 - PipelineDeferredSSAO для рендера Deffered Shading с SSAO
 
-# 12.05.2025
-- новый тест
-
 # 14.05.2025
 - gl4::GetUniformBlockIndex и тест Uniform Buffer
 - тест SSBO
 - CreateShaderProgram для вычислительного шейдера
 - первый вариант Forward+ shading для игры
 
-# 15.05.2025 - 20.05.2025 - разработка Forward+ shading для игры
+# 15.05.2025 - 19.05.2025 - разработка Forward+ shading для игры
 - DepthPrepass - класс рендерящий в буфер глубины
 - CreateBuffer переименован в CreateBufferStorage так как создает буфер неизменяемого размера
 - новый CreateBuffer
 - папка data разделена на три: ExampleData, CoreData, GameData
+- новая версия Forward+ shading
+
+# 19.05.2025
+- типобезопасные типы для OpenGL объектов. Дальше будут использоваться они, а не GLuint

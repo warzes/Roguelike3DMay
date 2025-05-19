@@ -65,7 +65,7 @@ void main()
 
 	Camera camera;
 
-	GLuint lightSphereShader;
+	gl4::ShaderProgram lightSphereShader;
 
 	std::vector<Light> lights{};
 	std::vector<float> lightAngles{};
@@ -249,7 +249,7 @@ void TestDeferredSSAO::RenderLights()
 	}
 }
 //=============================================================================
-void TestDeferredSSAO::RenderScene(GLuint shader) const
+void TestDeferredSSAO::RenderScene(gl4::ShaderProgram shader) const
 {
 	glm::mat4 modelMat = glm::mat4(1.0f);
 	modelMat = glm::translate(modelMat, glm::vec3(8.0f, 0.0f, 1.0f));

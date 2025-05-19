@@ -2,6 +2,7 @@
 
 #include "3rdparty/3rdpartyConfig.h"
 #include "EngineConfig.h"
+#include "BasePlatform.h"
 
 #define _USE_MATH_DEFINES
 
@@ -23,6 +24,8 @@
 #endif
 
 #include <cmath>
+#include <cctype>
+#include <cwctype>
 #include <algorithm>
 //#include <chrono>
 #include <random>

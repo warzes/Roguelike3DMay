@@ -36,7 +36,6 @@
     <ClCompile Include="TestSimple.cpp">
       <Filter>GameApp\Test2</Filter>
     </ClCompile>
-    <ClCompile Include="temp.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />

@@ -53,6 +53,12 @@
     <ClCompile Include="DepthPrepass.cpp">
       <Filter>Render\RenderPass</Filter>
     </ClCompile>
+    <ClCompile Include="FileUtils.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="CoreMath.cpp">
+      <Filter>Math</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -62,8 +68,6 @@
     <ClInclude Include="Log.h">
       <Filter>Core</Filter>
     </ClInclude>
-    <ClInclude Include="EngineConfig.h" />
-    <ClInclude Include="BaseHeader.h" />
     <ClInclude Include="EngineApp.h">
       <Filter>App</Filter>
     </ClInclude>
@@ -113,6 +117,27 @@
     <ClInclude Include="DepthPrepass.h">
       <Filter>Render\RenderPass</Filter>
     </ClInclude>
+    <ClInclude Include="BaseHeader.h">
+      <Filter>Base</Filter>
+    </ClInclude>
+    <ClInclude Include="BasePlatform.h">
+      <Filter>Base</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineConfig.h">
+      <Filter>Base</Filter>
+    </ClInclude>
+    <ClInclude Include="StrUtils.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="FileUtils.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Input.h">
+      <Filter>App</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreMath.h">
+      <Filter>Math</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="App">
@@ -141,6 +166,9 @@
     </Filter>
     <Filter Include="Render\RenderPass">
       <UniqueIdentifier>{5180e80b-7898-4e76-9a65-b53a9689645c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Base">
+      <UniqueIdentifier>{fa34636f-7a07-4f3e-984b-943a463ecdc9}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

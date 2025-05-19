@@ -116,7 +116,7 @@ void main()
 		glm::vec3 viewPos;
 	};
 
-	GLuint program;
+	gl4::ShaderProgram program;
 
 	MVPData mvpData;
 	GLuint mvpUbo;
@@ -124,7 +124,7 @@ void main()
 	Light2Data lightData;
 	GLuint lightUbo;
 
-	GLuint lampDrawProgram;
+	gl4::ShaderProgram lampDrawProgram;
 	int lampModelLoc;
 	int lampViewLoc;
 	int lampProjLoc;

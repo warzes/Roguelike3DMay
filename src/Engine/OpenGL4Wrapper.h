@@ -3,16 +3,113 @@
 namespace gl4
 {
 	//-------------------------------------------------------------------------
+	// OpenGL Types
+	//-------------------------------------------------------------------------
+	template <typename Tag>
+	struct GLObject final
+	{
+		operator GLuint() const { return id; }
+
+		GLuint id{ 0 };
+	};
+	struct ShaderProgramTag {};
+	struct BufferTag {};
+	struct VertexArrayTag {};
+	struct Texture1DTag {};
+	struct Texture2DTag {};
+	struct Texture3DTag {};
+	struct TextureCubeTag {};
+	struct Texture1DArrayTag {};
+	struct Texture2DArrayTag {};
+	struct TextureCubeArrayTag {};
+	struct RenderBufferTag {};
+	struct FrameBufferTag {};
+
+	using ShaderProgram = GLObject<ShaderProgramTag>;
+	using Buffer = GLObject<BufferTag>;
+	using VertexArray = GLObject<VertexArrayTag>;
+	using Texture1D = GLObject<Texture1DTag>;
+	using Texture2D = GLObject<Texture2DTag>;
+	using Texture3D = GLObject<Texture3DTag>;
+	using TextureCube = GLObject<TextureCubeTag>;
+	using Texture1DArray = GLObject<Texture1DArrayTag>;
+	using Texture2DArray = GLObject<Texture2DArrayTag>;
+	using TextureCubeArray = GLObject<TextureCubeArrayTag>;
+	using RenderBuffer = GLObject<RenderBufferTag>;
+	using FrameBuffer = GLObject<FrameBufferTag>;
+	
+	template<typename T>
+	bool IsValid(const T& res) { return res.id > 0; }
+
+	template<typename T>
+	void Create(T& res)
+	{
+		if constexpr (std::is_same_v<T, ShaderProgram>)         { res.id = glCreateProgram(); }
+		else if constexpr (std::is_same_v<T, Buffer>)           { glCreateBuffers(1, &res.id); }
+		else if constexpr (std::is_same_v<T, VertexArray>)      { glCreateVertexArrays(1, &res.id); }
+		else if constexpr (std::is_same_v<T, Texture1D>)        { glCreateTextures(GL_TEXTURE_1D, 1, &res.id); }
+		else if constexpr (std::is_same_v<T, Texture2D>)        { glCreateTextures(GL_TEXTURE_2D, 1, &res.id); }
+		else if constexpr (std::is_same_v<T, Texture3D>)        { glCreateTextures(GL_TEXTURE_3D, 1, &res.id); }
+		else if constexpr (std::is_same_v<T, TextureCube>)      { glCreateTextures(GL_TEXTURE_CUBE_MAP, 1, &res.id); }
+		else if constexpr (std::is_same_v<T, Texture1DArray>)   { glCreateTextures(GL_TEXTURE_1D_ARRAY, 1, &res.id); }
+		else if constexpr (std::is_same_v<T, Texture2DArray>)   { glCreateTextures(GL_TEXTURE_2D_ARRAY, 1, &res.id); }
+		else if constexpr (std::is_same_v<T, TextureCubeArray>) { glCreateTextures(GL_TEXTURE_CUBE_MAP_ARRAY, 1, &res.id); }
+		else if constexpr (std::is_same_v<T, RenderBuffer>)     { glCreateRenderbuffers( 1, &res.id); }
+		else if constexpr (std::is_same_v<T, FrameBuffer>)      { glCreateFramebuffers(1, &res.id); }
+		assert(res.id);
+	}
+
+	template<typename T>
+	void Destroy(T& res)
+	{
+		if constexpr (std::is_same_v<T, ShaderProgram>)         { glDeleteProgram(res.id); }
+		else if constexpr (std::is_same_v<T, Buffer>)           { glDeleteBuffers(1, &res.id); }
+		else if constexpr (std::is_same_v<T, VertexArray>)      { glDeleteVertexArrays(1, &res.id); }
+		else if constexpr (std::is_same_v<T, Texture1D>)        { glDeleteTextures(1, &res.id); }
+		else if constexpr (std::is_same_v<T, Texture2D>)        { glDeleteTextures(1, &res.id); }
+		else if constexpr (std::is_same_v<T, Texture3D>)        { glDeleteTextures(1, &res.id); }
+		else if constexpr (std::is_same_v<T, TextureCube>)      { glDeleteTextures(1, &res.id); }
+		else if constexpr (std::is_same_v<T, Texture1DArray>)   { glDeleteTextures(1, &res.id); }
+		else if constexpr (std::is_same_v<T, Texture2DArray>)   { glDeleteTextures(1, &res.id); }
+		else if constexpr (std::is_same_v<T, TextureCubeArray>) { glDeleteTextures(1, &res.id); }
+		else if constexpr (std::is_same_v<T, RenderBuffer>)     { glDeleteRenderbuffers(1, &res.id); }
+		else if constexpr (std::is_same_v<T, FrameBuffer>)      { glDeleteFramebuffers(1, &res.id); }
+		res.id = 0;
+	}
+
+	/*
+	класс использующий принцип raii для объектов. Возможно в будущем пригодится
+	- реализовать методы перемещения и запретить копирование
+	- реализовать методы каста в базовый тип, чтобы все функции ниже автоматически извлекали нужный тип, без ручного каста
+	*/
+	template<typename T>
+	struct Raii
+	{
+		Raii() : id(m_type.id)
+		{
+			gl4::Create(m_type);
+		}
+		~Raii()
+		{
+			gl4::Destroy(m_type);
+		}
+
+		GLuint& id;
+	private:
+		T m_type;
+	};
+
+	//-------------------------------------------------------------------------
 	// Shader
 	//-------------------------------------------------------------------------
 
 	GLuint CreateShader(GLenum type, const std::string& shaderSource);
-	GLuint CreateShaderProgram(const std::string& computeSrc);
-	GLuint CreateShaderProgram(const std::string& vertexSrc, const std::string& fragmentSrc);
-	GLuint CreateShaderProgram(const std::string& vertexSrc, const std::string& geometrySrc, const std::string& fragmentSrc);
+	ShaderProgram CreateShaderProgram(const std::string& computeSrc);
+	ShaderProgram CreateShaderProgram(const std::string& vertexSrc, const std::string& fragmentSrc);
+	ShaderProgram CreateShaderProgram(const std::string& vertexSrc, const std::string& geometrySrc, const std::string& fragmentSrc);
 
-	int GetUniformLocation(GLuint program, const std::string& name);      // TODO: а нужна ли? это просто glGetUniformLocation
-	GLuint GetUniformBlockIndex(GLuint program, const std::string& name); // TODO: а нужна ли? это просто glGetUniformBlockIndex
+	int GetUniformLocation(ShaderProgram program, const std::string& name);      // TODO: а нужна ли? это просто glGetUniformLocation
+	GLuint GetUniformBlockIndex(ShaderProgram program, const std::string& name); // TODO: а нужна ли? это просто glGetUniformBlockIndex
 
 	void SetUniform(int uniformLoc, bool value);
 	void SetUniform(int uniformLoc, int value);
@@ -30,20 +127,20 @@ namespace gl4
 	void SetUniform(int uniformLoc, const glm::mat4& mat);
 
 	// Временные для демок, использовать нежелательно
-	void SetUniform(GLuint program, const std::string& name, bool value);
-	void SetUniform(GLuint program, const std::string& name, int value);
-	void SetUniform(GLuint program, const std::string& name, uint32_t value);
-	void SetUniform(GLuint program, const std::string& name, float value);
-	void SetUniform(GLuint program, const std::string& name, const glm::vec2& value);
-	void SetUniform(GLuint program, const std::string& name, const glm::ivec2& value);
-	void SetUniform(GLuint program, const std::string& name, float x, float y);
-	void SetUniform(GLuint program, const std::string& name, const glm::vec3& value);
-	void SetUniform(GLuint program, const std::string& name, float x, float y, float z);
-	void SetUniform(GLuint program, const std::string& name, const glm::vec4& value);
-	void SetUniform(GLuint program, const std::string& name, float x, float y, float z, float w);
-	void SetUniform(GLuint program, const std::string& name, const glm::mat2& mat);
-	void SetUniform(GLuint program, const std::string& name, const glm::mat3& mat);
-	void SetUniform(GLuint program, const std::string& name, const glm::mat4& mat);
+	void SetUniform(ShaderProgram program, const std::string& name, bool value);
+	void SetUniform(ShaderProgram program, const std::string& name, int value);
+	void SetUniform(ShaderProgram program, const std::string& name, uint32_t value);
+	void SetUniform(ShaderProgram program, const std::string& name, float value);
+	void SetUniform(ShaderProgram program, const std::string& name, const glm::vec2& value);
+	void SetUniform(ShaderProgram program, const std::string& name, const glm::ivec2& value);
+	void SetUniform(ShaderProgram program, const std::string& name, float x, float y);
+	void SetUniform(ShaderProgram program, const std::string& name, const glm::vec3& value);
+	void SetUniform(ShaderProgram program, const std::string& name, float x, float y, float z);
+	void SetUniform(ShaderProgram program, const std::string& name, const glm::vec4& value);
+	void SetUniform(ShaderProgram program, const std::string& name, float x, float y, float z, float w);
+	void SetUniform(ShaderProgram program, const std::string& name, const glm::mat2& mat);
+	void SetUniform(ShaderProgram program, const std::string& name, const glm::mat3& mat);
+	void SetUniform(ShaderProgram program, const std::string& name, const glm::mat4& mat);
 
 	//-------------------------------------------------------------------------
 	// Buffer

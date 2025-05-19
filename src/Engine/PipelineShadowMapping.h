@@ -1,4 +1,6 @@
-#pragma once
+﻿#pragma once
+
+#include "OpenGL4Wrapper.h"
 
 class PipelineShadowMapping final
 {
@@ -12,7 +14,7 @@ public:
 
 	void BindDepthTexture(unsigned int index) const { glBindTextureUnit(index, m_depthTexture); }
 
-	[[nodiscard]] GLuint           GetDepthShader() const { return m_depthShader; }
+	[[nodiscard]] auto GetDepthShader() const { return m_depthShader; }
 	[[nodiscard]] int              GetDepthShaderModelMatrixLoc() const { return m_modelMatrixLoc; }
 	[[nodiscard]] const glm::mat4& GetLightSpaceMatrix() const { return m_lightSpaceMatrix; }
 
@@ -23,11 +25,11 @@ private:
 	int m_depthWidth{};
 	int m_depthHeight{};
 
-	GLuint m_depthShader{ 0 };
+	gl4::ShaderProgram m_depthShader{ 0 };
 	int m_lightSpaceMatrixLoc{ -1 };
 	int m_modelMatrixLoc{ -1 };
 
-	GLuint m_debugShader{ 0 };
+	gl4::ShaderProgram m_debugShader{ 0 };
 	int m_shadowMapLoc{ -1 };
 
 	GLuint m_depthTexture{ 0 };

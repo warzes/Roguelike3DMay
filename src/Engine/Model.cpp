@@ -87,6 +87,8 @@ Mesh Model::processMesh(const aiMesh* mesh, const aiScene* scene, const glm::mat
 	std::vector<unsigned int> indices;
 	std::unordered_map<TextureType, TextureFile> textures;
 
+	// TODO: сделать проверки для нормалей, текстур, тангетстов по типу HasNormals()
+
 	// Walk through each of the mesh's vertices
 	for (unsigned int i = 0; i < mesh->mNumVertices; ++i)
 	{

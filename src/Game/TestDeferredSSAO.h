@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 class TestDeferredSSAO final : public IEngineApp
 {
@@ -22,5 +22,5 @@ public:
 	void UpdateLightPositions();
 	void InitLights();
 	void RenderLights();
-	void RenderScene(GLuint shader) const;
+	void RenderScene(gl4::ShaderProgram shader) const;
 };

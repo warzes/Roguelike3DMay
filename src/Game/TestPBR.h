@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 class TestPBR final : public IEngineApp
 {
@@ -18,5 +18,5 @@ public:
 	void OnImGuiDraw() final;
 	void OnResize(uint16_t width, uint16_t height) final;
 
-	void RenderScene(GLuint shader);
+	void RenderScene(gl4::ShaderProgram shader);
 };

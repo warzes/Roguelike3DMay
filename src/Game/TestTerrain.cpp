@@ -67,7 +67,7 @@ void main()
 }
 )";
 
-	GLuint program;
+	gl4::ShaderProgram program;
 	int ViewLoc;
 	int ProjLoc;
 	int lightPosLoc;

@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include "OpenGL4Wrapper.h"
+
 class Model;
 
 class DepthPrepass final
@@ -16,7 +18,7 @@ public:
 private:
 	void resizeFBO(int width, int height);
 
-	GLuint m_program{ 0 };
+	gl4::ShaderProgram m_program{ 0 };
 	int    m_uniformVPLoc{ -1 };
 	int    m_uniformModelLoc{ -1 };
 

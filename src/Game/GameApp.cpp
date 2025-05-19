@@ -127,17 +127,17 @@ void main()
 
 
 
-	GLuint program;
+	gl4::ShaderProgram program;
 	int ModelLoc;
 	int ViewLoc;
 	int ProjLoc;
 
-	GLuint modelProgram;
+	gl4::ShaderProgram modelProgram;
 	int modelModelLoc;
 	int modelViewLoc;
 	int modelProjLoc;
 
-	GLuint cubeProgram;
+	gl4::ShaderProgram cubeProgram;
 	int cubeModelLoc;
 	int cubeViewLoc;
 	int cubeProjLoc;

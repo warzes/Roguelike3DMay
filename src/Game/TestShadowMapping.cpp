@@ -194,14 +194,14 @@ void main()
 	FragColor = vec4(normalize(lightColor), alpha);
 }
 )";
-	GLuint lightProgram;
+	gl4::ShaderProgram lightProgram;
 	int lightProjLoc;
 	int lightViewLoc;
 	int lightPositionLoc;
 	int radiusLoc;
 	int lightColorLoc;
 
-	GLuint mainProgram;
+	gl4::ShaderProgram mainProgram;
 	int mainProjLoc;
 	int mainViewLoc;
 	int mainModelLoc;

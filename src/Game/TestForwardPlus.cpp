@@ -62,9 +62,9 @@ void main() {
 
 	DepthPrepass depthPrepass;
 	
-	GLuint depthDebugProgram;
+	gl4::ShaderProgram depthDebugProgram;
 	
-	GLuint lightCullingProgram;
+	gl4::ShaderProgram lightCullingProgram;
 	int lightCullingInvViewProjectionLoc;
 	int lightCullingCamPosLoc;
 	int lightCullingLightCountLoc;
@@ -72,7 +72,7 @@ void main() {
 	int lightCullingTileNumsLoc;
 
 
-	GLuint lightProgram;
+	gl4::ShaderProgram lightProgram;
 	int lightProgramProjectionLoc;
 	int lightProgramViewLoc;
 	int lightProgramModelLoc;
@@ -195,7 +195,7 @@ bool TestForwardPlus::OnCreate()
 
 	depthPrepass.Create(GetWidth(), GetHeight());
 	depthDebugProgram = gl4::CreateShaderProgram(depthDebugShaderCodeVertex, depthDebugShaderCodeFragment);
-	lightCullingProgram = gl4::CreateShaderProgram(ReadShaderCode("GameData/shaders/lightculling.comp", {}).c_str());
+	lightCullingProgram = gl4::CreateShaderProgram(FileUtils::ReadShaderCode("GameData/shaders/lightculling.comp", {}).c_str());
 
 	lightCullingInvViewProjectionLoc = gl4::GetUniformLocation(lightCullingProgram, "invViewProjection");
 	lightCullingCamPosLoc = gl4::GetUniformLocation(lightCullingProgram, "cameraPosition");
@@ -203,7 +203,7 @@ bool TestForwardPlus::OnCreate()
 	lightCullingViewportSizeLoc = gl4::GetUniformLocation(lightCullingProgram, "viewportSize");
 	lightCullingTileNumsLoc = gl4::GetUniformLocation(lightCullingProgram, "tileNums");
 
-	lightProgram = gl4::CreateShaderProgram(ReadShaderCode("GameData/shaders/forwardplus.vert", {}).c_str(), ReadShaderCode("GameData/shaders/forwardplus.frag", {}).c_str());
+	lightProgram = gl4::CreateShaderProgram(FileUtils::ReadShaderCode("GameData/shaders/forwardplus.vert", {}).c_str(), FileUtils::ReadShaderCode("GameData/shaders/forwardplus.frag", {}).c_str());
 
 	lightProgramProjectionLoc = gl4::GetUniformLocation(lightProgram, "projection");
 	lightProgramViewLoc = gl4::GetUniformLocation(lightProgram, "view");

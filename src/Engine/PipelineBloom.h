@@ -1,4 +1,6 @@
-#pragma once
+﻿#pragma once
+
+#include "OpenGL4Wrapper.h"
 
 class PipelineBloom final
 {
@@ -12,15 +14,15 @@ public:
 
 	void RenderComposite() const;
 
-	[[nodiscard]] GLuint GetMainShader() const { return m_mainShader; }
+	[[nodiscard]] gl4::ShaderProgram GetMainShader() const { return m_mainShader; }
 
 private:
 	void initQuad();
 	void renderQuad() const;
 
-	GLuint m_mainShader{ 0 };
-	GLuint m_shaderBlur{ 0 };
-	GLuint m_shaderFinal{ 0 };
+	gl4::ShaderProgram m_mainShader{ 0 };
+	gl4::ShaderProgram m_shaderBlur{ 0 };
+	gl4::ShaderProgram m_shaderFinal{ 0 };
 
 	uint32_t m_blurIteration{ 0 };
 
