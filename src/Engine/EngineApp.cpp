@@ -3,10 +3,14 @@
 #include "Log.h"
 #include "Profiler.h"
 //=============================================================================
+// Use the high-performance GPU (if available) on Windows laptops
+// https://docs.nvidia.com/gameworks/content/technologies/desktop/optimus.htm
+// https://gpuopen.com/learn/amdpowerxpressrequesthighperformance/
 #if defined(_WIN32)
-extern "C" {
-	_declspec(dllexport) uint32_t NvOptimusEnablement = 1;
-	_declspec(dllexport) uint32_t AmdPowerXpressRequestHighPerformance = 1;
+extern "C"
+{
+	__declspec(dllexport) unsigned long NvOptimusEnablement = 1;
+	__declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 1;
 }
 #endif
 //=============================================================================
@@ -20,46 +24,63 @@ void ExitApp()
 }
 //=============================================================================
 #if defined(_DEBUG)
-void messageCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, GLchar const* message, void const* user_param) noexcept
+void openGLErrorCallback(GLenum source, GLenum type, GLuint id, GLenum severity, [[maybe_unused]] GLsizei length, const GLchar* message, [[maybe_unused]] const void* user_param) noexcept
 {
-	auto const src_str = [source]() {
+	// Ignore certain verbose info messages (particularly ones on Nvidia).
+	if (id == 131169 ||
+		id == 131185 || // NV: Buffer will use video memory
+		id == 131218 ||
+		id == 131204 || // Texture cannot be used for texture mapping
+		id == 131222 ||
+		id == 131154 || // NV: pixel transfer is synchronized with 3D rendering
+		id == 0         // gl{Push, Pop}DebugGroup
+		)
+		return;
+
+	const auto sourceStr = [source]() {
 		switch (source)
 		{
-		case GL_DEBUG_SOURCE_API: return "API";
-		case GL_DEBUG_SOURCE_WINDOW_SYSTEM: return "WINDOW SYSTEM";
-		case GL_DEBUG_SOURCE_SHADER_COMPILER: return "SHADER COMPILER";
-		case GL_DEBUG_SOURCE_THIRD_PARTY: return "THIRD PARTY";
-		case GL_DEBUG_SOURCE_APPLICATION: return "APPLICATION";
-		case GL_DEBUG_SOURCE_OTHER: return "OTHER";
+		case GL_DEBUG_SOURCE_API:             return "Source: API";
+		case GL_DEBUG_SOURCE_WINDOW_SYSTEM:   return "Source: Window Manager";
+		case GL_DEBUG_SOURCE_SHADER_COMPILER: return "Source: Shader Compiler";
+		case GL_DEBUG_SOURCE_THIRD_PARTY:     return "Source: Third Party";
+		case GL_DEBUG_SOURCE_APPLICATION:     return "Source: Application";
+		case GL_DEBUG_SOURCE_OTHER:           return "Source: Other";
 		}
 		return "";
 		}();
 
-	auto const type_str = [type]() {
+	const auto typeStr = [type]() {
 		switch (type)
 		{
-		case GL_DEBUG_TYPE_ERROR: return "ERROR";
-		case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR: return "DEPRECATED_BEHAVIOR";
-		case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR: return "UNDEFINED_BEHAVIOR";
-		case GL_DEBUG_TYPE_PORTABILITY: return "PORTABILITY";
-		case GL_DEBUG_TYPE_PERFORMANCE: return "PERFORMANCE";
-		case GL_DEBUG_TYPE_MARKER: return "MARKER";
-		case GL_DEBUG_TYPE_OTHER: return "OTHER";
+		case GL_DEBUG_TYPE_ERROR:               return "Type: Error";
+		case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR: return "Type: Deprecated Behavior";
+		case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:  return "Type: Undefined Behavior";
+		case GL_DEBUG_TYPE_PORTABILITY:         return "Type: Portability";
+		case GL_DEBUG_TYPE_PERFORMANCE:         return "Type: Performance";
+		case GL_DEBUG_TYPE_MARKER:              return "Type: Marker";
+		case GL_DEBUG_TYPE_PUSH_GROUP:          return "Type: Push Group";
+		case GL_DEBUG_TYPE_POP_GROUP:           return "Type: Pop Group";
+		case GL_DEBUG_TYPE_OTHER:               return "Type: Other";
 		}
 		return "";
 		}();
 
-	auto const severity_str = [severity]() {
+	const auto severityStr = [severity]() {
 		switch (severity) {
-		case GL_DEBUG_SEVERITY_NOTIFICATION: return "NOTIFICATION";
-		case GL_DEBUG_SEVERITY_LOW: return "LOW";
-		case GL_DEBUG_SEVERITY_MEDIUM: return "MEDIUM";
-		case GL_DEBUG_SEVERITY_HIGH: return "HIGH";
+		case GL_DEBUG_SEVERITY_NOTIFICATION: return "Severity: notification";
+		case GL_DEBUG_SEVERITY_LOW:          return "Severity: low";
+		case GL_DEBUG_SEVERITY_MEDIUM:       return "Severity: medium";
+		case GL_DEBUG_SEVERITY_HIGH:         return "Severity: high";
 		}
 		return "";
 		}();
 
-	std::string msg = src_str + std::string(", ") + type_str + std::string(", ") + severity_str + std::string(", ") + std::to_string(id) + ": " + message;
+	const std::string msg = "OpenGL Debug message(id=" + std::to_string(id) + "):\n"
+		+ sourceStr + '\n'
+		+ typeStr + '\n'
+		+ severityStr + '\n'
+		+ "Message: " + std::string(message) + '\n';
 	Error(msg);
 }
 #endif
@@ -171,20 +192,27 @@ void IEngineApp::Run()
 			}
 			
 			{
-				SE_SCOPED_SAMPLE("Render");
-				OnRender();
-			}
-
-			{
-				SE_SCOPED_SAMPLE("ImGui Draw");
+				SE_SCOPED_SAMPLE("Frame");
+				// Start a new ImGUi frame
 				ImGui_ImplOpenGL3_NewFrame();
 				ImGui_ImplGlfw_NewFrame();
 				ImGui::NewFrame();
 
+				OnRender();
 				OnImGuiDraw();
 
+				// Updates ImGui
 				ImGui::Render();
-				ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+				auto* drawData = ImGui::GetDrawData();
+				if (drawData->CmdListsCount > 0)
+				{
+					// A frame marker is inserted to distinguish ImGui rendering from the application's in a debugger.
+					auto marker = gl4::ScopedDebugMarker("Draw ImGui");
+					glDisable(GL_FRAMEBUFFER_SRGB);
+					glBindFramebuffer(GL_FRAMEBUFFER, 0);
+					ImGui_ImplOpenGL3_RenderDrawData(drawData);
+					glEnable(GL_FRAMEBUFFER_SRGB);
+				}
 			}
 
 			memset(m_repeatKeys.data(), false, m_repeatKeys.size());
@@ -253,18 +281,11 @@ bool IEngineApp::create()
 
 	if (!createWindow(engineConfig))
 		return false;
-
 	initOpenGL();
-
 	initImGui();
 
 	if (!m_graphics.Create())
 		return false;
-
-	double xpos, ypos;
-	glfwGetCursorPos(m_window, &xpos, &ypos);
-	m_mouseLastX = xpos;
-	m_mouseLastY = ypos;
 
 	profiler::Init();
 	thisIEngineApp = this;
@@ -292,13 +313,24 @@ bool IEngineApp::createWindow(const EngineConfig& config)
 #else
 	glfwWindowHint(GLFW_CONTEXT_NO_ERROR, GLFW_TRUE);
 #endif
+	glfwWindowHint(GLFW_DOUBLEBUFFER, GLFW_TRUE);
+	glfwWindowHint(GLFW_SRGB_CAPABLE, GLFW_TRUE);
 
 	glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 	glfwWindowHint(GLFW_MAXIMIZED, config.window.maximized ? GL_TRUE : GL_FALSE);
+	glfwWindowHint(GLFW_DECORATED, config.window.decorate ? GL_TRUE : GL_FALSE);
 
 	// Disable GlFW auto iconify behaviour
 	// Auto Iconify automatically minimizes (iconifies) the window if the window loses focus additionally auto iconify restores the hardware resolution of the monitor if the window that loses focus is a fullscreen window
-	glfwWindowHint(GLFW_AUTO_ICONIFY, 0);
+	glfwWindowHint(GLFW_AUTO_ICONIFY, GL_FALSE);
+
+	GLFWmonitor* monitor = glfwGetPrimaryMonitor();
+	if (!monitor)
+	{
+		Fatal("No Monitor detected");
+		return false;
+	}
+	const GLFWvidmode* videoMode = glfwGetVideoMode(monitor);
 
 	m_window = glfwCreateWindow(config.window.width, config.window.height, config.window.title.data(), nullptr, nullptr);
 	if (!m_window)
@@ -320,10 +352,20 @@ bool IEngineApp::createWindow(const EngineConfig& config)
 
 	int displayW, displayH;
 	glfwGetFramebufferSize(m_window, &displayW, &displayH);
-	m_width = static_cast<uint32_t>(displayW);
-	m_height = static_cast<uint32_t>(displayH);
+	m_width = static_cast<uint16_t>(displayW);
+	m_height = static_cast<uint16_t>(displayH);
 
-	Info("Created window");
+	int monitorLeft, monitorTop;
+	glfwGetMonitorPos(monitor, &monitorLeft, &monitorTop);
+
+	glfwSetWindowPos(m_window,
+		videoMode->width / 2 - m_width / 2 + monitorLeft,
+		videoMode->height / 2 - m_height / 2 + monitorTop);
+
+	double xpos, ypos;
+	glfwGetCursorPos(m_window, &xpos, &ypos);
+	m_mouseLastX = xpos;
+	m_mouseLastY = ypos;
 
 	glfwMakeContextCurrent(m_window);
 
@@ -334,8 +376,6 @@ bool IEngineApp::createWindow(const EngineConfig& config)
 	}
 	glfwSwapInterval(config.render.vsync ? 1 : 0);
 
-	Info("Created OpenGL context");
-
 	return true;
 }
 //=============================================================================
@@ -344,11 +384,13 @@ void IEngineApp::initOpenGL()
 #if defined(_DEBUG)
 	glEnable(GL_DEBUG_OUTPUT);
 	glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
-	glDebugMessageCallback(messageCallback, nullptr);
-	glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, nullptr, GL_FALSE);
+	glDebugMessageCallback(openGLErrorCallback, nullptr);
+	glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
 #endif
 
 	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+
+	glEnable(GL_FRAMEBUFFER_SRGB);
 }
 //=============================================================================
 void IEngineApp::initImGui()

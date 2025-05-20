@@ -239,4 +239,15 @@ namespace gl4
 
 	void SetFrameBuffer(gl4::FrameBuffer fbo, int width, int height, GLbitfield clearMask);
 
+
+	//-------------------------------------------------------------------------
+	// Other
+	//-------------------------------------------------------------------------
+	class ScopedDebugMarker final
+	{
+	public:
+		ScopedDebugMarker(const char* message);
+		ScopedDebugMarker(const ScopedDebugMarker&) = delete;
+		~ScopedDebugMarker();
+	};
 }

@@ -12,6 +12,7 @@ struct EngineConfig final
 		uint16_t         height{ 900 };
 		std::string_view title{ "Game" };
 		bool             maximized{ false };
+		bool             decorate{ true };
 		bool             fullScreen{ false };
 	} window;
 

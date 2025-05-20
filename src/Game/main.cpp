@@ -37,9 +37,9 @@ int main(
 	//TestSimple game;
 	//TestTerrain game;
 	//TestForwardPlus game;
-	//TestCascadedShadowMaps game;
+	TestCascadedShadowMaps game;
 
-	TestComplex game;
+	//TestComplex game;
 
 	game.Run();
 }
