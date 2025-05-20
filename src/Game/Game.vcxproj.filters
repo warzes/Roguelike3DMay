@@ -46,7 +46,7 @@
       <Filter>GameApp\Test3</Filter>
     </ClCompile>
     <ClCompile Include="SimpleTest001.cpp">
-      <Filter>GameApp\OpenGL4SimpleTest</Filter>
+      <Filter>GameApp\OpenGL4Framework</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -95,7 +95,7 @@
       <Filter>GameApp\Test3</Filter>
     </ClInclude>
     <ClInclude Include="SimpleTest001.h">
-      <Filter>GameApp\OpenGL4SimpleTest</Filter>
+      <Filter>GameApp\OpenGL4Framework</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -123,7 +123,7 @@
     <Filter Include="GameApp\Test3\shaders\TestComplex">
       <UniqueIdentifier>{b2b7cdb4-6be4-41d9-8274-d9a0bd9c3972}</UniqueIdentifier>
     </Filter>
-    <Filter Include="GameApp\OpenGL4SimpleTest">
+    <Filter Include="GameApp\OpenGL4Framework">
       <UniqueIdentifier>{8d2ebf8d-9206-432f-9279-9410480cf170}</UniqueIdentifier>
     </Filter>
   </ItemGroup>

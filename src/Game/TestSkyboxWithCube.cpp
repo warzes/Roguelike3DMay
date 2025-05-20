@@ -84,13 +84,13 @@ void main()
 )";
 
 
-	gl4::ShaderProgram cubeProgram;
+	gl4::ShaderProgramId cubeProgram;
 	int cubeModelLoc;
 	int cubeViewLoc;
 	int cubeProjectionLoc;
 	int cubeCameraPosLoc;
 
-	gl4::ShaderProgram skyboxProgram;
+	gl4::ShaderProgramId skyboxProgram;
 	int skyViewLoc;
 	int skyProjectionLoc;
 

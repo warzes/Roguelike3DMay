@@ -61,16 +61,15 @@ void main()
 		glm::mat4 projection;
 	};
 
-	gl4::ShaderProgram program;
+	gl4::ShaderProgramId program;
 
 	MVPData mvpData;
 	GLuint mvpUbo;
 
 	GLuint texture;
-	gl4::Buffer vbo;
-	gl4::VertexArray vao;
 
-	Camera camera;
+	gl4f::Buffer* vertexPosBuffer;
+	gl4f::Buffer* vertexColorBuffer;
 }
 //=============================================================================
 EngineConfig SimpleTest001::GetConfig() const
@@ -86,38 +85,12 @@ bool SimpleTest001::OnCreate()
 	
 	texture = gl4::LoadTexture2D("ExampleData/textures/wood.png", false);
 
-	struct Vertex
-	{
-		glm::vec3 pos;
-		glm::vec3 normal;
-		glm::vec2 uv;
-	};
-
-	std::vector<gl4::VertexAttribute> attribs = {
-		{0, 3, GL_FLOAT, false, offsetof(Vertex, pos)},
-		{1, 3, GL_FLOAT, false, offsetof(Vertex, normal)},
-		{2, 2, GL_FLOAT, false, offsetof(Vertex, uv)},
-	};
-
-	// Quad
-	float vertices[]{
-		// positions            // normals            // texcoords
-		 10.0f, -0.5f,  10.0f,  0.0f, 1.0f, 0.0f,  10.0f,  0.0f,
-		-10.0f, -0.5f,  10.0f,  0.0f, 1.0f, 0.0f,   0.0f,  0.0f,
-		-10.0f, -0.5f, -10.0f,  0.0f, 1.0f, 0.0f,   0.0f, 10.0f,
-
-		 10.0f, -0.5f,  10.0f,  0.0f, 1.0f, 0.0f,  10.0f,  0.0f,
-		-10.0f, -0.5f, -10.0f,  0.0f, 1.0f, 0.0f,   0.0f, 10.0f,
-		 10.0f, -0.5f, -10.0f,  0.0f, 1.0f, 0.0f,  10.0f, 10.0f
-	};
-
-	vbo = gl4::CreateBufferStorage(0, sizeof(vertices), vertices);
-	vao = gl4::CreateVertexArray(vbo, sizeof(Vertex), attribs);
-
-	camera.SetPosition(glm::vec3(0.0f, 0.0f, -1.0f));
+	static constexpr std::array<float, 6> triPositions = { -0, -0, 1, -1, 1, 1 };
+	static constexpr std::array<uint8_t, 9> triColors = { 255, 0, 0, 0, 255, 0, 0, 0, 255 };
+	vertexPosBuffer = new gl4f::Buffer(triPositions);
+	vertexColorBuffer = new gl4f::Buffer(triColors);
 
 	glClearColor(0.7f, 0.8f, 0.9f, 1.0f);
-	glEnable(GL_DEPTH_TEST);
 
 	return true;
 }
@@ -128,25 +101,6 @@ void SimpleTest001::OnDestroy()
 //=============================================================================
 void SimpleTest001::OnUpdate(float deltaTime)
 {
-	if (glfwGetKey(GetGLFWWindow(), GLFW_KEY_W) == GLFW_PRESS)
-		camera.ProcessKeyboard(CameraForward, deltaTime);
-	if (glfwGetKey(GetGLFWWindow(), GLFW_KEY_S) == GLFW_PRESS)
-		camera.ProcessKeyboard(CameraBackward, deltaTime);
-	if (glfwGetKey(GetGLFWWindow(), GLFW_KEY_A) == GLFW_PRESS)
-		camera.ProcessKeyboard(CameraLeft, deltaTime);
-	if (glfwGetKey(GetGLFWWindow(), GLFW_KEY_D) == GLFW_PRESS)
-		camera.ProcessKeyboard(CameraRight, deltaTime);
-
-	if (glfwGetMouseButton(GetGLFWWindow(), GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
-	{
-		SetCursorVisible(false);
-		camera.ProcessMouseMovement(-GetMouseDeltaX(), -GetMouseDeltaY());
-	}
-	else if (glfwGetMouseButton(GetGLFWWindow(), GLFW_MOUSE_BUTTON_RIGHT) == GLFW_RELEASE)
-	{
-		glfwSetInputMode(GetGLFWWindow(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-		SetCursorVisible(true);
-	}
 }
 //=============================================================================
 void SimpleTest001::OnRender()
@@ -154,20 +108,10 @@ void SimpleTest001::OnRender()
 	gl4::SetFrameBuffer({ 0 }, GetWidth(), GetHeight(), GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	mvpData.model = glm::mat4(1.0f);
-	mvpData.view = camera.GetViewMatrix();
 	mvpData.projection = glm::perspective(glm::radians(60.0f), GetAspect(), 0.01f, 1000.0f);
 
 	glNamedBufferSubData(mvpUbo, 0, sizeof(MVPData), &mvpData);
-
-	// вывод квада плоскости
-	{
-		glUseProgram(program);
-		glBindBufferBase(GL_UNIFORM_BUFFER, 0, mvpUbo);
-		glBindTextureUnit(0, texture);
-		glBindVertexArray(vao);
-
-		glDrawArrays(GL_TRIANGLES, 0, 6);
-	}
+	
 }
 //=============================================================================
 void SimpleTest001::OnImGuiDraw()

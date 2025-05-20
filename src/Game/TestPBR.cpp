@@ -244,8 +244,8 @@ void main()
 }
 )";
 
-	gl4::ShaderProgram shader;
-	gl4::ShaderProgram lightSphereShader;
+	gl4::ShaderProgramId shader;
+	gl4::ShaderProgramId lightSphereShader;
 
 	Camera camera;
 
@@ -382,7 +382,7 @@ void TestPBR::OnResize(uint16_t width, uint16_t height)
 {
 }
 //=============================================================================
-void TestPBR::RenderScene(gl4::ShaderProgram shader)
+void TestPBR::RenderScene(gl4::ShaderProgramId shader)
 {
 	bool skipTextureBinding = false;
 

@@ -46,7 +46,7 @@ private:
 	std::unordered_map<TextureType, TextureFile> m_textureMap{};
 
 	// Render data 
-	gl4::VertexArray m_vao{0}; // TODO: возможно vao должно быть одно для всех моделей, а буферы размещать за счет glVertexArrayVertexBuffer/glVertexArrayElementBuffer
-	gl4::Buffer m_vbo{0};
-	gl4::Buffer m_ibo{0};
+	gl4::VertexArrayId m_vao{0}; // TODO: возможно vao должно быть одно для всех моделей, а буферы размещать за счет glVertexArrayVertexBuffer/glVertexArrayElementBuffer
+	gl4::BufferId m_vbo{0};
+	gl4::BufferId m_ibo{0};
 };

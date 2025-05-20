@@ -97,14 +97,14 @@ void main()
 )";
 
 
-	gl4::ShaderProgram modelProgram;
+	gl4::ShaderProgramId modelProgram;
 	int modelModelLoc;
 	int modelViewLoc;
 	int modelProjLoc;
 	int lightPosLoc;
 	int viewPosLoc;
 
-	gl4::ShaderProgram lightProgram;
+	gl4::ShaderProgramId lightProgram;
 	int lightModelLoc;
 	int lightViewLoc;
 	int lightProjLoc;

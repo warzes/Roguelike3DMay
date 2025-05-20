@@ -62,9 +62,9 @@ void main() {
 
 	DepthPrepass depthPrepass;
 	
-	gl4::ShaderProgram depthDebugProgram;
+	gl4::ShaderProgramId depthDebugProgram;
 	
-	gl4::ShaderProgram lightCullingProgram;
+	gl4::ShaderProgramId lightCullingProgram;
 	int lightCullingInvViewProjectionLoc;
 	int lightCullingCamPosLoc;
 	int lightCullingLightCountLoc;
@@ -72,7 +72,7 @@ void main() {
 	int lightCullingTileNumsLoc;
 
 
-	gl4::ShaderProgram lightProgram;
+	gl4::ShaderProgramId lightProgram;
 	int lightProgramProjectionLoc;
 	int lightProgramViewLoc;
 	int lightProgramModelLoc;
@@ -97,7 +97,7 @@ void main() {
 	GLuint tileCountPerRow;
 	GLuint tileCountPerCol;
 
-	gl4::FrameBuffer renderFBO;
+	gl4::FrameBufferId renderFBO;
 	GLuint rboColorBuffer;
 	GLuint rboDepthBuffer;
 

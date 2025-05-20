@@ -67,15 +67,15 @@ void main()
 }
 )";
 
-	gl4::ShaderProgram program;
+	gl4::ShaderProgramId program;
 	int ViewLoc;
 	int ProjLoc;
 	int lightPosLoc;
 	int viewPosLoc;
 
 	GLuint texture;
-	gl4::Buffer vbo;
-	gl4::VertexArray vao;
+	gl4::BufferId vbo;
+	gl4::VertexArrayId vao;
 
 	Camera camera;
 

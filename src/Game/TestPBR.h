@@ -18,5 +18,5 @@ public:
 	void OnImGuiDraw() final;
 	void OnResize(uint16_t width, uint16_t height) final;
 
-	void RenderScene(gl4::ShaderProgram shader);
+	void RenderScene(gl4::ShaderProgramId shader);
 };

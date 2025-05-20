@@ -6,7 +6,7 @@ namespace gl4
 	// OpenGL Types
 	//-------------------------------------------------------------------------
 	template <typename Tag>
-	struct GLObject final
+	struct GLObjectId final
 	{
 		operator GLuint() const { return id; }
 
@@ -25,18 +25,18 @@ namespace gl4
 	struct __RenderBufferTag;
 	struct __FrameBufferTag;
 
-	using ShaderProgram = GLObject<__ShaderProgramTag>;
-	using Buffer = GLObject<__BufferTag>;
-	using VertexArray = GLObject<__VertexArrayTag>;
-	using Texture1D = GLObject<__Texture1DTag>;
-	using Texture2D = GLObject<__Texture2DTag>;
-	using Texture3D = GLObject<__Texture3DTag>;
-	using TextureCube = GLObject<__TextureCubeTag>;
-	using Texture1DArray = GLObject<__Texture1DArrayTag>;
-	using Texture2DArray = GLObject<__Texture2DArrayTag>;
-	using TextureCubeArray = GLObject<__TextureCubeArrayTag>;
-	using RenderBuffer = GLObject<__RenderBufferTag>;
-	using FrameBuffer = GLObject<__FrameBufferTag>;
+	using ShaderProgramId = GLObjectId<__ShaderProgramTag>;
+	using BufferId = GLObjectId<__BufferTag>;
+	using VertexArrayId = GLObjectId<__VertexArrayTag>;
+	using Texture1DId = GLObjectId<__Texture1DTag>;
+	using Texture2DId = GLObjectId<__Texture2DTag>;
+	using Texture3DId = GLObjectId<__Texture3DTag>;
+	using TextureCubeId = GLObjectId<__TextureCubeTag>;
+	using Texture1DArrayId = GLObjectId<__Texture1DArrayTag>;
+	using Texture2DArrayId = GLObjectId<__Texture2DArrayTag>;
+	using TextureCubeArrayId = GLObjectId<__TextureCubeArrayTag>;
+	using RenderBufferId = GLObjectId<__RenderBufferTag>;
+	using FrameBufferId = GLObjectId<__FrameBufferTag>;
 	
 	template<typename T>
 	bool IsValid(const T& res) { return res.id > 0; }
@@ -44,36 +44,36 @@ namespace gl4
 	template<typename T>
 	void Create(T& res)
 	{
-		if constexpr (std::is_same_v<T, ShaderProgram>)         { res.id = glCreateProgram(); }
-		else if constexpr (std::is_same_v<T, Buffer>)           { glCreateBuffers(1, &res.id); }
-		else if constexpr (std::is_same_v<T, VertexArray>)      { glCreateVertexArrays(1, &res.id); }
-		else if constexpr (std::is_same_v<T, Texture1D>)        { glCreateTextures(GL_TEXTURE_1D, 1, &res.id); }
-		else if constexpr (std::is_same_v<T, Texture2D>)        { glCreateTextures(GL_TEXTURE_2D, 1, &res.id); }
-		else if constexpr (std::is_same_v<T, Texture3D>)        { glCreateTextures(GL_TEXTURE_3D, 1, &res.id); }
-		else if constexpr (std::is_same_v<T, TextureCube>)      { glCreateTextures(GL_TEXTURE_CUBE_MAP, 1, &res.id); }
-		else if constexpr (std::is_same_v<T, Texture1DArray>)   { glCreateTextures(GL_TEXTURE_1D_ARRAY, 1, &res.id); }
-		else if constexpr (std::is_same_v<T, Texture2DArray>)   { glCreateTextures(GL_TEXTURE_2D_ARRAY, 1, &res.id); }
-		else if constexpr (std::is_same_v<T, TextureCubeArray>) { glCreateTextures(GL_TEXTURE_CUBE_MAP_ARRAY, 1, &res.id); }
-		else if constexpr (std::is_same_v<T, RenderBuffer>)     { glCreateRenderbuffers( 1, &res.id); }
-		else if constexpr (std::is_same_v<T, FrameBuffer>)      { glCreateFramebuffers(1, &res.id); }
+		if constexpr (std::is_same_v<T, ShaderProgramId>)         { res.id = glCreateProgram(); }
+		else if constexpr (std::is_same_v<T, BufferId>)           { glCreateBuffers(1, &res.id); }
+		else if constexpr (std::is_same_v<T, VertexArrayId>)      { glCreateVertexArrays(1, &res.id); }
+		else if constexpr (std::is_same_v<T, Texture1DId>)        { glCreateTextures(GL_TEXTURE_1D, 1, &res.id); }
+		else if constexpr (std::is_same_v<T, Texture2DId>)        { glCreateTextures(GL_TEXTURE_2D, 1, &res.id); }
+		else if constexpr (std::is_same_v<T, Texture3DId>)        { glCreateTextures(GL_TEXTURE_3D, 1, &res.id); }
+		else if constexpr (std::is_same_v<T, TextureCubeId>)      { glCreateTextures(GL_TEXTURE_CUBE_MAP, 1, &res.id); }
+		else if constexpr (std::is_same_v<T, Texture1DArrayId>)   { glCreateTextures(GL_TEXTURE_1D_ARRAY, 1, &res.id); }
+		else if constexpr (std::is_same_v<T, Texture2DArrayId>)   { glCreateTextures(GL_TEXTURE_2D_ARRAY, 1, &res.id); }
+		else if constexpr (std::is_same_v<T, TextureCubeArrayId>) { glCreateTextures(GL_TEXTURE_CUBE_MAP_ARRAY, 1, &res.id); }
+		else if constexpr (std::is_same_v<T, RenderBufferId>)     { glCreateRenderbuffers( 1, &res.id); }
+		else if constexpr (std::is_same_v<T, FrameBufferId>)      { glCreateFramebuffers(1, &res.id); }
 		assert(res.id);
 	}
 
 	template<typename T>
 	void Destroy(T& res)
 	{
-		if constexpr (std::is_same_v<T, ShaderProgram>)         { glDeleteProgram(res.id); }
-		else if constexpr (std::is_same_v<T, Buffer>)           { glDeleteBuffers(1, &res.id); }
-		else if constexpr (std::is_same_v<T, VertexArray>)      { glDeleteVertexArrays(1, &res.id); }
-		else if constexpr (std::is_same_v<T, Texture1D>)        { glDeleteTextures(1, &res.id); }
-		else if constexpr (std::is_same_v<T, Texture2D>)        { glDeleteTextures(1, &res.id); }
-		else if constexpr (std::is_same_v<T, Texture3D>)        { glDeleteTextures(1, &res.id); }
-		else if constexpr (std::is_same_v<T, TextureCube>)      { glDeleteTextures(1, &res.id); }
-		else if constexpr (std::is_same_v<T, Texture1DArray>)   { glDeleteTextures(1, &res.id); }
-		else if constexpr (std::is_same_v<T, Texture2DArray>)   { glDeleteTextures(1, &res.id); }
-		else if constexpr (std::is_same_v<T, TextureCubeArray>) { glDeleteTextures(1, &res.id); }
-		else if constexpr (std::is_same_v<T, RenderBuffer>)     { glDeleteRenderbuffers(1, &res.id); }
-		else if constexpr (std::is_same_v<T, FrameBuffer>)      { glDeleteFramebuffers(1, &res.id); }
+		if constexpr (std::is_same_v<T, ShaderProgramId>)         { glDeleteProgram(res.id); }
+		else if constexpr (std::is_same_v<T, BufferId>)           { glDeleteBuffers(1, &res.id); }
+		else if constexpr (std::is_same_v<T, VertexArrayId>)      { glDeleteVertexArrays(1, &res.id); }
+		else if constexpr (std::is_same_v<T, Texture1DId>)        { glDeleteTextures(1, &res.id); }
+		else if constexpr (std::is_same_v<T, Texture2DId>)        { glDeleteTextures(1, &res.id); }
+		else if constexpr (std::is_same_v<T, Texture3DId>)        { glDeleteTextures(1, &res.id); }
+		else if constexpr (std::is_same_v<T, TextureCubeId>)      { glDeleteTextures(1, &res.id); }
+		else if constexpr (std::is_same_v<T, Texture1DArrayId>)   { glDeleteTextures(1, &res.id); }
+		else if constexpr (std::is_same_v<T, Texture2DArrayId>)   { glDeleteTextures(1, &res.id); }
+		else if constexpr (std::is_same_v<T, TextureCubeArrayId>) { glDeleteTextures(1, &res.id); }
+		else if constexpr (std::is_same_v<T, RenderBufferId>)     { glDeleteRenderbuffers(1, &res.id); }
+		else if constexpr (std::is_same_v<T, FrameBufferId>)      { glDeleteFramebuffers(1, &res.id); }
 		res.id = 0;
 	}
 
@@ -104,12 +104,12 @@ namespace gl4
 	//-------------------------------------------------------------------------
 
 	GLuint CreateShader(GLenum type, const std::string& shaderSource);
-	ShaderProgram CreateShaderProgram(const std::string& computeSrc);
-	ShaderProgram CreateShaderProgram(const std::string& vertexSrc, const std::string& fragmentSrc);
-	ShaderProgram CreateShaderProgram(const std::string& vertexSrc, const std::string& geometrySrc, const std::string& fragmentSrc);
+	ShaderProgramId CreateShaderProgram(const std::string& computeSrc);
+	ShaderProgramId CreateShaderProgram(const std::string& vertexSrc, const std::string& fragmentSrc);
+	ShaderProgramId CreateShaderProgram(const std::string& vertexSrc, const std::string& geometrySrc, const std::string& fragmentSrc);
 
-	int GetUniformLocation(ShaderProgram program, const std::string& name);      // TODO: а нужна ли? это просто glGetUniformLocation
-	GLuint GetUniformBlockIndex(ShaderProgram program, const std::string& name); // TODO: а нужна ли? это просто glGetUniformBlockIndex
+	int GetUniformLocation(ShaderProgramId program, const std::string& name);      // TODO: а нужна ли? это просто glGetUniformLocation
+	GLuint GetUniformBlockIndex(ShaderProgramId program, const std::string& name); // TODO: а нужна ли? это просто glGetUniformBlockIndex
 
 	void SetUniform(int uniformLoc, bool value);
 	void SetUniform(int uniformLoc, int value);
@@ -127,32 +127,32 @@ namespace gl4
 	void SetUniform(int uniformLoc, const glm::mat4& mat);
 
 	// Временные для демок, использовать нежелательно
-	void SetUniform(ShaderProgram program, const std::string& name, bool value);
-	void SetUniform(ShaderProgram program, const std::string& name, int value);
-	void SetUniform(ShaderProgram program, const std::string& name, uint32_t value);
-	void SetUniform(ShaderProgram program, const std::string& name, float value);
-	void SetUniform(ShaderProgram program, const std::string& name, const glm::vec2& value);
-	void SetUniform(ShaderProgram program, const std::string& name, const glm::ivec2& value);
-	void SetUniform(ShaderProgram program, const std::string& name, float x, float y);
-	void SetUniform(ShaderProgram program, const std::string& name, const glm::vec3& value);
-	void SetUniform(ShaderProgram program, const std::string& name, float x, float y, float z);
-	void SetUniform(ShaderProgram program, const std::string& name, const glm::vec4& value);
-	void SetUniform(ShaderProgram program, const std::string& name, float x, float y, float z, float w);
-	void SetUniform(ShaderProgram program, const std::string& name, const glm::mat2& mat);
-	void SetUniform(ShaderProgram program, const std::string& name, const glm::mat3& mat);
-	void SetUniform(ShaderProgram program, const std::string& name, const glm::mat4& mat);
+	void SetUniform(ShaderProgramId program, const std::string& name, bool value);
+	void SetUniform(ShaderProgramId program, const std::string& name, int value);
+	void SetUniform(ShaderProgramId program, const std::string& name, uint32_t value);
+	void SetUniform(ShaderProgramId program, const std::string& name, float value);
+	void SetUniform(ShaderProgramId program, const std::string& name, const glm::vec2& value);
+	void SetUniform(ShaderProgramId program, const std::string& name, const glm::ivec2& value);
+	void SetUniform(ShaderProgramId program, const std::string& name, float x, float y);
+	void SetUniform(ShaderProgramId program, const std::string& name, const glm::vec3& value);
+	void SetUniform(ShaderProgramId program, const std::string& name, float x, float y, float z);
+	void SetUniform(ShaderProgramId program, const std::string& name, const glm::vec4& value);
+	void SetUniform(ShaderProgramId program, const std::string& name, float x, float y, float z, float w);
+	void SetUniform(ShaderProgramId program, const std::string& name, const glm::mat2& mat);
+	void SetUniform(ShaderProgramId program, const std::string& name, const glm::mat3& mat);
+	void SetUniform(ShaderProgramId program, const std::string& name, const glm::mat4& mat);
 
 	//-------------------------------------------------------------------------
 	// Buffer
 	//-------------------------------------------------------------------------
 
-	Buffer CreateBuffer(GLenum usage, GLsizeiptr size, void* data);
+	BufferId CreateBuffer(GLenum usage, GLsizeiptr size, void* data);
 
-	Buffer CreateBufferStorage(GLbitfield flags, GLsizeiptr size, void* data);
-	Buffer CreateBufferStorage(GLbitfield flags, GLsizeiptr sizeElement, GLsizeiptr numElement, void* data);
+	BufferId CreateBufferStorage(GLbitfield flags, GLsizeiptr size, void* data);
+	BufferId CreateBufferStorage(GLbitfield flags, GLsizeiptr sizeElement, GLsizeiptr numElement, void* data);
 
 	template<typename T>
-	Buffer CreateBufferStorage(GLbitfield flags, const std::vector<T>& data)
+	BufferId CreateBufferStorage(GLbitfield flags, const std::vector<T>& data)
 	{
 		return CreateBufferStorage(flags, sizeof(T), data.size(), (void*)data.data());
 	}
@@ -178,10 +178,10 @@ namespace gl4
 	void SetVertexAttrib(GLuint vao, const VertexAttribute& attribute);
 	void SetVertexAttrib(GLuint vao, const std::vector<VertexAttribute>& attributes);
 
-	VertexArray CreateVertexArray();
-	VertexArray CreateVertexArray(const std::vector<VertexAttribute>& attributes);
-	VertexArray CreateVertexArray(Buffer vbo, size_t vertexSize, const std::vector<VertexAttribute>& attributes);
-	VertexArray CreateVertexArray(Buffer vbo, Buffer ibo, size_t vertexSize, const std::vector<VertexAttribute>& attributes);
+	VertexArrayId CreateVertexArray();
+	VertexArrayId CreateVertexArray(const std::vector<VertexAttribute>& attributes);
+	VertexArrayId CreateVertexArray(BufferId vbo, size_t vertexSize, const std::vector<VertexAttribute>& attributes);
+	VertexArrayId CreateVertexArray(BufferId vbo, BufferId ibo, size_t vertexSize, const std::vector<VertexAttribute>& attributes);
 
 	//-------------------------------------------------------------------------
 	// Texture
@@ -216,12 +216,12 @@ namespace gl4
 		.genMipMap = true
 	};
 
-	Texture2D CreateTexture2D(GLenum internalFormat, GLsizei width, GLsizei height, void* data, const TextureParameter& param = defaultTextureParameter2D);
-	Texture2D LoadTexture2D(const char* texturePath, bool flipVertical = false, const TextureParameter& param = defaultTextureParameter2D);
-	Texture2D LoadTexture2DHDR(const char* texturePath, bool flipVertical = false, const TextureParameter& param = defaultTextureParameter2DHDR);
-	TextureCube LoadCubeMap(const std::vector<std::string>& files, const std::string& directory);
+	Texture2DId CreateTexture2D(GLenum internalFormat, GLsizei width, GLsizei height, void* data, const TextureParameter& param = defaultTextureParameter2D);
+	Texture2DId LoadTexture2D(const char* texturePath, bool flipVertical = false, const TextureParameter& param = defaultTextureParameter2D);
+	Texture2DId LoadTexture2DHDR(const char* texturePath, bool flipVertical = false, const TextureParameter& param = defaultTextureParameter2DHDR);
+	TextureCubeId LoadCubeMap(const std::vector<std::string>& files, const std::string& directory);
 
-	void BindTextureSampler(GLuint unit, Texture2D texture, GLuint sampler);
+	void BindTextureSampler(GLuint unit, Texture2DId texture, GLuint sampler);
 
 
 	//-------------------------------------------------------------------------
@@ -230,24 +230,13 @@ namespace gl4
 	GLuint CreateColorBuffer2D(int width, int height, GLenum formatColor); // удалить - через создание текстуры
 	GLuint CreateDepthBuffer2D(int width, int height, GLenum formatDepth = GL_DEPTH_COMPONENT32);
 	// TODO: CreateRenderBuffer???
-	FrameBuffer CreateFrameBuffer2D(GLuint colorBuffer, GLuint depthBuffer);
+	FrameBufferId CreateFrameBuffer2D(GLuint colorBuffer, GLuint depthBuffer);
 
 
 	//-------------------------------------------------------------------------
 	// Commands
 	//-------------------------------------------------------------------------
 
-	void SetFrameBuffer(gl4::FrameBuffer fbo, int width, int height, GLbitfield clearMask);
+	void SetFrameBuffer(gl4::FrameBufferId fbo, int width, int height, GLbitfield clearMask);
 
-
-	//-------------------------------------------------------------------------
-	// Other
-	//-------------------------------------------------------------------------
-	class ScopedDebugMarker final
-	{
-	public:
-		ScopedDebugMarker(const char* message);
-		ScopedDebugMarker(const ScopedDebugMarker&) = delete;
-		~ScopedDebugMarker();
-	};
 } // namespace gl4

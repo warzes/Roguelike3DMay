@@ -22,5 +22,5 @@ public:
 	void UpdateLightPositions();
 	void InitLights();
 	void RenderLights();
-	void RenderScene(gl4::ShaderProgram shader) const;
+	void RenderScene(gl4::ShaderProgramId shader) const;
 };

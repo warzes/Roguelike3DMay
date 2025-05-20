@@ -63,7 +63,7 @@ void main()
 }
 )";
 
-	gl4::ShaderProgram program;
+	gl4::ShaderProgramId program;
 	int lightPositionLoc;
 	int radiusLoc;
 	int lightColorLoc;

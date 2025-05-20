@@ -4,6 +4,8 @@
 
 // Core
 #include "Log.h"
+#include "FlagsUtils.h"
+#include "BasicTypes.h"
 #include "StrUtils.h"
 #include "FileUtils.h"
 #include "CoreFunc.h"
@@ -12,7 +14,11 @@
 #include "CoreMath.h"
 
 // RHI
+#include "OpenGL4Base.h"
+#include "OpenGL4ApiToEnum.h"
 #include "OpenGL4Simple.h"
+#include "OpenGL4Buffer.h"
+#include "OpenGL4DebugMarker.h"
 
 // Render
 #include "DepthPrepass.h"

@@ -2,6 +2,7 @@
 #include "EngineApp.h"
 #include "Log.h"
 #include "Profiler.h"
+#include "OpenGL4DebugMarker.h"
 //=============================================================================
 // Use the high-performance GPU (if available) on Windows laptops
 // https://docs.nvidia.com/gameworks/content/technologies/desktop/optimus.htm
@@ -207,7 +208,7 @@ void IEngineApp::Run()
 				if (drawData->CmdListsCount > 0)
 				{
 					// A frame marker is inserted to distinguish ImGui rendering from the application's in a debugger.
-					auto marker = gl4::ScopedDebugMarker("Draw ImGui");
+					auto marker = gl4f::ScopedDebugMarker("Draw ImGui");
 					glDisable(GL_FRAMEBUFFER_SRGB);
 					glBindFramebuffer(GL_FRAMEBUFFER, 0);
 					ImGui_ImplOpenGL3_RenderDrawData(drawData);

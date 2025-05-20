@@ -127,25 +127,25 @@ void main()
 
 
 
-	gl4::ShaderProgram program;
+	gl4::ShaderProgramId program;
 	int ModelLoc;
 	int ViewLoc;
 	int ProjLoc;
 
-	gl4::ShaderProgram modelProgram;
+	gl4::ShaderProgramId modelProgram;
 	int modelModelLoc;
 	int modelViewLoc;
 	int modelProjLoc;
 
-	gl4::ShaderProgram cubeProgram;
+	gl4::ShaderProgramId cubeProgram;
 	int cubeModelLoc;
 	int cubeViewLoc;
 	int cubeProjLoc;
 
 	GLuint texture;
-	gl4::Buffer vbo;
-	gl4::Buffer ibo;
-	gl4::VertexArray vao;
+	gl4::BufferId vbo;
+	gl4::BufferId ibo;
+	gl4::VertexArrayId vao;
 
 	Camera camera;
 

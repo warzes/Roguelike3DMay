@@ -194,14 +194,14 @@ void main()
 	FragColor = vec4(normalize(lightColor), alpha);
 }
 )";
-	gl4::ShaderProgram lightProgram;
+	gl4::ShaderProgramId lightProgram;
 	int lightProjLoc;
 	int lightViewLoc;
 	int lightPositionLoc;
 	int radiusLoc;
 	int lightColorLoc;
 
-	gl4::ShaderProgram mainProgram;
+	gl4::ShaderProgramId mainProgram;
 	int mainProjLoc;
 	int mainViewLoc;
 	int mainModelLoc;
@@ -221,8 +221,8 @@ void main()
 
 	Model* model;
 
-	gl4::Buffer planevbo;
-	gl4::VertexArray planevao;
+	gl4::BufferId planevbo;
+	gl4::VertexArrayId planevao;
 
 	PipelineShadowMapping* pipeline;
 

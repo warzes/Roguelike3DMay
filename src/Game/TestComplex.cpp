@@ -61,14 +61,14 @@ void main()
 		glm::mat4 projection;
 	};
 
-	gl4::ShaderProgram program;
+	gl4::ShaderProgramId program;
 
 	MVPData mvpData;
 	GLuint mvpUbo;
 
 	GLuint texture;
-	gl4::Buffer vbo;
-	gl4::VertexArray vao;
+	gl4::BufferId vbo;
+	gl4::VertexArrayId vao;
 
 	Camera camera;
 

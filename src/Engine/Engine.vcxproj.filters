@@ -56,6 +56,18 @@
     <ClCompile Include="CoreMath.cpp">
       <Filter>Math</Filter>
     </ClCompile>
+    <ClCompile Include="OpenGL4DebugMarker.cpp">
+      <Filter>RHI\OpenGL4Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenGL4Base.cpp">
+      <Filter>RHI\OpenGL4Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenGL4Buffer.cpp">
+      <Filter>RHI\OpenGL4Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenGL4ApiToEnum.cpp">
+      <Filter>RHI\OpenGL4Framework</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -131,6 +143,24 @@
     </ClInclude>
     <ClInclude Include="CoreMath.h">
       <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL4DebugMarker.h">
+      <Filter>RHI\OpenGL4Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="FlagsUtils.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="BasicTypes.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL4Base.h">
+      <Filter>RHI\OpenGL4Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL4Buffer.h">
+      <Filter>RHI\OpenGL4Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL4ApiToEnum.h">
+      <Filter>RHI\OpenGL4Framework</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

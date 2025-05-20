@@ -17,15 +17,15 @@ private:
 	void createCube();
 	void createQuad();
 
-	gl4::Buffer m_sphereVBO;
-	gl4::Buffer m_sphereIBO;
-	gl4::VertexArray m_sphereVAO;
+	gl4::BufferId m_sphereVBO;
+	gl4::BufferId m_sphereIBO;
+	gl4::VertexArrayId m_sphereVAO;
 	unsigned int m_sphereIndexCount{};
 
-	gl4::Buffer m_cubeVBO;
+	gl4::BufferId m_cubeVBO;
 	//gl4::Buffer m_cubeIBO;
-	gl4::VertexArray m_cubeVAO;
+	gl4::VertexArrayId m_cubeVAO;
 
-	gl4::Buffer m_quadVBO;
-	gl4::VertexArray m_quadVAO;
+	gl4::BufferId m_quadVBO;
+	gl4::VertexArrayId m_quadVAO;
 };
