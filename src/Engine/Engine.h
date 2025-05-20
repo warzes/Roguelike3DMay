@@ -12,8 +12,7 @@
 #include "CoreMath.h"
 
 // RHI
-#include "OpenGL4Low.h"
-#include "OpenGLHelper.h"
+#include "OpenGL4Simple.h"
 
 // Render
 #include "DepthPrepass.h"

@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "OpenGL4Low.h"
+#include "OpenGL4Simple.h"
 
 class PipelineShadowMapping final
 {

@@ -2,7 +2,7 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
-    <ClCompile Include="OpenGL4Low.cpp">
+    <ClCompile Include="OpenGL4Simple.cpp">
       <Filter>RHI</Filter>
     </ClCompile>
     <ClCompile Include="Log.cpp">
@@ -41,9 +41,6 @@
     <ClCompile Include="PipelineDeferredSSAO.cpp">
       <Filter>Render\Pipelines</Filter>
     </ClCompile>
-    <ClCompile Include="OpenGLHelper.cpp">
-      <Filter>RHI</Filter>
-    </ClCompile>
     <ClCompile Include="PipelineBloom.cpp">
       <Filter>Render\Pipelines</Filter>
     </ClCompile>
@@ -62,7 +59,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
-    <ClInclude Include="OpenGL4Low.h">
+    <ClInclude Include="OpenGL4Simple.h">
       <Filter>RHI</Filter>
     </ClInclude>
     <ClInclude Include="Log.h">
@@ -104,9 +101,6 @@
     </ClInclude>
     <ClInclude Include="PipelineDeferredSSAOShaders.h">
       <Filter>Render\Pipelines</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGLHelper.h">
-      <Filter>RHI</Filter>
     </ClInclude>
     <ClInclude Include="PipelineBloom.h">
       <Filter>Render\Pipelines</Filter>
@@ -169,6 +163,9 @@
     </Filter>
     <Filter Include="Base">
       <UniqueIdentifier>{fa34636f-7a07-4f3e-984b-943a463ecdc9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="RHI\OpenGL4Framework">
+      <UniqueIdentifier>{c26b03b6-8dcd-4a1e-b8bc-5019439f997a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

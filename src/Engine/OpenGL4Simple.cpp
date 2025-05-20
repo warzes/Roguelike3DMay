@@ -1,5 +1,5 @@
 ﻿#include "stdafx.h"
-#include "OpenGL4Low.h"
+#include "OpenGL4Simple.h"
 #include "Log.h"
 //=============================================================================
 namespace

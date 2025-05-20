@@ -1,6 +1,6 @@
 ﻿#include "stdafx.h"
 #include "PipelineDeferredSSAO.h"
-#include "OpenGL4Low.h"
+#include "OpenGL4Simple.h"
 #include "PipelineDeferredSSAOShaders.h"
 #include "CoreFunc.h"
 //=============================================================================

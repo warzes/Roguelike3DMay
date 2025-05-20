@@ -250,4 +250,4 @@ namespace gl4
 		ScopedDebugMarker(const ScopedDebugMarker&) = delete;
 		~ScopedDebugMarker();
 	};
-}
+} // namespace gl4

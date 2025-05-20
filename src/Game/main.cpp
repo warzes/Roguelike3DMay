@@ -14,6 +14,8 @@
 #include "TestCascadedShadowMaps.h"
 
 #include "TestComplex.h"
+
+#include "SimpleTest001.h"
 //=============================================================================
 #if defined(_MSC_VER)
 #	pragma comment( lib, "3rdparty.lib" )
@@ -37,9 +39,11 @@ int main(
 	//TestSimple game;
 	//TestTerrain game;
 	//TestForwardPlus game;
-	TestCascadedShadowMaps game;
+	//TestCascadedShadowMaps game;
 
 	//TestComplex game;
+
+	SimpleTest001 game;
 
 	game.Run();
 }
