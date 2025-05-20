@@ -1,6 +1,6 @@
 ﻿#include "stdafx.h"
 #include "Mesh.h"
-#include "OpenGL4Wrapper.h"
+#include "OpenGL4Low.h"
 #include "Log.h"
 //=============================================================================
 Mesh::Mesh(std::vector<MeshVertex>&& vertices, std::vector<unsigned int>&& indices, std::unordered_map<TextureType, TextureFile>&& textures)

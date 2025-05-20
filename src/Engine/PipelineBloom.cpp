@@ -1,6 +1,6 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "PipelineBloom.h"
-#include "OpenGL4Wrapper.h"
+#include "OpenGL4Low.h"
 #include "Log.h"
 //=============================================================================
 uint16_t GetWindowWidth();

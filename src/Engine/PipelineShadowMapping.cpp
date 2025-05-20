@@ -1,6 +1,6 @@
 ﻿#include "stdafx.h"
 #include "PipelineShadowMapping.h"
-#include "OpenGL4Wrapper.h"
+#include "OpenGL4Low.h"
 //=============================================================================
 PipelineShadowMapping::PipelineShadowMapping(int depthWidth, int depthHeight)
 	: m_depthWidth(depthWidth)

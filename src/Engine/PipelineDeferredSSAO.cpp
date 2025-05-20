@@ -1,6 +1,6 @@
-#include "stdafx.h"
+п»ї#include "stdafx.h"
 #include "PipelineDeferredSSAO.h"
-#include "OpenGL4Wrapper.h"
+#include "OpenGL4Low.h"
 #include "PipelineDeferredSSAOShaders.h"
 #include "CoreFunc.h"
 //=============================================================================
@@ -177,7 +177,7 @@ PipelineDeferredSSAO::PipelineDeferredSSAO(int kernelSize, int noiseSize)
 //=============================================================================
 PipelineDeferredSSAO::~PipelineDeferredSSAO()
 {
-	// TODO: очистка
+	// TODO: РѕС‡РёСЃС‚РєР°
 }
 //=============================================================================
 void PipelineDeferredSSAO::StartGeometryPass(const glm::mat4& projection, const glm::mat4& view)

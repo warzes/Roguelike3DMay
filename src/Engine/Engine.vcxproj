@@ -104,7 +104,7 @@
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="Model.cpp" />
-    <ClCompile Include="OpenGL4Wrapper.cpp" />
+    <ClCompile Include="OpenGL4Low.cpp" />
     <ClCompile Include="OpenGLHelper.cpp" />
     <ClCompile Include="PipelineBloom.cpp" />
     <ClCompile Include="PipelineDeferredSSAO.cpp" />
@@ -134,7 +134,7 @@
     <ClInclude Include="Material.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Model.h" />
-    <ClInclude Include="OpenGL4Wrapper.h" />
+    <ClInclude Include="OpenGL4Low.h" />
     <ClInclude Include="OpenGLHelper.h" />
     <ClInclude Include="PipelineBloom.h" />
     <ClInclude Include="PipelineDeferredSSAO.h" />

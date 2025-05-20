@@ -1,6 +1,6 @@
 ﻿#include "stdafx.h"
 #include "GraphicSystem.h"
-#include "OpenGL4Wrapper.h"
+#include "OpenGL4Low.h"
 //=============================================================================
 bool GraphicSystem::Create()
 {

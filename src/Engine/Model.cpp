@@ -1,7 +1,7 @@
 ﻿#include "stdafx.h"
 #include "Model.h"
 #include "Log.h"
-#include "OpenGL4Wrapper.h"
+#include "OpenGL4Low.h"
 //=============================================================================
 inline glm::mat4 mat4_cast(const aiMatrix4x4& m)
 {

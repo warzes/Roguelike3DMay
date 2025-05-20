@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include "Light.h"
-#include "OpenGL4Wrapper.h"
+#include "OpenGL4Low.h"
 
 class PipelineDeferredSSAO final
 {

@@ -1,6 +1,6 @@
 ﻿#include "stdafx.h"
 #include "DepthPrepass.h"
-#include "OpenGL4Wrapper.h"
+#include "OpenGL4Low.h"
 #include "Model.h"
 //=============================================================================
 void DepthPrepass::Create(int width, int height)

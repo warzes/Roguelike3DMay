@@ -2,7 +2,7 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
-    <ClCompile Include="OpenGL4Wrapper.cpp">
+    <ClCompile Include="OpenGL4Low.cpp">
       <Filter>RHI</Filter>
     </ClCompile>
     <ClCompile Include="Log.cpp">
@@ -62,7 +62,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
-    <ClInclude Include="OpenGL4Wrapper.h">
+    <ClInclude Include="OpenGL4Low.h">
       <Filter>RHI</Filter>
     </ClInclude>
     <ClInclude Include="Log.h">

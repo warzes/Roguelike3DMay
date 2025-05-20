@@ -12,7 +12,7 @@
 #include "CoreMath.h"
 
 // RHI
-#include "OpenGL4Wrapper.h"
+#include "OpenGL4Low.h"
 #include "OpenGLHelper.h"
 
 // Render
