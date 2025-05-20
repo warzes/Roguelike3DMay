@@ -59,7 +59,7 @@
     <ClCompile Include="OpenGL4DebugMarker.cpp">
       <Filter>RHI\OpenGL4Framework</Filter>
     </ClCompile>
-    <ClCompile Include="OpenGL4Base.cpp">
+    <ClCompile Include="OpenGL4BaseType.cpp">
       <Filter>RHI\OpenGL4Framework</Filter>
     </ClCompile>
     <ClCompile Include="OpenGL4Buffer.cpp">
@@ -67,6 +67,45 @@
     </ClCompile>
     <ClCompile Include="OpenGL4ApiToEnum.cpp">
       <Filter>RHI\OpenGL4Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenGL4Texture.cpp">
+      <Filter>RHI\OpenGL4Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenGL4Context.cpp">
+      <Filter>RHI\OpenGL4Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenGL4Shader.cpp">
+      <Filter>RHI\OpenGL4Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="ShaderGLSL.cpp">
+      <Filter>RHI\OpenGL4Framework\private</Filter>
+    </ClCompile>
+    <ClCompile Include="ShaderSPIRV.cpp">
+      <Filter>RHI\OpenGL4Framework\private</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenGL4Sampler.cpp">
+      <Filter>RHI\OpenGL4Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenGL4VertexArray.cpp">
+      <Filter>RHI\OpenGL4Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenGL4Framebuffer.cpp">
+      <Filter>RHI\OpenGL4Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenGL4Rendering.cpp">
+      <Filter>RHI\OpenGL4Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenGL4Pipeline.cpp">
+      <Filter>RHI\OpenGL4Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenGL4PipelineManager.cpp">
+      <Filter>RHI\OpenGL4Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenGL4Timer.cpp">
+      <Filter>RHI\OpenGL4Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="RsmTechnique.cpp">
+      <Filter>RHI\OpenGL4Framework\Advance</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -153,7 +192,7 @@
     <ClInclude Include="BasicTypes.h">
       <Filter>Core</Filter>
     </ClInclude>
-    <ClInclude Include="OpenGL4Base.h">
+    <ClInclude Include="OpenGL4BaseType.h">
       <Filter>RHI\OpenGL4Framework</Filter>
     </ClInclude>
     <ClInclude Include="OpenGL4Buffer.h">
@@ -161,6 +200,48 @@
     </ClInclude>
     <ClInclude Include="OpenGL4ApiToEnum.h">
       <Filter>RHI\OpenGL4Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL4Texture.h">
+      <Filter>RHI\OpenGL4Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL4Context.h">
+      <Filter>RHI\OpenGL4Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL4Shader.h">
+      <Filter>RHI\OpenGL4Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="ShaderGLSL.h">
+      <Filter>RHI\OpenGL4Framework\private</Filter>
+    </ClInclude>
+    <ClInclude Include="ShaderSPIRV.h">
+      <Filter>RHI\OpenGL4Framework\private</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL4Sampler.h">
+      <Filter>RHI\OpenGL4Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Hash.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL4VertexArray.h">
+      <Filter>RHI\OpenGL4Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL4Framebuffer.h">
+      <Filter>RHI\OpenGL4Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL4Rendering.h">
+      <Filter>RHI\OpenGL4Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL4Pipeline.h">
+      <Filter>RHI\OpenGL4Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL4PipelineManager.h">
+      <Filter>RHI\OpenGL4Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL4Timer.h">
+      <Filter>RHI\OpenGL4Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="RsmTechnique.h">
+      <Filter>RHI\OpenGL4Framework\Advance</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -196,6 +277,12 @@
     </Filter>
     <Filter Include="RHI\OpenGL4Framework">
       <UniqueIdentifier>{c26b03b6-8dcd-4a1e-b8bc-5019439f997a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="RHI\OpenGL4Framework\private">
+      <UniqueIdentifier>{c01b6278-412a-4db3-9a86-fb2e41d35ce9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="RHI\OpenGL4Framework\Advance">
+      <UniqueIdentifier>{d3878b47-c6e3-47bb-909b-2b5d9e5ccb20}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

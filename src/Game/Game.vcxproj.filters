@@ -48,6 +48,24 @@
     <ClCompile Include="SimpleTest001.cpp">
       <Filter>GameApp\OpenGL4Framework</Filter>
     </ClCompile>
+    <ClCompile Include="SimpleTest002.cpp">
+      <Filter>GameApp\OpenGL4Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="SimpleTest003.cpp">
+      <Filter>GameApp\OpenGL4Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneLoader.cpp">
+      <Filter>GameApp\OpenGL4Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="SimpleTest004.cpp">
+      <Filter>GameApp\OpenGL4Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="SimpleTest005.cpp">
+      <Filter>GameApp\OpenGL4Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="SimpleTest006.cpp">
+      <Filter>GameApp\OpenGL4Framework</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -95,6 +113,24 @@
       <Filter>GameApp\Test3</Filter>
     </ClInclude>
     <ClInclude Include="SimpleTest001.h">
+      <Filter>GameApp\OpenGL4Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleTest002.h">
+      <Filter>GameApp\OpenGL4Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleTest003.h">
+      <Filter>GameApp\OpenGL4Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneLoader.h">
+      <Filter>GameApp\OpenGL4Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleTest004.h">
+      <Filter>GameApp\OpenGL4Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleTest005.h">
+      <Filter>GameApp\OpenGL4Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleTest006.h">
       <Filter>GameApp\OpenGL4Framework</Filter>
     </ClInclude>
   </ItemGroup>

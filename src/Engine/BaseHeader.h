@@ -27,9 +27,12 @@
 #include <cctype>
 #include <cwctype>
 #include <algorithm>
+#include <fstream>
 //#include <chrono>
 #include <random>
+#include <functional>
 #include <filesystem>
+#include <variant>
 #include <string>
 #include <string_view>
 #include <span>
@@ -50,7 +53,7 @@
 #include <imgui/imgui_impl_opengl3.h>
 
 #define GLM_FORCE_XYZW_ONLY 1
-#define GLM_FORCE_LEFT_HANDED 1
+//#define GLM_FORCE_LEFT_HANDED 1
 //#define GLM_FORCE_DEPTH_ZERO_TO_ONE 1
 #define GLM_ENABLE_EXPERIMENTAL 1
 #include <glm/glm.hpp>
@@ -66,6 +69,7 @@
 #include <stb/stb_image_write.h>
 #include <stb/stb_image_resize2.h>
 #include <stb/stb_truetype.h>
+#include <stb/stb_include.h>
 
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>

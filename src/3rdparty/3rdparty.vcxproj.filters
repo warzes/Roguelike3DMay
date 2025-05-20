@@ -28,6 +28,15 @@
     <ClCompile Include="stb\stb.cpp">
       <Filter>stb</Filter>
     </ClCompile>
+    <ClCompile Include="fastgltf\fastgltf.cpp">
+      <Filter>fastgltf</Filter>
+    </ClCompile>
+    <ClCompile Include="fastgltf\base64.cpp">
+      <Filter>fastgltf</Filter>
+    </ClCompile>
+    <ClCompile Include="simdjson\simdjson.cpp">
+      <Filter>simdjson</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="glad">
@@ -62,6 +71,15 @@
     </Filter>
     <Filter Include="assimp">
       <UniqueIdentifier>{6bb44281-36bf-4da9-8017-c076d0e286b6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="fastgltf">
+      <UniqueIdentifier>{01c39963-ed85-42b2-99c8-ad1a4df0328a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="simdjson">
+      <UniqueIdentifier>{02c56eaa-fb76-4b95-8e55-821df4eda811}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ktx">
+      <UniqueIdentifier>{8a83a15d-7659-428d-8d86-7cdd20898b78}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -981,6 +999,30 @@
       <Filter>stb</Filter>
     </ClInclude>
     <ClInclude Include="3rdpartyConfig.h" />
+    <ClInclude Include="stb\stb_include.h">
+      <Filter>stb</Filter>
+    </ClInclude>
+    <ClInclude Include="fastgltf\base64.hpp">
+      <Filter>fastgltf</Filter>
+    </ClInclude>
+    <ClInclude Include="fastgltf\glm_element_traits.hpp">
+      <Filter>fastgltf</Filter>
+    </ClInclude>
+    <ClInclude Include="fastgltf\parser.hpp">
+      <Filter>fastgltf</Filter>
+    </ClInclude>
+    <ClInclude Include="fastgltf\tools.hpp">
+      <Filter>fastgltf</Filter>
+    </ClInclude>
+    <ClInclude Include="fastgltf\types.hpp">
+      <Filter>fastgltf</Filter>
+    </ClInclude>
+    <ClInclude Include="fastgltf\util.hpp">
+      <Filter>fastgltf</Filter>
+    </ClInclude>
+    <ClInclude Include="simdjson\simdjson.h">
+      <Filter>simdjson</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="glm\detail\func_common.inl">
@@ -1403,10 +1445,25 @@
     <None Include="lib\assimp-vc143-mt.exp">
       <Filter>assimp</Filter>
     </None>
+    <None Include="lib\ktx_read.exp">
+      <Filter>ktx</Filter>
+    </None>
+    <None Include="lib\ktx.exp">
+      <Filter>ktx</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Library Include="lib\assimp-vc143-mt.lib">
       <Filter>assimp</Filter>
+    </Library>
+    <Library Include="lib\ktx_read.lib">
+      <Filter>ktx</Filter>
+    </Library>
+    <Library Include="lib\objUtil.lib">
+      <Filter>ktx</Filter>
+    </Library>
+    <Library Include="lib\ktx.lib">
+      <Filter>ktx</Filter>
     </Library>
   </ItemGroup>
 </Project>

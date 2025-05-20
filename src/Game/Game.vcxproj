@@ -96,7 +96,13 @@
   <ItemGroup>
     <ClCompile Include="GameApp.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="SceneLoader.cpp" />
     <ClCompile Include="SimpleTest001.cpp" />
+    <ClCompile Include="SimpleTest002.cpp" />
+    <ClCompile Include="SimpleTest003.cpp" />
+    <ClCompile Include="SimpleTest004.cpp" />
+    <ClCompile Include="SimpleTest005.cpp" />
+    <ClCompile Include="SimpleTest006.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
@@ -118,7 +124,13 @@
   <ItemGroup>
     <ClInclude Include="GameApp.h" />
     <ClInclude Include="GameConfig.h" />
+    <ClInclude Include="SceneLoader.h" />
     <ClInclude Include="SimpleTest001.h" />
+    <ClInclude Include="SimpleTest002.h" />
+    <ClInclude Include="SimpleTest003.h" />
+    <ClInclude Include="SimpleTest004.h" />
+    <ClInclude Include="SimpleTest005.h" />
+    <ClInclude Include="SimpleTest006.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="TestBlinnPhong.h" />
     <ClInclude Include="TestBloom.h" />

@@ -92,6 +92,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="fastgltf\base64.cpp" />
+    <ClCompile Include="fastgltf\fastgltf.cpp" />
     <ClCompile Include="glad\gl.c" />
     <ClCompile Include="glfw\glfw3.c" />
     <ClCompile Include="imgui\imgui.cpp" />
@@ -100,10 +102,17 @@
     <ClCompile Include="imgui\imgui_impl_opengl3.cpp" />
     <ClCompile Include="imgui\imgui_tables.cpp" />
     <ClCompile Include="imgui\imgui_widgets.cpp" />
+    <ClCompile Include="simdjson\simdjson.cpp" />
     <ClCompile Include="stb\stb.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="3rdpartyConfig.h" />
+    <ClInclude Include="fastgltf\base64.hpp" />
+    <ClInclude Include="fastgltf\glm_element_traits.hpp" />
+    <ClInclude Include="fastgltf\parser.hpp" />
+    <ClInclude Include="fastgltf\tools.hpp" />
+    <ClInclude Include="fastgltf\types.hpp" />
+    <ClInclude Include="fastgltf\util.hpp" />
     <ClInclude Include="glad\gl.h" />
     <ClInclude Include="glfw\glfw3.h" />
     <ClInclude Include="glm\common.hpp" />
@@ -405,9 +414,11 @@
     <ClInclude Include="imgui\imstb_textedit.h" />
     <ClInclude Include="imgui\imstb_truetype.h" />
     <ClInclude Include="KHR\khrplatform.h" />
+    <ClInclude Include="simdjson\simdjson.h" />
     <ClInclude Include="stb\stb_image.h" />
     <ClInclude Include="stb\stb_image_resize2.h" />
     <ClInclude Include="stb\stb_image_write.h" />
+    <ClInclude Include="stb\stb_include.h" />
     <ClInclude Include="stb\stb_truetype.h" />
   </ItemGroup>
   <ItemGroup>
@@ -551,9 +562,14 @@
     <None Include="glm\gtx\vector_query.inl" />
     <None Include="glm\gtx\wrap.inl" />
     <None Include="lib\assimp-vc143-mt.exp" />
+    <None Include="lib\ktx.exp" />
+    <None Include="lib\ktx_read.exp" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="lib\assimp-vc143-mt.lib" />
+    <Library Include="lib\ktx.lib" />
+    <Library Include="lib\ktx_read.lib" />
+    <Library Include="lib\objUtil.lib" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

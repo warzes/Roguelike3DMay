@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-namespace gl4f
+namespace gl4
 {
 	class ScopedDebugMarker final
 	{
