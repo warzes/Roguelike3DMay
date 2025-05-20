@@ -102,6 +102,9 @@
     </ClCompile>
     <ClCompile Include="TestBlinnPhong.cpp" />
     <ClCompile Include="TestBloom.cpp" />
+    <ClCompile Include="TestCascadedShadowMaps.cpp" />
+    <ClCompile Include="TestComplex.cpp" />
+    <ClCompile Include="TestComplex_Temp.cpp" />
     <ClCompile Include="TestDeferredSSAO.cpp" />
     <ClCompile Include="TestForwardPlus.cpp" />
     <ClCompile Include="TestModelLoading.cpp" />
@@ -117,6 +120,9 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="TestBlinnPhong.h" />
     <ClInclude Include="TestBloom.h" />
+    <ClInclude Include="TestCascadedShadowMaps.h" />
+    <ClInclude Include="TestComplex.h" />
+    <ClInclude Include="TestComplex_Temp.h" />
     <ClInclude Include="TestDeferredSSAO.h" />
     <ClInclude Include="TestForwardPlus.h" />
     <ClInclude Include="TestModelLoading.h" />
@@ -127,9 +133,23 @@
     <ClInclude Include="TestTerrain.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\bin\GameData\shaders\forwardplus.frag" />
-    <None Include="..\..\bin\GameData\shaders\forwardplus.vert" />
-    <None Include="..\..\bin\GameData\shaders\lightculling.comp" />
+    <None Include="..\..\bin\ExampleData\shaders\TestComplex\gbuf.fs" />
+    <None Include="..\..\bin\ExampleData\shaders\TestComplex\gbuf.vs" />
+    <None Include="..\..\bin\ExampleData\shaders\TestComplex\lighting.fs" />
+    <None Include="..\..\bin\ExampleData\shaders\TestComplex\lighting.vs" />
+    <None Include="..\..\bin\ExampleData\shaders\TestComplex\post.frag" />
+    <None Include="..\..\bin\ExampleData\shaders\TestComplex\post.vert" />
+    <None Include="..\..\bin\ExampleData\shaders\TestComplex\rsm.fs" />
+    <None Include="..\..\bin\ExampleData\shaders\TestComplex\rsm.vs" />
+    <None Include="..\..\bin\ExampleData\shaders\TestComplex\shadow.fs" />
+    <None Include="..\..\bin\ExampleData\shaders\TestComplex\shadow.vs" />
+    <None Include="..\..\bin\ExampleData\shaders\TestComplex\ssao.frag" />
+    <None Include="..\..\bin\ExampleData\shaders\TestComplex\ssao.vert" />
+    <None Include="..\..\bin\ExampleData\shaders\TestComplex\ssr.fs" />
+    <None Include="..\..\bin\ExampleData\shaders\TestComplex\ssr.vs" />
+    <None Include="..\..\bin\ExampleData\shaders\TestForwardPlus\forwardplus.frag" />
+    <None Include="..\..\bin\ExampleData\shaders\TestForwardPlus\forwardplus.vert" />
+    <None Include="..\..\bin\ExampleData\shaders\TestForwardPlus\lightculling.comp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

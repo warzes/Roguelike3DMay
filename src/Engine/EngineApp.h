@@ -116,3 +116,8 @@ private:
 uint16_t GetWindowWidth();
 uint16_t GetWindowHeight();
 float GetWindowAspect();
+
+bool GetKeyDown(int key);
+bool GetMouseButton(int button);
+int GetMousePositionX();
+int GetMousePositionY();

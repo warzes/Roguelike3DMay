@@ -36,6 +36,15 @@
     <ClCompile Include="TestSimple.cpp">
       <Filter>GameApp\Test2</Filter>
     </ClCompile>
+    <ClCompile Include="TestCascadedShadowMaps.cpp">
+      <Filter>GameApp\Test2</Filter>
+    </ClCompile>
+    <ClCompile Include="TestComplex.cpp">
+      <Filter>GameApp\Test3</Filter>
+    </ClCompile>
+    <ClCompile Include="TestComplex_Temp.cpp">
+      <Filter>GameApp\Test3</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -73,6 +82,15 @@
     <ClInclude Include="TestSimple.h">
       <Filter>GameApp\Test2</Filter>
     </ClInclude>
+    <ClInclude Include="TestCascadedShadowMaps.h">
+      <Filter>GameApp\Test2</Filter>
+    </ClInclude>
+    <ClInclude Include="TestComplex.h">
+      <Filter>GameApp\Test3</Filter>
+    </ClInclude>
+    <ClInclude Include="TestComplex_Temp.h">
+      <Filter>GameApp\Test3</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="GameApp">
@@ -84,19 +102,73 @@
     <Filter Include="GameApp\Test2">
       <UniqueIdentifier>{6ec12468-041f-4337-b2b4-1980b07aee4f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="shaders">
+    <Filter Include="GameApp\Test2\shaders">
       <UniqueIdentifier>{e9433f5d-1e2e-4389-88a1-81bfb14e769e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameApp\Test2\shaders\TestForwardPlus">
+      <UniqueIdentifier>{f7a0e9c4-15ba-4dd6-a059-56e0c26fbc19}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameApp\Test3">
+      <UniqueIdentifier>{54477bab-d8f1-478b-950a-fb905a0f54a6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameApp\Test3\shaders">
+      <UniqueIdentifier>{8790c819-e030-446d-abdb-7de2b5e9c76f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameApp\Test3\shaders\TestComplex">
+      <UniqueIdentifier>{b2b7cdb4-6be4-41d9-8274-d9a0bd9c3972}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\bin\GameData\shaders\forwardplus.frag">
-      <Filter>shaders</Filter>
+    <None Include="..\..\bin\ExampleData\shaders\TestForwardPlus\forwardplus.frag">
+      <Filter>GameApp\Test2\shaders\TestForwardPlus</Filter>
     </None>
-    <None Include="..\..\bin\GameData\shaders\forwardplus.vert">
-      <Filter>shaders</Filter>
+    <None Include="..\..\bin\ExampleData\shaders\TestForwardPlus\forwardplus.vert">
+      <Filter>GameApp\Test2\shaders\TestForwardPlus</Filter>
     </None>
-    <None Include="..\..\bin\GameData\shaders\lightculling.comp">
-      <Filter>shaders</Filter>
+    <None Include="..\..\bin\ExampleData\shaders\TestForwardPlus\lightculling.comp">
+      <Filter>GameApp\Test2\shaders\TestForwardPlus</Filter>
+    </None>
+    <None Include="..\..\bin\ExampleData\shaders\TestComplex\lighting.fs">
+      <Filter>GameApp\Test3\shaders\TestComplex</Filter>
+    </None>
+    <None Include="..\..\bin\ExampleData\shaders\TestComplex\lighting.vs">
+      <Filter>GameApp\Test3\shaders\TestComplex</Filter>
+    </None>
+    <None Include="..\..\bin\ExampleData\shaders\TestComplex\post.frag">
+      <Filter>GameApp\Test3\shaders\TestComplex</Filter>
+    </None>
+    <None Include="..\..\bin\ExampleData\shaders\TestComplex\post.vert">
+      <Filter>GameApp\Test3\shaders\TestComplex</Filter>
+    </None>
+    <None Include="..\..\bin\ExampleData\shaders\TestComplex\rsm.fs">
+      <Filter>GameApp\Test3\shaders\TestComplex</Filter>
+    </None>
+    <None Include="..\..\bin\ExampleData\shaders\TestComplex\rsm.vs">
+      <Filter>GameApp\Test3\shaders\TestComplex</Filter>
+    </None>
+    <None Include="..\..\bin\ExampleData\shaders\TestComplex\shadow.fs">
+      <Filter>GameApp\Test3\shaders\TestComplex</Filter>
+    </None>
+    <None Include="..\..\bin\ExampleData\shaders\TestComplex\shadow.vs">
+      <Filter>GameApp\Test3\shaders\TestComplex</Filter>
+    </None>
+    <None Include="..\..\bin\ExampleData\shaders\TestComplex\ssao.frag">
+      <Filter>GameApp\Test3\shaders\TestComplex</Filter>
+    </None>
+    <None Include="..\..\bin\ExampleData\shaders\TestComplex\ssao.vert">
+      <Filter>GameApp\Test3\shaders\TestComplex</Filter>
+    </None>
+    <None Include="..\..\bin\ExampleData\shaders\TestComplex\ssr.fs">
+      <Filter>GameApp\Test3\shaders\TestComplex</Filter>
+    </None>
+    <None Include="..\..\bin\ExampleData\shaders\TestComplex\ssr.vs">
+      <Filter>GameApp\Test3\shaders\TestComplex</Filter>
+    </None>
+    <None Include="..\..\bin\ExampleData\shaders\TestComplex\gbuf.fs">
+      <Filter>GameApp\Test3\shaders\TestComplex</Filter>
+    </None>
+    <None Include="..\..\bin\ExampleData\shaders\TestComplex\gbuf.vs">
+      <Filter>GameApp\Test3\shaders\TestComplex</Filter>
     </None>
   </ItemGroup>
 </Project>

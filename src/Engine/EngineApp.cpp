@@ -423,3 +423,23 @@ float GetWindowAspect()
 	return thisIEngineApp->GetAspect();
 }
 //=============================================================================
+bool GetKeyDown(int key)
+{
+	return thisIEngineApp->GetKeyDown(key);
+}
+//=============================================================================
+bool GetMouseButton(int button)
+{
+	return thisIEngineApp->GetMouseButton(button);
+}
+//=============================================================================
+int GetMousePositionX()
+{
+	return thisIEngineApp->GetMousePositionX();
+}
+//=============================================================================
+int GetMousePositionY()
+{
+	return thisIEngineApp->GetMousePositionY();
+}
+//=============================================================================
