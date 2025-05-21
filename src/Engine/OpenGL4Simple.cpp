@@ -201,6 +201,12 @@ gl4::ShaderProgramId gl4::CreateShaderProgram(const std::string& vertexSrc, cons
 	return program;
 }
 //=============================================================================
+void gl4::Bind(ShaderProgramId id)
+{
+	// TODO: возможно кеширование
+	glUseProgram(id);
+}
+//=============================================================================
 int gl4::GetUniformLocation(ShaderProgramId program, const std::string& name)
 {
 	return glGetUniformLocation(program, name.c_str());
@@ -527,7 +533,9 @@ void gl4::SetUniform(ShaderProgramId program, const std::string& locName, const 
 //=============================================================================
 #pragma endregion
 //=============================================================================
-gl4::BufferId gl4::CreateBuffer(GLenum usage, GLsizeiptr size, void* data)
+#pragma region [ Buffer ]
+//=============================================================================
+gl4::BufferId gl4::CreateBuffer(GLenum usage, GLsizeiptr size, const void* data)
 {
 	gl4::BufferId buffer;
 	gl4::Create(buffer);
@@ -535,7 +543,7 @@ gl4::BufferId gl4::CreateBuffer(GLenum usage, GLsizeiptr size, void* data)
 	return buffer;
 }
 //=============================================================================
-gl4::BufferId gl4::CreateBufferStorage(GLbitfield flags, GLsizeiptr size, void* data)
+gl4::BufferId gl4::CreateBufferStorage(GLbitfield flags, GLsizeiptr size, const void* data)
 {
 	gl4::BufferId buffer;
 	gl4::Create(buffer);
@@ -543,15 +551,93 @@ gl4::BufferId gl4::CreateBufferStorage(GLbitfield flags, GLsizeiptr size, void* 
 	return buffer;
 }
 //=============================================================================
-gl4::BufferId gl4::CreateBufferStorage(GLbitfield flags, GLsizeiptr sizeElement, GLsizeiptr numElement, void* data)
+gl4::BufferId gl4::CreateBufferStorage(GLbitfield flags, GLsizeiptr sizeElement, GLsizeiptr numElement, const void* data)
 {
 	return CreateBufferStorage(flags, sizeElement * numElement, data);
 }
 //=============================================================================
-void gl4::SetVertexAttrib(GLuint vao, GLuint attribIndex, GLint size, GLenum type, GLboolean normalized, GLuint relativeOffset)
+void gl4::SetSubData(BufferId id, GLintptr offset, GLsizeiptr size, const void* data)
 {
+	glNamedBufferSubData(id, offset, size, data);
+}
+//=============================================================================
+void gl4::CopySubData(BufferId readBuffer, BufferId writeBuffer, GLintptr readOffset, GLintptr writeOffset, GLsizeiptr size)
+{
+	glCopyNamedBufferSubData(readBuffer, writeBuffer, readOffset, writeOffset, size);
+}
+//=============================================================================
+void gl4::ClearData(BufferId id, GLenum internalFormat, GLenum format, GLenum type, const void* data)
+{
+	glClearNamedBufferData(id, internalFormat, format, type, data);
+}
+//=============================================================================
+void gl4::ClearSubData(BufferId id, GLenum internalFormat, GLintptr offset, GLsizeiptr size, GLenum format, GLenum type, const void* data)
+{
+	glClearNamedBufferSubData(id, internalFormat, offset, size, format, type, data);
+}
+//=============================================================================
+void gl4::InvalidateData(BufferId id)
+{
+	glInvalidateBufferData(id);
+}
+//=============================================================================
+void gl4::InvalidateSubData(BufferId id, GLintptr offset, GLsizeiptr length)
+{
+	glInvalidateBufferSubData(id, offset, length);
+}
+//=============================================================================
+void* gl4::Map(BufferId id, GLenum access)
+{
+	return glMapNamedBuffer(id, access);
+}
+//=============================================================================
+void* gl4::MapRange(BufferId id, GLintptr offset, GLsizeiptr length, GLbitfield access)
+{
+	return glMapNamedBufferRange(id, offset, length, access);
+}
+//=============================================================================
+bool gl4::UnMap(BufferId id)
+{
+	return glUnmapNamedBuffer(id) == GL_TRUE;
+}
+//=============================================================================
+void gl4::FlushMappedRange(BufferId id, GLintptr offset, GLsizeiptr length)
+{
+	glFlushMappedNamedBufferRange(id, offset, length);
+}
+//=============================================================================
+void* gl4::GetBufferPointer(BufferId id)
+{
+	void* ptr;
+	glGetNamedBufferPointerv(id, GL_BUFFER_MAP_POINTER, &ptr);
+	return ptr;
+}
+//=============================================================================
+void gl4::GetSubData(BufferId id, GLintptr offset, GLsizeiptr size, void* data)
+{
+	glGetNamedBufferSubData(id, offset, size, data);
+}
+//=============================================================================
+void gl4::BindBufferBase(BufferId id, GLenum target, GLuint index)
+{
+	glBindBufferBase(target, index, id);
+}
+//=============================================================================
+void gl4::BindBufferRange(BufferId id, GLenum target, GLuint index, GLintptr offset, GLsizeiptr size)
+{
+	glBindBufferRange(target, index, id, offset, size);
+}
+//=============================================================================
+#pragma endregion
+//=============================================================================
+#pragma region [ Vertex Array ]
+//=============================================================================
+void gl4::SetVertexAttrib(GLuint vao, GLuint attribIndex, GLint size, GLenum type, GLboolean normalized, GLuint relativeOffset, GLuint bindingIndex)
+{
+	// TODO: еще есть glVertexArrayBindingDivisor для инстанса
+
 	glEnableVertexArrayAttrib(vao, attribIndex);
-	glVertexArrayAttribBinding(vao, attribIndex, 0);
+	glVertexArrayAttribBinding(vao, attribIndex, bindingIndex);
 
 	if (type == GL_INT) // TODO: другие типы возможно тоже учесть, и есть еще glVertexArrayAttribLFormat
 		glVertexArrayAttribIFormat(vao, attribIndex, size, type, relativeOffset);
@@ -561,7 +647,7 @@ void gl4::SetVertexAttrib(GLuint vao, GLuint attribIndex, GLint size, GLenum typ
 //=============================================================================
 void gl4::SetVertexAttrib(GLuint vao, const VertexAttribute& attr)
 {
-	SetVertexAttrib(vao, attr.index, attr.size, attr.type, attr.normalized ? GL_TRUE : GL_FALSE, attr.relativeOffset);
+	SetVertexAttrib(vao, attr.index, attr.size, attr.type, attr.normalized ? GL_TRUE : GL_FALSE, attr.relativeOffset, attr.bindingIndex);
 }
 //=============================================================================
 void gl4::SetVertexAttrib(GLuint vao, const std::vector<VertexAttribute>& attributes)
@@ -594,10 +680,31 @@ gl4::VertexArrayId gl4::CreateVertexArray(gl4::BufferId vbo, size_t vertexSize, 
 gl4::VertexArrayId gl4::CreateVertexArray(gl4::BufferId vbo, gl4::BufferId ibo, size_t vertexSize, const std::vector<VertexAttribute>& attributes)
 {
 	gl4::VertexArrayId vao = CreateVertexArray(attributes);
-	if (vbo.id > 0) glVertexArrayVertexBuffer(vao, 0, vbo, 0, vertexSize);
-	if (ibo.id > 0) glVertexArrayElementBuffer(vao, ibo);
+	SetVertexBuffer(vao, vbo, 0, 0, vertexSize);
+	SetIndexBuffer(vao, ibo);
 	return vao;
 }
+//=============================================================================
+void gl4::SetVertexBuffer(VertexArrayId id, BufferId vbo, GLuint bindingindex, GLintptr offset, GLsizei stride)
+{
+	// TODO: возможно кеширование
+	if (IsValid(vbo)) glVertexArrayVertexBuffer(id, bindingindex, vbo, offset, stride);
+}
+//=============================================================================
+void gl4::SetIndexBuffer(VertexArrayId id, BufferId ibo)
+{
+	if (IsValid(ibo)) glVertexArrayElementBuffer(id, ibo);
+}
+//=============================================================================
+void gl4::Bind(VertexArrayId id)
+{
+	// TODO: возможно кеширование
+	glBindVertexArray(id);
+}
+//=============================================================================
+#pragma endregion
+//=============================================================================
+#pragma region [ Texture ]
 //=============================================================================
 inline GLenum getBaseFormat(GLenum internalFormat)
 {
@@ -711,7 +818,7 @@ gl4::Texture2DId gl4::CreateTexture2D(GLenum internalFormat, GLsizei width, GLsi
 	glTextureStorage2D(texture, numMipmaps, internalFormat, width, height);
 	if (data)
 	{
-		glTextureSubImage2D(texture, 0, 0, 0, width, height, getBaseFormat(internalFormat), param.dataType, data);
+		SetSubImage(texture, 0, 0, 0, width, height, getBaseFormat(internalFormat), param.dataType, data);
 		glGenerateTextureMipmap(texture);
 	}
 
@@ -839,11 +946,121 @@ gl4::TextureCubeId gl4::LoadCubeMap(const std::vector<std::string>& files, const
 	return texture;
 }
 //=============================================================================
-void gl4::BindTextureSampler(GLuint unit, gl4::Texture2DId texture, GLuint sampler)
+void gl4::SetSubImage(Texture1DId id, GLint level, GLint xoffset, GLsizei width, GLenum format, GLenum type, const void* pixels)
 {
-	glBindTextureUnit(unit, texture);
+	glTextureSubImage1D(id, level, xoffset, width, format, type, pixels);
+}
+//=============================================================================
+void gl4::SetSubImage(Texture2DId id, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, const void* pixels)
+{
+	glTextureSubImage2D(id, level, xoffset, yoffset, width, height, format, type, pixels);
+}
+//=============================================================================
+void gl4::SetSubImage(Texture3DId id, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLenum type, const void* pixels)
+{
+	glTextureSubImage3D(id, level, xoffset, yoffset, zoffset, width, height, depth, format, type, pixels);
+}
+//=============================================================================
+void gl4::SetCompressedSubImage(Texture1DId id, GLint level, GLint xoffset, GLsizei width, GLenum format, GLsizei imageSize, const void* data)
+{
+	glCompressedTextureSubImage1D(id, level, xoffset, width, format, imageSize, data);
+}
+//=============================================================================
+void gl4::SetCompressedSubImage(Texture2DId id, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLsizei imageSize, const void* data)
+{
+	glCompressedTextureSubImage2D(id, level, xoffset, yoffset, width, height, format, imageSize, data);
+}
+//=============================================================================
+void gl4::SetCompressedSubImage(Texture3DId id, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLsizei imageSize, const void* data)
+{
+	glCompressedTextureSubImage3D(id, level, xoffset, yoffset, zoffset, width, height, depth, format, imageSize, data);
+}
+//=============================================================================
+void gl4::CopySubImage(Texture1DId id, GLint level, GLint xoffset, GLint x, GLint y, GLsizei width)
+{
+	glCopyTextureSubImage1D(id, level, xoffset, x, y, width);
+}
+//=============================================================================
+void gl4::CopySubImage(Texture2DId id, GLint level, GLint xoffset, GLint yoffset, GLint x, GLint y, GLsizei width, GLsizei height)
+{
+	glCopyTextureSubImage2D(id, level, xoffset, yoffset, x, y, width, height);
+}
+//=============================================================================
+void gl4::CopySubImage(Texture3DId id, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLint x, GLint y, GLsizei width, GLsizei height)
+{
+	glCopyTextureSubImage3D(id, level, xoffset, yoffset, zoffset, x, y, width, height);
+}
+//=============================================================================
+void gl4::Bind(GLuint unit, Texture1DId id)
+{
+	// кешировать
+	glBindTextureUnit(unit, id);
+}
+//=============================================================================
+void gl4::Bind(GLuint unit, Texture2DId id)
+{
+	// кешировать
+	glBindTextureUnit(unit, id);
+}
+//=============================================================================
+void gl4::Bind(GLuint unit, Texture3DId id)
+{
+	// кешировать
+	glBindTextureUnit(unit, id);
+}
+//=============================================================================
+void gl4::Bind(GLuint unit, TextureCubeId id)
+{
+	// кешировать
+	glBindTextureUnit(unit, id);
+}
+//=============================================================================
+#pragma endregion
+//=============================================================================
+#pragma region [ Sampler ]
+//=============================================================================
+gl4::SamplerId gl4::CreateSampler()
+{
+	SamplerId id;
+	Create(id);
+	return id;
+}
+//=============================================================================
+void gl4::Bind(GLuint unit, SamplerId sampler)
+{
+	// TODO: кеширование
 	glBindSampler(unit, sampler);
 }
+//=============================================================================
+void gl4::Bind(GLuint unit, Texture2DId texture, SamplerId sampler)
+{
+	Bind(unit, texture);
+	Bind(unit, sampler);
+}
+//=============================================================================
+#pragma endregion
+//=============================================================================
+#pragma region [ RenderBuffer ]
+//=============================================================================
+gl4::RenderBufferId gl4::CreateRenderBuffer(GLenum internalFormat, GLsizei width, GLsizei height)
+{
+	RenderBufferId id;
+	Create(id);
+	glNamedRenderbufferStorage(id, internalFormat, width, height);
+	return id;
+}
+//=============================================================================
+gl4::RenderBufferId gl4::CreateRenderBuffer(GLsizei samples, GLenum internalFormat, GLsizei width, GLsizei height)
+{
+	RenderBufferId id;
+	Create(id);
+	glNamedRenderbufferStorageMultisample(id, samples, internalFormat, width, height);
+	return id;
+}
+//=============================================================================
+#pragma endregion
+//=============================================================================
+#pragma region [ FrameBuffer ]
 //=============================================================================
 GLuint gl4::CreateColorBuffer2D(int width, int height, GLenum formatColor)
 {
@@ -888,15 +1105,89 @@ gl4::FrameBufferId gl4::CreateFrameBuffer2D(GLuint colorBuffer, GLuint depthBuff
 	return framebuffer;
 }
 //=============================================================================
-void gl4::SetFrameBuffer(gl4::FrameBufferId fbo, int width, int height, GLbitfield clearMask)
+gl4::FrameBufferId gl4::CreateFrameBuffer2D(Texture2DId colorBuffer, Texture2DId depthBuffer)
+{
+	gl4::FrameBufferId framebuffer;
+	gl4::Create(framebuffer);
+
+	if (IsValid(colorBuffer))
+	{
+		glNamedFramebufferTexture(framebuffer, GL_COLOR_ATTACHMENT0, colorBuffer, 0);
+	}
+
+	if (IsValid(depthBuffer))
+	{
+		glNamedFramebufferTexture(framebuffer, GL_DEPTH_ATTACHMENT, depthBuffer, 0);
+	}
+
+	const GLenum status = glCheckNamedFramebufferStatus(framebuffer, GL_FRAMEBUFFER);
+	if (status != GL_FRAMEBUFFER_COMPLETE)
+	{
+		// TODO: error
+	}
+
+	return framebuffer;
+}
+//=============================================================================
+gl4::FrameBufferId gl4::CreateFrameBuffer2D(Texture2DId colorBuffer, RenderBufferId depthBuffer)
+{
+	gl4::FrameBufferId framebuffer;
+	gl4::Create(framebuffer);
+
+	if (IsValid(colorBuffer))
+	{
+		glNamedFramebufferTexture(framebuffer, GL_COLOR_ATTACHMENT0, colorBuffer, 0);
+	}
+
+	if (IsValid(depthBuffer))
+	{
+		glNamedFramebufferRenderbuffer(framebuffer, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthBuffer);
+	}
+
+	const GLenum status = glCheckNamedFramebufferStatus(framebuffer, GL_FRAMEBUFFER);
+	if (status != GL_FRAMEBUFFER_COMPLETE)
+	{
+		// TODO: error
+	}
+
+	return framebuffer;
+}
+//=============================================================================
+void gl4::SetDrawBuffer(FrameBufferId fbo, GLenum buffer)
+{
+	glNamedFramebufferDrawBuffer(fbo, buffer);
+}
+//=============================================================================
+void gl4::SetDrawBuffers(FrameBufferId fbo, GLsizei size, const GLenum* buffers)
+{
+	glNamedFramebufferDrawBuffers(fbo, size, buffers);
+}
+//=============================================================================
+void gl4::Invalidate(FrameBufferId fbo, GLsizei numAttachments, const GLenum* attachments)
+{
+	glInvalidateNamedFramebufferData(fbo, numAttachments, attachments);
+}
+//=============================================================================
+void gl4::InvalidateSubData(FrameBufferId fbo, GLsizei numAttachments, const GLenum* attachments, GLint x, GLint y, GLsizei width, GLsizei height)
+{
+	glInvalidateNamedFramebufferSubData(fbo, numAttachments, attachments, x, y, width, height);
+}
+//=============================================================================
+void gl4::SetFrameBuffer(FrameBufferId fbo)
 {
 	if (currentFBO != fbo)
 	{
 		glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 		currentFBO = fbo;
 	}
-
+}
+//=============================================================================
+void gl4::SetFrameBuffer(FrameBufferId fbo, int width, int height, GLbitfield clearMask)
+{
+	SetFrameBuffer(fbo);
 	glViewport(0, 0, width, height);
 	glClear(clearMask);
 }
+//=============================================================================
+#pragma endregion
 //=============================================================================

@@ -54,3 +54,7 @@
 
 # 21.05.2025
 - поддержка создания шейдеров на основе кода spirv
+- правки SetUniform
+- новые методы для BufferId
+- SamplerId и RenderBufferId
+- другие правки OpenGL4Simple

@@ -1,5 +1,23 @@
 ﻿#pragma once
 
+/*
+TODO:
+ есть текстурный буфер (создается буфер и текстура, затем буфер грузится в текстуру через glTextureBuffer или glTextureBufferRange. Текстура создается с GL_TEXTURE_BUFFER типом
+		GLuint buffer;
+		glGenBuffers(1, &buffer);
+		glBindBuffer(GL_TEXTURE_BUFFER, buffer);
+		glBufferData(GL_TEXTURE_BUFFER, sizeInBytes, data, GL_STATIC_DRAW);
+		GLuint texBuffer;
+		glCreateTextures(GL_TEXTURE_BUFFER, 1, &texBuffer);
+		glTextureBuffer(texBuffer, GL_R32F, buffer); // например, один float на пиксель
+
+		uniform samplerBuffer myBuffer;
+		void main() {
+			float value = texelFetch(myBuffer, index).r;
+		}
+	но возможно хватит SSBO
+*/
+
 namespace gl4
 {
 	//-------------------------------------------------------------------------
@@ -24,6 +42,7 @@ namespace gl4
 	struct __Texture1DArrayTag;
 	struct __Texture2DArrayTag;
 	struct __TextureCubeArrayTag;
+	struct __SamplerTag;
 	struct __RenderBufferTag;
 	struct __FrameBufferTag;
 
@@ -37,15 +56,18 @@ namespace gl4
 	using Texture1DArrayId = GLObjectId<__Texture1DArrayTag>;
 	using Texture2DArrayId = GLObjectId<__Texture2DArrayTag>;
 	using TextureCubeArrayId = GLObjectId<__TextureCubeArrayTag>;
+	using SamplerId = GLObjectId<__SamplerTag>;
 	using RenderBufferId = GLObjectId<__RenderBufferTag>;
 	using FrameBufferId = GLObjectId<__FrameBufferTag>;
 
 	template<typename T>
-	bool IsValid(const T& res) { return res.id > 0; }
+	bool IsValid(T res) { return res.id > 0; }
 
 	template<typename T>
 	void Create(T& res)
 	{
+		assert(!res.id);
+
 		if constexpr (std::is_same_v<T, ShaderProgramId>) { res.id = glCreateProgram(); }
 		else if constexpr (std::is_same_v<T, BufferId>) { glCreateBuffers(1, &res.id); }
 		else if constexpr (std::is_same_v<T, VertexArrayId>) { glCreateVertexArrays(1, &res.id); }
@@ -55,7 +77,8 @@ namespace gl4
 		else if constexpr (std::is_same_v<T, TextureCubeId>) { glCreateTextures(GL_TEXTURE_CUBE_MAP, 1, &res.id); }
 		else if constexpr (std::is_same_v<T, Texture1DArrayId>) { glCreateTextures(GL_TEXTURE_1D_ARRAY, 1, &res.id); }
 		else if constexpr (std::is_same_v<T, Texture2DArrayId>) { glCreateTextures(GL_TEXTURE_2D_ARRAY, 1, &res.id); }
-		else if constexpr (std::is_same_v<T, TextureCubeArrayId>) { glCreateTextures(GL_TEXTURE_CUBE_MAP_ARRAY, 1, &res.id); }
+		else if constexpr (std::is_same_v<T, TextureCubeArrayId>) { glCreateTextures(GL_TEXTURE_CUBE_MAP_ARRAY, 1, &res.id); }		
+		else if constexpr (std::is_same_v<T, SamplerId>) { glCreateSamplers(1, &res.id); }
 		else if constexpr (std::is_same_v<T, RenderBufferId>) { glCreateRenderbuffers(1, &res.id); }
 		else if constexpr (std::is_same_v<T, FrameBufferId>) { glCreateFramebuffers(1, &res.id); }
 		assert(res.id);
@@ -64,6 +87,8 @@ namespace gl4
 	template<typename T>
 	void Destroy(T& res)
 	{
+		if (res.id == 0) return;
+
 		if constexpr (std::is_same_v<T, ShaderProgramId>) { glDeleteProgram(res.id); }
 		else if constexpr (std::is_same_v<T, BufferId>) { glDeleteBuffers(1, &res.id); }
 		else if constexpr (std::is_same_v<T, VertexArrayId>) { glDeleteVertexArrays(1, &res.id); }
@@ -74,6 +99,7 @@ namespace gl4
 		else if constexpr (std::is_same_v<T, Texture1DArrayId>) { glDeleteTextures(1, &res.id); }
 		else if constexpr (std::is_same_v<T, Texture2DArrayId>) { glDeleteTextures(1, &res.id); }
 		else if constexpr (std::is_same_v<T, TextureCubeArrayId>) { glDeleteTextures(1, &res.id); }
+		else if constexpr (std::is_same_v<T, SamplerId>) { glDeleteSamplers(1, &res.id); }
 		else if constexpr (std::is_same_v<T, RenderBufferId>) { glDeleteRenderbuffers(1, &res.id); }
 		else if constexpr (std::is_same_v<T, FrameBufferId>) { glDeleteFramebuffers(1, &res.id); }
 		res.id = 0;
@@ -102,8 +128,7 @@ namespace gl4
 	};
 
 #pragma endregion
-
-	
+		
 	//-------------------------------------------------------------------------
 	// Shader
 	//-------------------------------------------------------------------------
@@ -138,6 +163,8 @@ namespace gl4
 	ShaderProgramId CreateShaderProgram(const std::string& computeSrc);
 	ShaderProgramId CreateShaderProgram(const std::string& vertexSrc, const std::string& fragmentSrc);
 	ShaderProgramId CreateShaderProgram(const std::string& vertexSrc, const std::string& geometrySrc, const std::string& fragmentSrc);
+
+	void Bind(ShaderProgramId id);
 
 	int GetUniformLocation(ShaderProgramId program, const std::string& name);      // TODO: а нужна ли? это просто glGetUniformLocation
 	GLuint GetUniformBlockIndex(ShaderProgramId program, const std::string& name); // TODO: а нужна ли? это просто glGetUniformBlockIndex
@@ -213,23 +240,63 @@ namespace gl4
 #pragma endregion
 
 	//-------------------------------------------------------------------------
+	// ProgramPipeline
+	//-------------------------------------------------------------------------
+	
+	// TODO:
+	/*
+		glCreateProgramPipelines(1, &id);
+		glDeleteProgramPipelines(1, &id);
+
+		glUseProgramStages(id, GLbitfield(stages), program);
+
+		glActiveShaderProgram(id, program);
+
+		glValidateProgramPipeline(id);
+	*/
+
+	//-------------------------------------------------------------------------
 	// Buffer
 	//-------------------------------------------------------------------------
+#pragma region [ Buffer ]
 
-	BufferId CreateBuffer(GLenum usage, GLsizeiptr size, void* data);
+	BufferId CreateBuffer(GLenum usage, GLsizeiptr size, const void* data);
 
-	BufferId CreateBufferStorage(GLbitfield flags, GLsizeiptr size, void* data);
-	BufferId CreateBufferStorage(GLbitfield flags, GLsizeiptr sizeElement, GLsizeiptr numElement, void* data);
-
+	BufferId CreateBufferStorage(GLbitfield flags, GLsizeiptr size, const void* data);
+	BufferId CreateBufferStorage(GLbitfield flags, GLsizeiptr sizeElement, GLsizeiptr numElement, const void* data);
 	template<typename T>
 	BufferId CreateBufferStorage(GLbitfield flags, const std::vector<T>& data)
 	{
-		return CreateBufferStorage(flags, sizeof(T), data.size(), (void*)data.data());
+		return CreateBufferStorage(flags, sizeof(T), data.size(), data.data());
 	}
+
+	// TODO: Set(Init)Data и Set(Init)Storage???
+	void SetSubData(BufferId id, GLintptr offset, GLsizeiptr size, const void* data);
+	void CopySubData(BufferId readBuffer, BufferId writeBuffer, GLintptr readOffset, GLintptr writeOffset, GLsizeiptr size);
+
+	void ClearData(BufferId id, GLenum internalFormat, GLenum format, GLenum type, const void* data);
+	void ClearSubData(BufferId id, GLenum internalFormat, GLintptr offset, GLsizeiptr size, GLenum format, GLenum type, const void* data);
+
+	void InvalidateData(BufferId id);
+	void InvalidateSubData(BufferId id, GLintptr offset, GLsizeiptr length);
+
+	void* Map(BufferId id, GLenum access);
+	void* MapRange(BufferId id, GLintptr offset, GLsizeiptr length, GLbitfield access);
+	bool UnMap(BufferId id);
+	void FlushMappedRange(BufferId id, GLintptr offset, GLsizeiptr length);
+
+	void* GetBufferPointer(BufferId id);
+	void GetSubData(BufferId id, GLintptr offset, GLsizeiptr size, void* data);
+
+	void BindBufferBase(BufferId id, GLenum target, GLuint index);
+	void BindBufferRange(BufferId id, GLenum target, GLuint index, GLintptr offset, GLsizeiptr size);
+
+#pragma endregion
 
 	//-------------------------------------------------------------------------
 	// Vertex Array
 	//-------------------------------------------------------------------------
+#pragma region [ Vertex Array ]
 
 	struct VertexAttribute final
 	{
@@ -239,12 +306,13 @@ namespace gl4
 		GLenum type;				// example: GL_FLOAT
 		bool normalized{ false };	// example: GL_FALSE
 		GLuint relativeOffset;		// example: offsetof(Vertex, pos)
+		GLuint bindingIndex{ 0 };
 	};
 
 	// example:
 	//	SetVertexAttrib(vao, 0, 3, GL_FLOAT, GL_FALSE, offsetof(Vertex, pos));
 	//	SetVertexAttrib(vao, 1, 2, GL_FLOAT, GL_FALSE, offsetof(Vertex, uv));
-	void SetVertexAttrib(GLuint vao, GLuint attribIndex, GLint size, GLenum type, GLboolean normalized, GLuint relativeOffset);
+	void SetVertexAttrib(GLuint vao, GLuint attribIndex, GLint size, GLenum type, GLboolean normalized, GLuint relativeOffset, GLuint bindingIndex);
 	void SetVertexAttrib(GLuint vao, const VertexAttribute& attribute);
 	void SetVertexAttrib(GLuint vao, const std::vector<VertexAttribute>& attributes);
 
@@ -253,9 +321,17 @@ namespace gl4
 	VertexArrayId CreateVertexArray(BufferId vbo, size_t vertexSize, const std::vector<VertexAttribute>& attributes);
 	VertexArrayId CreateVertexArray(BufferId vbo, BufferId ibo, size_t vertexSize, const std::vector<VertexAttribute>& attributes);
 
+	void SetVertexBuffer(VertexArrayId id, BufferId vbo, GLuint bindingindex, GLintptr offset, GLsizei stride);
+	void SetIndexBuffer(VertexArrayId id, BufferId ibo);
+
+	void Bind(VertexArrayId id);
+
+#pragma endregion
+
 	//-------------------------------------------------------------------------
 	// Texture
 	//-------------------------------------------------------------------------
+#pragma region [ Texture ]
 
 	struct TextureParameter final
 	{
@@ -270,12 +346,12 @@ namespace gl4
 	};
 	constexpr TextureParameter defaultTextureParameter2D{};
 	constexpr TextureParameter defaultTextureParameter2DHDR{
-	.minFilter = GL_LINEAR_MIPMAP_LINEAR,
-	.magFilter = GL_LINEAR,
-	.maxAnisotropy = 16,
-	.wrap = GL_CLAMP_TO_EDGE,
-	.dataType = GL_FLOAT,
-	.genMipMap = true
+		.minFilter = GL_LINEAR_MIPMAP_LINEAR,
+		.magFilter = GL_LINEAR,
+		.maxAnisotropy = 16,
+		.wrap = GL_CLAMP_TO_EDGE,
+		.dataType = GL_FLOAT,
+		.genMipMap = true
 	};
 	constexpr TextureParameter defaultTextureParameterCube{
 		.minFilter = GL_LINEAR_MIPMAP_LINEAR,
@@ -291,22 +367,67 @@ namespace gl4
 	Texture2DId LoadTexture2DHDR(const char* texturePath, bool flipVertical = false, const TextureParameter& param = defaultTextureParameter2DHDR);
 	TextureCubeId LoadCubeMap(const std::vector<std::string>& files, const std::string& directory);
 
-	void BindTextureSampler(GLuint unit, Texture2DId texture, GLuint sampler);
+	void SetSubImage(Texture1DId id, GLint level, GLint xoffset, GLsizei width, GLenum format, GLenum type, const void* pixels);
+	void SetSubImage(Texture2DId id, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, const void* pixels);
+	void SetSubImage(Texture3DId id, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLenum type, const void* pixels);
+
+	void SetCompressedSubImage(Texture1DId id, GLint level, GLint xoffset, GLsizei width, GLenum format, GLsizei imageSize, const void* data);
+	void SetCompressedSubImage(Texture2DId id, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLsizei imageSize, const void* data);
+	void SetCompressedSubImage(Texture3DId id, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLsizei imageSize, const void* data);
+
+	void CopySubImage(Texture1DId id, GLint level, GLint xoffset, GLint x, GLint y, GLsizei width);
+	void CopySubImage(Texture2DId id, GLint level, GLint xoffset, GLint yoffset, GLint x, GLint y, GLsizei width, GLsizei height);
+	void CopySubImage(Texture3DId id, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLint x, GLint y, GLsizei width, GLsizei height);
 
 
+	void Bind(GLuint unit, Texture1DId id);
+	void Bind(GLuint unit, Texture2DId id);
+	void Bind(GLuint unit, Texture3DId id);
+	void Bind(GLuint unit, TextureCubeId id);
+#pragma endregion
+
 	//-------------------------------------------------------------------------
-	// Framebuffer
+	// Sampler
 	//-------------------------------------------------------------------------
+#pragma region [ Sampler ]
+
+	SamplerId CreateSampler();
+	void Bind(GLuint unit, SamplerId sampler);
+	void Bind(GLuint unit, Texture2DId texture, SamplerId sampler);
+
+#pragma endregion
+
+	//-------------------------------------------------------------------------
+	// RenderBuffer
+	//-------------------------------------------------------------------------
+#pragma region [ RenderBuffer ]
+
+	RenderBufferId CreateRenderBuffer(GLenum internalFormat, GLsizei width, GLsizei height);
+	RenderBufferId CreateRenderBuffer(GLsizei samples, GLenum internalFormat, GLsizei width, GLsizei height); // Multisample
+
+#pragma endregion
+
+	//-------------------------------------------------------------------------
+	// FrameBuffer
+	//-------------------------------------------------------------------------
+#pragma region [ FrameBuffer ]
+
 	GLuint CreateColorBuffer2D(int width, int height, GLenum formatColor); // удалить - через создание текстуры
 	GLuint CreateDepthBuffer2D(int width, int height, GLenum formatDepth = GL_DEPTH_COMPONENT32);
 	// TODO: CreateRenderBuffer???
-	FrameBufferId CreateFrameBuffer2D(GLuint colorBuffer, GLuint depthBuffer);
+	FrameBufferId CreateFrameBuffer2D(GLuint colorBuffer, GLuint depthBuffer); // TODO:
 
+	FrameBufferId CreateFrameBuffer2D(Texture2DId colorBuffer, Texture2DId depthBuffer);
+	FrameBufferId CreateFrameBuffer2D(Texture2DId colorBuffer, RenderBufferId depthBuffer);
 
-	//-------------------------------------------------------------------------
-	// Commands
-	//-------------------------------------------------------------------------
+	void SetDrawBuffer(FrameBufferId fbo, GLenum buffer);
+	void SetDrawBuffers(FrameBufferId fbo, GLsizei size, const GLenum* buffers);
 
+	void Invalidate(FrameBufferId fbo, GLsizei numAttachments, const GLenum* attachments);
+	void InvalidateSubData(FrameBufferId fbo, GLsizei numAttachments, const GLenum* attachments, GLint x, GLint y, GLsizei width, GLsizei height);
+
+	void SetFrameBuffer(gl4::FrameBufferId fbo);
 	void SetFrameBuffer(gl4::FrameBufferId fbo, int width, int height, GLbitfield clearMask);
 
+#pragma endregion
 } // namespace gl4

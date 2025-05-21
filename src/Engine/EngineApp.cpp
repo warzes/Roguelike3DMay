@@ -212,7 +212,7 @@ void IEngineApp::Run()
 				if (drawData->CmdListsCount > 0)
 				{
 					// A frame marker is inserted to distinguish ImGui rendering from the application's in a debugger.
-					auto marker = gl4A::ScopedDebugMarker("Draw ImGui");
+					auto marker = gl4::ScopedDebugMarker("Draw ImGui");
 					glDisable(GL_FRAMEBUFFER_SRGB);
 					glBindFramebuffer(GL_FRAMEBUFFER, 0);
 					ImGui_ImplOpenGL3_RenderDrawData(drawData);
