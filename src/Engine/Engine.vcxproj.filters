@@ -141,11 +141,11 @@
     <ClInclude Include="BasicTypes.h">
       <Filter>Core</Filter>
     </ClInclude>
-    <ClInclude Include="Hash.h">
-      <Filter>Core</Filter>
-    </ClInclude>
     <ClInclude Include="OpenGL4Advance.h">
       <Filter>RHI</Filter>
+    </ClInclude>
+    <ClInclude Include="Hash.h">
+      <Filter>Core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

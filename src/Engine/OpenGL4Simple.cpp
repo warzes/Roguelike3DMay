@@ -1,6 +1,32 @@
 ﻿#include "stdafx.h"
 #include "OpenGL4Simple.h"
 #include "Log.h"
+#include "Hash.h"
+#pragma region [ Hash ]
+//=============================================================================
+template<>
+struct std::hash<gl4::SamplerState>
+{
+	std::size_t operator()(const gl4::SamplerState& k) const noexcept
+	{
+		auto rtup = std::make_tuple(k.minFilter,
+			k.magFilter,
+			k.mipmapFilter,
+			k.addressModeU,
+			k.addressModeV,
+			k.addressModeW,
+			k.borderColor,
+			k.anisotropy,
+			k.compareEnable,
+			k.compareOp,
+			k.lodBias,
+			k.minLod,
+			k.maxLod);
+		return detail::hashing::hash<decltype(rtup)>{}(rtup);
+	}
+};
+//=============================================================================
+#pragma endregion
 //=============================================================================
 #pragma region [ Local variables ]
 //=============================================================================
@@ -11,8 +37,10 @@ namespace
 	bool depthState{ false };
 	bool blendingState{ false };
 	gl4::PolygonMode polygonMode{ gl4::PolygonMode::Fill };
-	gl4::DepthTestFunc depthTestFunc{ gl4::DepthTestFunc::Less };
+	gl4::CompareOp depthTestFunc{ gl4::CompareOp::Less };
 	gl4::BlendFunc blendFunc{ gl4::BlendFunc::Zero };
+
+	std::unordered_map<gl4::SamplerState, gl4::SamplerId> samplerCache;
 }
 //=============================================================================
 void ClearOpenGLState()
@@ -21,8 +49,14 @@ void ClearOpenGLState()
 	depthState = { false };
 	blendingState = { false };
 	polygonMode = { gl4::PolygonMode::Fill };
-	depthTestFunc = { gl4::DepthTestFunc::Less };
+	depthTestFunc = { gl4::CompareOp::Less };
 	blendFunc = { gl4::BlendFunc::Zero };
+}
+//=============================================================================
+void ClearResourceCache()
+{
+	for (auto& [_, sampler] : samplerCache) { gl4::Destroy(sampler); }
+	samplerCache.clear();
 }
 //=============================================================================
 #pragma endregion
@@ -1031,11 +1065,93 @@ void gl4::Bind(GLuint unit, TextureCubeId id)
 //=============================================================================
 #pragma region [ Sampler ]
 //=============================================================================
-gl4::SamplerId gl4::CreateSampler()
+gl4::SamplerId gl4::CreateSampler(const SamplerState& createInfo)
 {
+	if (auto it = samplerCache.find(createInfo); it != samplerCache.end())
+	{
+		return it->second;
+	}
+
 	SamplerId id;
 	Create(id);
-	return id;
+
+	glSamplerParameteri(id, GL_TEXTURE_COMPARE_MODE, createInfo.compareEnable ? GL_COMPARE_REF_TO_TEXTURE : GL_NONE);
+	glSamplerParameteri(id, GL_TEXTURE_COMPARE_FUNC, EnumToGL(createInfo.compareOp));
+
+	GLint magFilter = createInfo.magFilter == Filter::Linear ? GL_LINEAR : GL_NEAREST;
+	glSamplerParameteri(id, GL_TEXTURE_MAG_FILTER, magFilter);
+
+	GLint minFilter{};
+	switch (createInfo.mipmapFilter)
+	{
+	case Filter::None:
+		minFilter = createInfo.minFilter == Filter::Linear ? GL_LINEAR : GL_NEAREST;
+		break;
+	case Filter::Nearest:
+		minFilter = createInfo.minFilter == Filter::Linear ? GL_LINEAR_MIPMAP_NEAREST : GL_NEAREST_MIPMAP_NEAREST;
+		break;
+	case Filter::Linear:
+		minFilter = createInfo.minFilter == Filter::Linear ? GL_LINEAR_MIPMAP_LINEAR : GL_NEAREST_MIPMAP_LINEAR;
+		break;
+	default: assert(0);
+	}
+	glSamplerParameteri(id, GL_TEXTURE_MIN_FILTER, minFilter);
+
+	glSamplerParameteri(id, GL_TEXTURE_WRAP_S, EnumToGL(createInfo.addressModeU));
+	glSamplerParameteri(id, GL_TEXTURE_WRAP_T, EnumToGL(createInfo.addressModeV));
+	glSamplerParameteri(id, GL_TEXTURE_WRAP_R, EnumToGL(createInfo.addressModeW));
+
+	// TODO: determine whether int white values should be 1 or 255
+	switch (createInfo.borderColor)
+	{
+	case BorderColor::FloatTransparentBlack:
+	{
+		constexpr GLfloat color[4]{ 0, 0, 0, 0 };
+		glSamplerParameterfv(id, GL_TEXTURE_BORDER_COLOR, color);
+		break;
+	}
+	case BorderColor::IntTransparentBlack:
+	{
+		constexpr GLint color[4]{ 0, 0, 0, 0 };
+		glSamplerParameteriv(id, GL_TEXTURE_BORDER_COLOR, color);
+		break;
+	}
+	case BorderColor::FloatOpaqueBlack:
+	{
+		constexpr GLfloat color[4]{ 0, 0, 0, 1 };
+		glSamplerParameterfv(id, GL_TEXTURE_BORDER_COLOR, color);
+		break;
+	}
+	case BorderColor::IntOpaqueBlack:
+	{
+		// constexpr GLint color[4]{ 0, 0, 0, 255 };
+		constexpr GLint color[4]{ 0, 0, 0, 1 };
+		glSamplerParameteriv(id, GL_TEXTURE_BORDER_COLOR, color);
+		break;
+	}
+	case BorderColor::FloatOpaqueWhite:
+	{
+		constexpr GLfloat color[4]{ 1, 1, 1, 1 };
+		glSamplerParameterfv(id, GL_TEXTURE_BORDER_COLOR, color);
+		break;
+	}
+	case BorderColor::IntOpaqueWhite:
+	{
+		// constexpr GLint color[4]{ 255, 255, 255, 255 };
+		constexpr GLint color[4]{ 1, 1, 1, 1 };
+		glSamplerParameteriv(id, GL_TEXTURE_BORDER_COLOR, color);
+		break;
+	}
+	default: assert(0); break;
+	}
+
+	glSamplerParameterf(id, GL_TEXTURE_MAX_ANISOTROPY, static_cast<GLfloat>(EnumToGL(createInfo.anisotropy)));
+
+	glSamplerParameterf(id, GL_TEXTURE_LOD_BIAS, createInfo.lodBias);
+	glSamplerParameterf(id, GL_TEXTURE_MIN_LOD, createInfo.minLod);
+	glSamplerParameterf(id, GL_TEXTURE_MAX_LOD, createInfo.maxLod);
+
+	return samplerCache.insert({ createInfo, SamplerId(id) }).first->second;
 }
 //=============================================================================
 void gl4::Bind(GLuint unit, SamplerId sampler)
@@ -1236,13 +1352,11 @@ void gl4::SwitchPolygonMode(PolygonMode mode)
 	}
 }
 //=============================================================================
-void gl4::SwitchDepthTestFunc(DepthTestFunc mode)
+void gl4::SwitchDepthTestFunc(CompareOp mode)
 {
-	constexpr GLenum glDepthFuncs[] = { GL_LESS, GL_NEVER, GL_EQUAL, GL_LEQUAL, GL_GREATER, GL_NOTEQUAL, GL_GEQUAL, GL_ALWAYS };
 	if (mode != depthTestFunc)
 	{
-		unsigned int indexFunc = static_cast<unsigned int>(mode);
-		glDepthFunc(glDepthFuncs[indexFunc]);
+		glDepthFunc(EnumToGL(mode));
 		depthTestFunc = mode;
 	}
 }

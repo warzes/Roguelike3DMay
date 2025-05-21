@@ -436,6 +436,9 @@ void IEngineApp::destroy()
 {
 	OnDestroy();
 
+	void ClearResourceCache();
+	ClearResourceCache();
+
 	profiler::Close();
 
 	m_graphics.Destroy();

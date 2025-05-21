@@ -21,9 +21,105 @@ TODO:
 namespace gl4
 {
 	//-------------------------------------------------------------------------
-	// OpenGL Types
+	// Base
 	//-------------------------------------------------------------------------
-#pragma region [ OpenGL Types ]
+#pragma region [ Base ]
+
+	// multisampling and anisotropy
+	enum class SampleCount : uint32_t
+	{
+		Samples1  = 1,
+		Samples2  = 2,
+		Samples4  = 4,
+		Samples8  = 8,
+		Samples16 = 16,
+		Samples32 = 32,
+	};
+	inline GLsizei EnumToGL(SampleCount sampleCount)
+	{
+		switch (sampleCount)
+		{
+		case SampleCount::Samples1:  return 1;
+		case SampleCount::Samples2:  return 2;
+		case SampleCount::Samples4:  return 4;
+		case SampleCount::Samples8:  return 8;
+		case SampleCount::Samples16: return 16;
+		case SampleCount::Samples32: return 32;
+		default: assert(0);          return 0;
+		}
+	}
+
+	enum class Filter : uint32_t
+	{
+		None,
+		Nearest,
+		Linear
+	};
+
+	enum class AddressMode : uint32_t
+	{
+		Repeat,
+		MirroredRepeat,
+		ClampToEdge,
+		ClampToBorder,
+		MirrorClampToEdge,
+	};
+	inline GLint EnumToGL(AddressMode addressMode)
+	{
+		switch (addressMode)
+		{
+		case AddressMode::Repeat:            return GL_REPEAT;
+		case AddressMode::MirroredRepeat:    return GL_MIRRORED_REPEAT;
+		case AddressMode::ClampToEdge:       return GL_CLAMP_TO_EDGE;
+		case AddressMode::ClampToBorder:     return GL_CLAMP_TO_BORDER;
+		case AddressMode::MirrorClampToEdge: return GL_MIRROR_CLAMP_TO_EDGE;
+		default: assert(0);                  return 0;
+		}
+	}
+
+	enum class BorderColor : uint32_t
+	{
+		FloatTransparentBlack,
+		IntTransparentBlack,
+		FloatOpaqueBlack,
+		IntOpaqueBlack,
+		FloatOpaqueWhite,
+		IntOpaqueWhite,
+	};
+
+	enum class CompareOp : uint32_t
+	{
+		Never,
+		Less,
+		Equal,
+		LessOrEqual,
+		Greater,
+		NotEqual,
+		GreaterOrEqual,
+		Always,
+	};
+	inline GLenum EnumToGL(CompareOp op)
+	{
+		switch (op)
+		{
+		case CompareOp::Never:          return GL_NEVER;
+		case CompareOp::Less:           return GL_LESS;
+		case CompareOp::Equal:          return GL_EQUAL;
+		case CompareOp::LessOrEqual:    return GL_LEQUAL;
+		case CompareOp::Greater:        return GL_GREATER;
+		case CompareOp::NotEqual:       return GL_NOTEQUAL;
+		case CompareOp::GreaterOrEqual: return GL_GEQUAL;
+		case CompareOp::Always:         return GL_ALWAYS;
+		default: assert(0);             return 0;
+		}
+	}
+
+#pragma endregion
+
+	//-------------------------------------------------------------------------
+	// OpenGL RHI Types
+	//-------------------------------------------------------------------------
+#pragma region [ OpenGL RHI Types ]
 
 	template <typename Tag>
 	struct GLObjectId final
@@ -391,7 +487,27 @@ namespace gl4
 	//-------------------------------------------------------------------------
 #pragma region [ Sampler ]
 
-	SamplerId CreateSampler();
+	struct SamplerState final
+	{
+		bool operator==(const SamplerState&) const noexcept = default;
+
+		float lodBias{ 0 };
+		float minLod{ -1000 };
+		float maxLod{ 1000 };
+
+		Filter minFilter{ Filter::Linear };
+		Filter magFilter{ Filter::Linear };
+		Filter mipmapFilter{ Filter::None };
+		AddressMode addressModeU{ AddressMode::ClampToEdge };
+		AddressMode addressModeV{ AddressMode::ClampToEdge };
+		AddressMode addressModeW{ AddressMode::ClampToEdge };
+		BorderColor borderColor{ BorderColor::FloatOpaqueWhite };
+		SampleCount anisotropy{ SampleCount::Samples1 };
+		bool compareEnable{ false };
+		CompareOp compareOp{ CompareOp::Never };
+	};
+
+	SamplerId CreateSampler(const SamplerState& createInfo);
 	void Bind(GLuint unit, SamplerId sampler);
 	void Bind(GLuint unit, Texture2DId texture, SamplerId sampler);
 
@@ -436,18 +552,6 @@ namespace gl4
 	//-------------------------------------------------------------------------
 #pragma region [ State ]
 	
-	enum class DepthTestFunc 
-	{
-		Less,
-		Never,
-		Equal,
-		LessEqual,
-		Greater,
-		NotEqual,
-		GreaterEqual,
-		Always
-	};
-
 	enum class BlendFunc
 	{
 		Zero,
@@ -477,7 +581,7 @@ namespace gl4
 	void SwitchBlendingState(bool state);
 
 	void SwitchPolygonMode(PolygonMode mode);
-	void SwitchDepthTestFunc(DepthTestFunc mode);
+	void SwitchDepthTestFunc(CompareOp mode);
 	void SwitchBlendingFunc(BlendFunc mode);
 
 #pragma endregion
