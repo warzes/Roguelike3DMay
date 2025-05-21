@@ -53,12 +53,12 @@ void DepthPrepass::Start(int width, int height, const glm::mat4& vp)
 	glDepthFunc(GL_LESS);
 	gl4::SetFrameBuffer(m_depthpassFBO, width, height, GL_DEPTH_BUFFER_BIT);
 	glUseProgram(m_program);
-	gl4::SetUniform(m_uniformVPLoc, vp);
+	gl4::SetUniform(m_program, m_uniformVPLoc, vp);
 }
 //=============================================================================
 void DepthPrepass::DrawModel(Model* model, const glm::mat4& modelMat)
 {
-	gl4::SetUniform(m_uniformModelLoc, modelMat);
+	gl4::SetUniform(m_program, m_uniformModelLoc, modelMat);
 	model->Draw(m_program, true);
 }
 //=============================================================================

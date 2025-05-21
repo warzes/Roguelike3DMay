@@ -34,6 +34,7 @@ void Mesh::Draw(GLuint shaderProgram, bool skipTexture) const
 {
 	if (!skipTexture)
 	{
+		glUseProgram(shaderProgram);
 		// Currently only supports one texture per type
 		for (unsigned int i = 0; i < TextureMapper::NUM_TEXTURE_TYPE; ++i) // Iterate over TextureType elements
 		{

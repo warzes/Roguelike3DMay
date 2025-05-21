@@ -178,10 +178,10 @@ void TestSkyboxWithCube::OnRender()
 		glUseProgram(cubeProgram);
 		glm::mat4 model = glm::mat4(1.0f);
 		model = glm::scale(model, glm::vec3(0.5f));
-		gl4::SetUniform(cubeModelLoc, model);
-		gl4::SetUniform(cubeViewLoc, view);
-		gl4::SetUniform(cubeProjectionLoc, proj);
-		gl4::SetUniform(cubeCameraPosLoc, camera.Position);
+		gl4::SetUniform(cubeProgram, cubeModelLoc, model);
+		gl4::SetUniform(cubeProgram, cubeViewLoc, view);
+		gl4::SetUniform(cubeProgram, cubeProjectionLoc, proj);
+		gl4::SetUniform(cubeProgram, cubeCameraPosLoc, camera.Position);
 		glBindTextureUnit(0, skyboxTexture);
 		glBindTextureUnit(1, cubeTexture);
 		GetGraphicSystem().DrawCube();
@@ -194,8 +194,8 @@ void TestSkyboxWithCube::OnRender()
 
 		glUseProgram(skyboxProgram);
 		auto skyboxView = glm::mat4(glm::mat3(view)); // Remove translation from the view matrix
-		gl4::SetUniform(skyViewLoc, skyboxView);
-		gl4::SetUniform(skyProjectionLoc, proj);
+		gl4::SetUniform(skyboxProgram, skyViewLoc, skyboxView);
+		gl4::SetUniform(skyboxProgram, skyProjectionLoc, proj);
 		glBindTextureUnit(0, skyboxTexture);
 		GetGraphicSystem().DrawCube();
 		glBindVertexArray(0);

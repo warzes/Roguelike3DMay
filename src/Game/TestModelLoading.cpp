@@ -185,16 +185,16 @@ void TestModelLoading::OnRender()
 	// вывод модели
 	{
 		glUseProgram(modelProgram);
-		gl4::SetUniform(modelProjLoc, proj);
-		gl4::SetUniform(modelViewLoc, view);
-		gl4::SetUniform(viewPosLoc, camera.Position);
-		gl4::SetUniform(lightPosLoc, lightPos);
+		gl4::SetUniform(modelProgram, modelProjLoc, proj);
+		gl4::SetUniform(modelProgram, modelViewLoc, view);
+		gl4::SetUniform(modelProgram, viewPosLoc, camera.Position);
+		gl4::SetUniform(modelProgram, lightPosLoc, lightPos);
 
 		glm::mat4 modelMat = glm::mat4(1.0f);
 		modelMat = glm::scale(modelMat, glm::vec3(1.0f, 1.0f, 1.0f));
 		modelMat = glm::rotate(modelMat, modelRotation, glm::vec3(0.0f, 1.0f, 0.0f));
 		modelRotation += GetDeltaTime();
-		gl4::SetUniform(modelModelLoc, modelMat);
+		gl4::SetUniform(modelProgram, modelModelLoc, modelMat);
 
 		model->Draw(modelProgram);
 	}
@@ -202,13 +202,13 @@ void TestModelLoading::OnRender()
 	// рендер источника света
 	{
 		glUseProgram(lightProgram);
-		gl4::SetUniform(lightProjLoc, proj);
-		gl4::SetUniform(lightViewLoc, view);
+		gl4::SetUniform(lightProgram, lightProjLoc, proj);
+		gl4::SetUniform(lightProgram, lightViewLoc, view);
 
 		glm::mat4 modelMat = glm::mat4(1.0f);
 		modelMat = glm::translate(modelMat, lightPos);
 		modelMat = glm::scale(modelMat, glm::vec3(0.2f));
-		gl4::SetUniform(lightModelLoc, modelMat);
+		gl4::SetUniform(lightProgram, lightModelLoc, modelMat);
 
 		GetGraphicSystem().DrawCube();
 	}

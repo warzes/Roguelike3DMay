@@ -2,6 +2,8 @@
 #include "OpenGL4Simple.h"
 #include "Log.h"
 //=============================================================================
+#pragma region [ Local variables ]
+
 namespace
 {
 	gl4::FrameBufferId currentFBO{ 0 };
@@ -11,6 +13,9 @@ void ClearOpenGLState()
 {
 	currentFBO = { 0 };
 }
+#pragma endregion
+//=============================================================================
+#pragma region [ Shader ]
 //=============================================================================
 inline std::string shaderTypeToString(GLenum shaderType)
 {
@@ -48,39 +53,104 @@ inline std::string printShaderSource(const char* text)
 	return formatText;
 }
 //=============================================================================
-GLuint gl4::CreateShader(GLenum type, const std::string& shaderSource)
+inline void validateShader(GLuint id, GLenum type, const GLchar* shaderText)
 {
-	GLuint shader = glCreateShader(type);
-	const char* shaderText = shaderSource.c_str();
-	glShaderSource(shader, 1, &shaderText, nullptr);
-	glCompileShader(shader);
-
-	GLint success;
-	glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
+	GLint success{};
+	glGetShaderiv(id, GL_COMPILE_STATUS, &success);
 	if (success == GL_FALSE)
 	{
-		GLchar log[512];
-		glGetShaderInfoLog(shader, 512, nullptr, log);
+		GLint infoLength{ 512 };
+		glGetShaderiv(id, GL_INFO_LOG_LENGTH, &infoLength);
+		auto infoLog = std::string(infoLength + 1, '\0');
+		glGetShaderInfoLog(id, infoLength, nullptr, infoLog.data());
 
-		const std::string logError
-			= "OPENGL " + shaderTypeToString(type) + ": Shader compilation failed : "
-			+ std::string(log) + ", Source: \n" + printShaderSource(shaderText);
+		std::string logError = "OPENGL " + shaderTypeToString(type) + ": Shader compilation failed : " + infoLog;
+		if (shaderText != nullptr)
+			logError += ", Source: \n" + printShaderSource(shaderText);
+		
 		Error(logError);
 	}
-
-	return shader;
 }
+//=============================================================================
+GLuint gl4::CreateShader(GLenum type, const std::string& source, std::string_view name)
+{
+	assert(!source.empty());
+
+	const GLchar* shaderText = source.c_str();
+
+	GLuint id = glCreateShader(type); assert(id);
+	glShaderSource(id, 1, &shaderText, nullptr);
+	glCompileShader(id);
+
+	validateShader(id, type, shaderText);
+
+	if (id && !name.empty())
+	{
+		glObjectLabel(GL_SHADER, id, static_cast<GLsizei>(name.length()), name.data());
+	}
+
+	return id;
+}
+//=============================================================================
+GLuint gl4::CreateShaderSpirv(GLenum type, const ShaderSpirvInfo& spirvInfo, std::string_view name)
+{
+	GLuint id = glCreateShader(type); assert(id);
+
+	glShaderBinary(1, &id, GL_SHADER_BINARY_FORMAT_SPIR_V, (const GLuint*)spirvInfo.code.data(), (GLsizei)spirvInfo.code.size_bytes());
+
+	// Unzip specialization constants into two streams to feed to OpenGL
+	auto indices = std::vector<uint32_t>(spirvInfo.specializationConstants.size());
+	auto values = std::vector<uint32_t>(spirvInfo.specializationConstants.size());
+	for (size_t i = 0; i < spirvInfo.specializationConstants.size(); i++)
+	{
+		indices[i] = spirvInfo.specializationConstants[i].index;
+		values[i] = spirvInfo.specializationConstants[i].value;
+	}
+
+	glSpecializeShader(id, spirvInfo.entryPoint, (GLuint)spirvInfo.specializationConstants.size(), indices.data(), values.data());
+
+	validateShader(id, type, nullptr);
+
+	if (id && !name.empty())
+	{
+		glObjectLabel(GL_SHADER, id, static_cast<GLsizei>(name.length()), name.data());
+	}
+
+	return id;
+}
+//=============================================================================
+std::string gl4::GetShaderSourceCode(GLuint id)
+{
+	if (glIsShader(id) != GL_TRUE)
+	{
+		assert(0);
+		Fatal(std::to_string(id) + " not shader.");
+		return "";
+	}
+
+	GLint length;
+	glGetShaderiv(id, GL_SHADER_SOURCE_LENGTH, &length);
+	std::vector<char> source(length);
+
+	glGetShaderSource(id, length, nullptr, source.data());
+	return std::string(source.data(), length);
+}
+//=============================================================================
+#pragma endregion
+//=============================================================================
+#pragma region [ ShaderProgram ]
 //=============================================================================
 inline void checkProgramStatus(GLuint program)
 {
-	GLint success;
+	GLint success{};
 	glGetProgramiv(program, GL_LINK_STATUS, &success);
 	if (!success)
 	{
-		char  log[512];
-		glGetProgramInfoLog(program, 512, nullptr, log);
-		std::string logError = "OPENGL: Shader program linking failed: " + std::string(log);
-		Error(logError);
+		GLint length{ 512 };
+		glGetProgramiv(program, GL_INFO_LOG_LENGTH, &length);
+		auto infoLog = std::string(length + 1, '\0');
+		glGetProgramInfoLog(program, length, nullptr, infoLog.data());
+		Error("OPENGL: Shader Program(" + std::to_string(program) + ") linking failed: " + infoLog);
 	}
 }
 //=============================================================================
@@ -131,155 +201,331 @@ gl4::ShaderProgramId gl4::CreateShaderProgram(const std::string& vertexSrc, cons
 	return program;
 }
 //=============================================================================
-int gl4::GetUniformLocation(gl4::ShaderProgramId program, const std::string& name)
+int gl4::GetUniformLocation(ShaderProgramId program, const std::string& name)
 {
 	return glGetUniformLocation(program, name.c_str());
 }
 //=============================================================================
-GLuint gl4::GetUniformBlockIndex(gl4::ShaderProgramId program, const std::string& name)
+GLuint gl4::GetUniformBlockIndex(ShaderProgramId program, const std::string& name)
 {
 	return glGetUniformBlockIndex(program, name.c_str());
 }
 //=============================================================================
-void gl4::SetUniform(int uniformLoc, bool value)
+#pragma region [ SetUniform ]
+//=============================================================================
+void gl4::SetUniform(ShaderProgramId program, int location, bool value)
 {
-	glUniform1i(uniformLoc, static_cast<int>(value));
+	glProgramUniform1i(program, location, static_cast<int>(value));
 }
 //=============================================================================
-void gl4::SetUniform(int uniformLoc, int value)
+void gl4::SetUniform(ShaderProgramId program, int location, int value)
 {
-	glUniform1i(uniformLoc, value);
+	glProgramUniform1i(program, location, value);
 }
 //=============================================================================
-void gl4::SetUniform(int uniformLoc, uint32_t value)
+void gl4::SetUniform(ShaderProgramId program, int location, int v1, int v2)
 {
-	glUniform1ui(uniformLoc, value);
+	glProgramUniform2i(program, location, v1, v2);
 }
 //=============================================================================
-void gl4::SetUniform(int uniformLoc, float value)
+void gl4::SetUniform(ShaderProgramId program, int location, int v1, int v2, int v3)
 {
-	glUniform1f(uniformLoc, value);
+	glProgramUniform3i(program, location, v1, v2, v3);
 }
 //=============================================================================
-void gl4::SetUniform(int uniformLoc, const glm::vec2& value)
+void gl4::SetUniform(ShaderProgramId program, int location, int v1, int v2, int v3, int v4)
 {
-	glUniform2fv(uniformLoc, 1, &value[0]);
+	glProgramUniform4i(program, location, v1, v2, v3, v4);
 }
 //=============================================================================
-void gl4::SetUniform(int uniformLoc, const glm::ivec2& value)
+void gl4::SetUniform(ShaderProgramId program, int location, uint32_t value)
 {
-	glUniform2iv(uniformLoc, 1, &value[0]);
+	glProgramUniform1ui(program, location, value);
 }
 //=============================================================================
-void gl4::SetUniform(int uniformLoc, float x, float y)
+void gl4::SetUniform(ShaderProgramId program, int location, uint32_t v1, uint32_t v2)
 {
-	glUniform2f(uniformLoc, x, y);
+	glProgramUniform2ui(program, location, v1, v2);
 }
 //=============================================================================
-void gl4::SetUniform(int uniformLoc, const glm::vec3& value)
+void gl4::SetUniform(ShaderProgramId program, int location, uint32_t v1, uint32_t v2, uint32_t v3)
 {
-	glUniform3fv(uniformLoc, 1, &value[0]);
+	glProgramUniform3ui(program, location, v1, v2, v3);
 }
 //=============================================================================
-void gl4::SetUniform(int uniformLoc, float x, float y, float z)
+void gl4::SetUniform(ShaderProgramId program, int location, uint32_t v1, uint32_t v2, uint32_t v3, uint32_t v4)
 {
-	glUniform3f(uniformLoc, x, y, z);
+	glProgramUniform4ui(program, location, v1, v2, v3, v4);
 }
 //=============================================================================
-void gl4::SetUniform(int uniformLoc, const glm::vec4& value)
+void gl4::SetUniform(ShaderProgramId program, int location, float value)
 {
-	glUniform4fv(uniformLoc, 1, &value[0]);
+	glProgramUniform1f(program, location, value);
 }
 //=============================================================================
-void gl4::SetUniform(int uniformLoc, float x, float y, float z, float w)
+void gl4::SetUniform(ShaderProgramId program, int location, float v1, float v2)
 {
-	glUniform4f(uniformLoc, x, y, z, w);
+	glProgramUniform2f(program, location, v1, v2);
 }
 //=============================================================================
-void gl4::SetUniform(int uniformLoc, const glm::mat2& mat)
+void gl4::SetUniform(ShaderProgramId program, int location, float v1, float v2, float v3)
 {
-	glUniformMatrix2fv(uniformLoc, 1, GL_FALSE, &mat[0][0]);
+	glProgramUniform3f(program, location, v1, v2, v3);
 }
 //=============================================================================
-void gl4::SetUniform(int uniformLoc, const glm::mat3& mat)
+void gl4::SetUniform(ShaderProgramId program, int location, float v1, float v2, float v3, float v4)
 {
-	glUniformMatrix3fv(uniformLoc, 1, GL_FALSE, &mat[0][0]);
+	glProgramUniform4f(program, location, v1, v2, v3, v4);
 }
 //=============================================================================
-void gl4::SetUniform(int uniformLoc, const glm::mat4& mat)
+void gl4::SetUniform(ShaderProgramId program, int location, const glm::vec2& value)
 {
-	glUniformMatrix4fv(uniformLoc, 1, GL_FALSE, &mat[0][0]);
+	glProgramUniform2fv(program, location, 1, glm::value_ptr(value));
 }
 //=============================================================================
-void gl4::SetUniform(gl4::ShaderProgramId program, const std::string& name, bool value)
+void gl4::SetUniform(ShaderProgramId program, int location, const glm::ivec2& value)
 {
-	SetUniform(GetUniformLocation(program, name.c_str()), value);
+	glProgramUniform2iv(program, location, 1, glm::value_ptr(value));
 }
 //=============================================================================
-void gl4::SetUniform(gl4::ShaderProgramId program, const std::string& name, int value)
+void gl4::SetUniform(ShaderProgramId program, int location, const glm::uvec2& value)
 {
-	SetUniform(GetUniformLocation(program, name.c_str()), value);
+	glProgramUniform2uiv(program, location, 1, glm::value_ptr(value));
 }
 //=============================================================================
-void gl4::SetUniform(gl4::ShaderProgramId program, const std::string& name, uint32_t value)
+void gl4::SetUniform(ShaderProgramId program, int location, const glm::vec3& value)
 {
-	SetUniform(GetUniformLocation(program, name.c_str()), value);
+	glProgramUniform3fv(program, location, 1, glm::value_ptr(value));
 }
 //=============================================================================
-void gl4::SetUniform(gl4::ShaderProgramId program, const std::string& name, float value)
+void gl4::SetUniform(ShaderProgramId program, int location, const glm::ivec3& value)
 {
-	SetUniform(GetUniformLocation(program, name.c_str()), value);
+	glProgramUniform3iv(program, location, 1, glm::value_ptr(value));
 }
 //=============================================================================
-void gl4::SetUniform(gl4::ShaderProgramId program, const std::string& name, const glm::vec2& value)
+void gl4::SetUniform(ShaderProgramId program, int location, const glm::uvec3& value)
 {
-	SetUniform(GetUniformLocation(program, name.c_str()), value);
+	glProgramUniform3uiv(program, location, 1, glm::value_ptr(value));
 }
 //=============================================================================
-void gl4::SetUniform(gl4::ShaderProgramId program, const std::string& name, const glm::ivec2& value)
+void gl4::SetUniform(ShaderProgramId program, int location, const glm::vec4& value)
 {
-	SetUniform(GetUniformLocation(program, name.c_str()), value);
+	glProgramUniform4fv(program, location, 1, glm::value_ptr(value));
 }
 //=============================================================================
-void gl4::SetUniform(gl4::ShaderProgramId program, const std::string& name, float x, float y)
+void gl4::SetUniform(ShaderProgramId program, int location, const glm::ivec4& value)
 {
-	SetUniform(GetUniformLocation(program, name.c_str()), x, y);
+	glProgramUniform4iv(program, location, 1, glm::value_ptr(value));
 }
 //=============================================================================
-void gl4::SetUniform(gl4::ShaderProgramId program, const std::string& name, const glm::vec3& value)
+void gl4::SetUniform(ShaderProgramId program, int location, const glm::uvec4& value)
 {
-	SetUniform(GetUniformLocation(program, name.c_str()), value);
+	glProgramUniform4uiv(program, location, 1, glm::value_ptr(value));
 }
 //=============================================================================
-void gl4::SetUniform(gl4::ShaderProgramId program, const std::string& name, float x, float y, float z)
+void gl4::SetUniform(ShaderProgramId program, int location, const glm::mat2& mat, bool transpose)
 {
-	SetUniform(GetUniformLocation(program, name.c_str()), x, y, z);
+	glProgramUniformMatrix2fv(program, location, 1, transpose ? GL_TRUE : GL_FALSE, glm::value_ptr(mat));
 }
 //=============================================================================
-void gl4::SetUniform(gl4::ShaderProgramId program, const std::string& name, const glm::vec4& value)
+void gl4::SetUniform(ShaderProgramId program, int location, const glm::mat3& mat, bool transpose)
 {
-	SetUniform(GetUniformLocation(program, name.c_str()), value);
+	glProgramUniformMatrix3fv(program, location, 1, transpose ? GL_TRUE : GL_FALSE, glm::value_ptr(mat));
 }
 //=============================================================================
-void gl4::SetUniform(gl4::ShaderProgramId program, const std::string& name, float x, float y, float z, float w)
+void gl4::SetUniform(ShaderProgramId program, int location, const glm::mat4& mat, bool transpose)
 {
-	SetUniform(GetUniformLocation(program, name.c_str()), x, y, z, w);
+	glProgramUniformMatrix4fv(program, location, 1, transpose ? GL_TRUE : GL_FALSE, glm::value_ptr(mat));
 }
 //=============================================================================
-void gl4::SetUniform(gl4::ShaderProgramId program, const std::string& name, const glm::mat2& mat)
+void gl4::SetUniform(ShaderProgramId program, int location, const glm::mat2x3& mat, bool transpose)
 {
-	SetUniform(GetUniformLocation(program, name.c_str()), mat);
+	glProgramUniformMatrix2x3fv(program, location, 1, transpose ? GL_TRUE : GL_FALSE, glm::value_ptr(mat));
 }
 //=============================================================================
-void gl4::SetUniform(gl4::ShaderProgramId program, const std::string& name, const glm::mat3& mat)
+void gl4::SetUniform(ShaderProgramId program, int location, const glm::mat3x2& mat, bool transpose)
 {
-	SetUniform(GetUniformLocation(program, name.c_str()), mat);
+	glProgramUniformMatrix3x2fv(program, location, 1, transpose ? GL_TRUE : GL_FALSE, glm::value_ptr(mat));
 }
 //=============================================================================
-void gl4::SetUniform(gl4::ShaderProgramId program, const std::string& name, const glm::mat4& mat)
+void gl4::SetUniform(ShaderProgramId program, int location, const glm::mat2x4& mat, bool transpose)
 {
-	SetUniform(GetUniformLocation(program, name.c_str()), mat);
+	glProgramUniformMatrix2x4fv(program, location, 1, transpose ? GL_TRUE : GL_FALSE, glm::value_ptr(mat));
 }
+//=============================================================================
+void gl4::SetUniform(ShaderProgramId program, int location, const glm::mat4x2& mat, bool transpose)
+{
+	glProgramUniformMatrix4x2fv(program, location, 1, transpose ? GL_TRUE : GL_FALSE, glm::value_ptr(mat));
+}
+//=============================================================================
+void gl4::SetUniform(ShaderProgramId program, int location, const glm::mat3x4& mat, bool transpose)
+{
+	glProgramUniformMatrix3x4fv(program, location, 1, transpose ? GL_TRUE : GL_FALSE, glm::value_ptr(mat));
+}
+//=============================================================================
+void gl4::SetUniform(ShaderProgramId program, int location, const glm::mat4x3& mat, bool transpose)
+{
+	glProgramUniformMatrix4x3fv(program, location, 1, transpose ? GL_TRUE : GL_FALSE, glm::value_ptr(mat));
+}
+//=============================================================================
+void gl4::SetUniform(ShaderProgramId program, const std::string& locName, bool value)
+{
+	glProgramUniform1i(program, glGetUniformLocation(program, locName.c_str()), static_cast<int>(value));
+}
+//=============================================================================
+void gl4::SetUniform(ShaderProgramId program, const std::string& locName, int value)
+{
+	glProgramUniform1i(program, glGetUniformLocation(program, locName.c_str()), value);
+}
+//=============================================================================
+void gl4::SetUniform(ShaderProgramId program, const std::string& locName, int v1, int v2)
+{
+	glProgramUniform2i(program, glGetUniformLocation(program, locName.c_str()), v1, v2);
+}
+//=============================================================================
+void gl4::SetUniform(ShaderProgramId program, const std::string& locName, int v1, int v2, int v3)
+{
+	glProgramUniform3i(program, glGetUniformLocation(program, locName.c_str()), v1, v2, v3);
+}
+//=============================================================================
+void gl4::SetUniform(ShaderProgramId program, const std::string& locName, int v1, int v2, int v3, int v4)
+{
+	glProgramUniform4i(program, glGetUniformLocation(program, locName.c_str()), v1, v2, v3, v4);
+}
+//=============================================================================
+void gl4::SetUniform(ShaderProgramId program, const std::string& locName, uint32_t value)
+{
+	glProgramUniform1ui(program, glGetUniformLocation(program, locName.c_str()), value);
+}
+//=============================================================================
+void gl4::SetUniform(ShaderProgramId program, const std::string& locName, uint32_t v1, uint32_t v2)
+{
+	glProgramUniform2ui(program, glGetUniformLocation(program, locName.c_str()), v1, v2);
+}
+//=============================================================================
+void gl4::SetUniform(ShaderProgramId program, const std::string& locName, uint32_t v1, uint32_t v2, uint32_t v3)
+{
+	glProgramUniform3ui(program, glGetUniformLocation(program, locName.c_str()), v1, v2, v3);
+}
+//=============================================================================
+void gl4::SetUniform(ShaderProgramId program, const std::string& locName, uint32_t v1, uint32_t v2, uint32_t v3, uint32_t v4)
+{
+	glProgramUniform4ui(program, glGetUniformLocation(program, locName.c_str()), v1, v2, v3, v4);
+}
+//=============================================================================
+void gl4::SetUniform(ShaderProgramId program, const std::string& locName, float value)
+{
+	glProgramUniform1f(program, glGetUniformLocation(program, locName.c_str()), value);
+}
+//=============================================================================
+void gl4::SetUniform(ShaderProgramId program, const std::string& locName, float v1, float v2)
+{
+	glProgramUniform2f(program, glGetUniformLocation(program, locName.c_str()), v1, v2);
+}
+//=============================================================================
+void gl4::SetUniform(ShaderProgramId program, const std::string& locName, float v1, float v2, float v3)
+{
+	glProgramUniform3f(program, glGetUniformLocation(program, locName.c_str()), v1, v2, v3);
+}
+//=============================================================================
+void gl4::SetUniform(ShaderProgramId program, const std::string& locName, float v1, float v2, float v3, float v4)
+{
+	glProgramUniform4f(program, glGetUniformLocation(program, locName.c_str()), v1, v2, v3, v4);
+}
+//=============================================================================
+void gl4::SetUniform(ShaderProgramId program, const std::string& locName, const glm::vec2& value)
+{
+	glProgramUniform2fv(program, glGetUniformLocation(program, locName.c_str()), 1, glm::value_ptr(value));
+}
+//=============================================================================
+void gl4::SetUniform(ShaderProgramId program, const std::string& locName, const glm::ivec2& value)
+{
+	glProgramUniform2iv(program, glGetUniformLocation(program, locName.c_str()), 1, glm::value_ptr(value));
+}
+//=============================================================================
+void gl4::SetUniform(ShaderProgramId program, const std::string& locName, const glm::uvec2& value)
+{
+	glProgramUniform2uiv(program, glGetUniformLocation(program, locName.c_str()), 1, glm::value_ptr(value));
+}
+//=============================================================================
+void gl4::SetUniform(ShaderProgramId program, const std::string& locName, const glm::vec3& value)
+{
+	glProgramUniform3fv(program, glGetUniformLocation(program, locName.c_str()), 1, glm::value_ptr(value));
+}
+//=============================================================================
+void gl4::SetUniform(ShaderProgramId program, const std::string& locName, const glm::ivec3& value)
+{
+	glProgramUniform3iv(program, glGetUniformLocation(program, locName.c_str()), 1, glm::value_ptr(value));
+}
+//=============================================================================
+void gl4::SetUniform(ShaderProgramId program, const std::string& locName, const glm::uvec3& value)
+{
+	glProgramUniform3uiv(program, glGetUniformLocation(program, locName.c_str()), 1, glm::value_ptr(value));
+}
+//=============================================================================
+void gl4::SetUniform(ShaderProgramId program, const std::string& locName, const glm::vec4& value)
+{
+	glProgramUniform4fv(program, glGetUniformLocation(program, locName.c_str()), 1, glm::value_ptr(value));
+}
+//=============================================================================
+void gl4::SetUniform(ShaderProgramId program, const std::string& locName, const glm::ivec4& value)
+{
+	glProgramUniform4iv(program, glGetUniformLocation(program, locName.c_str()), 1, glm::value_ptr(value));
+}
+//=============================================================================
+void gl4::SetUniform(ShaderProgramId program, const std::string& locName, const glm::uvec4& value)
+{
+	glProgramUniform4uiv(program, glGetUniformLocation(program, locName.c_str()), 1, glm::value_ptr(value));
+}
+//=============================================================================
+void gl4::SetUniform(ShaderProgramId program, const std::string& locName, const glm::mat2& mat, bool transpose)
+{
+	glProgramUniformMatrix2fv(program, glGetUniformLocation(program, locName.c_str()), 1, transpose ? GL_TRUE : GL_FALSE, glm::value_ptr(mat));
+}
+//=============================================================================
+void gl4::SetUniform(ShaderProgramId program, const std::string& locName, const glm::mat3& mat, bool transpose)
+{
+	glProgramUniformMatrix3fv(program, glGetUniformLocation(program, locName.c_str()), 1, transpose ? GL_TRUE : GL_FALSE, glm::value_ptr(mat));
+}
+//=============================================================================
+void gl4::SetUniform(ShaderProgramId program, const std::string& locName, const glm::mat4& mat, bool transpose)
+{
+	glProgramUniformMatrix4fv(program, glGetUniformLocation(program, locName.c_str()), 1, transpose ? GL_TRUE : GL_FALSE, glm::value_ptr(mat));
+}
+//=============================================================================
+void gl4::SetUniform(ShaderProgramId program, const std::string& locName, const glm::mat2x3& mat, bool transpose)
+{
+	glProgramUniformMatrix2x3fv(program, glGetUniformLocation(program, locName.c_str()), 1, transpose ? GL_TRUE : GL_FALSE, glm::value_ptr(mat));
+}
+//=============================================================================
+void gl4::SetUniform(ShaderProgramId program, const std::string& locName, const glm::mat3x2& mat, bool transpose)
+{
+	glProgramUniformMatrix3x2fv(program, glGetUniformLocation(program, locName.c_str()), 1, transpose ? GL_TRUE : GL_FALSE, glm::value_ptr(mat));
+}
+//=============================================================================
+void gl4::SetUniform(ShaderProgramId program, const std::string& locName, const glm::mat2x4& mat, bool transpose)
+{
+	glProgramUniformMatrix2x4fv(program, glGetUniformLocation(program, locName.c_str()), 1, transpose ? GL_TRUE : GL_FALSE, glm::value_ptr(mat));
+}
+//=============================================================================
+void gl4::SetUniform(ShaderProgramId program, const std::string& locName, const glm::mat4x2& mat, bool transpose)
+{
+	glProgramUniformMatrix4x2fv(program, glGetUniformLocation(program, locName.c_str()), 1, transpose ? GL_TRUE : GL_FALSE, glm::value_ptr(mat));
+}
+//=============================================================================
+void gl4::SetUniform(ShaderProgramId program, const std::string& locName, const glm::mat3x4& mat, bool transpose)
+{
+	glProgramUniformMatrix3x4fv(program, glGetUniformLocation(program, locName.c_str()), 1, transpose ? GL_TRUE : GL_FALSE, glm::value_ptr(mat));
+}
+//=============================================================================
+void gl4::SetUniform(ShaderProgramId program, const std::string& locName, const glm::mat4x3& mat, bool transpose)
+{
+	glProgramUniformMatrix4x3fv(program, glGetUniformLocation(program, locName.c_str()), 1, transpose ? GL_TRUE : GL_FALSE, glm::value_ptr(mat));
+}
+//=============================================================================
+#pragma endregion
+//=============================================================================
+#pragma endregion
 //=============================================================================
 gl4::BufferId gl4::CreateBuffer(GLenum usage, GLsizeiptr size, void* data)
 {

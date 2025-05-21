@@ -168,9 +168,9 @@ void TestBloom::OnRender()
 	glUseProgram(program);
 	gl4::SetUniform(program, "projection", proj);
 	gl4::SetUniform(program, "view", view);
-	gl4::SetUniform(lightPositionLoc, light.Position);
-	gl4::SetUniform(radiusLoc, 0.4f);
-	gl4::SetUniform(lightColorLoc, light.Color);
+	gl4::SetUniform(program, lightPositionLoc, light.Position);
+	gl4::SetUniform(program, radiusLoc, 0.4f);
+	gl4::SetUniform(program, lightColorLoc, light.Color);
 	GetGraphicSystem().DrawQuad();
 }
 //=============================================================================

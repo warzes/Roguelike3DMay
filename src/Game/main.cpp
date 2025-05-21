@@ -34,10 +34,10 @@ int main(
 	//TestPBR game;
 	//TestBloom game;
 
-	//TestSimple game;
+	TestSimple game;
 	//TestTerrain game;
 	//TestForwardPlus game;
-	TestCascadedShadowMaps game;
+	//TestCascadedShadowMaps game;
 
 	//TestComplex game;
 

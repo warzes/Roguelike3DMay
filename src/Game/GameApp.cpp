@@ -274,9 +274,9 @@ void GameApp::OnRender()
 	// вывод квада
 	{
 		glUseProgram(program);
-		gl4::SetUniform(ModelLoc, matmodel);
-		gl4::SetUniform(ViewLoc, view);
-		gl4::SetUniform(ProjLoc, proj);
+		gl4::SetUniform(program, ModelLoc, matmodel);
+		gl4::SetUniform(program, ViewLoc, view);
+		gl4::SetUniform(program, ProjLoc, proj);
 
 		glBindTextureUnit(0, texture);
 		glBindVertexArray(vao);
@@ -287,18 +287,18 @@ void GameApp::OnRender()
 	// вывод меша
 	{
 		glUseProgram(modelProgram);
-		gl4::SetUniform(modelModelLoc, matmodel);
-		gl4::SetUniform(modelViewLoc, view);
-		gl4::SetUniform(modelProjLoc, proj);
+		gl4::SetUniform(modelProgram, modelModelLoc, matmodel);
+		gl4::SetUniform(modelProgram, modelViewLoc, view);
+		gl4::SetUniform(modelProgram, modelProjLoc, proj);
 		model->Draw(modelProgram);
 	}
 
 	// вывод кубов
 	{
 		glUseProgram(cubeProgram);
-		gl4::SetUniform(cubeModelLoc, matmodel);
-		gl4::SetUniform(cubeViewLoc, view);
-		gl4::SetUniform(cubeProjLoc, proj);
+		gl4::SetUniform(cubeProgram, cubeModelLoc, matmodel);
+		gl4::SetUniform(cubeProgram, cubeViewLoc, view);
+		gl4::SetUniform(cubeProgram, cubeProjLoc, proj);
 
 		glBindTextureUnit(0, texture);
 		// Render boxes
@@ -310,7 +310,7 @@ void GameApp::OnRender()
 			const float angle = 20.0f * static_cast<float>(i);
 			model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
 			model = glm::scale(model, glm::vec3(0.5));
-			gl4::SetUniform(cubeModelLoc, model);
+			gl4::SetUniform(cubeProgram, cubeModelLoc, model);
 
 			GetGraphicSystem().DrawCube();
 		}

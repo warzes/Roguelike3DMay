@@ -177,11 +177,11 @@ void TestTerrain::OnRender()
 	// вывод квада
 	{
 		glUseProgram(program);
-		gl4::SetUniform(ViewLoc, view);
-		gl4::SetUniform(ProjLoc, proj);
+		gl4::SetUniform(program, ViewLoc, view);
+		gl4::SetUniform(program, ProjLoc, proj);
 
-		gl4::SetUniform(lightPosLoc, lightPos);
-		gl4::SetUniform(viewPosLoc, camera.Position);
+		gl4::SetUniform(program, lightPosLoc, lightPos);
+		gl4::SetUniform(program, viewPosLoc, camera.Position);
 
 		glBindTextureUnit(0, texture);
 		glBindVertexArray(vao);

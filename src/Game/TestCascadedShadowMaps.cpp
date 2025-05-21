@@ -265,13 +265,13 @@ void TestCascadedShadowMaps::OnRender()
 	// рендер источника света
 	{
 		glUseProgram(lampDrawProgram);
-		gl4::SetUniform(lampProjLoc, mvpData.projection);
-		gl4::SetUniform(lampViewLoc, mvpData.view);
+		gl4::SetUniform(lampDrawProgram, lampProjLoc, mvpData.projection);
+		gl4::SetUniform(lampDrawProgram, lampViewLoc, mvpData.view);
 
 		glm::mat4 modelMat = glm::mat4(1.0f);
 		modelMat = glm::translate(modelMat, lightPos);
 		modelMat = glm::scale(modelMat, glm::vec3(0.2f));
-		gl4::SetUniform(lampModelLoc, modelMat);
+		gl4::SetUniform(lampDrawProgram, lampModelLoc, modelMat);
 
 		GetGraphicSystem().DrawCube();
 	}

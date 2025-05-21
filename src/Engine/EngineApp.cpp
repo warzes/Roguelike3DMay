@@ -191,15 +191,19 @@ void IEngineApp::Run()
 				SE_SCOPED_SAMPLE("Update");
 				OnUpdate(m_deltaTime);
 			}
+
+			{
+				SE_SCOPED_SAMPLE("Render");
+				OnRender();
+			}
 			
 			{
-				SE_SCOPED_SAMPLE("Frame");
+				SE_SCOPED_SAMPLE("ImGui Frame");
 				// Start a new ImGUi frame
 				ImGui_ImplOpenGL3_NewFrame();
 				ImGui_ImplGlfw_NewFrame();
 				ImGui::NewFrame();
-
-				OnRender();
+					
 				OnImGuiDraw();
 
 				// Updates ImGui
@@ -217,6 +221,10 @@ void IEngineApp::Run()
 			}
 
 			memset(m_repeatKeys.data(), false, m_repeatKeys.size());
+			if (!m_cursorVisible)
+			{
+				SetCursorPosition({ m_width / 2, m_height / 2 });
+			}
 			
 			profiler::EndFrame();
 			glfwSwapBuffers(m_window);
@@ -254,8 +262,9 @@ double IEngineApp::GetTimeInSec() const
 void IEngineApp::SetCursorPosition(const glm::uvec2& position)
 {
 	glfwSetCursorPos(m_window, static_cast<double>(position.x), static_cast<double>(position.y));
-	m_mouseLastX = position.x;
-	m_mouseLastY = position.y;
+	m_mouseLastX = m_currentMousePositionX = position.x;
+	m_mouseLastY = m_currentMousePositionY = position.y;
+	m_mouseDeltaX = m_mouseDeltaY = 0.0f;
 }
 //=============================================================================
 void IEngineApp::DrawProfilerInfo()
@@ -269,7 +278,6 @@ void IEngineApp::SetCursorVisible(bool visible)
 	{
 		m_cursorVisible = visible;
 		glfwSetInputMode(m_window, GLFW_CURSOR, visible ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_HIDDEN);
-		SetCursorPosition({ m_width / 2, m_height / 2 });
 	}
 }
 //=============================================================================

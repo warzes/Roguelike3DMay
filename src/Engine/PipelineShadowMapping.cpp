@@ -29,7 +29,7 @@ void PipelineShadowMapping::StartRenderDepth(float nearPlane, float farPlane, co
 
 	// Render depth
 	glUseProgram(m_depthShader);
-	gl4::SetUniform(m_lightSpaceMatrixLoc, m_lightSpaceMatrix);
+	gl4::SetUniform(m_depthShader, m_lightSpaceMatrixLoc, m_lightSpaceMatrix);
 	gl4::SetFrameBuffer(m_depthFBO, m_depthWidth, m_depthHeight, GL_DEPTH_BUFFER_BIT);
 }
 //=============================================================================
@@ -109,7 +109,7 @@ void main()
 		m_debugShader = gl4::CreateShaderProgram(shaderCodeVertex, shaderCodeFragment);
 		m_shadowMapLoc = gl4::GetUniformLocation(m_debugShader, "DepthMap");
 		glUseProgram(m_debugShader);
-		gl4::SetUniform(m_shadowMapLoc, 0);
+		gl4::SetUniform(m_debugShader, m_shadowMapLoc, 0);
 		glUseProgram(0);
 	}
 

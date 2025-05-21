@@ -371,17 +371,17 @@ void TestShadowMapping::OnRender()
 	// Render Scene
 	gl4::SetFrameBuffer({ 0 }, GetWidth(), GetHeight(), GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glUseProgram(mainProgram);
-	gl4::SetUniform(mainTextureDiffuse1Loc, 0);
-	gl4::SetUniform(mainShadowMapLoc, 1);
-	gl4::SetUniform(mainMinBiasLoc, minBias);
-	gl4::SetUniform(mainMaxBiasLoc, maxBias);
-	gl4::SetUniform(mainAmbientPowerLoc, ambientPower);
-	gl4::SetUniform(mainSpecularPowerLoc, specularPower);
-	gl4::SetUniform(mainProjLoc, proj);
-	gl4::SetUniform(mainViewLoc, view);
-	gl4::SetUniform(mainViewPosLoc, camera.Position);
-	gl4::SetUniform(mainLightPosLoc, light.Position);
-	gl4::SetUniform(mainLightSpaceMatrixLoc, pipeline->GetLightSpaceMatrix());
+	gl4::SetUniform(mainProgram, mainTextureDiffuse1Loc, 0);
+	gl4::SetUniform(mainProgram, mainShadowMapLoc, 1);
+	gl4::SetUniform(mainProgram, mainMinBiasLoc, minBias);
+	gl4::SetUniform(mainProgram, mainMaxBiasLoc, maxBias);
+	gl4::SetUniform(mainProgram, mainAmbientPowerLoc, ambientPower);
+	gl4::SetUniform(mainProgram, mainSpecularPowerLoc, specularPower);
+	gl4::SetUniform(mainProgram, mainProjLoc, proj);
+	gl4::SetUniform(mainProgram, mainViewLoc, view);
+	gl4::SetUniform(mainProgram, mainViewPosLoc, camera.Position);
+	gl4::SetUniform(mainProgram, mainLightPosLoc, light.Position);
+	gl4::SetUniform(mainProgram, mainLightSpaceMatrixLoc, pipeline->GetLightSpaceMatrix());
 
 	glBindTextureUnit(0, texture);
 	pipeline->BindDepthTexture(1);
@@ -390,11 +390,11 @@ void TestShadowMapping::OnRender()
 
 	// Debug light
 	glUseProgram(lightProgram);
-	gl4::SetUniform(lightProjLoc, proj);
-	gl4::SetUniform(lightViewLoc, view);
-	gl4::SetUniform(lightPositionLoc, light.Position);
-	gl4::SetUniform(radiusLoc, 0.4f);
-	gl4::SetUniform(lightColorLoc, light.Color);
+	gl4::SetUniform(lightProgram, lightProjLoc, proj);
+	gl4::SetUniform(lightProgram, lightViewLoc, view);
+	gl4::SetUniform(lightProgram, lightPositionLoc, light.Position);
+	gl4::SetUniform(lightProgram, radiusLoc, 0.4f);
+	gl4::SetUniform(lightProgram, lightColorLoc, light.Color);
 	GetGraphicSystem().DrawQuad();
 
 	// Debug depth
@@ -428,26 +428,26 @@ void TestShadowMapping::OnResize(uint16_t width, uint16_t height)
 {
 }
 //=============================================================================
-void TestShadowMapping::RenderScene(GLuint shader, int modelMatLoc)
+void TestShadowMapping::RenderScene(gl4::ShaderProgramId shader, int modelMatLoc)
 {
 	glm::mat4 modelMat = glm::mat4(1.0f);
-	gl4::SetUniform(modelMatLoc, modelMat);
+	gl4::SetUniform(shader, modelMatLoc, modelMat);
 	glBindVertexArray(planevao);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 
 	modelMat = glm::mat4(1.0f);
 	modelMat = glm::translate(modelMat, glm::vec3(2.0f, 0.0f, 1.0f));
-	gl4::SetUniform(modelMatLoc, modelMat);
+	gl4::SetUniform(shader, modelMatLoc, modelMat);
 	model->Draw(shader);
 
 	modelMat = glm::mat4(1.0f);
 	modelMat = glm::translate(modelMat, glm::vec3(0.0f, 0.0f, 2.0f));
-	gl4::SetUniform(modelMatLoc, modelMat);
+	gl4::SetUniform(shader, modelMatLoc, modelMat);
 	model->Draw(shader);
 
 	modelMat = glm::mat4(1.0f);
 	modelMat = glm::translate(modelMat, glm::vec3(-1.5f, 0.0f, 0.0f));
-	gl4::SetUniform(modelMatLoc, modelMat);
+	gl4::SetUniform(shader, modelMatLoc, modelMat);
 	model->Draw(shader);
 }
 //=============================================================================

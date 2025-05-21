@@ -306,11 +306,11 @@ void TestForwardPlus::OnRender()
 		{
 			glUseProgram(lightCullingProgram);
 
-			gl4::SetUniform(lightCullingInvViewProjectionLoc, invViewProjection);
-			gl4::SetUniform(lightCullingCamPosLoc, camera.Position);
-			gl4::SetUniform(lightCullingLightCountLoc, numberOfLights);
-			gl4::SetUniform(lightCullingViewportSizeLoc, glm::ivec2(GetWidth(), GetHeight()));
-			gl4::SetUniform(lightCullingTileNumsLoc, glm::ivec2(tileCountPerRow, tileCountPerCol));
+			gl4::SetUniform(lightCullingProgram, lightCullingInvViewProjectionLoc, invViewProjection);
+			gl4::SetUniform(lightCullingProgram, lightCullingCamPosLoc, camera.Position);
+			gl4::SetUniform(lightCullingProgram, lightCullingLightCountLoc, numberOfLights);
+			gl4::SetUniform(lightCullingProgram, lightCullingViewportSizeLoc, glm::ivec2(GetWidth(), GetHeight()));
+			gl4::SetUniform(lightCullingProgram, lightCullingTileNumsLoc, glm::ivec2(tileCountPerRow, tileCountPerCol));
 
 			depthPrepass.BindTexture(0);
 
@@ -328,14 +328,14 @@ void TestForwardPlus::OnRender()
 			gl4::SetFrameBuffer(renderFBO, GetWidth(), GetHeight(), GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 			glUseProgram(lightProgram);
-			gl4::SetUniform(lightProgramProjectionLoc, projection);
-			gl4::SetUniform(lightProgramViewLoc, view);
-			gl4::SetUniform(lightProgramModelLoc, modelMat);
-			gl4::SetUniform(lightProgramProjViewLoc, viewProjection);
-			gl4::SetUniform(lightProgramViewPositionLoc, camera.Position);
-			gl4::SetUniform(lightProgramViewportSizeLoc, glm::ivec2(GetWidth(), GetHeight()));
-			gl4::SetUniform(lightProgramTileNumsLoc, glm::ivec2(tileCountPerRow, tileCountPerCol));
-			gl4::SetUniform(lightProgramLightDebugLoc, (ViewModes == LIGHT) ? 1 : 0);
+			gl4::SetUniform(lightProgram, lightProgramProjectionLoc, projection);
+			gl4::SetUniform(lightProgram, lightProgramViewLoc, view);
+			gl4::SetUniform(lightProgram, lightProgramModelLoc, modelMat);
+			gl4::SetUniform(lightProgram, lightProgramProjViewLoc, viewProjection);
+			gl4::SetUniform(lightProgram, lightProgramViewPositionLoc, camera.Position);
+			gl4::SetUniform(lightProgram, lightProgramViewportSizeLoc, glm::ivec2(GetWidth(), GetHeight()));
+			gl4::SetUniform(lightProgram, lightProgramTileNumsLoc, glm::ivec2(tileCountPerRow, tileCountPerCol));
+			gl4::SetUniform(lightProgram, lightProgramLightDebugLoc, (ViewModes == LIGHT) ? 1 : 0);
 
 			model->Draw(lightProgram);
 		}
