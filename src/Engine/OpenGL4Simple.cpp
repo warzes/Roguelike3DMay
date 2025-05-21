@@ -11,7 +11,6 @@ struct std::hash<gl4::SamplerState>
 	{
 		auto rtup = std::make_tuple(k.minFilter,
 			k.magFilter,
-			k.mipmapFilter,
 			k.addressModeU,
 			k.addressModeV,
 			k.addressModeW,
@@ -38,7 +37,7 @@ namespace
 	bool blendingState{ false };
 	gl4::PolygonMode polygonMode{ gl4::PolygonMode::Fill };
 	gl4::CompareOp depthTestFunc{ gl4::CompareOp::Less };
-	gl4::BlendFunc blendFunc{ gl4::BlendFunc::Zero };
+	gl4::BlendFactor blendFunc{ gl4::BlendFactor::Zero };
 
 	std::unordered_map<gl4::SamplerState, gl4::SamplerId> samplerCache;
 }
@@ -50,7 +49,7 @@ void ClearOpenGLState()
 	blendingState = { false };
 	polygonMode = { gl4::PolygonMode::Fill };
 	depthTestFunc = { gl4::CompareOp::Less };
-	blendFunc = { gl4::BlendFunc::Zero };
+	blendFunc = { gl4::BlendFactor::Zero };
 }
 //=============================================================================
 void ClearResourceCache()
@@ -1078,23 +1077,10 @@ gl4::SamplerId gl4::CreateSampler(const SamplerState& createInfo)
 	glSamplerParameteri(id, GL_TEXTURE_COMPARE_MODE, createInfo.compareEnable ? GL_COMPARE_REF_TO_TEXTURE : GL_NONE);
 	glSamplerParameteri(id, GL_TEXTURE_COMPARE_FUNC, EnumToGL(createInfo.compareOp));
 
-	GLint magFilter = createInfo.magFilter == Filter::Linear ? GL_LINEAR : GL_NEAREST;
+	GLint magFilter = EnumToGL(createInfo.magFilter);
 	glSamplerParameteri(id, GL_TEXTURE_MAG_FILTER, magFilter);
 
-	GLint minFilter{};
-	switch (createInfo.mipmapFilter)
-	{
-	case Filter::None:
-		minFilter = createInfo.minFilter == Filter::Linear ? GL_LINEAR : GL_NEAREST;
-		break;
-	case Filter::Nearest:
-		minFilter = createInfo.minFilter == Filter::Linear ? GL_LINEAR_MIPMAP_NEAREST : GL_NEAREST_MIPMAP_NEAREST;
-		break;
-	case Filter::Linear:
-		minFilter = createInfo.minFilter == Filter::Linear ? GL_LINEAR_MIPMAP_LINEAR : GL_NEAREST_MIPMAP_LINEAR;
-		break;
-	default: assert(0);
-	}
+	GLint minFilter = EnumToGL(createInfo.minFilter);
 	glSamplerParameteri(id, GL_TEXTURE_MIN_FILTER, minFilter);
 
 	glSamplerParameteri(id, GL_TEXTURE_WRAP_S, EnumToGL(createInfo.addressModeU));
@@ -1343,11 +1329,9 @@ void gl4::SwitchBlendingState(bool state)
 //=============================================================================
 void gl4::SwitchPolygonMode(PolygonMode mode)
 {
-	constexpr GLenum glPolygonModes[] = { GL_POINT, GL_LINE, GL_FILL };
 	if (mode != polygonMode)
 	{
-		unsigned int indexMode = static_cast<unsigned int>(mode);
-		glPolygonMode(GL_FRONT_AND_BACK, glPolygonModes[indexMode]);
+		glPolygonMode(GL_FRONT_AND_BACK, EnumToGL(mode));
 		polygonMode = mode;
 	}
 }
@@ -1361,19 +1345,11 @@ void gl4::SwitchDepthTestFunc(CompareOp mode)
 	}
 }
 //=============================================================================
-void gl4::SwitchBlendingFunc(BlendFunc mode)
+void gl4::SwitchBlendingFunc(BlendFactor mode)
 {
-	GLenum glBlendFuncs[] = {	GL_ZERO,           GL_ONE,
-								GL_SRC_COLOR,      GL_ONE_MINUS_SRC_COLOR,
-								GL_DST_COLOR,      GL_ONE_MINUS_DST_COLOR,
-								GL_SRC_ALPHA,      GL_ONE_MINUS_SRC_ALPHA,
-								GL_DST_ALPHA,      GL_ONE_MINUS_DST_ALPHA,
-								GL_CONSTANT_COLOR, GL_ONE_MINUS_CONSTANT_COLOR,
-								GL_CONSTANT_ALPHA, GL_ONE_MINUS_CONSTANT_ALPHA };
 	if (mode != blendFunc)
 	{
-		unsigned int indexFunc = static_cast<unsigned int>(mode);
-		glBlendFunc(GL_SRC_ALPHA, glBlendFuncs[indexFunc]);
+		glBlendFunc(GL_SRC_ALPHA, EnumToGL(mode));
 		blendFunc = mode;
 	}
 }

@@ -26,7 +26,7 @@ namespace gl4
 #pragma region [ Base ]
 
 	// multisampling and anisotropy
-	enum class SampleCount : uint32_t
+	enum class SampleCount : uint8_t
 	{
 		Samples1  = 1,
 		Samples2  = 2,
@@ -49,14 +49,47 @@ namespace gl4
 		}
 	}
 
-	enum class Filter : uint32_t
+	enum class MagFilter : uint8_t
 	{
-		None,
 		Nearest,
 		Linear
 	};
+	inline GLenum EnumToGL(MagFilter filter)
+	{
+		switch (filter)
+		{
+		case MagFilter::Nearest: return GL_NEAREST;
+		case MagFilter::Linear:  return GL_LINEAR;
+		default: assert(0); return 0;
+		}
+	}
 
-	enum class AddressMode : uint32_t
+	enum class MinFilter : uint8_t
+	{
+		Nearest,
+		Linear,
+
+		NearestMimapNearest,
+		NearestMimapLinear,
+		LinearMimapNearest,
+		LinearMimapLinear
+	};
+	inline GLenum EnumToGL(MinFilter filter)
+	{
+		switch (filter)
+		{
+		case MinFilter::Nearest: return GL_NEAREST;
+		case MinFilter::Linear:  return GL_LINEAR;
+		case MinFilter::NearestMimapNearest: return GL_NEAREST_MIPMAP_NEAREST;
+		case MinFilter::NearestMimapLinear: return GL_NEAREST_MIPMAP_LINEAR;
+		case MinFilter::LinearMimapNearest: return GL_LINEAR_MIPMAP_NEAREST;
+		case MinFilter::LinearMimapLinear: return GL_LINEAR_MIPMAP_LINEAR;
+
+		default: assert(0); return 0;
+		}
+	}
+
+	enum class AddressMode : uint8_t
 	{
 		Repeat,
 		MirroredRepeat,
@@ -77,7 +110,7 @@ namespace gl4
 		}
 	}
 
-	enum class BorderColor : uint32_t
+	enum class BorderColor : uint8_t
 	{
 		FloatTransparentBlack,
 		IntTransparentBlack,
@@ -87,7 +120,7 @@ namespace gl4
 		IntOpaqueWhite,
 	};
 
-	enum class CompareOp : uint32_t
+	enum class CompareOp : uint8_t
 	{
 		Never,
 		Less,
@@ -114,12 +147,203 @@ namespace gl4
 		}
 	}
 
+	enum class StencilOp : uint8_t
+	{
+		Keep,
+		Zero,
+		Replace,
+		IncrementAndClamp,
+		DecrementAndClamp,
+		Invert,
+		IncrementAndWrap,
+		DecrementAndWrap,
+	};
+	inline GLenum EnumToGL(StencilOp op)
+	{
+		switch (op)
+		{
+		case StencilOp::Keep: return GL_KEEP;
+		case StencilOp::Zero: return GL_ZERO;
+		case StencilOp::Replace: return GL_REPLACE;
+		case StencilOp::IncrementAndClamp: return GL_INCR;
+		case StencilOp::DecrementAndClamp: return GL_DECR;
+		case StencilOp::Invert: return GL_INVERT;
+		case StencilOp::IncrementAndWrap: return GL_INCR_WRAP;
+		case StencilOp::DecrementAndWrap: return GL_DECR_WRAP;
+		default: assert(0); return 0;
+		}
+	}
+
+	enum class PolygonMode : uint8_t
+	{
+		Fill,
+		Line,
+		Point,
+	};
+	inline GLenum EnumToGL(PolygonMode mode)
+	{
+		switch (mode)
+		{
+		case PolygonMode::Fill: return GL_FILL;
+		case PolygonMode::Line: return GL_LINE;
+		case PolygonMode::Point: return GL_POINT;
+		default: assert(0); return 0;
+		}
+	}
+
+	enum class CullMode : uint8_t
+	{
+		Front,
+		Back,
+		FrontAndBack,
+	};
+	inline GLenum EnumToGL(CullMode mode)
+	{
+		switch (mode)
+		{
+		case CullMode::Front: return GL_FRONT;
+		case CullMode::Back: return GL_BACK;
+		case CullMode::FrontAndBack: return GL_FRONT_AND_BACK;
+		default: assert(0); return 0;
+		}
+	}
+
+	enum class FrontFace : uint8_t
+	{
+		Clockwise,
+		CounterClockwise,
+	};
+	inline GLenum EnumToGL(FrontFace face)
+	{
+		switch (face)
+		{
+		case FrontFace::Clockwise: return GL_CW;
+		case FrontFace::CounterClockwise: return GL_CCW;
+		default: assert(0); return 0;
+		}
+	}
+
+	enum class BlendFactor : uint8_t
+	{
+		Zero,
+		One,
+		SrcColor,
+		OneMinusSrcColor,
+		DstColor,
+		OneMinusDstColor,
+		SrcAlpha,
+		OneMinusSrcAlpha,
+		DstAlpha,
+		OneMinusDstAlpha,
+		ConstantColor,
+		OneMinusConstantColor,
+		ConstantAlpha,
+		OneMinusConstantAlpha,
+		SrcAlphaSaturate,
+		Src1Color,
+		OneMinusSrc1Color,
+		Src1Alpha,
+		OneMinusSrc1Alpha,
+	};
+	inline GLenum EnumToGL(BlendFactor factor)
+	{
+		switch (factor)
+		{
+		case BlendFactor::Zero: return GL_ZERO;
+		case BlendFactor::One: return GL_ONE;
+		case BlendFactor::SrcColor: return GL_SRC_COLOR;
+		case BlendFactor::OneMinusSrcColor: return GL_ONE_MINUS_SRC_COLOR;
+		case BlendFactor::DstColor: return GL_DST_COLOR;
+		case BlendFactor::OneMinusDstColor: return GL_ONE_MINUS_DST_COLOR;
+		case BlendFactor::SrcAlpha: return GL_SRC_ALPHA;
+		case BlendFactor::OneMinusSrcAlpha: return GL_ONE_MINUS_SRC_ALPHA;
+		case BlendFactor::DstAlpha: return GL_DST_ALPHA;
+		case BlendFactor::OneMinusDstAlpha: return GL_ONE_MINUS_DST_ALPHA;
+		case BlendFactor::ConstantColor: return GL_CONSTANT_COLOR;
+		case BlendFactor::OneMinusConstantColor: return GL_ONE_MINUS_CONSTANT_COLOR;
+		case BlendFactor::ConstantAlpha: return GL_CONSTANT_ALPHA;
+		case BlendFactor::OneMinusConstantAlpha: return GL_ONE_MINUS_CONSTANT_ALPHA;
+		case BlendFactor::SrcAlphaSaturate: return GL_SRC_ALPHA_SATURATE;
+		case BlendFactor::Src1Color: return GL_SRC1_COLOR;
+		case BlendFactor::OneMinusSrc1Color: return GL_ONE_MINUS_SRC1_COLOR;
+		case BlendFactor::Src1Alpha: return GL_SRC1_ALPHA;
+		case BlendFactor::OneMinusSrc1Alpha: return GL_ONE_MINUS_SRC1_ALPHA;
+		default: assert(0); return 0;
+		}
+	}
+
+	enum class BlendOp : uint8_t
+	{
+		Add,
+		Subtract,
+		ReverseSubtract,
+		Min,
+		Max,
+	};
+	inline GLenum EnumToGL(BlendOp op)
+	{
+		switch (op)
+		{
+		case BlendOp::Add: return GL_FUNC_ADD;
+		case BlendOp::Subtract: return GL_FUNC_SUBTRACT;
+		case BlendOp::ReverseSubtract: return GL_FUNC_REVERSE_SUBTRACT;
+		case BlendOp::Min: return GL_MIN;
+		case BlendOp::Max: return GL_MAX;
+		default: assert(0); return 0;
+		}
+	}
+
+	enum class LogicOp : uint8_t
+	{
+		Clear,
+		Set,
+		Copy,
+		CopyInverted,
+		NoOp,
+		Invert,
+		And,
+		Nand,
+		Or,
+		Nor,
+		Xor,
+		Equivalent,
+		AndReverse,
+		OrReverse,
+		AndInverted,
+		OrInverted
+	};
+	inline GLenum EnumToGL(LogicOp op)
+	{
+		switch (op)
+		{
+		case LogicOp::Clear: return GL_CLEAR;
+		case LogicOp::Set: return GL_SET;
+		case LogicOp::Copy: return GL_COPY;
+		case LogicOp::CopyInverted: return GL_COPY_INVERTED;
+		case LogicOp::NoOp: return GL_NOOP;
+		case LogicOp::Invert: return GL_INVERT;
+		case LogicOp::And: return GL_AND;
+		case LogicOp::Nand: return GL_NAND;
+		case LogicOp::Or: return GL_OR;
+		case LogicOp::Nor: return GL_NOR;
+		case LogicOp::Xor: return GL_XOR;
+		case LogicOp::Equivalent: return GL_EQUIV;
+		case LogicOp::AndReverse: return GL_AND_REVERSE;
+		case LogicOp::OrReverse: return GL_OR_REVERSE;
+		case LogicOp::AndInverted: return GL_AND_INVERTED;
+		case LogicOp::OrInverted: return GL_OR_INVERTED;
+		default: assert(0); return 0;
+		}
+	}
+
 #pragma endregion
 
 	//-------------------------------------------------------------------------
 	// OpenGL RHI Types
 	//-------------------------------------------------------------------------
 #pragma region [ OpenGL RHI Types ]
+
+	constexpr inline uint64_t WHOLE_BUFFER = static_cast<uint64_t>(-1);
 
 	template <typename Tag>
 	struct GLObjectId final
@@ -495,9 +719,8 @@ namespace gl4
 		float minLod{ -1000 };
 		float maxLod{ 1000 };
 
-		Filter minFilter{ Filter::Linear };
-		Filter magFilter{ Filter::Linear };
-		Filter mipmapFilter{ Filter::None };
+		MinFilter minFilter{ MinFilter::Linear };
+		MagFilter magFilter{ MagFilter::Linear };
 		AddressMode addressModeU{ AddressMode::ClampToEdge };
 		AddressMode addressModeV{ AddressMode::ClampToEdge };
 		AddressMode addressModeW{ AddressMode::ClampToEdge };
@@ -552,37 +775,12 @@ namespace gl4
 	//-------------------------------------------------------------------------
 #pragma region [ State ]
 	
-	enum class BlendFunc
-	{
-		Zero,
-		One,
-		SrcColor,
-		OneMinusSrcColor,
-		DstColor,
-		OneMinusDstColor,
-		SrcApha,
-		OneMinusSrcAlpha,
-		DstAlpha,
-		OneMinusDstAlpha,
-		ConstantColor,
-		OneMinusConstantColor,
-		ConstantAlpha,
-		OneMinusConstantAlpha
-	};
-
-	enum class PolygonMode
-	{ 
-		Point,
-		Line, 
-		Fill 
-	};
-
 	void SwitchDepthTestState(bool state);
 	void SwitchBlendingState(bool state);
 
 	void SwitchPolygonMode(PolygonMode mode);
 	void SwitchDepthTestFunc(CompareOp mode);
-	void SwitchBlendingFunc(BlendFunc mode);
+	void SwitchBlendingFunc(BlendFactor mode);
 
 #pragma endregion
 
