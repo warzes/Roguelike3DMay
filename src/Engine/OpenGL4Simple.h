@@ -430,4 +430,56 @@ namespace gl4
 	void SetFrameBuffer(gl4::FrameBufferId fbo, int width, int height, GLbitfield clearMask);
 
 #pragma endregion
+
+	//-------------------------------------------------------------------------
+	// State
+	//-------------------------------------------------------------------------
+#pragma region [ State ]
+	
+	enum class DepthTestFunc 
+	{
+		Less,
+		Never,
+		Equal,
+		LessEqual,
+		Greater,
+		NotEqual,
+		GreaterEqual,
+		Always
+	};
+
+	enum class BlendFunc
+	{
+		Zero,
+		One,
+		SrcColor,
+		OneMinusSrcColor,
+		DstColor,
+		OneMinusDstColor,
+		SrcApha,
+		OneMinusSrcAlpha,
+		DstAlpha,
+		OneMinusDstAlpha,
+		ConstantColor,
+		OneMinusConstantColor,
+		ConstantAlpha,
+		OneMinusConstantAlpha
+	};
+
+	enum class PolygonMode
+	{ 
+		Point,
+		Line, 
+		Fill 
+	};
+
+	void SwitchDepthTestState(bool state);
+	void SwitchBlendingState(bool state);
+
+	void SwitchPolygonMode(PolygonMode mode);
+	void SwitchDepthTestFunc(DepthTestFunc mode);
+	void SwitchBlendingFunc(BlendFunc mode);
+
+#pragma endregion
+
 } // namespace gl4

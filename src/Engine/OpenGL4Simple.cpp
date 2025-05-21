@@ -3,16 +3,28 @@
 #include "Log.h"
 //=============================================================================
 #pragma region [ Local variables ]
-
+//=============================================================================
 namespace
 {
 	gl4::FrameBufferId currentFBO{ 0 };
+
+	bool depthState{ false };
+	bool blendingState{ false };
+	gl4::PolygonMode polygonMode{ gl4::PolygonMode::Fill };
+	gl4::DepthTestFunc depthTestFunc{ gl4::DepthTestFunc::Less };
+	gl4::BlendFunc blendFunc{ gl4::BlendFunc::Zero };
 }
 //=============================================================================
 void ClearOpenGLState()
 {
 	currentFBO = { 0 };
+	depthState = { false };
+	blendingState = { false };
+	polygonMode = { gl4::PolygonMode::Fill };
+	depthTestFunc = { gl4::DepthTestFunc::Less };
+	blendFunc = { gl4::BlendFunc::Zero };
 }
+//=============================================================================
 #pragma endregion
 //=============================================================================
 #pragma region [ Shader ]
@@ -1191,3 +1203,65 @@ void gl4::SetFrameBuffer(FrameBufferId fbo, int width, int height, GLbitfield cl
 //=============================================================================
 #pragma endregion
 //=============================================================================
+#pragma region [ State ]
+//=============================================================================
+void gl4::SwitchDepthTestState(bool state)
+{
+	if (state != depthState)
+	{
+		if (state) glEnable(GL_DEPTH_TEST);
+		else glDisable(GL_DEPTH_TEST);
+		depthState = state;
+	}
+}
+//=============================================================================
+void gl4::SwitchBlendingState(bool state)
+{
+	if (state != blendingState)
+	{
+		if (state) glEnable(GL_BLEND);
+		else glDisable(GL_BLEND);
+		blendingState = state;
+	}
+}
+//=============================================================================
+void gl4::SwitchPolygonMode(PolygonMode mode)
+{
+	constexpr GLenum glPolygonModes[] = { GL_POINT, GL_LINE, GL_FILL };
+	if (mode != polygonMode)
+	{
+		unsigned int indexMode = static_cast<unsigned int>(mode);
+		glPolygonMode(GL_FRONT_AND_BACK, glPolygonModes[indexMode]);
+		polygonMode = mode;
+	}
+}
+//=============================================================================
+void gl4::SwitchDepthTestFunc(DepthTestFunc mode)
+{
+	constexpr GLenum glDepthFuncs[] = { GL_LESS, GL_NEVER, GL_EQUAL, GL_LEQUAL, GL_GREATER, GL_NOTEQUAL, GL_GEQUAL, GL_ALWAYS };
+	if (mode != depthTestFunc)
+	{
+		unsigned int indexFunc = static_cast<unsigned int>(mode);
+		glDepthFunc(glDepthFuncs[indexFunc]);
+		depthTestFunc = mode;
+	}
+}
+//=============================================================================
+void gl4::SwitchBlendingFunc(BlendFunc mode)
+{
+	GLenum glBlendFuncs[] = {	GL_ZERO,           GL_ONE,
+								GL_SRC_COLOR,      GL_ONE_MINUS_SRC_COLOR,
+								GL_DST_COLOR,      GL_ONE_MINUS_DST_COLOR,
+								GL_SRC_ALPHA,      GL_ONE_MINUS_SRC_ALPHA,
+								GL_DST_ALPHA,      GL_ONE_MINUS_DST_ALPHA,
+								GL_CONSTANT_COLOR, GL_ONE_MINUS_CONSTANT_COLOR,
+								GL_CONSTANT_ALPHA, GL_ONE_MINUS_CONSTANT_ALPHA };
+	if (mode != blendFunc)
+	{
+		unsigned int indexFunc = static_cast<unsigned int>(mode);
+		glBlendFunc(GL_SRC_ALPHA, glBlendFuncs[indexFunc]);
+		blendFunc = mode;
+	}
+}
+//=============================================================================
+#pragma endregion
