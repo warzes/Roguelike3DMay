@@ -53,7 +53,7 @@
 #include <imgui/imgui_impl_opengl3.h>
 
 #define GLM_FORCE_XYZW_ONLY 1
-//#define GLM_FORCE_LEFT_HANDED 1
+#define GLM_FORCE_LEFT_HANDED 1
 //#define GLM_FORCE_DEPTH_ZERO_TO_ONE 1
 #define GLM_ENABLE_EXPERIMENTAL 1
 #include <glm/glm.hpp>

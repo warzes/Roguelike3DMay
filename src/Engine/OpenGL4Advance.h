@@ -1,6 +1,8 @@
 ﻿#pragma once
 
-namespace gl4
+#include "OpenGL4Simple.h"
+
+namespace gl4A
 {
 	class ScopedDebugMarker final
 	{
@@ -9,4 +11,4 @@ namespace gl4
 		ScopedDebugMarker(const ScopedDebugMarker&) = delete;
 		~ScopedDebugMarker();
 	};
-}
+} // namespace gl4A

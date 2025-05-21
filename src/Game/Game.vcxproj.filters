@@ -45,27 +45,6 @@
     <ClCompile Include="TestComplex_Temp.cpp">
       <Filter>GameApp\Test3</Filter>
     </ClCompile>
-    <ClCompile Include="SimpleTest001.cpp">
-      <Filter>GameApp\OpenGL4Framework</Filter>
-    </ClCompile>
-    <ClCompile Include="SimpleTest002.cpp">
-      <Filter>GameApp\OpenGL4Framework</Filter>
-    </ClCompile>
-    <ClCompile Include="SimpleTest003.cpp">
-      <Filter>GameApp\OpenGL4Framework</Filter>
-    </ClCompile>
-    <ClCompile Include="SceneLoader.cpp">
-      <Filter>GameApp\OpenGL4Framework</Filter>
-    </ClCompile>
-    <ClCompile Include="SimpleTest004.cpp">
-      <Filter>GameApp\OpenGL4Framework</Filter>
-    </ClCompile>
-    <ClCompile Include="SimpleTest005.cpp">
-      <Filter>GameApp\OpenGL4Framework</Filter>
-    </ClCompile>
-    <ClCompile Include="SimpleTest006.cpp">
-      <Filter>GameApp\OpenGL4Framework</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -112,27 +91,6 @@
     <ClInclude Include="TestComplex_Temp.h">
       <Filter>GameApp\Test3</Filter>
     </ClInclude>
-    <ClInclude Include="SimpleTest001.h">
-      <Filter>GameApp\OpenGL4Framework</Filter>
-    </ClInclude>
-    <ClInclude Include="SimpleTest002.h">
-      <Filter>GameApp\OpenGL4Framework</Filter>
-    </ClInclude>
-    <ClInclude Include="SimpleTest003.h">
-      <Filter>GameApp\OpenGL4Framework</Filter>
-    </ClInclude>
-    <ClInclude Include="SceneLoader.h">
-      <Filter>GameApp\OpenGL4Framework</Filter>
-    </ClInclude>
-    <ClInclude Include="SimpleTest004.h">
-      <Filter>GameApp\OpenGL4Framework</Filter>
-    </ClInclude>
-    <ClInclude Include="SimpleTest005.h">
-      <Filter>GameApp\OpenGL4Framework</Filter>
-    </ClInclude>
-    <ClInclude Include="SimpleTest006.h">
-      <Filter>GameApp\OpenGL4Framework</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="GameApp">
@@ -158,9 +116,6 @@
     </Filter>
     <Filter Include="GameApp\Test3\shaders\TestComplex">
       <UniqueIdentifier>{b2b7cdb4-6be4-41d9-8274-d9a0bd9c3972}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GameApp\OpenGL4Framework">
-      <UniqueIdentifier>{8d2ebf8d-9206-432f-9279-9410480cf170}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
