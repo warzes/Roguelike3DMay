@@ -58,3 +58,9 @@
 - новые методы для BufferId
 - SamplerId и RenderBufferId
 - другие правки OpenGL4Simple
+
+# 22.05.2025
+- базовые перечисления OpenGL
+- Format
+- новый вариант создание VAO с кешированием
+- новый BufferStorageId

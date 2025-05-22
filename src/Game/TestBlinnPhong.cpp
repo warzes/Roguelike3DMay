@@ -104,7 +104,7 @@ bool TestBlinnPhong::OnCreate()
 		glm::vec2 uv;
 	};
 
-	std::vector<gl4::VertexAttribute> attribs = {
+	std::vector<gl4::VertexAttributeRaw> attribs = {
 		{0, 3, GL_FLOAT, false, offsetof(Vertex, pos)},
 		{1, 3, GL_FLOAT, false, offsetof(Vertex, normals)},
 		{2, 2, GL_FLOAT, false, offsetof(Vertex, uv)},

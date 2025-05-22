@@ -4,6 +4,20 @@
 #include "Hash.h"
 #pragma region [ Hash ]
 //=============================================================================
+inline size_t vertexInputStateHash(const gl4::VertexInputStateOwning& k)
+{
+	size_t hashVal{};
+
+	for (const auto& desc : k.vertexBindingDescriptions)
+	{
+		auto cctup = std::make_tuple(desc.location, desc.binding, desc.format, desc.offset);
+		auto chashVal = ::detail::hashing::hash<decltype(cctup)>{}(cctup);
+		::detail::hashing::hash_combine(hashVal, chashVal);
+	}
+
+	return hashVal;
+}
+//=============================================================================
 template<>
 struct std::hash<gl4::SamplerState>
 {
@@ -39,6 +53,7 @@ namespace
 	gl4::CompareOp depthTestFunc{ gl4::CompareOp::Less };
 	gl4::BlendFactor blendFunc{ gl4::BlendFactor::Zero };
 
+	std::unordered_map<size_t, gl4::VertexArrayId> vertexArrayCache;
 	std::unordered_map<gl4::SamplerState, gl4::SamplerId> samplerCache;
 }
 //=============================================================================
@@ -54,6 +69,8 @@ void ClearOpenGLState()
 //=============================================================================
 void ClearResourceCache()
 {
+	for (auto& [_, vao] : vertexArrayCache) { gl4::Destroy(vao); }
+	vertexArrayCache.clear();
 	for (auto& [_, sampler] : samplerCache) { gl4::Destroy(sampler); }
 	samplerCache.clear();
 }
@@ -675,6 +692,83 @@ void gl4::BindBufferRange(BufferId id, GLenum target, GLuint index, GLintptr off
 //=============================================================================
 #pragma endregion
 //=============================================================================
+#pragma region [ BufferStorage ]
+//=============================================================================
+constexpr size_t roundUp(size_t numberToRoundUp, size_t multipleOf)
+{
+	assert(multipleOf);
+	return ((numberToRoundUp + multipleOf - 1) / multipleOf) * multipleOf;
+}
+//=============================================================================
+gl4::BufferStorageId gl4::CreateStorageBuffer(size_t size, BufferStorageFlags storageFlags, std::string_view name)
+{
+	return CreateStorageBuffer(nullptr, size, storageFlags, name);
+}
+//=============================================================================
+gl4::BufferStorageId gl4::CreateStorageBuffer(TriviallyCopyableByteSpan data, BufferStorageFlags storageFlags, std::string_view name)
+{
+	return CreateStorageBuffer(data.data(), data.size_bytes(), storageFlags, name);
+}
+//=============================================================================
+gl4::BufferStorageId gl4::CreateStorageBuffer(const void* data, size_t size, BufferStorageFlags storageFlags, std::string_view name)
+{
+	gl4::BufferStorageId id;
+	Create(id);
+
+	id.size = roundUp(size, 16);
+	id.storageFlags = storageFlags;
+
+	GLbitfield glflags = BufferStorageFlagsToGL(storageFlags);
+	glNamedBufferStorage(id, id.size, data, glflags);
+
+	if (storageFlags & BufferStorageFlag::MAP_MEMORY)
+	{
+		// GL_MAP_UNSYNCHRONIZED_BIT should be used if the user can map and unmap buffers at their own will
+		constexpr GLenum access = GL_MAP_READ_BIT | GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT;
+		id.mappedMemory = glMapNamedBufferRange(id, 0, size, access);
+	}
+
+	if (!name.empty())
+	{
+		glObjectLabel(GL_BUFFER, id, static_cast<GLsizei>(name.length()), name.data());
+	}
+
+	return id;
+}
+//=============================================================================
+void gl4::UpdateData(BufferStorageId id, TriviallyCopyableByteSpan data, size_t destOffsetBytes)
+{
+	UpdateData(id, data.data(), data.size_bytes(), destOffsetBytes);
+}
+//=============================================================================
+void gl4::UpdateData(BufferStorageId id, const void* data, size_t size, size_t offset)
+{
+	assert((id.storageFlags & BufferStorageFlag::DYNAMIC_STORAGE) &&
+		"UpdateData can only be called on buffers created with the DYNAMIC_STORAGE flag");
+	assert(size + offset <= id.size);
+	glNamedBufferSubData(id, static_cast<GLuint>(offset), static_cast<GLuint>(size), data);
+}
+//=============================================================================
+void gl4::FillData(BufferStorageId id, const BufferFillInfo& clear)
+{
+	const auto actualSize = clear.size == WHOLE_BUFFER ? id.size : clear.size;
+	assert(actualSize % 4 == 0 && "Size must be a multiple of 4 bytes");
+	glClearNamedBufferSubData(id,
+		GL_R32UI,
+		clear.offset,
+		actualSize,
+		GL_RED_INTEGER,
+		GL_UNSIGNED_INT,
+		&clear.data);
+}
+//=============================================================================
+void gl4::Invalidate(BufferStorageId id)
+{
+	glInvalidateBufferData(id);
+}
+//=============================================================================
+#pragma endregion
+//=============================================================================
 #pragma region [ Vertex Array ]
 //=============================================================================
 void gl4::SetVertexAttrib(GLuint vao, GLuint attribIndex, GLint size, GLenum type, GLboolean normalized, GLuint relativeOffset, GLuint bindingIndex)
@@ -690,12 +784,12 @@ void gl4::SetVertexAttrib(GLuint vao, GLuint attribIndex, GLint size, GLenum typ
 		glVertexArrayAttribFormat(vao, attribIndex, size, type, normalized, relativeOffset);
 }
 //=============================================================================
-void gl4::SetVertexAttrib(GLuint vao, const VertexAttribute& attr)
+void gl4::SetVertexAttrib(GLuint vao, const VertexAttributeRaw& attr)
 {
 	SetVertexAttrib(vao, attr.index, attr.size, attr.type, attr.normalized ? GL_TRUE : GL_FALSE, attr.relativeOffset, attr.bindingIndex);
 }
 //=============================================================================
-void gl4::SetVertexAttrib(GLuint vao, const std::vector<VertexAttribute>& attributes)
+void gl4::SetVertexAttrib(GLuint vao, const std::vector<VertexAttributeRaw>& attributes)
 {
 	for (size_t i = 0; i < attributes.size(); i++)
 	{
@@ -710,24 +804,57 @@ gl4::VertexArrayId gl4::CreateVertexArray()
 	return vao;
 }
 //=============================================================================
-gl4::VertexArrayId gl4::CreateVertexArray(const std::vector<VertexAttribute>& attributes)
+gl4::VertexArrayId gl4::CreateVertexArray(const std::vector<VertexAttributeRaw>& attributes)
 {
 	gl4::VertexArrayId vao = CreateVertexArray();
 	SetVertexAttrib(vao, attributes);
 	return vao;
 }
 //=============================================================================
-gl4::VertexArrayId gl4::CreateVertexArray(gl4::BufferId vbo, size_t vertexSize, const std::vector<VertexAttribute>& attributes)
+gl4::VertexArrayId gl4::CreateVertexArray(gl4::BufferId vbo, size_t vertexSize, const std::vector<VertexAttributeRaw>& attributes)
 {
 	return CreateVertexArray(vbo, { 0 }, vertexSize, attributes);
 }
 //=============================================================================
-gl4::VertexArrayId gl4::CreateVertexArray(gl4::BufferId vbo, gl4::BufferId ibo, size_t vertexSize, const std::vector<VertexAttribute>& attributes)
+gl4::VertexArrayId gl4::CreateVertexArray(gl4::BufferId vbo, gl4::BufferId ibo, size_t vertexSize, const std::vector<VertexAttributeRaw>& attributes)
 {
 	gl4::VertexArrayId vao = CreateVertexArray(attributes);
 	SetVertexBuffer(vao, vbo, 0, 0, vertexSize);
 	SetIndexBuffer(vao, ibo);
 	return vao;
+}
+//=============================================================================
+gl4::VertexArrayId gl4::CreateVertexArray(const VertexInputStateOwning& inputState)
+{
+	auto inputHash = vertexInputStateHash(inputState);
+	if (auto it = vertexArrayCache.find(inputHash); it != vertexArrayCache.end())
+	{
+		return it->second;
+	}
+
+	gl4::VertexArrayId id;
+	gl4::Create(id);
+
+	for (uint32_t i = 0; i < inputState.vertexBindingDescriptions.size(); i++)
+	{
+		const auto& desc = inputState.vertexBindingDescriptions[i];
+		glEnableVertexArrayAttrib(id, desc.location);
+		glVertexArrayAttribBinding(id, desc.location, desc.binding);
+
+		auto type = FormatToTypeGL(desc.format);
+		auto size = FormatToSizeGL(desc.format);
+		auto normalized = IsFormatNormalizedGL(desc.format);
+		auto internalType = FormatToFormatClass(desc.format);
+		switch (internalType)
+		{
+		case GlFormatClass::Float: glVertexArrayAttribFormat(id, desc.location, size, type, normalized, desc.offset); break;
+		case GlFormatClass::Int:   glVertexArrayAttribIFormat(id, desc.location, size, type, desc.offset); break;
+		case GlFormatClass::Long:  glVertexArrayAttribLFormat(id, desc.location, size, type, desc.offset); break;
+		default: assert(0);
+		}
+	}
+
+	return vertexArrayCache.insert({ inputHash, id }).first->second;
 }
 //=============================================================================
 void gl4::SetVertexBuffer(VertexArrayId id, BufferId vbo, GLuint bindingindex, GLintptr offset, GLsizei stride)
@@ -1067,9 +1194,7 @@ void gl4::Bind(GLuint unit, TextureCubeId id)
 gl4::SamplerId gl4::CreateSampler(const SamplerState& createInfo)
 {
 	if (auto it = samplerCache.find(createInfo); it != samplerCache.end())
-	{
 		return it->second;
-	}
 
 	SamplerId id;
 	Create(id);

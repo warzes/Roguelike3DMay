@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include "FlagsUtils.h"
+
 /*
 TODO:
  есть текстурный буфер (создается буфер и текстура, затем буфер грузится в текстуру через glTextureBuffer или glTextureBufferRange. Текстура создается с GL_TEXTURE_BUFFER типом
@@ -336,6 +338,496 @@ namespace gl4
 		}
 	}
 
+	enum class GlFormatClass : uint8_t
+	{
+		Float,
+		Int,
+		Long
+	};
+
+	enum class Format : uint16_t
+	{
+		UNDEFINED,
+
+		// Color formats
+		R8_UNORM,
+		R8_SNORM,
+		R16_UNORM,
+		R16_SNORM,
+		R8G8_UNORM,
+		R8G8_SNORM,
+		R16G16_UNORM,
+		R16G16_SNORM,
+		R3G3B2_UNORM,
+		R4G4B4_UNORM,
+		R5G5B5_UNORM,
+		R8G8B8_UNORM,
+		R8G8B8_SNORM,
+		R10G10B10_UNORM,
+		R12G12B12_UNORM,
+		R16G16B16_SNORM,
+		R2G2B2A2_UNORM,
+		R4G4B4A4_UNORM,
+		R5G5B5A1_UNORM,
+		R8G8B8A8_UNORM,
+		R8G8B8A8_SNORM,
+		R10G10B10A2_UNORM,
+		R10G10B10A2_UINT,
+		R12G12B12A12_UNORM,
+		R16G16B16A16_UNORM,
+		R16G16B16A16_SNORM,
+		R8G8B8_SRGB,
+		R8G8B8A8_SRGB,
+		R16_FLOAT,
+		R16G16_FLOAT,
+		R16G16B16_FLOAT,
+		R16G16B16A16_FLOAT,
+		R32_FLOAT,
+		R32G32_FLOAT,
+		R32G32B32_FLOAT,
+		R32G32B32A32_FLOAT,
+		R11G11B10_FLOAT,
+		R9G9B9_E5,
+		R8_SINT,
+		R8_UINT,
+		R16_SINT,
+		R16_UINT,
+		R32_SINT,
+		R32_UINT,
+		R8G8_SINT,
+		R8G8_UINT,
+		R16G16_SINT,
+		R16G16_UINT,
+		R32G32_SINT,
+		R32G32_UINT,
+		R8G8B8_SINT,
+		R8G8B8_UINT,
+		R16G16B16_SINT,
+		R16G16B16_UINT,
+		R32G32B32_SINT,
+		R32G32B32_UINT,
+		R8G8B8A8_SINT,
+		R8G8B8A8_UINT,
+		R16G16B16A16_SINT,
+		R16G16B16A16_UINT,
+		R32G32B32A32_SINT,
+		R32G32B32A32_UINT,
+
+		// Depth & stencil formats
+		D32_FLOAT,
+		D32_UNORM,
+		D24_UNORM,
+		D16_UNORM,
+		D32_FLOAT_S8_UINT,
+		D24_UNORM_S8_UINT,
+		S8_UINT,
+
+		// Compressed formats
+		// DXT
+		BC1_RGB_UNORM,
+		BC1_RGB_SRGB,
+		BC1_RGBA_UNORM,
+		BC1_RGBA_SRGB,
+		BC2_RGBA_UNORM,
+		BC2_RGBA_SRGB,
+		BC3_RGBA_UNORM,
+		BC3_RGBA_SRGB,
+		// RGTC
+		BC4_R_UNORM,
+		BC4_R_SNORM,
+		BC5_RG_UNORM,
+		BC5_RG_SNORM,
+		// BPTC
+		BC6H_RGB_UFLOAT,
+		BC6H_RGB_SFLOAT,
+		BC7_RGBA_UNORM,
+		BC7_RGBA_SRGB,
+
+		// TODO: 64-bits-per-component formats
+	};
+	inline GLint FormatToGL(Format format)
+	{
+		switch (format)
+		{
+		case Format::R8_UNORM:           return GL_R8;
+		case Format::R8_SNORM:           return GL_R8_SNORM;
+		case Format::R16_UNORM:          return GL_R16;
+		case Format::R16_SNORM:          return GL_R16_SNORM;
+		case Format::R8G8_UNORM:         return GL_RG8;
+		case Format::R8G8_SNORM:         return GL_RG8_SNORM;
+		case Format::R16G16_UNORM:       return GL_RG16;
+		case Format::R16G16_SNORM:       return GL_RG16_SNORM;
+		case Format::R3G3B2_UNORM:       return GL_R3_G3_B2;
+		case Format::R4G4B4_UNORM:       return GL_RGB4;
+		case Format::R5G5B5_UNORM:       return GL_RGB5;
+		case Format::R8G8B8_UNORM:       return GL_RGB8;
+		case Format::R8G8B8_SNORM:       return GL_RGB8_SNORM;
+		case Format::R10G10B10_UNORM:    return GL_RGB10;
+		case Format::R12G12B12_UNORM:    return GL_RGB12;
+			// GL_RG16?
+		case Format::R16G16B16_SNORM:    return GL_RGB16_SNORM;
+		case Format::R2G2B2A2_UNORM:     return GL_RGBA2;
+		case Format::R4G4B4A4_UNORM:     return GL_RGBA4;
+		case Format::R5G5B5A1_UNORM:     return GL_RGB5_A1;
+		case Format::R8G8B8A8_UNORM:     return GL_RGBA8;
+		case Format::R8G8B8A8_SNORM:     return GL_RGBA8_SNORM;
+		case Format::R10G10B10A2_UNORM:  return GL_RGB10_A2;
+		case Format::R10G10B10A2_UINT:   return GL_RGB10_A2UI;
+		case Format::R12G12B12A12_UNORM: return GL_RGBA12;
+		case Format::R16G16B16A16_UNORM: return GL_RGBA16;
+		case Format::R16G16B16A16_SNORM: return GL_RGBA16_SNORM;
+		case Format::R8G8B8_SRGB:        return GL_SRGB8;
+		case Format::R8G8B8A8_SRGB:      return GL_SRGB8_ALPHA8;
+		case Format::R16_FLOAT:          return GL_R16F;
+		case Format::R16G16_FLOAT:       return GL_RG16F;
+		case Format::R16G16B16_FLOAT:    return GL_RGB16F;
+		case Format::R16G16B16A16_FLOAT: return GL_RGBA16F;
+		case Format::R32_FLOAT:          return GL_R32F;
+		case Format::R32G32_FLOAT:       return GL_RG32F;
+		case Format::R32G32B32_FLOAT:    return GL_RGB32F;
+		case Format::R32G32B32A32_FLOAT: return GL_RGBA32F;
+		case Format::R11G11B10_FLOAT:    return GL_R11F_G11F_B10F;
+		case Format::R9G9B9_E5:          return GL_RGB9_E5;
+		case Format::R8_SINT:            return GL_R8I;
+		case Format::R8_UINT:            return GL_R8UI;
+		case Format::R16_SINT:           return GL_R16I;
+		case Format::R16_UINT:           return GL_R16UI;
+		case Format::R32_SINT:           return GL_R32I;
+		case Format::R32_UINT:           return GL_R32UI;
+		case Format::R8G8_SINT:          return GL_RG8I;
+		case Format::R8G8_UINT:          return GL_RG8UI;
+		case Format::R16G16_SINT:        return GL_RG16I;
+		case Format::R16G16_UINT:        return GL_RG16UI;
+		case Format::R32G32_SINT:        return GL_RG32I;
+		case Format::R32G32_UINT:        return GL_RG32UI;
+		case Format::R8G8B8_SINT:        return GL_RGB8I;
+		case Format::R8G8B8_UINT:        return GL_RGB8UI;
+		case Format::R16G16B16_SINT:     return GL_RGB16I;
+		case Format::R16G16B16_UINT:     return GL_RGB16UI;
+		case Format::R32G32B32_SINT:     return GL_RGB32I;
+		case Format::R32G32B32_UINT:     return GL_RGB32UI;
+		case Format::R8G8B8A8_SINT:      return GL_RGBA8I;
+		case Format::R8G8B8A8_UINT:      return GL_RGBA8UI;
+		case Format::R16G16B16A16_SINT:  return GL_RGBA16I;
+		case Format::R16G16B16A16_UINT:  return GL_RGBA16UI;
+		case Format::R32G32B32A32_SINT:  return GL_RGBA32I;
+		case Format::R32G32B32A32_UINT:  return GL_RGBA32UI;
+		case Format::D32_FLOAT:          return GL_DEPTH_COMPONENT32F;
+		case Format::D32_UNORM:          return GL_DEPTH_COMPONENT32;
+		case Format::D24_UNORM:          return GL_DEPTH_COMPONENT24;
+		case Format::D16_UNORM:          return GL_DEPTH_COMPONENT16;
+		case Format::D32_FLOAT_S8_UINT:  return GL_DEPTH32F_STENCIL8;
+		case Format::D24_UNORM_S8_UINT:  return GL_DEPTH24_STENCIL8;
+		case Format::S8_UINT:            return GL_STENCIL_INDEX8;
+		case Format::BC1_RGB_UNORM:      return GL_COMPRESSED_RGB_S3TC_DXT1_EXT;
+		case Format::BC1_RGBA_UNORM:     return GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;
+		case Format::BC1_RGB_SRGB:       return GL_COMPRESSED_SRGB_S3TC_DXT1_EXT;
+		case Format::BC1_RGBA_SRGB:      return GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT1_EXT;
+		case Format::BC2_RGBA_UNORM:     return GL_COMPRESSED_RGBA_S3TC_DXT3_EXT;
+		case Format::BC2_RGBA_SRGB:      return GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT3_EXT;
+		case Format::BC3_RGBA_UNORM:     return GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
+		case Format::BC3_RGBA_SRGB:      return GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT;
+		case Format::BC4_R_UNORM:        return GL_COMPRESSED_RED_RGTC1;
+		case Format::BC4_R_SNORM:        return GL_COMPRESSED_SIGNED_RED_RGTC1;
+		case Format::BC5_RG_UNORM:       return GL_COMPRESSED_RG_RGTC2;
+		case Format::BC5_RG_SNORM:       return GL_COMPRESSED_SIGNED_RG_RGTC2;
+		case Format::BC6H_RGB_UFLOAT:    return GL_COMPRESSED_RGB_BPTC_UNSIGNED_FLOAT;
+		case Format::BC6H_RGB_SFLOAT:    return GL_COMPRESSED_RGB_BPTC_SIGNED_FLOAT;
+		case Format::BC7_RGBA_UNORM:     return GL_COMPRESSED_RGBA_BPTC_UNORM;
+		case Format::BC7_RGBA_SRGB:      return GL_COMPRESSED_SRGB_ALPHA_BPTC_UNORM;
+		default: assert(0);              return 0;
+		}
+	}
+	inline bool IsBlockCompressedFormat(Format format)
+	{
+		switch (format)
+		{
+		case Format::BC1_RGB_UNORM:
+		case Format::BC1_RGBA_UNORM:
+		case Format::BC1_RGB_SRGB:
+		case Format::BC1_RGBA_SRGB:
+		case Format::BC2_RGBA_UNORM:
+		case Format::BC2_RGBA_SRGB:
+		case Format::BC3_RGBA_UNORM:
+		case Format::BC3_RGBA_SRGB:
+		case Format::BC4_R_UNORM:
+		case Format::BC4_R_SNORM:
+		case Format::BC5_RG_UNORM:
+		case Format::BC5_RG_SNORM:
+		case Format::BC6H_RGB_UFLOAT:
+		case Format::BC6H_RGB_SFLOAT:
+		case Format::BC7_RGBA_UNORM:
+		case Format::BC7_RGBA_SRGB:
+			return true;
+		default: return false;
+		}
+	}
+	inline GLenum FormatToTypeGL(Format format)
+	{
+		switch (format)
+		{
+		case Format::R8_UNORM:
+		case Format::R8G8_UNORM:
+		case Format::R8G8B8_UNORM:
+		case Format::R8G8B8A8_UNORM:
+		case Format::R8_UINT:
+		case Format::R8G8_UINT:
+		case Format::R8G8B8_UINT:
+		case Format::R8G8B8A8_UINT:
+		case Format::R8G8B8A8_SRGB:
+		case Format::R8G8B8_SRGB:
+			return GL_UNSIGNED_BYTE;
+		case Format::R8_SNORM:
+		case Format::R8G8_SNORM:
+		case Format::R8G8B8_SNORM:
+		case Format::R8G8B8A8_SNORM:
+		case Format::R8_SINT:
+		case Format::R8G8_SINT:
+		case Format::R8G8B8_SINT:
+		case Format::R8G8B8A8_SINT:
+			return GL_BYTE;
+		case Format::R16_UNORM:
+		case Format::R16G16_UNORM:
+		case Format::R16G16B16A16_UNORM:
+		case Format::R16_UINT:
+		case Format::R16G16_UINT:
+		case Format::R16G16B16_UINT:
+		case Format::R16G16B16A16_UINT:
+			return GL_UNSIGNED_SHORT;
+		case Format::R16_SNORM:
+		case Format::R16G16_SNORM:
+		case Format::R16G16B16_SNORM:
+		case Format::R16G16B16A16_SNORM:
+		case Format::R16_SINT:
+		case Format::R16G16_SINT:
+		case Format::R16G16B16_SINT:
+		case Format::R16G16B16A16_SINT:
+			return GL_SHORT;
+		case Format::R16_FLOAT:
+		case Format::R16G16_FLOAT:
+		case Format::R16G16B16_FLOAT:
+		case Format::R16G16B16A16_FLOAT:
+			return GL_HALF_FLOAT;
+		case Format::R32_FLOAT:
+		case Format::R32G32_FLOAT:
+		case Format::R32G32B32_FLOAT:
+		case Format::R32G32B32A32_FLOAT:
+			return GL_FLOAT;
+		case Format::R32_SINT:
+		case Format::R32G32_SINT:
+		case Format::R32G32B32_SINT:
+		case Format::R32G32B32A32_SINT:
+			return GL_INT;
+		case Format::R32_UINT:
+		case Format::R32G32_UINT:
+		case Format::R32G32B32_UINT:
+		case Format::R32G32B32A32_UINT:
+			return GL_UNSIGNED_INT;
+		default: assert(0); return 0;
+		}
+	}
+	inline GLint FormatToSizeGL(Format format)
+	{
+		switch (format)
+		{
+		case Format::R8_UNORM:
+		case Format::R8_SNORM:
+		case Format::R16_UNORM:
+		case Format::R16_SNORM:
+		case Format::R16_FLOAT:
+		case Format::R32_FLOAT:
+		case Format::R8_SINT:
+		case Format::R16_SINT:
+		case Format::R32_SINT:
+		case Format::R8_UINT:
+		case Format::R16_UINT:
+		case Format::R32_UINT:
+			return 1;
+		case Format::R8G8_UNORM:
+		case Format::R8G8_SNORM:
+		case Format::R16G16_FLOAT:
+		case Format::R16G16_UNORM:
+		case Format::R16G16_SNORM:
+		case Format::R32G32_FLOAT:
+		case Format::R8G8_SINT:
+		case Format::R16G16_SINT:
+		case Format::R32G32_SINT:
+		case Format::R8G8_UINT:
+		case Format::R16G16_UINT:
+		case Format::R32G32_UINT:
+			return 2;
+		case Format::R8G8B8_UNORM:
+		case Format::R8G8B8_SNORM:
+		case Format::R16G16B16_SNORM:
+		case Format::R16G16B16_FLOAT:
+		case Format::R32G32B32_FLOAT:
+		case Format::R8G8B8_SINT:
+		case Format::R16G16B16_SINT:
+		case Format::R32G32B32_SINT:
+		case Format::R8G8B8_UINT:
+		case Format::R16G16B16_UINT:
+		case Format::R32G32B32_UINT:
+			return 3;
+		case Format::R8G8B8A8_UNORM:
+		case Format::R8G8B8A8_SNORM:
+		case Format::R16G16B16A16_UNORM:
+		case Format::R16G16B16A16_SNORM:
+		case Format::R16G16B16A16_FLOAT:
+		case Format::R32G32B32A32_FLOAT:
+		case Format::R8G8B8A8_SINT:
+		case Format::R16G16B16A16_SINT:
+		case Format::R32G32B32A32_SINT:
+		case Format::R10G10B10A2_UINT:
+		case Format::R8G8B8A8_UINT:
+		case Format::R16G16B16A16_UINT:
+		case Format::R32G32B32A32_UINT:
+			return 4;
+		default: assert(0); return 0;
+		}
+	}
+	inline GLboolean IsFormatNormalizedGL(Format format)
+	{
+		switch (format)
+		{
+		case Format::R8_UNORM:
+		case Format::R8_SNORM:
+		case Format::R16_UNORM:
+		case Format::R16_SNORM:
+		case Format::R8G8_UNORM:
+		case Format::R8G8_SNORM:
+		case Format::R16G16_UNORM:
+		case Format::R16G16_SNORM:
+		case Format::R8G8B8_UNORM:
+		case Format::R8G8B8_SNORM:
+		case Format::R16G16B16_SNORM:
+		case Format::R8G8B8A8_UNORM:
+		case Format::R8G8B8A8_SNORM:
+		case Format::R16G16B16A16_UNORM:
+		case Format::R16G16B16A16_SNORM:
+			return GL_TRUE;
+		case Format::R16_FLOAT:
+		case Format::R32_FLOAT:
+		case Format::R8_SINT:
+		case Format::R16_SINT:
+		case Format::R32_SINT:
+		case Format::R8_UINT:
+		case Format::R16_UINT:
+		case Format::R32_UINT:
+		case Format::R16G16_FLOAT:
+		case Format::R32G32_FLOAT:
+		case Format::R8G8_SINT:
+		case Format::R16G16_SINT:
+		case Format::R32G32_SINT:
+		case Format::R8G8_UINT:
+		case Format::R16G16_UINT:
+		case Format::R32G32_UINT:
+		case Format::R16G16B16_FLOAT:
+		case Format::R32G32B32_FLOAT:
+		case Format::R8G8B8_SINT:
+		case Format::R16G16B16_SINT:
+		case Format::R32G32B32_SINT:
+		case Format::R8G8B8_UINT:
+		case Format::R16G16B16_UINT:
+		case Format::R32G32B32_UINT:
+		case Format::R16G16B16A16_FLOAT:
+		case Format::R32G32B32A32_FLOAT:
+		case Format::R8G8B8A8_SINT:
+		case Format::R16G16B16A16_SINT:
+		case Format::R32G32B32A32_SINT:
+		case Format::R10G10B10A2_UINT:
+		case Format::R8G8B8A8_UINT:
+		case Format::R16G16B16A16_UINT:
+		case Format::R32G32B32A32_UINT:
+			return GL_FALSE;
+		default: assert(0); return 0;
+		}
+	}
+	inline GlFormatClass FormatToFormatClass(Format format)
+	{
+		switch (format)
+		{
+		case Format::R8_UNORM:
+		case Format::R8_SNORM:
+		case Format::R16_UNORM:
+		case Format::R16_SNORM:
+		case Format::R8G8_UNORM:
+		case Format::R8G8_SNORM:
+		case Format::R16G16_UNORM:
+		case Format::R16G16_SNORM:
+		case Format::R8G8B8_UNORM:
+		case Format::R8G8B8_SNORM:
+		case Format::R16G16B16_SNORM:
+		case Format::R8G8B8A8_UNORM:
+		case Format::R8G8B8A8_SNORM:
+		case Format::R16G16B16A16_UNORM:
+		case Format::R16G16B16A16_SNORM:
+		case Format::R16_FLOAT:
+		case Format::R16G16_FLOAT:
+		case Format::R16G16B16_FLOAT:
+		case Format::R16G16B16A16_FLOAT:
+		case Format::R32_FLOAT:
+		case Format::R32G32_FLOAT:
+		case Format::R32G32B32_FLOAT:
+		case Format::R32G32B32A32_FLOAT:
+			return GlFormatClass::Float;
+		case Format::R8_SINT:
+		case Format::R16_SINT:
+		case Format::R32_SINT:
+		case Format::R8G8_SINT:
+		case Format::R16G16_SINT:
+		case Format::R32G32_SINT:
+		case Format::R8G8B8_SINT:
+		case Format::R16G16B16_SINT:
+		case Format::R32G32B32_SINT:
+		case Format::R8G8B8A8_SINT:
+		case Format::R16G16B16A16_SINT:
+		case Format::R32G32B32A32_SINT:
+		case Format::R10G10B10A2_UINT:
+		case Format::R8_UINT:
+		case Format::R16_UINT:
+		case Format::R32_UINT:
+		case Format::R8G8_UINT:
+		case Format::R16G16_UINT:
+		case Format::R32G32_UINT:
+		case Format::R8G8B8_UINT:
+		case Format::R16G16B16_UINT:
+		case Format::R32G32B32_UINT:
+		case Format::R8G8B8A8_UINT:
+		case Format::R16G16B16A16_UINT:
+		case Format::R32G32B32A32_UINT:
+			return GlFormatClass::Int;
+		default: assert(0); return GlFormatClass::Long;
+		}
+	}
+
+	enum class BufferStorageFlag : uint32_t
+	{
+		NONE = 0,
+		// Allows the user to update the buffer's contents with UpdateData
+		DYNAMIC_STORAGE = 1 << 0,
+		// Hints to the implementation to place the buffer storage in host memory
+		CLIENT_STORAGE = 1 << 1,
+		// Maps the buffer (persistently and coherently) upon creation
+		MAP_MEMORY = 1 << 2,
+	};
+	SE_DECLARE_FLAG_TYPE(BufferStorageFlags, BufferStorageFlag, uint32_t)
+
+	inline GLbitfield BufferStorageFlagsToGL(BufferStorageFlags flags)
+	{
+		GLbitfield ret = 0;
+		ret |= flags & BufferStorageFlag::DYNAMIC_STORAGE ? GL_DYNAMIC_STORAGE_BIT : 0;
+		ret |= flags & BufferStorageFlag::CLIENT_STORAGE ? GL_CLIENT_STORAGE_BIT : 0;
+
+		// As far as I can tell, there is no perf hit to having both MAP_WRITE and MAP_READ all the time.
+		// Additionally, desktop platforms (the ones we care about) do not have incoherent host-visible device heaps, so we can safely include that flag all the time.
+		// https://gpuopen.com/learn/get-the-most-out-of-smart-access-memory/
+		// https://basnieuwenhuizen.nl/the-catastrophe-of-reading-from-vram/
+		// https://asawicki.info/news_1740_vulkan_memory_types_on_pc_and_how_to_use_them
+		constexpr GLenum memMapFlags = GL_MAP_READ_BIT | GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT;
+		ret |= flags & BufferStorageFlag::MAP_MEMORY ? memMapFlags : 0;
+		return ret;
+	}
+
 #pragma endregion
 
 	//-------------------------------------------------------------------------
@@ -346,7 +838,7 @@ namespace gl4
 	constexpr inline uint64_t WHOLE_BUFFER = static_cast<uint64_t>(-1);
 
 	template <typename Tag>
-	struct GLObjectId final
+	struct GLObjectId
 	{
 		operator GLuint() const { return id; }
 
@@ -354,6 +846,7 @@ namespace gl4
 	};
 	struct __ShaderProgramTag;
 	struct __BufferTag;
+	struct __BufferStorageTag;
 	struct __VertexArrayTag;
 	struct __Texture1DTag;
 	struct __Texture2DTag;
@@ -368,6 +861,12 @@ namespace gl4
 
 	using ShaderProgramId = GLObjectId<__ShaderProgramTag>;
 	using BufferId = GLObjectId<__BufferTag>;
+	struct BufferStorageId final : public GLObjectId<__BufferStorageTag>
+	{
+		void* mappedMemory{ nullptr };
+		size_t size{0};
+		BufferStorageFlags storageFlags{0};
+	};
 	using VertexArrayId = GLObjectId<__VertexArrayTag>;
 	using Texture1DId = GLObjectId<__Texture1DTag>;
 	using Texture2DId = GLObjectId<__Texture2DTag>;
@@ -390,6 +889,7 @@ namespace gl4
 
 		if constexpr (std::is_same_v<T, ShaderProgramId>) { res.id = glCreateProgram(); }
 		else if constexpr (std::is_same_v<T, BufferId>) { glCreateBuffers(1, &res.id); }
+		else if constexpr (std::is_same_v<T, BufferStorageId>) { glCreateBuffers(1, &res.id); }
 		else if constexpr (std::is_same_v<T, VertexArrayId>) { glCreateVertexArrays(1, &res.id); }
 		else if constexpr (std::is_same_v<T, Texture1DId>) { glCreateTextures(GL_TEXTURE_1D, 1, &res.id); }
 		else if constexpr (std::is_same_v<T, Texture2DId>) { glCreateTextures(GL_TEXTURE_2D, 1, &res.id); }
@@ -411,6 +911,15 @@ namespace gl4
 
 		if constexpr (std::is_same_v<T, ShaderProgramId>) { glDeleteProgram(res.id); }
 		else if constexpr (std::is_same_v<T, BufferId>) { glDeleteBuffers(1, &res.id); }
+		else if constexpr (std::is_same_v<T, BufferStorageId>) 
+		{ 
+			if (res.mappedMemory)
+			{
+				glUnmapNamedBuffer(res.id);
+				res.mappedMemory = nullptr;
+			}
+			glDeleteBuffers(1, &res.id); 
+		}
 		else if constexpr (std::is_same_v<T, VertexArrayId>) { glDeleteVertexArrays(1, &res.id); }
 		else if constexpr (std::is_same_v<T, Texture1DId>) { glDeleteTextures(1, &res.id); }
 		else if constexpr (std::is_same_v<T, Texture2DId>) { glDeleteTextures(1, &res.id); }
@@ -576,7 +1085,7 @@ namespace gl4
 	*/
 
 	//-------------------------------------------------------------------------
-	// Buffer
+	// Buffer (OLD)
 	//-------------------------------------------------------------------------
 #pragma region [ Buffer ]
 
@@ -588,7 +1097,7 @@ namespace gl4
 	BufferId CreateBufferStorage(GLbitfield flags, const std::vector<T>& data)
 	{
 		return CreateBufferStorage(flags, sizeof(T), data.size(), data.data());
-	}
+	}	
 
 	// TODO: Set(Init)Data и Set(Init)Storage???
 	void SetSubData(BufferId id, GLintptr offset, GLsizeiptr size, const void* data);
@@ -614,32 +1123,112 @@ namespace gl4
 #pragma endregion
 
 	//-------------------------------------------------------------------------
+	// BufferStorage
+	//-------------------------------------------------------------------------
+#pragma region [ BufferStorage ]
+
+	/*
+	EXAMPLE:
+		static constexpr std::array<float, 6> triPositions = {-0, -0, 1, -1, 1, 1};
+		CreateBuffer(triPositions);
+	*/
+	class TriviallyCopyableByteSpan final : public std::span<const std::byte>
+	{
+	public:
+		template<typename T> requires std::is_trivially_copyable_v<T>
+		TriviallyCopyableByteSpan(const T& t)
+			: std::span<const std::byte>(std::as_bytes(std::span{ &t, static_cast<size_t>(1) }))
+		{
+		}
+
+		template<typename T> requires std::is_trivially_copyable_v<T>
+		TriviallyCopyableByteSpan(std::span<const T> t) : std::span<const std::byte>(std::as_bytes(t))
+		{
+		}
+
+		template<typename T> requires std::is_trivially_copyable_v<T>
+		TriviallyCopyableByteSpan(std::span<T> t) : std::span<const std::byte>(std::as_bytes(t))
+		{
+		}
+	};
+
+	struct BufferFillInfo final
+	{
+		uint64_t offset{ 0 };
+		uint64_t size{ WHOLE_BUFFER };
+		uint32_t data{ 0 };
+	};
+
+	BufferStorageId CreateStorageBuffer(size_t size, BufferStorageFlags storageFlags = BufferStorageFlag::NONE, std::string_view name = "");
+	BufferStorageId CreateStorageBuffer(TriviallyCopyableByteSpan data, BufferStorageFlags storageFlags = BufferStorageFlag::NONE, std::string_view name = "");
+	BufferStorageId CreateStorageBuffer(const void* data, size_t size, BufferStorageFlags storageFlags, std::string_view name);
+
+	template<class T>
+		requires(std::is_trivially_copyable_v<T>)
+	BufferStorageId CreateStorageBuffer(BufferStorageFlags storageFlags = BufferStorageFlag::NONE, std::string_view name = "")
+	{
+		return CreateStorageBuffer(sizeof(T), storageFlags, name);
+	}
+
+	template<class T>
+		requires(std::is_trivially_copyable_v<T>)
+	BufferStorageId CreateStorageBuffer(size_t count, BufferStorageFlags storageFlags = BufferStorageFlag::NONE, std::string_view name = "")
+	{
+		return CreateStorageBuffer(sizeof(T) * count, storageFlags, name);
+	}
+
+	void UpdateData(BufferStorageId id, TriviallyCopyableByteSpan data, size_t destOffsetBytes = 0);
+	void UpdateData(BufferStorageId id, const void* data, size_t size, size_t offset = 0);
+	void FillData(BufferStorageId id, const BufferFillInfo& clear = {});
+
+	[[nodiscard]] inline void* GetMappedPointer(BufferStorageId id) noexcept { return id.mappedMemory; }
+	[[nodiscard]] inline bool IsMapped(BufferStorageId id) noexcept { return id.mappedMemory != nullptr; }
+	void Invalidate(BufferStorageId id);
+
+#pragma endregion
+
+
+	//-------------------------------------------------------------------------
 	// Vertex Array
 	//-------------------------------------------------------------------------
 #pragma region [ Vertex Array ]
 
-	struct VertexAttribute final
+	struct VertexInputBindingDescription final
+	{
+		uint32_t location; // glEnableVertexArrayAttrib + glVertexArrayAttribFormat
+		uint32_t binding;  // glVertexArrayAttribBinding
+		Format   format;   // glVertexArrayAttribFormat
+		uint32_t offset;   // glVertexArrayAttribFormat
+	};
+
+	struct VertexInputStateOwning final
+	{
+		std::vector<VertexInputBindingDescription> vertexBindingDescriptions;
+	};
+
+	struct VertexAttributeRaw final // TODO: old, delete
 	{
 		//  TODO: для случая type = GL_INT не нужно передавать normalized. Подумать как сделать
 		GLuint index;				// example: 0
-		GLint size;					// example: 3
+		GLint  size;				// example: 3
 		GLenum type;				// example: GL_FLOAT
-		bool normalized{ false };	// example: GL_FALSE
+		bool   normalized{ false };	// example: GL_FALSE
 		GLuint relativeOffset;		// example: offsetof(Vertex, pos)
 		GLuint bindingIndex{ 0 };
 	};
-
 	// example:
 	//	SetVertexAttrib(vao, 0, 3, GL_FLOAT, GL_FALSE, offsetof(Vertex, pos));
 	//	SetVertexAttrib(vao, 1, 2, GL_FLOAT, GL_FALSE, offsetof(Vertex, uv));
-	void SetVertexAttrib(GLuint vao, GLuint attribIndex, GLint size, GLenum type, GLboolean normalized, GLuint relativeOffset, GLuint bindingIndex);
-	void SetVertexAttrib(GLuint vao, const VertexAttribute& attribute);
-	void SetVertexAttrib(GLuint vao, const std::vector<VertexAttribute>& attributes);
+	void SetVertexAttrib(GLuint vao, GLuint attribIndex, GLint size, GLenum type, GLboolean normalized, GLuint relativeOffset, GLuint bindingIndex); // TODO: old, delete
+	void SetVertexAttrib(GLuint vao, const VertexAttributeRaw& attribute); // TODO: old, delete
+	void SetVertexAttrib(GLuint vao, const std::vector<VertexAttributeRaw>& attributes); // TODO: old, delete
 
-	VertexArrayId CreateVertexArray();
-	VertexArrayId CreateVertexArray(const std::vector<VertexAttribute>& attributes);
-	VertexArrayId CreateVertexArray(BufferId vbo, size_t vertexSize, const std::vector<VertexAttribute>& attributes);
-	VertexArrayId CreateVertexArray(BufferId vbo, BufferId ibo, size_t vertexSize, const std::vector<VertexAttribute>& attributes);
+	VertexArrayId CreateVertexArray(); // TODO: old, delete
+	VertexArrayId CreateVertexArray(const std::vector<VertexAttributeRaw>& attributes); // TODO: old, delete
+	VertexArrayId CreateVertexArray(BufferId vbo, size_t vertexSize, const std::vector<VertexAttributeRaw>& attributes); // TODO: old, delete
+	VertexArrayId CreateVertexArray(BufferId vbo, BufferId ibo, size_t vertexSize, const std::vector<VertexAttributeRaw>& attributes); // TODO: old, delete
+
+	VertexArrayId CreateVertexArray(const VertexInputStateOwning& inputState);
 
 	void SetVertexBuffer(VertexArrayId id, BufferId vbo, GLuint bindingindex, GLintptr offset, GLsizei stride);
 	void SetIndexBuffer(VertexArrayId id, BufferId ibo);

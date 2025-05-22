@@ -48,7 +48,7 @@ void GraphicSystem::createSphere()
 		glm::vec3 normal;
 		glm::vec2 uv;
 	};
-	std::vector<gl4::VertexAttribute> attribs = {
+	std::vector<gl4::VertexAttributeRaw> attribs = {
 		{0, 3, GL_FLOAT, false, offsetof(Vertex, position)},
 		{1, 3, GL_FLOAT, false, offsetof(Vertex, normal)},
 		{2, 2, GL_FLOAT, false, offsetof(Vertex, uv)},
@@ -163,7 +163,7 @@ void GraphicSystem::createCube()
 		glm::vec2 uv;
 	};
 
-	std::vector<gl4::VertexAttribute> attribs = {
+	std::vector<gl4::VertexAttributeRaw> attribs = {
 		{0, 3, GL_FLOAT, false, offsetof(Vertex, pos)},
 		{1, 3, GL_FLOAT, false, offsetof(Vertex, normal)},
 		{2, 2, GL_FLOAT, false, offsetof(Vertex, uv)},
@@ -182,7 +182,7 @@ void GraphicSystem::createQuad()
 		glm::vec2 uv;
 	};
 
-	std::vector<gl4::VertexAttribute> attribs = {
+	std::vector<gl4::VertexAttributeRaw> attribs = {
 		{0, 3, GL_FLOAT, false, offsetof(Vertex, pos)},
 		{1, 3, GL_FLOAT, false, offsetof(Vertex, normal)},
 		{2, 2, GL_FLOAT, false, offsetof(Vertex, uv)},

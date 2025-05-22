@@ -58,7 +58,7 @@ void Mesh::Draw(GLuint shaderProgram, bool skipTexture) const
 //=============================================================================
 void Mesh::setupMesh()
 {
-	std::vector<gl4::VertexAttribute> attribs = {
+	std::vector<gl4::VertexAttributeRaw> attribs = {
 		{0, 3, GL_FLOAT, false, offsetof(MeshVertex, Position)},
 		{1, 3, GL_FLOAT, false, offsetof(MeshVertex, Normal)},
 		{2, 2, GL_FLOAT, false, offsetof(MeshVertex, TexCoords)},
