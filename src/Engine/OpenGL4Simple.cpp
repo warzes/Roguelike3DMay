@@ -1,7 +1,7 @@
 ﻿#include "stdafx.h"
 #include "OpenGL4Simple.h"
 #include "Log.h"
-#include "OpenGL4Context.h"
+#include "OpenGL4DeviceProperties.h"
 #include "Hash.h"
 //=============================================================================
 #pragma region [ Hash ]
@@ -96,67 +96,86 @@ namespace
 {
 	constexpr int MAX_COLOR_ATTACHMENTS = 8;
 
-	// навести порядок
+	// Used for scope error checking
+	bool isComputeActive = false;
+	bool isRendering = false;
 
 	// Used for error checking for indexed draws
-	bool isIndexBufferBound{ false };
+	bool isIndexBufferBound = false;
 
-
-	gl4::IndexType currentIndexType{};
-
-
-
-
-
-	gl4::FrameBufferId currentFBO{ 0 };
-
-	bool depthState{ false };
-	bool blendingState{ false };
-	gl4::PolygonMode polygonMode{ gl4::PolygonMode::Fill };
-	gl4::CompareOp depthTestFunc{ gl4::CompareOp::Less };
-	gl4::BlendFactor blendFunc{ gl4::BlendFactor::Zero };
-
-	std::unordered_map<size_t, gl4::VertexArrayId> vertexArrayCache;
-	std::unordered_map<gl4::SamplerState, gl4::SamplerId> samplerCache;
-
-	GraphicsPipelineCache  lastGraphicsPipeline{};
-	gl4::ShaderProgramId   lastProgram; // шейдер отделен от pipeline так как есть еще вычислительный шейдер и долно сбрасывать
-	gl4::VertexArrayId     lastVao;
-	gl4::PrimitiveTopology currentTopology{};
-	bool lastDepthMask = true;
-	uint32_t lastStencilMask[2] = { static_cast<uint32_t>(-1), static_cast<uint32_t>(-1) };
-	std::array<gl4::ColorComponentFlags, MAX_COLOR_ATTACHMENTS> lastColorMask = {};
+	// True during a render or compute scope that has a name.
+	bool isScopedDebugGroupPushed = false;
 
 	// True when a pipeline with a name is bound during a render or compute scope.
 	bool isPipelineDebugGroupPushed = false;
 
+	// True during SwapchainRendering scopes that disable sRGB.
+	// This is needed since regular Rendering scopes always have framebuffer sRGB enabled
+	// (the user uses framebuffer attachments to decide if they want the linear->sRGB conversion).
+	bool srgbWasDisabled = false;
+
+	GraphicsPipelineCache lastGraphicsPipeline{};
+	gl4::ComputePipelineId lastComputePipeline{};
+	gl4::ShaderProgramId lastProgram; // шейдер отделен от pipeline так как есть еще вычислительный шейдер и долно сбрасывать
+
+	// Potentially used for state deduplication.
+	gl4::VertexArrayId currentVao{ 0 };
+	gl4::FrameBufferId currentFBO{ 0 };
+
+	// Currently unused (and probably shouldn't be used)
+	const gl4::RenderInfo* lastRenderInfo{};
+
+	// These can be set at the start of rendering, so they need to be tracked separately from the other pipeline state.
+	std::array<gl4::ColorComponentFlags, MAX_COLOR_ATTACHMENTS> lastColorMask = {};
+	bool lastDepthMask = true;
+	uint32_t lastStencilMask[2] = { static_cast<uint32_t>(-1), static_cast<uint32_t>(-1) };
+	bool initViewport = true;
+	gl4::Viewport lastViewport = {};
+	Rect2D lastScissor = {};
+	bool scissorEnabled = false;
+
+	// These persist until another Pipeline is bound.
+	// They are not used for state deduplication, as they are arguments for GL draw calls.
+	gl4::PrimitiveTopology currentTopology{};
+	gl4::IndexType currentIndexType{};
+
+	std::unordered_map<size_t, gl4::VertexArrayId> vertexArrayCache;
+	std::unordered_map<gl4::SamplerState, gl4::SamplerId> samplerCache;
 }
 //=============================================================================
 void ClearOpenGLState()
 {
+	isComputeActive = false;
+	isRendering = false;
 	isIndexBufferBound = false;
-	currentIndexType = {};
-
-	lastStencilMask[0] = static_cast<uint32_t>(-1);
-	lastStencilMask[1] = static_cast<uint32_t>(-1);
-	lastColorMask = {};
-	lastDepthMask = true;
-	currentTopology = {};
-	currentFBO = { 0 };
-	depthState = { false };
-	blendingState = { false };
-	polygonMode = { gl4::PolygonMode::Fill };
-	depthTestFunc = { gl4::CompareOp::Less };
-	blendFunc = { gl4::BlendFactor::Zero };
-
-	lastGraphicsPipeline.valid = false;
-	lastProgram = {};
-	lastVao = {};
+	isScopedDebugGroupPushed = false;
 	if (isPipelineDebugGroupPushed)
 	{
 		isPipelineDebugGroupPushed = false;
 		glPopDebugGroup();
 	}
+	srgbWasDisabled = false;
+
+	lastGraphicsPipeline.valid = false;
+	lastComputePipeline.valid = false;
+	lastProgram = {};
+	currentVao = {};
+	currentFBO = {};
+	lastRenderInfo = nullptr;
+
+	lastColorMask = {};
+	lastDepthMask = true;
+	lastStencilMask[0] = static_cast<uint32_t>(-1);
+	lastStencilMask[1] = static_cast<uint32_t>(-1);
+
+	initViewport = true;
+	lastViewport = {};
+	lastScissor = {};
+	scissorEnabled = false;
+
+
+	currentTopology = {};
+	currentIndexType = {};
 }
 //=============================================================================
 void ClearResourceCache()
@@ -1536,7 +1555,7 @@ void gl4::GenMipmaps(TextureId id)
 //=============================================================================
 uint64_t gl4::GetBindlessHandle(TextureId id, SamplerId sampler)
 {
-	assert(context.properties.features.bindlessTextures && "GL_ARB_bindless_texture is not supported");
+	assert(gDeviceProperties.features.bindlessTextures && "GL_ARB_bindless_texture is not supported");
 	assert(id.bindlessHandle == 0 && "Texture already has bindless handle resident.");
 	id.bindlessHandle = glGetTextureSamplerHandleARB(id, sampler);
 	assert(id.bindlessHandle != 0 && "Failed to create texture sampler handle.");
@@ -1884,90 +1903,39 @@ void gl4::SetFrameBuffer(FrameBufferId fbo, int width, int height, GLbitfield cl
 //=============================================================================
 #pragma region [ (NEW) FrameBuffer ]
 //=============================================================================
-gl4::FrameBufferId gl4::CreateFrameBuffer(const RenderInfo& renderInfo)
+gl4::FrameBufferId gl4::CreateFrameBuffer(const FrameBufferCreateInfo& createInfo)
 {
 	FrameBufferId id;
 	glCreateFramebuffers(1, &id.id);
 	
 	std::vector<GLenum> drawBuffers;
-	for (size_t i = 0; i < renderInfo.colorAttachments.size(); i++)
+	for (size_t i = 0; i < createInfo.colorAttachments.size(); i++)
 	{
-		const auto& attachment = renderInfo.colorAttachments[i];
+		const auto& attachment = createInfo.colorAttachments[i];
 		glNamedFramebufferTexture(id, static_cast<GLenum>(GL_COLOR_ATTACHMENT0 + i), attachment.id, 0);
 		drawBuffers.push_back(static_cast<GLenum>(GL_COLOR_ATTACHMENT0 + i));
 	}
 	glNamedFramebufferDrawBuffers(id, static_cast<GLsizei>(drawBuffers.size()), drawBuffers.data());
 
-	if (renderInfo.depthAttachment && renderInfo.stencilAttachment &&
-		renderInfo.depthAttachment == renderInfo.stencilAttachment)
+	if (createInfo.depthAttachment && createInfo.stencilAttachment &&
+		createInfo.depthAttachment == createInfo.stencilAttachment)
 	{
-		glNamedFramebufferTexture(id, GL_DEPTH_STENCIL_ATTACHMENT, renderInfo.depthAttachment->id, 0);
+		glNamedFramebufferTexture(id, GL_DEPTH_STENCIL_ATTACHMENT, createInfo.depthAttachment->id, 0);
 	}
 	else
 	{
-		if (renderInfo.depthAttachment)
+		if (createInfo.depthAttachment)
 		{
-			glNamedFramebufferTexture(id, GL_DEPTH_ATTACHMENT, renderInfo.depthAttachment->id, 0);
+			glNamedFramebufferTexture(id, GL_DEPTH_ATTACHMENT, createInfo.depthAttachment->id, 0);
 		}
 
-		if (renderInfo.stencilAttachment)
+		if (createInfo.stencilAttachment)
 		{
-			glNamedFramebufferTexture(id, GL_STENCIL_ATTACHMENT, renderInfo.stencilAttachment->id, 0);
+			glNamedFramebufferTexture(id, GL_STENCIL_ATTACHMENT, createInfo.stencilAttachment->id, 0);
 		}
 	}
 
 	return id;
-}
-//=============================================================================
-#pragma endregion
-//=============================================================================
-#pragma region [ State ]
-//=============================================================================
-void gl4::SwitchDepthTestState(bool state)
-{
-	if (state != depthState)
-	{
-		if (state) glEnable(GL_DEPTH_TEST);
-		else glDisable(GL_DEPTH_TEST);
-		depthState = state;
-	}
-}
-//=============================================================================
-void gl4::SwitchBlendingState(bool state)
-{
-	if (state != blendingState)
-	{
-		if (state) glEnable(GL_BLEND);
-		else glDisable(GL_BLEND);
-		blendingState = state;
-	}
-}
-//=============================================================================
-void gl4::SwitchPolygonMode(PolygonMode mode)
-{
-	if (mode != polygonMode)
-	{
-		glPolygonMode(GL_FRONT_AND_BACK, EnumToGL(mode));
-		polygonMode = mode;
-	}
-}
-//=============================================================================
-void gl4::SwitchDepthTestFunc(CompareOp mode)
-{
-	if (mode != depthTestFunc)
-	{
-		glDepthFunc(EnumToGL(mode));
-		depthTestFunc = mode;
-	}
-}
-//=============================================================================
-void gl4::SwitchBlendingFunc(BlendFactor mode)
-{
-	if (mode != blendFunc)
-	{
-		glBlendFunc(GL_SRC_ALPHA, EnumToGL(mode));
-		blendFunc = mode;
-	}
 }
 //=============================================================================
 #pragma endregion
@@ -2089,11 +2057,11 @@ gl4::ComputePipelineId gl4::CreateComputePipeline(const ComputePipelineInfo& cre
 	glGetProgramiv(id.program, GL_COMPUTE_WORK_GROUP_SIZE, workgroupSize);
 
 	assert(
-		workgroupSize[0] <= context.properties.limits.maxComputeWorkGroupSize[0] &&
-		workgroupSize[1] <= context.properties.limits.maxComputeWorkGroupSize[1] &&
-		workgroupSize[2] <= context.properties.limits.maxComputeWorkGroupSize[2]);
+		workgroupSize[0] <= gDeviceProperties.limits.maxComputeWorkGroupSize[0] &&
+		workgroupSize[1] <= gDeviceProperties.limits.maxComputeWorkGroupSize[1] &&
+		workgroupSize[2] <= gDeviceProperties.limits.maxComputeWorkGroupSize[2]);
 	assert(workgroupSize[0] * workgroupSize[1] * workgroupSize[2] <=
-		context.properties.limits.maxComputeWorkGroupInvocations);
+		gDeviceProperties.limits.maxComputeWorkGroupInvocations);
 
 	id.uniformBlocks = reflectProgram(id.program, GL_UNIFORM_BLOCK);
 	id.storageBlocks = reflectProgram(id.program, GL_SHADER_STORAGE_BLOCK);
@@ -2130,7 +2098,7 @@ void gl4::Cmd::BindGraphicsPipeline(const GraphicsPipelineId& pipeline, bool res
 	{
 		lastGraphicsPipeline.valid = false;
 		lastProgram = {};
-		lastVao = {};
+		currentVao = {};
 	}
 
 	if (lastProgram != pipeline.program)
@@ -2139,10 +2107,10 @@ void gl4::Cmd::BindGraphicsPipeline(const GraphicsPipelineId& pipeline, bool res
 		lastProgram = pipeline.program;
 	}
 
-	if (lastVao != pipeline.vao)
+	if (currentVao != pipeline.vao)
 	{
 		gl4::Bind(pipeline.vao);
-		lastVao = pipeline.vao;
+		currentVao = pipeline.vao;
 	}
 
 	// стейт уже стоит
@@ -2410,14 +2378,14 @@ void gl4::Cmd::Draw(uint32_t vertexCount, uint32_t instanceCount, uint32_t first
 //=============================================================================
 void gl4::Cmd::BindVertexBuffer(uint32_t bindingIndex, const BufferStorageId& buffer, uint64_t offset, uint64_t stride)
 {
-	glVertexArrayVertexBuffer(lastVao, bindingIndex, buffer, static_cast<GLintptr>(offset), static_cast<GLsizei>(stride));
+	glVertexArrayVertexBuffer(currentVao, bindingIndex, buffer, static_cast<GLintptr>(offset), static_cast<GLsizei>(stride));
 }
 //=============================================================================
 void gl4::Cmd::BindIndexBuffer(const BufferStorageId& buffer, IndexType indexType)
 {
 	isIndexBufferBound = true;
 	currentIndexType = indexType;
-	glVertexArrayElementBuffer(lastVao, buffer);
+	glVertexArrayElementBuffer(currentVao, buffer);
 }
 //=============================================================================
 #pragma endregion

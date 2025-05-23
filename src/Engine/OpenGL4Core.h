@@ -1299,20 +1299,5 @@ namespace gl4
 		uint32_t minLayer{ 0 };
 		uint32_t numLayers{ 0 };
 	};
-
-	struct Viewport final
-	{
-		Rect2D drawRect{};  // glViewport
-		float minDepth{ 0.0f }; // glDepthRangef
-		float maxDepth{ 1.0f }; // glDepthRangef
-		ClipDepthRange depthRange = // glClipControl
-#ifdef SE_DEFAULT_CLIP_DEPTH_RANGE_NEGATIVE_ONE_TO_ONE
-			ClipDepthRange::NEGATIVE_ONE_TO_ONE;
-#else
-			ClipDepthRange::ZERO_TO_ONE;
-#endif
-
-		bool operator==(const Viewport&) const noexcept = default;
-	};
-
+		
 } // namespace gl4

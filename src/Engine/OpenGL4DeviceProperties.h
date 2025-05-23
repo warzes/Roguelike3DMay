@@ -114,11 +114,8 @@ namespace gl4
 		DeviceFeatures features;
 	};
 
-	struct ContextState final
-	{
-		DeviceProperties properties;
+	inline DeviceProperties gDeviceProperties;
 
-
-	} inline context;
+	void InitDeviceProperties();
 
 } // namespace gl4

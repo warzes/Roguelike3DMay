@@ -611,7 +611,7 @@ namespace gl4
 #pragma region [ (NEW) FrameBuffer ]
 
 	// Describes the render targets that may be used in a draw
-	struct RenderInfo final
+	struct FrameBufferCreateInfo final
 	{
 		std::vector<TextureId> colorAttachments{};
 		std::optional<TextureId> depthAttachment{ std::nullopt };
@@ -619,21 +619,7 @@ namespace gl4
 	};
 	// TODO: также еще и с RenderBufferId
 
-	FrameBufferId CreateFrameBuffer(const RenderInfo& renderInfo);
-
-#pragma endregion
-
-	//-------------------------------------------------------------------------
-	// State
-	//-------------------------------------------------------------------------
-#pragma region [ State ]
-	
-	void SwitchDepthTestState(bool state);
-	void SwitchBlendingState(bool state);
-
-	void SwitchPolygonMode(PolygonMode mode);
-	void SwitchDepthTestFunc(CompareOp mode);
-	void SwitchBlendingFunc(BlendFactor mode);
+	FrameBufferId CreateFrameBuffer(const FrameBufferCreateInfo& renderInfo);
 
 #pragma endregion
 
@@ -825,6 +811,76 @@ namespace gl4
 		res.storageBlocks.clear();
 		res.samplersAndImages.clear();
 	}
+
+#pragma endregion
+
+	//-------------------------------------------------------------------------
+	// RenderInfo
+	//-------------------------------------------------------------------------
+#pragma region [ RenderInfo ]
+
+	struct Viewport final
+	{
+		Rect2D drawRect{};  // glViewport
+		float minDepth{ 0.0f }; // glDepthRangef
+		float maxDepth{ 1.0f }; // glDepthRangef
+		ClipDepthRange depthRange = // glClipControl
+#ifdef SE_DEFAULT_CLIP_DEPTH_RANGE_NEGATIVE_ONE_TO_ONE
+			ClipDepthRange::NEGATIVE_ONE_TO_ONE;
+#else
+			ClipDepthRange::ZERO_TO_ONE;
+#endif
+
+		bool operator==(const Viewport&) const noexcept = default;
+	};
+
+	// Tells what to do with a render target at the beginning of a pass
+	enum class AttachmentLoadOp : uint32_t
+	{
+		// The previous contents of the image will be preserved
+		Load,
+		// The contents of the image will be cleared to a uniform value
+		Clear,
+		// The previous contents of the image need not be preserved (they may be discarded)
+		DontCare,
+	};
+
+	struct RenderColorAttachment final
+	{
+		TextureId texture;
+		AttachmentLoadOp loadOp = AttachmentLoadOp::Load;
+		glm::vec4 clearValue;
+	};
+
+	struct ClearDepthStencilValue final
+	{
+		float depth{};
+		int32_t stencil{};
+	};
+
+	struct RenderDepthStencilAttachment final
+	{
+		TextureId texture;
+		AttachmentLoadOp loadOp = AttachmentLoadOp::Load;
+		ClearDepthStencilValue clearValue;
+	};
+
+
+	// Describes the render targets that may be used in a draw
+	struct RenderInfo final
+	{
+		/// @brief An optional name to demarcate the pass in a graphics debugger
+		std::string_view name;
+
+		/// @brief An optional viewport
+		/// 
+		/// If empty, the viewport size will be the minimum the render targets' size and the offset will be 0.
+		std::optional<Viewport> viewport = std::nullopt;
+		std::span<const RenderColorAttachment> colorAttachments;
+		std::optional<RenderDepthStencilAttachment> depthAttachment = std::nullopt;
+		std::optional<RenderDepthStencilAttachment> stencilAttachment = std::nullopt;
+	};
+
 
 #pragma endregion
 

@@ -3,6 +3,7 @@
 #include "Log.h"
 #include "Profiler.h"
 #include "OpenGL4Advance.h"
+#include "OpenGL4DeviceProperties.h"
 //=============================================================================
 // Use the high-performance GPU (if available) on Windows laptops
 // https://docs.nvidia.com/gameworks/content/technologies/desktop/optimus.htm
@@ -399,9 +400,12 @@ void IEngineApp::initOpenGL()
 	glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
 #endif
 
+	glEnable(GL_FRAMEBUFFER_SRGB);
+
+	glDisable(GL_DITHER);
 	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 
-	glEnable(GL_FRAMEBUFFER_SRGB);
+	gl4::InitDeviceProperties();
 }
 //=============================================================================
 void IEngineApp::initImGui()

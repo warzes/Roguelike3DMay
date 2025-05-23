@@ -14,6 +14,7 @@
 #include "CoreMath.h"
 
 // RHI
+#include "OpenGL4DeviceProperties.h"
 #include "OpenGL4Simple.h"
 #include "OpenGL4Advance.h"
 

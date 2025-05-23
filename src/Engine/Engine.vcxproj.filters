@@ -59,7 +59,7 @@
     <ClCompile Include="OpenGL4Advance.cpp">
       <Filter>RHI</Filter>
     </ClCompile>
-    <ClCompile Include="OpenGL4Context.cpp">
+    <ClCompile Include="OpenGL4DeviceProperties.cpp">
       <Filter>RHI</Filter>
     </ClCompile>
   </ItemGroup>
@@ -153,7 +153,7 @@
     <ClInclude Include="OpenGL4Core.h">
       <Filter>RHI</Filter>
     </ClInclude>
-    <ClInclude Include="OpenGL4Context.h">
+    <ClInclude Include="OpenGL4DeviceProperties.h">
       <Filter>RHI</Filter>
     </ClInclude>
   </ItemGroup>
