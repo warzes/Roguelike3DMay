@@ -45,6 +45,9 @@
     <ClCompile Include="TestComplex_Temp.cpp">
       <Filter>GameApp\Test3</Filter>
     </ClCompile>
+    <ClCompile Include="NewTest001.cpp">
+      <Filter>GameApp\NewTest1</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -91,6 +94,9 @@
     <ClInclude Include="TestComplex_Temp.h">
       <Filter>GameApp\Test3</Filter>
     </ClInclude>
+    <ClInclude Include="NewTest001.h">
+      <Filter>GameApp\NewTest1</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="GameApp">
@@ -116,6 +122,9 @@
     </Filter>
     <Filter Include="GameApp\Test3\shaders\TestComplex">
       <UniqueIdentifier>{b2b7cdb4-6be4-41d9-8274-d9a0bd9c3972}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameApp\NewTest1">
+      <UniqueIdentifier>{2e1fcf20-4c6c-44a2-aaf8-6b72ca4e0687}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

@@ -68,3 +68,8 @@
 # 23.05.2025
 - удален gl4::Create из-за избыточности
 - новый TextureId
+- TextureViewId
+- новый вариант создания FBO
+- GraphicsPipeline
+- ComputePipeline
+- Cmd - команды аналогичные vkCmd*

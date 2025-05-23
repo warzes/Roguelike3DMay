@@ -33,6 +33,7 @@
 #include <functional>
 #include <filesystem>
 #include <variant>
+#include <optional>
 #include <string>
 #include <string_view>
 #include <span>

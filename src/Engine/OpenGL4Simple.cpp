@@ -1,18 +1,20 @@
 ﻿#include "stdafx.h"
 #include "OpenGL4Simple.h"
 #include "Log.h"
+#include "OpenGL4Context.h"
 #include "Hash.h"
+//=============================================================================
 #pragma region [ Hash ]
 //=============================================================================
-inline size_t vertexInputStateHash(const gl4::VertexInputStateOwning& k)
+inline size_t vertexInputStateHash(const gl4::VertexInputState& k)
 {
 	size_t hashVal{};
 
 	for (const auto& desc : k.vertexBindingDescriptions)
 	{
 		auto cctup = std::make_tuple(desc.location, desc.binding, desc.format, desc.offset);
-		auto chashVal = ::detail::hashing::hash<decltype(cctup)>{}(cctup);
-		::detail::hashing::hash_combine(hashVal, chashVal);
+		auto chashVal = detail::hashing::hash<decltype(cctup)>{}(cctup);
+		detail::hashing::hash_combine(hashVal, chashVal);
 	}
 
 	return hashVal;
@@ -43,8 +45,69 @@ struct std::hash<gl4::SamplerState>
 //=============================================================================
 #pragma region [ Local variables ]
 //=============================================================================
+struct GraphicsPipelineCache final
+{
+	std::string_view   debugName;
+
+	gl4::InputAssemblyState inputAssemblyState;
+	gl4::TessellationState  tessellationState;
+	gl4::RasterizationState rasterizationState;
+	gl4::MultisampleState   multisampleState;
+	gl4::DepthState         depthState;
+	gl4::StencilState       stencilState;
+	gl4::ColorBlendState    colorBlendState;
+
+	bool valid{ false };
+
+	GraphicsPipelineCache& operator=(const GraphicsPipelineCache&) = default;
+	GraphicsPipelineCache& operator=(const gl4::GraphicsPipelineId& p)
+	{
+		valid = true;
+
+		debugName = p.debugName;
+		inputAssemblyState = p.inputAssemblyState;
+		tessellationState = p.tessellationState;
+		rasterizationState = p.rasterizationState;
+		multisampleState = p.multisampleState;
+		depthState = p.depthState;
+		stencilState = p.stencilState;
+		colorBlendState = p.colorBlendState;
+
+		return *this;
+	}
+
+	bool operator==(const gl4::GraphicsPipelineId& p) const noexcept
+	{
+		return (
+			valid == p.valid &&
+			debugName == p.debugName &&
+			inputAssemblyState == p.inputAssemblyState &&
+			tessellationState == p.tessellationState &&
+			rasterizationState == p.rasterizationState &&
+			multisampleState == p.multisampleState &&
+			depthState == p.depthState &&
+			stencilState == p.stencilState &&
+			colorBlendState == p.colorBlendState
+			);
+	}
+};
+//=============================================================================
 namespace
 {
+	constexpr int MAX_COLOR_ATTACHMENTS = 8;
+
+	// навести порядок
+
+	// Used for error checking for indexed draws
+	bool isIndexBufferBound{ false };
+
+
+	gl4::IndexType currentIndexType{};
+
+
+
+
+
 	gl4::FrameBufferId currentFBO{ 0 };
 
 	bool depthState{ false };
@@ -55,16 +118,45 @@ namespace
 
 	std::unordered_map<size_t, gl4::VertexArrayId> vertexArrayCache;
 	std::unordered_map<gl4::SamplerState, gl4::SamplerId> samplerCache;
+
+	GraphicsPipelineCache  lastGraphicsPipeline{};
+	gl4::ShaderProgramId   lastProgram; // шейдер отделен от pipeline так как есть еще вычислительный шейдер и долно сбрасывать
+	gl4::VertexArrayId     lastVao;
+	gl4::PrimitiveTopology currentTopology{};
+	bool lastDepthMask = true;
+	uint32_t lastStencilMask[2] = { static_cast<uint32_t>(-1), static_cast<uint32_t>(-1) };
+	std::array<gl4::ColorComponentFlags, MAX_COLOR_ATTACHMENTS> lastColorMask = {};
+
+	// True when a pipeline with a name is bound during a render or compute scope.
+	bool isPipelineDebugGroupPushed = false;
+
 }
 //=============================================================================
 void ClearOpenGLState()
 {
+	isIndexBufferBound = false;
+	currentIndexType = {};
+
+	lastStencilMask[0] = static_cast<uint32_t>(-1);
+	lastStencilMask[1] = static_cast<uint32_t>(-1);
+	lastColorMask = {};
+	lastDepthMask = true;
+	currentTopology = {};
 	currentFBO = { 0 };
 	depthState = { false };
 	blendingState = { false };
 	polygonMode = { gl4::PolygonMode::Fill };
 	depthTestFunc = { gl4::CompareOp::Less };
 	blendFunc = { gl4::BlendFactor::Zero };
+
+	lastGraphicsPipeline.valid = false;
+	lastProgram = {};
+	lastVao = {};
+	if (isPipelineDebugGroupPushed)
+	{
+		isPipelineDebugGroupPushed = false;
+		glPopDebugGroup();
+	}
 }
 //=============================================================================
 void ClearResourceCache()
@@ -822,7 +914,7 @@ gl4::VertexArrayId gl4::CreateVertexArray(gl4::BufferId vbo, gl4::BufferId ibo, 
 	return vao;
 }
 //=============================================================================
-gl4::VertexArrayId gl4::CreateVertexArray(const VertexInputStateOwning& inputState)
+gl4::VertexArrayId gl4::CreateVertexArray(const VertexInputState& inputState)
 {
 	auto inputHash = vertexInputStateHash(inputState);
 	if (auto it = vertexArrayCache.find(inputHash); it != vertexArrayCache.end())
@@ -1187,11 +1279,12 @@ void gl4::Bind(GLuint unit, TextureCubeId id)
 //=============================================================================
 #pragma endregion
 //=============================================================================
-#pragma region [ New Texture ]
+#pragma region [ (NEW) Texture ]
 //=============================================================================
 gl4::TextureId gl4::CreateTexture(const TextureCreateInfo& createInfo, std::string_view name)
 {
 	gl4::TextureId id;
+	id.info = createInfo;
 	glCreateTextures(EnumToGL(createInfo.imageType), 1, &id.id);
 
 	switch (createInfo.imageType)
@@ -1230,6 +1323,320 @@ gl4::TextureId gl4::CreateTexture(const TextureCreateInfo& createInfo, std::stri
 		glObjectLabel(GL_TEXTURE, id, static_cast<GLsizei>(name.length()), name.data());
 
 	return id;
+}
+//=============================================================================
+gl4::TextureId gl4::CreateTexture2D(Extent2D size, Format format, std::string_view name)
+{
+	TextureCreateInfo createInfo{
+			.imageType = ImageType::Tex2D,
+			.format = format,
+			.extent = {size.width, size.height, 1},
+			.mipLevels = 1,
+			.arrayLayers = 1,
+			.sampleCount = SampleCount::Samples1,
+	};
+	return CreateTexture(createInfo, name);
+}
+//=============================================================================
+gl4::TextureId gl4::CreateTexture2DMip(Extent2D size, Format format, uint32_t mipLevels, std::string_view name)
+{
+	TextureCreateInfo createInfo{
+	.imageType = ImageType::Tex2D,
+	.format = format,
+	.extent = {size.width, size.height, 1},
+	.mipLevels = mipLevels,
+	.arrayLayers = 1,
+	.sampleCount = SampleCount::Samples1,
+	};
+	return CreateTexture(createInfo, name);
+}
+//=============================================================================
+void gl4::UpdateImage(TextureId id, const TextureUpdateInfo& info)
+{
+	glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
+
+	assert(!IsBlockCompressedFormat(id.info.format));
+	GLenum format{};
+	if (info.format == UploadFormat::INFER_FORMAT)
+		format = EnumToGL(FormatToUploadFormat(id.info.format));
+	else
+		format = EnumToGL(info.format);
+
+	GLenum type{};
+	if (info.type == UploadType::INFER_TYPE)
+		type = FormatToTypeGL(id.info.format);
+	else
+		type = EnumToGL(info.type);
+
+	glPixelStorei(GL_UNPACK_ROW_LENGTH, info.rowLength);
+	glPixelStorei(GL_UNPACK_IMAGE_HEIGHT, info.imageHeight);
+
+	switch (ImageTypeToDimension(id.info.imageType))
+	{
+	case 1:
+		glTextureSubImage1D(
+			id,
+			info.level,
+			info.offset.x,
+			info.extent.width,
+			format,
+			type,
+			info.pixels);
+		break;
+	case 2:
+		glTextureSubImage2D(
+			id,
+			info.level,
+			info.offset.x,
+			info.offset.y,
+			info.extent.width,
+			info.extent.height,
+			format,
+			type,
+			info.pixels);
+		break;
+	case 3:
+		glTextureSubImage3D(
+			id,
+			info.level,
+			info.offset.x,
+			info.offset.y,
+			info.offset.z,
+			info.extent.width,
+			info.extent.height,
+			info.extent.depth,
+			format,
+			type,
+			info.pixels);
+		break;
+	}
+}
+//=============================================================================
+inline uint64_t getBlockCompressedImageSize(gl4::Format format, uint32_t width, uint32_t height, uint32_t depth)
+{
+	assert(gl4::IsBlockCompressedFormat(format));
+
+	// BCn formats store 4x4 blocks of pixels, even if the dimensions aren't a multiple of 4
+	// We round up to the nearest multiple of 4 for width and height, but not depth, since
+	// 3D BCn images are just multiple 2D images stacked
+	width = (width + 4 - 1) & -4;
+	height = (height + 4 - 1) & -4;
+
+	switch (format)
+	{
+		// BC1 and BC4 store 4x4 blocks with 64 bits (8 bytes)
+	case gl4::Format::BC1_RGB_UNORM:
+	case gl4::Format::BC1_RGBA_UNORM:
+	case gl4::Format::BC1_RGB_SRGB:
+	case gl4::Format::BC1_RGBA_SRGB:
+	case gl4::Format::BC4_R_UNORM:
+	case gl4::Format::BC4_R_SNORM:
+		return width * height * depth / 2;
+
+	// BC3, BC5, BC6, and BC7 store 4x4 blocks with 128 bits (16 bytes)
+	case gl4::Format::BC2_RGBA_UNORM:
+	case gl4::Format::BC2_RGBA_SRGB:
+	case gl4::Format::BC3_RGBA_UNORM:
+	case gl4::Format::BC3_RGBA_SRGB:
+	case gl4::Format::BC5_RG_UNORM:
+	case gl4::Format::BC5_RG_SNORM:
+	case gl4::Format::BC6H_RGB_UFLOAT:
+	case gl4::Format::BC6H_RGB_SFLOAT:
+	case gl4::Format::BC7_RGBA_UNORM:
+	case gl4::Format::BC7_RGBA_SRGB:
+		return width * height * depth;
+	default: assert(0); return 0;
+	}
+}
+//=============================================================================
+void gl4::UpdateCompressedImage(TextureId id, const CompressedTextureUpdateInfo& info)
+{
+	glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
+	assert(IsBlockCompressedFormat(id.info.format));
+	const GLenum format = FormatToGL(id.info.format);
+
+	glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
+	glPixelStorei(GL_UNPACK_IMAGE_HEIGHT, 0);
+
+	switch (ImageTypeToDimension(id.info.imageType))
+	{
+	case 2:
+		glCompressedTextureSubImage2D(
+			id,
+			info.level,
+			info.offset.x,
+			info.offset.y,
+			info.extent.width,
+			info.extent.height,
+			format,
+			static_cast<uint32_t>(getBlockCompressedImageSize(id.info.format, info.extent.width, info.extent.height, 1)),
+			info.data);
+		break;
+	case 3:
+		glCompressedTextureSubImage3D(
+			id,
+			info.level,
+			info.offset.x,
+			info.offset.y,
+			info.offset.z,
+			info.extent.width,
+			info.extent.height,
+			info.extent.depth,
+			format,
+			static_cast<uint32_t>(getBlockCompressedImageSize(id.info.format, info.extent.width, info.extent.height, info.extent.depth)),
+			info.data);
+		break;
+	default: assert(0);
+	}
+}
+//=============================================================================
+void gl4::ClearImage(TextureId id, const TextureClearInfo& info)
+{
+	// Infer format
+	GLenum format{};
+	if (info.format == UploadFormat::INFER_FORMAT)
+		format = EnumToGL(FormatToUploadFormat(id.info.format));
+	else
+		format = EnumToGL(info.format);
+
+	// Infer type
+	GLenum type{};
+	if (info.type == UploadType::INFER_TYPE) 
+		type = FormatToTypeGL(id.info.format);
+	else 
+		type = EnumToGL(info.type);
+
+	// Infer extent
+	Extent3D extent = info.extent;
+	if (extent == Extent3D{})
+	{
+		extent = id.info.extent >> info.level;
+		extent.width = std::max(extent.width, 1u);
+		extent.height = std::max(extent.height, 1u);
+		extent.depth = std::max(extent.depth, 1u);
+	}
+
+	glClearTexSubImage(id,
+		info.level,
+		info.offset.x,
+		info.offset.y,
+		info.offset.z,
+		extent.width,
+		extent.height,
+		extent.depth,
+		format,
+		type,
+		info.data);
+}
+//=============================================================================
+void gl4::GenMipmaps(TextureId id)
+{
+	glGenerateTextureMipmap(id);
+}
+//=============================================================================
+uint64_t gl4::GetBindlessHandle(TextureId id, SamplerId sampler)
+{
+	assert(context.properties.features.bindlessTextures && "GL_ARB_bindless_texture is not supported");
+	assert(id.bindlessHandle == 0 && "Texture already has bindless handle resident.");
+	id.bindlessHandle = glGetTextureSamplerHandleARB(id, sampler);
+	assert(id.bindlessHandle != 0 && "Failed to create texture sampler handle.");
+	glMakeTextureHandleResidentARB(id.bindlessHandle);
+	return id.bindlessHandle;
+}
+//=============================================================================
+#pragma endregion
+//=============================================================================
+#pragma region [ TextureView ]
+//=============================================================================
+gl4::TextureViewId gl4::CreateTextureView(const TextureViewCreateInfo& viewInfo, TextureId texture, std::string_view name)
+{
+	gl4::TextureViewId id;
+	id.info = viewInfo;
+	glGenTextures(1, &id.id); // glCreateTextures does not work here
+	glTextureView(id,
+		EnumToGL(viewInfo.viewType),
+		texture,
+		FormatToGL(viewInfo.format),
+		viewInfo.minLevel,
+		viewInfo.numLevels,
+		viewInfo.minLayer,
+		viewInfo.numLayers);
+
+	glTextureParameteri(id, GL_TEXTURE_SWIZZLE_R, EnumToGL(viewInfo.components.r));
+	glTextureParameteri(id, GL_TEXTURE_SWIZZLE_G, EnumToGL(viewInfo.components.g));
+	glTextureParameteri(id, GL_TEXTURE_SWIZZLE_B, EnumToGL(viewInfo.components.b));
+	glTextureParameteri(id, GL_TEXTURE_SWIZZLE_A, EnumToGL(viewInfo.components.a));
+
+	if (!name.empty())
+		glObjectLabel(GL_TEXTURE, id, static_cast<GLsizei>(name.length()), name.data());
+
+	return id;
+}
+//=============================================================================
+gl4::TextureViewId gl4::CreateTextureView(TextureId texture, std::string_view name)
+{
+	TextureViewCreateInfo createInfo{
+		.viewType = texture.info.imageType,
+		.format = texture.info.format,
+		.minLevel = 0,
+		.numLevels = texture.info.mipLevels,
+		.minLayer = 0,
+		.numLayers = texture.info.arrayLayers,
+	};
+	return CreateTextureView(createInfo, texture, name);
+}
+//=============================================================================
+gl4::TextureViewId gl4::CreateSingleMipView(TextureId texture, uint32_t level)
+{
+	TextureViewCreateInfo createInfo{
+		.viewType = texture.info.imageType,
+		.format = texture.info.format,
+		.minLevel = level,
+		.numLevels = 1,
+		.minLayer = 0,
+		.numLayers = texture.info.arrayLayers,
+	};
+	return CreateTextureView(createInfo, texture);
+}
+//=============================================================================
+gl4::TextureViewId gl4::CreateSingleLayerView(TextureId texture, uint32_t layer)
+{
+	TextureViewCreateInfo createInfo{
+		.viewType = texture.info.imageType,
+		.format = texture.info.format,
+		.minLevel = 0,
+		.numLevels = texture.info.mipLevels,
+		.minLayer = layer,
+		.numLayers = 1,
+	};
+	return CreateTextureView(createInfo, texture);
+}
+//=============================================================================
+gl4::TextureViewId gl4::CreateFormatView(TextureId texture, Format newFormat)
+{
+	TextureViewCreateInfo createInfo{
+		.viewType = texture.info.imageType,
+		.format = newFormat,
+		.minLevel = 0,
+		.numLevels = texture.info.mipLevels,
+		.minLayer = 0,
+		.numLayers = texture.info.arrayLayers,
+	};
+	return CreateTextureView(createInfo, texture);
+}
+//=============================================================================
+gl4::TextureViewId gl4::CreateSwizzleView(TextureId texture, ComponentMapping components)
+{
+	TextureViewCreateInfo createInfo{
+		.viewType = texture.info.imageType,
+		.format = texture.info.format,
+		.components = components,
+		.minLevel = 0,
+		.numLevels = texture.info.mipLevels,
+		.minLayer = 0,
+		.numLayers = texture.info.arrayLayers,
+	};
+	return CreateTextureView(createInfo, texture);
 }
 //=============================================================================
 #pragma endregion
@@ -1475,6 +1882,45 @@ void gl4::SetFrameBuffer(FrameBufferId fbo, int width, int height, GLbitfield cl
 //=============================================================================
 #pragma endregion
 //=============================================================================
+#pragma region [ (NEW) FrameBuffer ]
+//=============================================================================
+gl4::FrameBufferId gl4::CreateFrameBuffer(const RenderInfo& renderInfo)
+{
+	FrameBufferId id;
+	glCreateFramebuffers(1, &id.id);
+	
+	std::vector<GLenum> drawBuffers;
+	for (size_t i = 0; i < renderInfo.colorAttachments.size(); i++)
+	{
+		const auto& attachment = renderInfo.colorAttachments[i];
+		glNamedFramebufferTexture(id, static_cast<GLenum>(GL_COLOR_ATTACHMENT0 + i), attachment.id, 0);
+		drawBuffers.push_back(static_cast<GLenum>(GL_COLOR_ATTACHMENT0 + i));
+	}
+	glNamedFramebufferDrawBuffers(id, static_cast<GLsizei>(drawBuffers.size()), drawBuffers.data());
+
+	if (renderInfo.depthAttachment && renderInfo.stencilAttachment &&
+		renderInfo.depthAttachment == renderInfo.stencilAttachment)
+	{
+		glNamedFramebufferTexture(id, GL_DEPTH_STENCIL_ATTACHMENT, renderInfo.depthAttachment->id, 0);
+	}
+	else
+	{
+		if (renderInfo.depthAttachment)
+		{
+			glNamedFramebufferTexture(id, GL_DEPTH_ATTACHMENT, renderInfo.depthAttachment->id, 0);
+		}
+
+		if (renderInfo.stencilAttachment)
+		{
+			glNamedFramebufferTexture(id, GL_STENCIL_ATTACHMENT, renderInfo.stencilAttachment->id, 0);
+		}
+	}
+
+	return id;
+}
+//=============================================================================
+#pragma endregion
+//=============================================================================
 #pragma region [ State ]
 //=============================================================================
 void gl4::SwitchDepthTestState(bool state)
@@ -1525,3 +1971,454 @@ void gl4::SwitchBlendingFunc(BlendFactor mode)
 }
 //=============================================================================
 #pragma endregion
+//=============================================================================
+#pragma region [ GraphicsPipeline ]
+//=============================================================================
+inline std::vector<std::pair<std::string, uint32_t>> reflectProgram(GLuint program, GLenum interface)
+{
+	GLint numActiveResources{};
+	glGetProgramInterfaceiv(program, interface, GL_ACTIVE_RESOURCES, &numActiveResources);
+
+	GLint maxNameLength{};
+	glGetProgramInterfaceiv(program, interface, GL_MAX_NAME_LENGTH, &maxNameLength);
+
+	auto reflected = std::vector<std::pair<std::string, uint32_t>>(numActiveResources, { std::string(maxNameLength, '\0'), 0 });
+
+	for (GLint i = 0; i < numActiveResources; i++)
+	{
+		// Reflect the name of the resource
+		glGetProgramResourceName(program,
+			interface,
+			i,
+			static_cast<GLsizei>(reflected[i].first.size()),
+			nullptr,
+			reflected[i].first.data());
+
+		// Reflect the value or binding of the resource (for samplers and images, these are essentially bindings as well)
+		if (interface == GL_UNIFORM)
+		{
+			auto location = glGetProgramResourceLocation(program, interface, reflected[i].first.c_str());
+
+			// Variables inside uniform blocks will also be iterated here. Their location will be -1, so we can skip them this way.
+			if (location != -1)
+			{
+				// Wrong if the uniform isn't an integer (e.g., sampler or image). OK, default-block uniforms are not supported otherwise.
+				GLint binding{ -1 };
+				glGetUniformiv(program, location, &binding);
+				reflected[i].second = static_cast<uint32_t>(binding);
+			}
+			else
+			{
+				reflected[i].first = "";
+			}
+		}
+		else if (interface == GL_UNIFORM_BLOCK || interface == GL_SHADER_STORAGE_BLOCK)
+		{
+			GLint binding{ -1 };
+			constexpr GLenum property = GL_BUFFER_BINDING;
+			glGetProgramResourceiv(program, interface, i, 1, &property, 1, nullptr, &binding);
+			reflected[i].second = static_cast<uint32_t>(binding);
+		}
+		else
+		{
+			assert(0);
+		}
+	}
+
+	auto it = std::remove_if(reflected.begin(), reflected.end(), [](const auto& pair) { return pair.first.empty(); });
+	reflected.erase(it, reflected.end());
+
+	return reflected;
+}
+//=============================================================================
+gl4::GraphicsPipelineId gl4::CreateGraphicsPipeline(const GraphicsPipelineCreateInfo& createInfo)
+{
+	assert(!createInfo.vertexShader.empty() && "A graphics pipeline must at least have a vertex shader");
+	if (!createInfo.tessellationControlShader.empty() || !createInfo.tessellationEvaluationShader.empty())
+	{
+		assert(!createInfo.tessellationControlShader.empty() && !createInfo.tessellationEvaluationShader.empty() && "Either both or neither tessellation shader can be present");
+	}
+
+	gl4::GraphicsPipelineId id;
+	id.program = CreateShaderProgram(createInfo.vertexShader.data(), createInfo.fragmentShader.data());
+	if (!id.program) return {};
+
+	id.vao = CreateVertexArray(createInfo.vertexInputState);
+	if (!id.vao) return {};
+
+
+	if (!createInfo.debugName.empty())
+	{
+		glObjectLabel(GL_PROGRAM, id.program, static_cast<GLsizei>(createInfo.debugName.length()), createInfo.debugName.data());
+	}
+
+	id.debugName          = createInfo.debugName;
+	id.inputAssemblyState = createInfo.inputAssemblyState;
+	id.vertexInputState   = createInfo.vertexInputState;
+	id.tessellationState  = createInfo.tessellationState;
+	id.rasterizationState = createInfo.rasterizationState;
+	id.multisampleState   = createInfo.multisampleState;
+	id.depthState         = createInfo.depthState;
+	id.stencilState       = createInfo.stencilState;
+	id.colorBlendState    = createInfo.colorBlendState;
+
+	id.uniformBlocks     = reflectProgram(id.program, GL_UNIFORM_BLOCK);
+	id.storageBlocks     = reflectProgram(id.program, GL_SHADER_STORAGE_BLOCK);
+	id.samplersAndImages = reflectProgram(id.program, GL_UNIFORM);
+
+	id.valid = true;
+	return id;
+}
+//=============================================================================
+#pragma endregion
+//=============================================================================
+#pragma region [ ComputePipeline ]
+//=============================================================================
+gl4::ComputePipelineId gl4::CreateComputePipeline(const ComputePipelineInfo& createInfo)
+{
+	gl4::ComputePipelineId id;
+	id.program = CreateShaderProgram(createInfo.shader.data());
+	if (!id.program) return {};
+
+	if (!createInfo.debugName.empty())
+	{
+		glObjectLabel(GL_PROGRAM, id.program, static_cast<GLsizei>(createInfo.debugName.length()), createInfo.debugName.data());
+	}
+
+	GLint workgroupSize[3];
+	glGetProgramiv(id.program, GL_COMPUTE_WORK_GROUP_SIZE, workgroupSize);
+
+	assert(
+		workgroupSize[0] <= context.properties.limits.maxComputeWorkGroupSize[0] &&
+		workgroupSize[1] <= context.properties.limits.maxComputeWorkGroupSize[1] &&
+		workgroupSize[2] <= context.properties.limits.maxComputeWorkGroupSize[2]);
+	assert(workgroupSize[0] * workgroupSize[1] * workgroupSize[2] <=
+		context.properties.limits.maxComputeWorkGroupInvocations);
+
+	id.uniformBlocks = reflectProgram(id.program, GL_UNIFORM_BLOCK);
+	id.storageBlocks = reflectProgram(id.program, GL_SHADER_STORAGE_BLOCK);
+	id.samplersAndImages = reflectProgram(id.program, GL_UNIFORM);
+
+	id.workgroupSize.width = static_cast<uint32_t>(workgroupSize[0]);
+	id.workgroupSize.height = static_cast<uint32_t>(workgroupSize[1]);
+	id.workgroupSize.depth = static_cast<uint32_t>(workgroupSize[2]);
+
+	id.valid = true;
+	return id;
+}
+//=============================================================================
+#pragma endregion
+//=============================================================================
+#pragma region [ Cmd ]
+//=============================================================================
+// helper function
+inline void GLEnableOrDisable(GLenum state, GLboolean value)
+{
+	if (value) glEnable(state);
+	else glDisable(state);
+}
+//=============================================================================
+void gl4::Cmd::BindGraphicsPipeline(const GraphicsPipelineId& pipeline, bool resetCacheState)
+{
+	if (!pipeline.valid)
+	{
+		Error("GraphicsPipelineId not valid");
+		return;
+	}
+
+	if (resetCacheState) // сброс кешированного стейта
+	{
+		lastGraphicsPipeline.valid = false;
+		lastProgram = {};
+		lastVao = {};
+	}
+
+	if (lastProgram != pipeline.program)
+	{
+		gl4::Bind(pipeline.program);
+		lastProgram = pipeline.program;
+	}
+
+	if (lastVao != pipeline.vao)
+	{
+		gl4::Bind(pipeline.vao);
+		lastVao = pipeline.vao;
+	}
+
+	// стейт уже стоит
+	if (lastGraphicsPipeline == pipeline)
+	{
+#if defined(_DEBUG)
+		// TODO: сделать проверку на то что реальный рендер стейт на GAPI именно такой - делать только в отладке, так как надо делать запросы к GAPI
+#endif
+		return;
+	}
+
+	if (isPipelineDebugGroupPushed)
+	{
+		isPipelineDebugGroupPushed = false;
+		glPopDebugGroup();
+	}
+
+	if (!pipeline.debugName.empty())
+	{
+		glPushDebugGroup(GL_DEBUG_SOURCE_APPLICATION,
+			0,
+			static_cast<GLsizei>(pipeline.debugName.size()),
+			pipeline.debugName.data());
+		isPipelineDebugGroupPushed = true;
+	}
+
+	// всегда включать
+	glEnable(GL_FRAMEBUFFER_SRGB);
+
+	//-------------------------------------------------------------------------
+	// input assembly
+	//-------------------------------------------------------------------------
+	const auto& ias = pipeline.inputAssemblyState;
+	if (ias.primitiveRestartEnable != lastGraphicsPipeline.inputAssemblyState.primitiveRestartEnable)
+	{
+		GLEnableOrDisable(GL_PRIMITIVE_RESTART_FIXED_INDEX, ias.primitiveRestartEnable);
+	}
+	currentTopology = ias.topology;
+
+	//-------------------------------------------------------------------------
+	// tessellation
+	//-------------------------------------------------------------------------
+	const auto& ts = pipeline.tessellationState;
+	if (ts.patchControlPoints > 0)
+	{
+		if (ts.patchControlPoints != lastGraphicsPipeline.tessellationState.patchControlPoints)
+		{
+			glPatchParameteri(GL_PATCH_VERTICES, static_cast<GLint>(pipeline.tessellationState.patchControlPoints));
+		}
+	}
+
+	//-------------------------------------------------------------------------
+	// rasterization
+	//-------------------------------------------------------------------------
+	const auto& rs = pipeline.rasterizationState;
+	if (rs.depthClampEnable != lastGraphicsPipeline.rasterizationState.depthClampEnable)
+	{
+		GLEnableOrDisable(GL_DEPTH_CLAMP, rs.depthClampEnable);
+	}
+
+	if (rs.polygonMode != lastGraphicsPipeline.rasterizationState.polygonMode)
+	{
+		glPolygonMode(GL_FRONT_AND_BACK, EnumToGL(rs.polygonMode));
+	}
+
+	if (rs.cullMode != lastGraphicsPipeline.rasterizationState.cullMode)
+	{
+		GLEnableOrDisable(GL_CULL_FACE, rs.cullMode != CullMode::None);
+		if (rs.cullMode != CullMode::None)
+		{
+			glCullFace(EnumToGL(rs.cullMode));
+		}
+	}
+
+	if (rs.frontFace != lastGraphicsPipeline.rasterizationState.frontFace)
+	{
+		glFrontFace(EnumToGL(rs.frontFace));
+	}
+
+	if (rs.depthBiasEnable != lastGraphicsPipeline.rasterizationState.depthBiasEnable)
+	{
+		GLEnableOrDisable(GL_POLYGON_OFFSET_FILL, rs.depthBiasEnable);
+		GLEnableOrDisable(GL_POLYGON_OFFSET_LINE, rs.depthBiasEnable);
+		GLEnableOrDisable(GL_POLYGON_OFFSET_POINT, rs.depthBiasEnable);
+	}
+
+	if (rs.depthBiasSlopeFactor != lastGraphicsPipeline.rasterizationState.depthBiasSlopeFactor ||
+		rs.depthBiasConstantFactor != lastGraphicsPipeline.rasterizationState.depthBiasConstantFactor)
+	{
+		glPolygonOffset(rs.depthBiasSlopeFactor, rs.depthBiasConstantFactor);
+	}
+
+	if (rs.lineWidth != lastGraphicsPipeline.rasterizationState.lineWidth)
+	{
+		glLineWidth(rs.lineWidth);
+	}
+
+	if (rs.pointSize != lastGraphicsPipeline.rasterizationState.pointSize)
+	{
+		glPointSize(rs.pointSize);
+	}
+
+	//-------------------------------------------------------------------------
+	// multisample
+	//-------------------------------------------------------------------------
+	const auto& ms = pipeline.multisampleState;
+	if (ms.sampleShadingEnable != lastGraphicsPipeline.multisampleState.sampleShadingEnable)
+	{
+		GLEnableOrDisable(GL_SAMPLE_SHADING, ms.sampleShadingEnable);
+	}
+
+	if (ms.minSampleShading != lastGraphicsPipeline.multisampleState.minSampleShading)
+	{
+		glMinSampleShading(ms.minSampleShading);
+	}
+
+	if (ms.sampleMask != lastGraphicsPipeline.multisampleState.sampleMask)
+	{
+		GLEnableOrDisable(GL_SAMPLE_MASK, ms.sampleMask != 0xFFFFFFFF);
+		glSampleMaski(0, ms.sampleMask);
+	}
+
+	if (ms.alphaToCoverageEnable != lastGraphicsPipeline.multisampleState.alphaToCoverageEnable)
+	{
+		GLEnableOrDisable(GL_SAMPLE_ALPHA_TO_COVERAGE, ms.alphaToCoverageEnable);
+	}
+
+	if (ms.alphaToOneEnable != lastGraphicsPipeline.multisampleState.alphaToOneEnable)
+	{
+		GLEnableOrDisable(GL_SAMPLE_ALPHA_TO_ONE, ms.alphaToOneEnable);
+	}
+
+	//-------------------------------------------------------------------------
+	// depth + stencil
+	//-------------------------------------------------------------------------
+	const auto& ds = pipeline.depthState;
+	if (ds.depthTestEnable != lastGraphicsPipeline.depthState.depthTestEnable)
+	{
+		GLEnableOrDisable(GL_DEPTH_TEST, ds.depthTestEnable);
+	}
+
+	if (ds.depthWriteEnable != lastGraphicsPipeline.depthState.depthWriteEnable)
+	{
+		if (ds.depthWriteEnable != lastDepthMask)
+		{
+			glDepthMask(ds.depthWriteEnable);
+			lastDepthMask = ds.depthWriteEnable;
+		}
+	}
+
+	if (ds.depthCompareOp != lastGraphicsPipeline.depthState.depthCompareOp)
+	{
+		glDepthFunc(EnumToGL(ds.depthCompareOp));
+	}
+
+	const auto& ss = pipeline.stencilState;
+	if (ss.stencilTestEnable != lastGraphicsPipeline.stencilState.stencilTestEnable)
+	{
+		GLEnableOrDisable(GL_STENCIL_TEST, ss.stencilTestEnable);
+	}
+
+	// Stencil front
+	if (!lastGraphicsPipeline.stencilState.stencilTestEnable ||
+		ss.front != lastGraphicsPipeline.stencilState.front)
+	{
+		glStencilOpSeparate(GL_FRONT,
+			EnumToGL(ss.front.failOp),
+			EnumToGL(ss.front.depthFailOp),
+			EnumToGL(ss.front.passOp));
+		glStencilFuncSeparate(GL_FRONT, EnumToGL(ss.front.compareOp), ss.front.reference, ss.front.compareMask);
+		if (lastStencilMask[0] != ss.front.writeMask)
+		{
+			glStencilMaskSeparate(GL_FRONT, ss.front.writeMask);
+			lastStencilMask[0] = ss.front.writeMask;
+		}
+	}
+
+	// Stencil back
+	if (!lastGraphicsPipeline.stencilState.stencilTestEnable ||
+		ss.back != lastGraphicsPipeline.stencilState.back)
+	{
+		glStencilOpSeparate(GL_BACK,
+			EnumToGL(ss.back.failOp),
+			EnumToGL(ss.back.depthFailOp),
+			EnumToGL(ss.back.passOp));
+		glStencilFuncSeparate(GL_BACK, EnumToGL(ss.back.compareOp), ss.back.reference, ss.back.compareMask);
+		if (lastStencilMask[1] != ss.back.writeMask)
+		{
+			glStencilMaskSeparate(GL_BACK, ss.back.writeMask);
+			lastStencilMask[1] = ss.back.writeMask;
+		}
+	}
+
+	//-------------------------------------------------------------------------
+	// color blending state
+	//-------------------------------------------------------------------------
+	const auto& cb = pipeline.colorBlendState;
+	if (cb.logicOpEnable != lastGraphicsPipeline.colorBlendState.logicOpEnable)
+	{
+		GLEnableOrDisable(GL_COLOR_LOGIC_OP, cb.logicOpEnable);
+		if (!lastGraphicsPipeline.colorBlendState.logicOpEnable ||
+			(cb.logicOpEnable && cb.logicOp != lastGraphicsPipeline.colorBlendState.logicOp))
+		{
+			glLogicOp(EnumToGL(cb.logicOp));
+		}
+	}
+
+	if (std::memcmp(cb.blendConstants,
+		lastGraphicsPipeline.colorBlendState.blendConstants,
+		sizeof(cb.blendConstants)) != 0)
+	{
+		glBlendColor(cb.blendConstants[0], cb.blendConstants[1], cb.blendConstants[2], cb.blendConstants[3]);
+	}
+
+	if (cb.attachments.empty() != lastGraphicsPipeline.colorBlendState.attachments.empty())
+	{
+		GLEnableOrDisable(GL_BLEND, !cb.attachments.empty());
+	}
+
+	for (GLuint i = 0; i < static_cast<GLuint>(cb.attachments.size()); i++)
+	{
+		const auto& cba = cb.attachments[i];
+		if (i < lastGraphicsPipeline.colorBlendState.attachments.size() &&
+			cba == lastGraphicsPipeline.colorBlendState.attachments[i])
+		{
+			continue;
+		}
+
+		if (cba.blendEnable)
+		{
+			glBlendFuncSeparatei(i,
+				EnumToGL(cba.srcColorBlendFactor),
+				EnumToGL(cba.dstColorBlendFactor),
+				EnumToGL(cba.srcAlphaBlendFactor),
+				EnumToGL(cba.dstAlphaBlendFactor));
+			glBlendEquationSeparatei(i, EnumToGL(cba.colorBlendOp), EnumToGL(cba.alphaBlendOp));
+		}
+		else
+		{
+			// "no blending" blend state
+			glBlendFuncSeparatei(i, GL_SRC_COLOR, GL_ZERO, GL_SRC_ALPHA, GL_ZERO);
+			glBlendEquationSeparatei(i, GL_FUNC_ADD, GL_FUNC_ADD);
+		}
+
+		if (lastColorMask[i] != cba.colorWriteMask)
+		{
+			glColorMaski(i,
+				(cba.colorWriteMask & ColorComponentFlag::R_BIT) != ColorComponentFlag::NONE,
+				(cba.colorWriteMask & ColorComponentFlag::G_BIT) != ColorComponentFlag::NONE,
+				(cba.colorWriteMask & ColorComponentFlag::B_BIT) != ColorComponentFlag::NONE,
+				(cba.colorWriteMask & ColorComponentFlag::A_BIT) != ColorComponentFlag::NONE);
+			lastColorMask[i] = cba.colorWriteMask;
+		}
+	}
+
+	lastGraphicsPipeline = pipeline;
+}
+//=============================================================================
+
+
+void gl4::Cmd::Draw(uint32_t vertexCount, uint32_t instanceCount, uint32_t firstVertex, uint32_t firstInstance)
+{
+	glDrawArraysInstancedBaseInstance(EnumToGL(currentTopology), firstVertex, vertexCount, instanceCount, firstInstance);
+}
+//=============================================================================
+void gl4::Cmd::BindVertexBuffer(uint32_t bindingIndex, const BufferStorageId& buffer, uint64_t offset, uint64_t stride)
+{
+	glVertexArrayVertexBuffer(lastVao, bindingIndex, buffer, static_cast<GLintptr>(offset), static_cast<GLsizei>(stride));
+}
+//=============================================================================
+void gl4::Cmd::BindIndexBuffer(const BufferStorageId& buffer, IndexType indexType)
+{
+	isIndexBufferBound = true;
+	currentIndexType = indexType;
+	glVertexArrayElementBuffer(lastVao, buffer);
+}
+//=============================================================================
+#pragma endregion
+//=============================================================================

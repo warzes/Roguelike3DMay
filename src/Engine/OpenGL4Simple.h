@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "BasicTypes.h"
+#include "OpenGL4Core.h"
 
 /*
 TODO:
@@ -22,843 +22,7 @@ TODO:
 
 namespace gl4
 {
-	//-------------------------------------------------------------------------
-	// Base
-	//-------------------------------------------------------------------------
-#pragma region [ Base ]
-
-	// multisampling and anisotropy
-	enum class SampleCount : uint8_t
-	{
-		Samples1  = 1,
-		Samples2  = 2,
-		Samples4  = 4,
-		Samples8  = 8,
-		Samples16 = 16,
-		Samples32 = 32,
-	};
-	inline GLsizei EnumToGL(SampleCount sampleCount)
-	{
-		switch (sampleCount)
-		{
-		case SampleCount::Samples1:  return 1;
-		case SampleCount::Samples2:  return 2;
-		case SampleCount::Samples4:  return 4;
-		case SampleCount::Samples8:  return 8;
-		case SampleCount::Samples16: return 16;
-		case SampleCount::Samples32: return 32;
-		default: assert(0);          return 0;
-		}
-	}
-
-	enum class MagFilter : uint8_t
-	{
-		Nearest,
-		Linear
-	};
-	inline GLenum EnumToGL(MagFilter filter)
-	{
-		switch (filter)
-		{
-		case MagFilter::Nearest: return GL_NEAREST;
-		case MagFilter::Linear:  return GL_LINEAR;
-		default: assert(0); return 0;
-		}
-	}
-
-	enum class MinFilter : uint8_t
-	{
-		Nearest,
-		Linear,
-
-		NearestMimapNearest,
-		NearestMimapLinear,
-		LinearMimapNearest,
-		LinearMimapLinear
-	};
-	inline GLenum EnumToGL(MinFilter filter)
-	{
-		switch (filter)
-		{
-		case MinFilter::Nearest: return GL_NEAREST;
-		case MinFilter::Linear:  return GL_LINEAR;
-		case MinFilter::NearestMimapNearest: return GL_NEAREST_MIPMAP_NEAREST;
-		case MinFilter::NearestMimapLinear: return GL_NEAREST_MIPMAP_LINEAR;
-		case MinFilter::LinearMimapNearest: return GL_LINEAR_MIPMAP_NEAREST;
-		case MinFilter::LinearMimapLinear: return GL_LINEAR_MIPMAP_LINEAR;
-
-		default: assert(0); return 0;
-		}
-	}
-
-	enum class AddressMode : uint8_t
-	{
-		Repeat,
-		MirroredRepeat,
-		ClampToEdge,
-		ClampToBorder,
-		MirrorClampToEdge,
-	};
-	inline GLint EnumToGL(AddressMode addressMode)
-	{
-		switch (addressMode)
-		{
-		case AddressMode::Repeat:            return GL_REPEAT;
-		case AddressMode::MirroredRepeat:    return GL_MIRRORED_REPEAT;
-		case AddressMode::ClampToEdge:       return GL_CLAMP_TO_EDGE;
-		case AddressMode::ClampToBorder:     return GL_CLAMP_TO_BORDER;
-		case AddressMode::MirrorClampToEdge: return GL_MIRROR_CLAMP_TO_EDGE;
-		default: assert(0);                  return 0;
-		}
-	}
-
-	enum class BorderColor : uint8_t
-	{
-		FloatTransparentBlack,
-		IntTransparentBlack,
-		FloatOpaqueBlack,
-		IntOpaqueBlack,
-		FloatOpaqueWhite,
-		IntOpaqueWhite,
-	};
-
-	enum class CompareOp : uint8_t
-	{
-		Never,
-		Less,
-		Equal,
-		LessOrEqual,
-		Greater,
-		NotEqual,
-		GreaterOrEqual,
-		Always,
-	};
-	inline GLenum EnumToGL(CompareOp op)
-	{
-		switch (op)
-		{
-		case CompareOp::Never:          return GL_NEVER;
-		case CompareOp::Less:           return GL_LESS;
-		case CompareOp::Equal:          return GL_EQUAL;
-		case CompareOp::LessOrEqual:    return GL_LEQUAL;
-		case CompareOp::Greater:        return GL_GREATER;
-		case CompareOp::NotEqual:       return GL_NOTEQUAL;
-		case CompareOp::GreaterOrEqual: return GL_GEQUAL;
-		case CompareOp::Always:         return GL_ALWAYS;
-		default: assert(0);             return 0;
-		}
-	}
-
-	enum class StencilOp : uint8_t
-	{
-		Keep,
-		Zero,
-		Replace,
-		IncrementAndClamp,
-		DecrementAndClamp,
-		Invert,
-		IncrementAndWrap,
-		DecrementAndWrap,
-	};
-	inline GLenum EnumToGL(StencilOp op)
-	{
-		switch (op)
-		{
-		case StencilOp::Keep: return GL_KEEP;
-		case StencilOp::Zero: return GL_ZERO;
-		case StencilOp::Replace: return GL_REPLACE;
-		case StencilOp::IncrementAndClamp: return GL_INCR;
-		case StencilOp::DecrementAndClamp: return GL_DECR;
-		case StencilOp::Invert: return GL_INVERT;
-		case StencilOp::IncrementAndWrap: return GL_INCR_WRAP;
-		case StencilOp::DecrementAndWrap: return GL_DECR_WRAP;
-		default: assert(0); return 0;
-		}
-	}
-
-	enum class PolygonMode : uint8_t
-	{
-		Fill,
-		Line,
-		Point,
-	};
-	inline GLenum EnumToGL(PolygonMode mode)
-	{
-		switch (mode)
-		{
-		case PolygonMode::Fill: return GL_FILL;
-		case PolygonMode::Line: return GL_LINE;
-		case PolygonMode::Point: return GL_POINT;
-		default: assert(0); return 0;
-		}
-	}
-
-	enum class CullMode : uint8_t
-	{
-		Front,
-		Back,
-		FrontAndBack,
-	};
-	inline GLenum EnumToGL(CullMode mode)
-	{
-		switch (mode)
-		{
-		case CullMode::Front: return GL_FRONT;
-		case CullMode::Back: return GL_BACK;
-		case CullMode::FrontAndBack: return GL_FRONT_AND_BACK;
-		default: assert(0); return 0;
-		}
-	}
-
-	enum class FrontFace : uint8_t
-	{
-		Clockwise,
-		CounterClockwise,
-	};
-	inline GLenum EnumToGL(FrontFace face)
-	{
-		switch (face)
-		{
-		case FrontFace::Clockwise: return GL_CW;
-		case FrontFace::CounterClockwise: return GL_CCW;
-		default: assert(0); return 0;
-		}
-	}
-
-	enum class BlendFactor : uint8_t
-	{
-		Zero,
-		One,
-		SrcColor,
-		OneMinusSrcColor,
-		DstColor,
-		OneMinusDstColor,
-		SrcAlpha,
-		OneMinusSrcAlpha,
-		DstAlpha,
-		OneMinusDstAlpha,
-		ConstantColor,
-		OneMinusConstantColor,
-		ConstantAlpha,
-		OneMinusConstantAlpha,
-		SrcAlphaSaturate,
-		Src1Color,
-		OneMinusSrc1Color,
-		Src1Alpha,
-		OneMinusSrc1Alpha,
-	};
-	inline GLenum EnumToGL(BlendFactor factor)
-	{
-		switch (factor)
-		{
-		case BlendFactor::Zero: return GL_ZERO;
-		case BlendFactor::One: return GL_ONE;
-		case BlendFactor::SrcColor: return GL_SRC_COLOR;
-		case BlendFactor::OneMinusSrcColor: return GL_ONE_MINUS_SRC_COLOR;
-		case BlendFactor::DstColor: return GL_DST_COLOR;
-		case BlendFactor::OneMinusDstColor: return GL_ONE_MINUS_DST_COLOR;
-		case BlendFactor::SrcAlpha: return GL_SRC_ALPHA;
-		case BlendFactor::OneMinusSrcAlpha: return GL_ONE_MINUS_SRC_ALPHA;
-		case BlendFactor::DstAlpha: return GL_DST_ALPHA;
-		case BlendFactor::OneMinusDstAlpha: return GL_ONE_MINUS_DST_ALPHA;
-		case BlendFactor::ConstantColor: return GL_CONSTANT_COLOR;
-		case BlendFactor::OneMinusConstantColor: return GL_ONE_MINUS_CONSTANT_COLOR;
-		case BlendFactor::ConstantAlpha: return GL_CONSTANT_ALPHA;
-		case BlendFactor::OneMinusConstantAlpha: return GL_ONE_MINUS_CONSTANT_ALPHA;
-		case BlendFactor::SrcAlphaSaturate: return GL_SRC_ALPHA_SATURATE;
-		case BlendFactor::Src1Color: return GL_SRC1_COLOR;
-		case BlendFactor::OneMinusSrc1Color: return GL_ONE_MINUS_SRC1_COLOR;
-		case BlendFactor::Src1Alpha: return GL_SRC1_ALPHA;
-		case BlendFactor::OneMinusSrc1Alpha: return GL_ONE_MINUS_SRC1_ALPHA;
-		default: assert(0); return 0;
-		}
-	}
-
-	enum class BlendOp : uint8_t
-	{
-		Add,
-		Subtract,
-		ReverseSubtract,
-		Min,
-		Max,
-	};
-	inline GLenum EnumToGL(BlendOp op)
-	{
-		switch (op)
-		{
-		case BlendOp::Add: return GL_FUNC_ADD;
-		case BlendOp::Subtract: return GL_FUNC_SUBTRACT;
-		case BlendOp::ReverseSubtract: return GL_FUNC_REVERSE_SUBTRACT;
-		case BlendOp::Min: return GL_MIN;
-		case BlendOp::Max: return GL_MAX;
-		default: assert(0); return 0;
-		}
-	}
-
-	enum class LogicOp : uint8_t
-	{
-		Clear,
-		Set,
-		Copy,
-		CopyInverted,
-		NoOp,
-		Invert,
-		And,
-		Nand,
-		Or,
-		Nor,
-		Xor,
-		Equivalent,
-		AndReverse,
-		OrReverse,
-		AndInverted,
-		OrInverted
-	};
-	inline GLenum EnumToGL(LogicOp op)
-	{
-		switch (op)
-		{
-		case LogicOp::Clear: return GL_CLEAR;
-		case LogicOp::Set: return GL_SET;
-		case LogicOp::Copy: return GL_COPY;
-		case LogicOp::CopyInverted: return GL_COPY_INVERTED;
-		case LogicOp::NoOp: return GL_NOOP;
-		case LogicOp::Invert: return GL_INVERT;
-		case LogicOp::And: return GL_AND;
-		case LogicOp::Nand: return GL_NAND;
-		case LogicOp::Or: return GL_OR;
-		case LogicOp::Nor: return GL_NOR;
-		case LogicOp::Xor: return GL_XOR;
-		case LogicOp::Equivalent: return GL_EQUIV;
-		case LogicOp::AndReverse: return GL_AND_REVERSE;
-		case LogicOp::OrReverse: return GL_OR_REVERSE;
-		case LogicOp::AndInverted: return GL_AND_INVERTED;
-		case LogicOp::OrInverted: return GL_OR_INVERTED;
-		default: assert(0); return 0;
-		}
-	}
-
-	enum class GlFormatClass : uint8_t
-	{
-		Float,
-		Int,
-		Long
-	};
-
-	enum class Format : uint16_t
-	{
-		UNDEFINED,
-
-		// Color formats
-		R8_UNORM,
-		R8_SNORM,
-		R16_UNORM,
-		R16_SNORM,
-		R8G8_UNORM,
-		R8G8_SNORM,
-		R16G16_UNORM,
-		R16G16_SNORM,
-		R3G3B2_UNORM,
-		R4G4B4_UNORM,
-		R5G5B5_UNORM,
-		R8G8B8_UNORM,
-		R8G8B8_SNORM,
-		R10G10B10_UNORM,
-		R12G12B12_UNORM,
-		R16G16B16_SNORM,
-		R2G2B2A2_UNORM,
-		R4G4B4A4_UNORM,
-		R5G5B5A1_UNORM,
-		R8G8B8A8_UNORM,
-		R8G8B8A8_SNORM,
-		R10G10B10A2_UNORM,
-		R10G10B10A2_UINT,
-		R12G12B12A12_UNORM,
-		R16G16B16A16_UNORM,
-		R16G16B16A16_SNORM,
-		R8G8B8_SRGB,
-		R8G8B8A8_SRGB,
-		R16_FLOAT,
-		R16G16_FLOAT,
-		R16G16B16_FLOAT,
-		R16G16B16A16_FLOAT,
-		R32_FLOAT,
-		R32G32_FLOAT,
-		R32G32B32_FLOAT,
-		R32G32B32A32_FLOAT,
-		R11G11B10_FLOAT,
-		R9G9B9_E5,
-		R8_SINT,
-		R8_UINT,
-		R16_SINT,
-		R16_UINT,
-		R32_SINT,
-		R32_UINT,
-		R8G8_SINT,
-		R8G8_UINT,
-		R16G16_SINT,
-		R16G16_UINT,
-		R32G32_SINT,
-		R32G32_UINT,
-		R8G8B8_SINT,
-		R8G8B8_UINT,
-		R16G16B16_SINT,
-		R16G16B16_UINT,
-		R32G32B32_SINT,
-		R32G32B32_UINT,
-		R8G8B8A8_SINT,
-		R8G8B8A8_UINT,
-		R16G16B16A16_SINT,
-		R16G16B16A16_UINT,
-		R32G32B32A32_SINT,
-		R32G32B32A32_UINT,
-
-		// Depth & stencil formats
-		D32_FLOAT,
-		D32_UNORM,
-		D24_UNORM,
-		D16_UNORM,
-		D32_FLOAT_S8_UINT,
-		D24_UNORM_S8_UINT,
-		S8_UINT,
-
-		// Compressed formats
-		// DXT
-		BC1_RGB_UNORM,
-		BC1_RGB_SRGB,
-		BC1_RGBA_UNORM,
-		BC1_RGBA_SRGB,
-		BC2_RGBA_UNORM,
-		BC2_RGBA_SRGB,
-		BC3_RGBA_UNORM,
-		BC3_RGBA_SRGB,
-		// RGTC
-		BC4_R_UNORM,
-		BC4_R_SNORM,
-		BC5_RG_UNORM,
-		BC5_RG_SNORM,
-		// BPTC
-		BC6H_RGB_UFLOAT,
-		BC6H_RGB_SFLOAT,
-		BC7_RGBA_UNORM,
-		BC7_RGBA_SRGB,
-
-		// TODO: 64-bits-per-component formats
-	};
-	inline GLint FormatToGL(Format format)
-	{
-		switch (format)
-		{
-		case Format::R8_UNORM:           return GL_R8;
-		case Format::R8_SNORM:           return GL_R8_SNORM;
-		case Format::R16_UNORM:          return GL_R16;
-		case Format::R16_SNORM:          return GL_R16_SNORM;
-		case Format::R8G8_UNORM:         return GL_RG8;
-		case Format::R8G8_SNORM:         return GL_RG8_SNORM;
-		case Format::R16G16_UNORM:       return GL_RG16;
-		case Format::R16G16_SNORM:       return GL_RG16_SNORM;
-		case Format::R3G3B2_UNORM:       return GL_R3_G3_B2;
-		case Format::R4G4B4_UNORM:       return GL_RGB4;
-		case Format::R5G5B5_UNORM:       return GL_RGB5;
-		case Format::R8G8B8_UNORM:       return GL_RGB8;
-		case Format::R8G8B8_SNORM:       return GL_RGB8_SNORM;
-		case Format::R10G10B10_UNORM:    return GL_RGB10;
-		case Format::R12G12B12_UNORM:    return GL_RGB12;
-			// GL_RG16?
-		case Format::R16G16B16_SNORM:    return GL_RGB16_SNORM;
-		case Format::R2G2B2A2_UNORM:     return GL_RGBA2;
-		case Format::R4G4B4A4_UNORM:     return GL_RGBA4;
-		case Format::R5G5B5A1_UNORM:     return GL_RGB5_A1;
-		case Format::R8G8B8A8_UNORM:     return GL_RGBA8;
-		case Format::R8G8B8A8_SNORM:     return GL_RGBA8_SNORM;
-		case Format::R10G10B10A2_UNORM:  return GL_RGB10_A2;
-		case Format::R10G10B10A2_UINT:   return GL_RGB10_A2UI;
-		case Format::R12G12B12A12_UNORM: return GL_RGBA12;
-		case Format::R16G16B16A16_UNORM: return GL_RGBA16;
-		case Format::R16G16B16A16_SNORM: return GL_RGBA16_SNORM;
-		case Format::R8G8B8_SRGB:        return GL_SRGB8;
-		case Format::R8G8B8A8_SRGB:      return GL_SRGB8_ALPHA8;
-		case Format::R16_FLOAT:          return GL_R16F;
-		case Format::R16G16_FLOAT:       return GL_RG16F;
-		case Format::R16G16B16_FLOAT:    return GL_RGB16F;
-		case Format::R16G16B16A16_FLOAT: return GL_RGBA16F;
-		case Format::R32_FLOAT:          return GL_R32F;
-		case Format::R32G32_FLOAT:       return GL_RG32F;
-		case Format::R32G32B32_FLOAT:    return GL_RGB32F;
-		case Format::R32G32B32A32_FLOAT: return GL_RGBA32F;
-		case Format::R11G11B10_FLOAT:    return GL_R11F_G11F_B10F;
-		case Format::R9G9B9_E5:          return GL_RGB9_E5;
-		case Format::R8_SINT:            return GL_R8I;
-		case Format::R8_UINT:            return GL_R8UI;
-		case Format::R16_SINT:           return GL_R16I;
-		case Format::R16_UINT:           return GL_R16UI;
-		case Format::R32_SINT:           return GL_R32I;
-		case Format::R32_UINT:           return GL_R32UI;
-		case Format::R8G8_SINT:          return GL_RG8I;
-		case Format::R8G8_UINT:          return GL_RG8UI;
-		case Format::R16G16_SINT:        return GL_RG16I;
-		case Format::R16G16_UINT:        return GL_RG16UI;
-		case Format::R32G32_SINT:        return GL_RG32I;
-		case Format::R32G32_UINT:        return GL_RG32UI;
-		case Format::R8G8B8_SINT:        return GL_RGB8I;
-		case Format::R8G8B8_UINT:        return GL_RGB8UI;
-		case Format::R16G16B16_SINT:     return GL_RGB16I;
-		case Format::R16G16B16_UINT:     return GL_RGB16UI;
-		case Format::R32G32B32_SINT:     return GL_RGB32I;
-		case Format::R32G32B32_UINT:     return GL_RGB32UI;
-		case Format::R8G8B8A8_SINT:      return GL_RGBA8I;
-		case Format::R8G8B8A8_UINT:      return GL_RGBA8UI;
-		case Format::R16G16B16A16_SINT:  return GL_RGBA16I;
-		case Format::R16G16B16A16_UINT:  return GL_RGBA16UI;
-		case Format::R32G32B32A32_SINT:  return GL_RGBA32I;
-		case Format::R32G32B32A32_UINT:  return GL_RGBA32UI;
-		case Format::D32_FLOAT:          return GL_DEPTH_COMPONENT32F;
-		case Format::D32_UNORM:          return GL_DEPTH_COMPONENT32;
-		case Format::D24_UNORM:          return GL_DEPTH_COMPONENT24;
-		case Format::D16_UNORM:          return GL_DEPTH_COMPONENT16;
-		case Format::D32_FLOAT_S8_UINT:  return GL_DEPTH32F_STENCIL8;
-		case Format::D24_UNORM_S8_UINT:  return GL_DEPTH24_STENCIL8;
-		case Format::S8_UINT:            return GL_STENCIL_INDEX8;
-		case Format::BC1_RGB_UNORM:      return GL_COMPRESSED_RGB_S3TC_DXT1_EXT;
-		case Format::BC1_RGBA_UNORM:     return GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;
-		case Format::BC1_RGB_SRGB:       return GL_COMPRESSED_SRGB_S3TC_DXT1_EXT;
-		case Format::BC1_RGBA_SRGB:      return GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT1_EXT;
-		case Format::BC2_RGBA_UNORM:     return GL_COMPRESSED_RGBA_S3TC_DXT3_EXT;
-		case Format::BC2_RGBA_SRGB:      return GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT3_EXT;
-		case Format::BC3_RGBA_UNORM:     return GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
-		case Format::BC3_RGBA_SRGB:      return GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT;
-		case Format::BC4_R_UNORM:        return GL_COMPRESSED_RED_RGTC1;
-		case Format::BC4_R_SNORM:        return GL_COMPRESSED_SIGNED_RED_RGTC1;
-		case Format::BC5_RG_UNORM:       return GL_COMPRESSED_RG_RGTC2;
-		case Format::BC5_RG_SNORM:       return GL_COMPRESSED_SIGNED_RG_RGTC2;
-		case Format::BC6H_RGB_UFLOAT:    return GL_COMPRESSED_RGB_BPTC_UNSIGNED_FLOAT;
-		case Format::BC6H_RGB_SFLOAT:    return GL_COMPRESSED_RGB_BPTC_SIGNED_FLOAT;
-		case Format::BC7_RGBA_UNORM:     return GL_COMPRESSED_RGBA_BPTC_UNORM;
-		case Format::BC7_RGBA_SRGB:      return GL_COMPRESSED_SRGB_ALPHA_BPTC_UNORM;
-		default: assert(0);              return 0;
-		}
-	}
-	inline bool IsBlockCompressedFormat(Format format)
-	{
-		switch (format)
-		{
-		case Format::BC1_RGB_UNORM:
-		case Format::BC1_RGBA_UNORM:
-		case Format::BC1_RGB_SRGB:
-		case Format::BC1_RGBA_SRGB:
-		case Format::BC2_RGBA_UNORM:
-		case Format::BC2_RGBA_SRGB:
-		case Format::BC3_RGBA_UNORM:
-		case Format::BC3_RGBA_SRGB:
-		case Format::BC4_R_UNORM:
-		case Format::BC4_R_SNORM:
-		case Format::BC5_RG_UNORM:
-		case Format::BC5_RG_SNORM:
-		case Format::BC6H_RGB_UFLOAT:
-		case Format::BC6H_RGB_SFLOAT:
-		case Format::BC7_RGBA_UNORM:
-		case Format::BC7_RGBA_SRGB:
-			return true;
-		default: return false;
-		}
-	}
-	inline GLenum FormatToTypeGL(Format format)
-	{
-		switch (format)
-		{
-		case Format::R8_UNORM:
-		case Format::R8G8_UNORM:
-		case Format::R8G8B8_UNORM:
-		case Format::R8G8B8A8_UNORM:
-		case Format::R8_UINT:
-		case Format::R8G8_UINT:
-		case Format::R8G8B8_UINT:
-		case Format::R8G8B8A8_UINT:
-		case Format::R8G8B8A8_SRGB:
-		case Format::R8G8B8_SRGB:
-			return GL_UNSIGNED_BYTE;
-		case Format::R8_SNORM:
-		case Format::R8G8_SNORM:
-		case Format::R8G8B8_SNORM:
-		case Format::R8G8B8A8_SNORM:
-		case Format::R8_SINT:
-		case Format::R8G8_SINT:
-		case Format::R8G8B8_SINT:
-		case Format::R8G8B8A8_SINT:
-			return GL_BYTE;
-		case Format::R16_UNORM:
-		case Format::R16G16_UNORM:
-		case Format::R16G16B16A16_UNORM:
-		case Format::R16_UINT:
-		case Format::R16G16_UINT:
-		case Format::R16G16B16_UINT:
-		case Format::R16G16B16A16_UINT:
-			return GL_UNSIGNED_SHORT;
-		case Format::R16_SNORM:
-		case Format::R16G16_SNORM:
-		case Format::R16G16B16_SNORM:
-		case Format::R16G16B16A16_SNORM:
-		case Format::R16_SINT:
-		case Format::R16G16_SINT:
-		case Format::R16G16B16_SINT:
-		case Format::R16G16B16A16_SINT:
-			return GL_SHORT;
-		case Format::R16_FLOAT:
-		case Format::R16G16_FLOAT:
-		case Format::R16G16B16_FLOAT:
-		case Format::R16G16B16A16_FLOAT:
-			return GL_HALF_FLOAT;
-		case Format::R32_FLOAT:
-		case Format::R32G32_FLOAT:
-		case Format::R32G32B32_FLOAT:
-		case Format::R32G32B32A32_FLOAT:
-			return GL_FLOAT;
-		case Format::R32_SINT:
-		case Format::R32G32_SINT:
-		case Format::R32G32B32_SINT:
-		case Format::R32G32B32A32_SINT:
-			return GL_INT;
-		case Format::R32_UINT:
-		case Format::R32G32_UINT:
-		case Format::R32G32B32_UINT:
-		case Format::R32G32B32A32_UINT:
-			return GL_UNSIGNED_INT;
-		default: assert(0); return 0;
-		}
-	}
-	inline GLint FormatToSizeGL(Format format)
-	{
-		switch (format)
-		{
-		case Format::R8_UNORM:
-		case Format::R8_SNORM:
-		case Format::R16_UNORM:
-		case Format::R16_SNORM:
-		case Format::R16_FLOAT:
-		case Format::R32_FLOAT:
-		case Format::R8_SINT:
-		case Format::R16_SINT:
-		case Format::R32_SINT:
-		case Format::R8_UINT:
-		case Format::R16_UINT:
-		case Format::R32_UINT:
-			return 1;
-		case Format::R8G8_UNORM:
-		case Format::R8G8_SNORM:
-		case Format::R16G16_FLOAT:
-		case Format::R16G16_UNORM:
-		case Format::R16G16_SNORM:
-		case Format::R32G32_FLOAT:
-		case Format::R8G8_SINT:
-		case Format::R16G16_SINT:
-		case Format::R32G32_SINT:
-		case Format::R8G8_UINT:
-		case Format::R16G16_UINT:
-		case Format::R32G32_UINT:
-			return 2;
-		case Format::R8G8B8_UNORM:
-		case Format::R8G8B8_SNORM:
-		case Format::R16G16B16_SNORM:
-		case Format::R16G16B16_FLOAT:
-		case Format::R32G32B32_FLOAT:
-		case Format::R8G8B8_SINT:
-		case Format::R16G16B16_SINT:
-		case Format::R32G32B32_SINT:
-		case Format::R8G8B8_UINT:
-		case Format::R16G16B16_UINT:
-		case Format::R32G32B32_UINT:
-			return 3;
-		case Format::R8G8B8A8_UNORM:
-		case Format::R8G8B8A8_SNORM:
-		case Format::R16G16B16A16_UNORM:
-		case Format::R16G16B16A16_SNORM:
-		case Format::R16G16B16A16_FLOAT:
-		case Format::R32G32B32A32_FLOAT:
-		case Format::R8G8B8A8_SINT:
-		case Format::R16G16B16A16_SINT:
-		case Format::R32G32B32A32_SINT:
-		case Format::R10G10B10A2_UINT:
-		case Format::R8G8B8A8_UINT:
-		case Format::R16G16B16A16_UINT:
-		case Format::R32G32B32A32_UINT:
-			return 4;
-		default: assert(0); return 0;
-		}
-	}
-	inline GLboolean IsFormatNormalizedGL(Format format)
-	{
-		switch (format)
-		{
-		case Format::R8_UNORM:
-		case Format::R8_SNORM:
-		case Format::R16_UNORM:
-		case Format::R16_SNORM:
-		case Format::R8G8_UNORM:
-		case Format::R8G8_SNORM:
-		case Format::R16G16_UNORM:
-		case Format::R16G16_SNORM:
-		case Format::R8G8B8_UNORM:
-		case Format::R8G8B8_SNORM:
-		case Format::R16G16B16_SNORM:
-		case Format::R8G8B8A8_UNORM:
-		case Format::R8G8B8A8_SNORM:
-		case Format::R16G16B16A16_UNORM:
-		case Format::R16G16B16A16_SNORM:
-			return GL_TRUE;
-		case Format::R16_FLOAT:
-		case Format::R32_FLOAT:
-		case Format::R8_SINT:
-		case Format::R16_SINT:
-		case Format::R32_SINT:
-		case Format::R8_UINT:
-		case Format::R16_UINT:
-		case Format::R32_UINT:
-		case Format::R16G16_FLOAT:
-		case Format::R32G32_FLOAT:
-		case Format::R8G8_SINT:
-		case Format::R16G16_SINT:
-		case Format::R32G32_SINT:
-		case Format::R8G8_UINT:
-		case Format::R16G16_UINT:
-		case Format::R32G32_UINT:
-		case Format::R16G16B16_FLOAT:
-		case Format::R32G32B32_FLOAT:
-		case Format::R8G8B8_SINT:
-		case Format::R16G16B16_SINT:
-		case Format::R32G32B32_SINT:
-		case Format::R8G8B8_UINT:
-		case Format::R16G16B16_UINT:
-		case Format::R32G32B32_UINT:
-		case Format::R16G16B16A16_FLOAT:
-		case Format::R32G32B32A32_FLOAT:
-		case Format::R8G8B8A8_SINT:
-		case Format::R16G16B16A16_SINT:
-		case Format::R32G32B32A32_SINT:
-		case Format::R10G10B10A2_UINT:
-		case Format::R8G8B8A8_UINT:
-		case Format::R16G16B16A16_UINT:
-		case Format::R32G32B32A32_UINT:
-			return GL_FALSE;
-		default: assert(0); return 0;
-		}
-	}
-	inline GlFormatClass FormatToFormatClass(Format format)
-	{
-		switch (format)
-		{
-		case Format::R8_UNORM:
-		case Format::R8_SNORM:
-		case Format::R16_UNORM:
-		case Format::R16_SNORM:
-		case Format::R8G8_UNORM:
-		case Format::R8G8_SNORM:
-		case Format::R16G16_UNORM:
-		case Format::R16G16_SNORM:
-		case Format::R8G8B8_UNORM:
-		case Format::R8G8B8_SNORM:
-		case Format::R16G16B16_SNORM:
-		case Format::R8G8B8A8_UNORM:
-		case Format::R8G8B8A8_SNORM:
-		case Format::R16G16B16A16_UNORM:
-		case Format::R16G16B16A16_SNORM:
-		case Format::R16_FLOAT:
-		case Format::R16G16_FLOAT:
-		case Format::R16G16B16_FLOAT:
-		case Format::R16G16B16A16_FLOAT:
-		case Format::R32_FLOAT:
-		case Format::R32G32_FLOAT:
-		case Format::R32G32B32_FLOAT:
-		case Format::R32G32B32A32_FLOAT:
-			return GlFormatClass::Float;
-		case Format::R8_SINT:
-		case Format::R16_SINT:
-		case Format::R32_SINT:
-		case Format::R8G8_SINT:
-		case Format::R16G16_SINT:
-		case Format::R32G32_SINT:
-		case Format::R8G8B8_SINT:
-		case Format::R16G16B16_SINT:
-		case Format::R32G32B32_SINT:
-		case Format::R8G8B8A8_SINT:
-		case Format::R16G16B16A16_SINT:
-		case Format::R32G32B32A32_SINT:
-		case Format::R10G10B10A2_UINT:
-		case Format::R8_UINT:
-		case Format::R16_UINT:
-		case Format::R32_UINT:
-		case Format::R8G8_UINT:
-		case Format::R16G16_UINT:
-		case Format::R32G32_UINT:
-		case Format::R8G8B8_UINT:
-		case Format::R16G16B16_UINT:
-		case Format::R32G32B32_UINT:
-		case Format::R8G8B8A8_UINT:
-		case Format::R16G16B16A16_UINT:
-		case Format::R32G32B32A32_UINT:
-			return GlFormatClass::Int;
-		default: assert(0); return GlFormatClass::Long;
-		}
-	}
-
-	enum class BufferStorageFlag : uint32_t
-	{
-		NONE = 0,
-		// Allows the user to update the buffer's contents with UpdateData
-		DYNAMIC_STORAGE = 1 << 0,
-		// Hints to the implementation to place the buffer storage in host memory
-		CLIENT_STORAGE = 1 << 1,
-		// Maps the buffer (persistently and coherently) upon creation
-		MAP_MEMORY = 1 << 2,
-	};
-	SE_DECLARE_FLAG_TYPE(BufferStorageFlags, BufferStorageFlag, uint32_t)
-
-	inline GLbitfield BufferStorageFlagsToGL(BufferStorageFlags flags)
-	{
-		GLbitfield ret = 0;
-		ret |= flags & BufferStorageFlag::DYNAMIC_STORAGE ? GL_DYNAMIC_STORAGE_BIT : 0;
-		ret |= flags & BufferStorageFlag::CLIENT_STORAGE ? GL_CLIENT_STORAGE_BIT : 0;
-
-		// As far as I can tell, there is no perf hit to having both MAP_WRITE and MAP_READ all the time.
-		// Additionally, desktop platforms (the ones we care about) do not have incoherent host-visible device heaps, so we can safely include that flag all the time.
-		// https://gpuopen.com/learn/get-the-most-out-of-smart-access-memory/
-		// https://basnieuwenhuizen.nl/the-catastrophe-of-reading-from-vram/
-		// https://asawicki.info/news_1740_vulkan_memory_types_on_pc_and_how_to_use_them
-		constexpr GLenum memMapFlags = GL_MAP_READ_BIT | GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT;
-		ret |= flags & BufferStorageFlag::MAP_MEMORY ? memMapFlags : 0;
-		return ret;
-	}
-
-	enum class ImageType : uint8_t
-	{
-		Tex1D,
-		Tex2D,
-		Tex3D,
-		Tex1DArray,
-		Tex2DArray,
-		TexCubemap,
-		TexCubemapArray,
-		Tex2DMultisample,
-		Tex2DMultisampleArray,
-	};
-	inline GLint EnumToGL(ImageType imageType)
-	{
-		switch (imageType)
-		{
-		case ImageType::Tex1D:                 return GL_TEXTURE_1D;
-		case ImageType::Tex2D:                 return GL_TEXTURE_2D;
-		case ImageType::Tex3D:                 return GL_TEXTURE_3D;
-		case ImageType::Tex1DArray:            return GL_TEXTURE_1D_ARRAY;
-		case ImageType::Tex2DArray:            return GL_TEXTURE_2D_ARRAY;
-		case ImageType::TexCubemap:            return GL_TEXTURE_CUBE_MAP;
-		case ImageType::TexCubemapArray:       return GL_TEXTURE_CUBE_MAP_ARRAY;
-		case ImageType::Tex2DMultisample:      return GL_TEXTURE_2D_MULTISAMPLE;
-		case ImageType::Tex2DMultisampleArray: return GL_TEXTURE_2D_MULTISAMPLE_ARRAY;
-		default: assert(0);                    return 0;
-		}
-	}
-
-#pragma endregion
-
+	
 	//-------------------------------------------------------------------------
 	// OpenGL RHI Types
 	//-------------------------------------------------------------------------
@@ -878,6 +42,7 @@ namespace gl4
 	struct __BufferStorageTag;
 	struct __VertexArrayTag;
 	struct __TextureTag;
+	struct __TextureViewTag;
 	struct __Texture1DTag;
 	struct __Texture2DTag;
 	struct __Texture3DTag;
@@ -892,7 +57,6 @@ namespace gl4
 	using ShaderProgramId = GLObjectId<__ShaderProgramTag>;
 	using BufferId = GLObjectId<__BufferTag>;
 	using VertexArrayId = GLObjectId<__VertexArrayTag>;
-
 	using Texture1DId = GLObjectId<__Texture1DTag>;
 	using Texture2DId = GLObjectId<__Texture2DTag>;
 	using Texture3DId = GLObjectId<__Texture3DTag>;
@@ -913,7 +77,13 @@ namespace gl4
 
 	struct TextureId final : public GLObjectId<__TextureTag>
 	{
+		TextureCreateInfo info{};
 		uint64_t bindlessHandle{ 0 };
+	};
+
+	struct TextureViewId final : public GLObjectId<__TextureViewTag>
+	{
+		TextureViewCreateInfo info{};
 	};
 
 	template<typename T>
@@ -942,9 +112,8 @@ namespace gl4
 				glMakeTextureHandleNonResidentARB(res.bindlessHandle);
 			res.bindlessHandle = 0;
 			glDeleteTextures(1, &res.id);
-			void FBOCacheRemoveTexture(TextureId);
-			FBOCacheRemoveTexture(res);
 		}
+		else if constexpr (std::is_same_v<T, TextureViewId>) { glDeleteTextures(1, &res.id); }
 		else if constexpr (std::is_same_v<T, Texture1DId>) { glDeleteTextures(1, &res.id); }
 		else if constexpr (std::is_same_v<T, Texture2DId>) { glDeleteTextures(1, &res.id); }
 		else if constexpr (std::is_same_v<T, Texture3DId>) { glDeleteTextures(1, &res.id); }
@@ -1202,7 +371,7 @@ namespace gl4
 		uint32_t offset;   // glVertexArrayAttribFormat
 	};
 
-	struct VertexInputStateOwning final
+	struct VertexInputState final
 	{
 		std::vector<VertexInputBindingDescription> vertexBindingDescriptions;
 	};
@@ -1229,7 +398,7 @@ namespace gl4
 	VertexArrayId CreateVertexArray(BufferId vbo, size_t vertexSize, const std::vector<VertexAttributeRaw>& attributes); // TODO: old, delete
 	VertexArrayId CreateVertexArray(BufferId vbo, BufferId ibo, size_t vertexSize, const std::vector<VertexAttributeRaw>& attributes); // TODO: old, delete
 
-	VertexArrayId CreateVertexArray(const VertexInputStateOwning& inputState);
+	VertexArrayId CreateVertexArray(const VertexInputState& inputState);
 
 	void SetVertexBuffer(VertexArrayId id, BufferId vbo, GLuint bindingindex, GLintptr offset, GLsizei stride);
 	void SetIndexBuffer(VertexArrayId id, BufferId ibo);
@@ -1298,26 +467,80 @@ namespace gl4
 	//-------------------------------------------------------------------------
 	// New Texture
 	//-------------------------------------------------------------------------
-#pragma region [ New Texture ]
+#pragma region [ (NEW) Texture ]
 
-	struct TextureCreateInfo final
+	struct TextureUpdateInfo final
 	{
-		ImageType imageType{};
-		Format format{};
+		uint32_t level{ 0 };
+		Offset3D offset{};
 		Extent3D extent{};
-		uint32_t mipLevels{ 0 };
-		uint32_t arrayLayers{ 0 };
-		SampleCount sampleCount{};
+		UploadFormat format{ UploadFormat::INFER_FORMAT };
+		UploadType type{ UploadType::INFER_TYPE };
+		const void* pixels{ nullptr };
 
-		bool operator==(const TextureCreateInfo&) const noexcept = default;
+		// @brief Specifies, in texels, the size of rows in the array (for 2D and 3D images). If zero, it is assumed to be tightly packed according to size
+		uint32_t rowLength{ 0 };
+
+		// @brief Specifies, in texels, the number of rows in the array (for 3D images. If zero, it is assumed to be tightly packed according to size
+		uint32_t imageHeight{ 0 };
 	};
 
+	struct CompressedTextureUpdateInfo final
+	{
+		uint32_t level{ 0 };
+		Offset3D offset{};
+		Extent3D extent{};
+		const void* data{ nullptr };
+	};
+
+	struct TextureClearInfo final
+	{
+		uint32_t level{ 0 };
+		Offset3D offset{};
+		Extent3D extent{};
+		UploadFormat format{ UploadFormat::INFER_FORMAT };
+		UploadType type{ UploadType::INFER_TYPE };
+
+		/// @brief If null, then the subresource will be cleared with zeroes
+		const void* data{ nullptr };
+	};
 
 	// TODO: возможно всеже оставить разделение на 1D/2D/3D/Cube/etc?
 
+
 	TextureId CreateTexture(const TextureCreateInfo& createInfo, std::string_view name = "");
+	TextureId CreateTexture2D(Extent2D size, Format format, std::string_view name = "");
+	TextureId CreateTexture2DMip(Extent2D size, Format format, uint32_t mipLevels, std::string_view name = "");
+
+	void UpdateImage(TextureId id, const TextureUpdateInfo& info);
+	void UpdateCompressedImage(TextureId id, const CompressedTextureUpdateInfo& info);
+	void ClearImage(TextureId id, const TextureClearInfo& info);
+	void GenMipmaps(TextureId id);
+
+	// TODO: биндесс выделить в одтельный ресурс
+	uint64_t GetBindlessHandle(TextureId id, SamplerId sampler);
 
 #pragma endregion
+	
+	//-------------------------------------------------------------------------
+	// TextureView
+	//-------------------------------------------------------------------------
+#pragma region [ TextureView ]
+
+	TextureViewId CreateTextureView(const TextureViewCreateInfo& viewInfo, TextureId texture, std::string_view name = "");
+	TextureViewId CreateTextureView(TextureId texture, std::string_view name = "");
+
+	// Creates a view of a single mip level of the image
+	TextureViewId CreateSingleMipView(TextureId texture, uint32_t level);
+	// Creates a view of a single array layer of the image
+	TextureViewId CreateSingleLayerView(TextureId texture, uint32_t layer);
+	// Reinterpret the data of this texture
+	TextureViewId CreateFormatView(TextureId texture, Format newFormat);
+	// Creates a view of the texture with a new component mapping
+	TextureViewId CreateSwizzleView(TextureId texture, ComponentMapping components);
+
+#pragma endregion
+
 	//-------------------------------------------------------------------------
 	// Sampler
 	//-------------------------------------------------------------------------
@@ -1377,8 +600,26 @@ namespace gl4
 	void Invalidate(FrameBufferId fbo, GLsizei numAttachments, const GLenum* attachments);
 	void InvalidateSubData(FrameBufferId fbo, GLsizei numAttachments, const GLenum* attachments, GLint x, GLint y, GLsizei width, GLsizei height);
 
-	void SetFrameBuffer(gl4::FrameBufferId fbo);
-	void SetFrameBuffer(gl4::FrameBufferId fbo, int width, int height, GLbitfield clearMask);
+	void SetFrameBuffer(FrameBufferId fbo);
+	void SetFrameBuffer(FrameBufferId fbo, int width, int height, GLbitfield clearMask);
+
+#pragma endregion
+
+	//-------------------------------------------------------------------------
+	// NEW FrameBuffer
+	//-------------------------------------------------------------------------
+#pragma region [ (NEW) FrameBuffer ]
+
+	// Describes the render targets that may be used in a draw
+	struct RenderInfo final
+	{
+		std::vector<TextureId> colorAttachments{};
+		std::optional<TextureId> depthAttachment{ std::nullopt };
+		std::optional<TextureId> stencilAttachment{ std::nullopt };
+	};
+	// TODO: также еще и с RenderBufferId
+
+	FrameBufferId CreateFrameBuffer(const RenderInfo& renderInfo);
 
 #pragma endregion
 
@@ -1393,6 +634,386 @@ namespace gl4
 	void SwitchPolygonMode(PolygonMode mode);
 	void SwitchDepthTestFunc(CompareOp mode);
 	void SwitchBlendingFunc(BlendFactor mode);
+
+#pragma endregion
+
+	//-------------------------------------------------------------------------
+	// GraphicsPipeline
+	//-------------------------------------------------------------------------
+#pragma region [ GraphicsPipeline ]
+
+	struct InputAssemblyState final
+	{
+		PrimitiveTopology topology = PrimitiveTopology::TRIANGLE_LIST;
+		bool primitiveRestartEnable = false;
+
+		bool operator==(const InputAssemblyState&) const noexcept = default;
+	};
+
+	struct TessellationState final
+	{
+		uint32_t patchControlPoints; // glPatchParameteri(GL_PATCH_VERTICES, ...)
+
+		bool operator==(const TessellationState&) const noexcept = default;
+	};
+
+	struct RasterizationState final
+	{
+		bool        depthClampEnable{ false };
+		PolygonMode polygonMode{ PolygonMode::Fill };
+		CullMode    cullMode{ CullMode::Back };
+		FrontFace   frontFace{ FrontFace::CounterClockwise };
+		bool        depthBiasEnable{ false };
+		float       depthBiasConstantFactor{ 0 };
+		float       depthBiasSlopeFactor{ 0 };
+		float       lineWidth{ 1 }; // glLineWidth
+		float       pointSize{ 1 }; // glPointSize
+
+		bool operator==(const RasterizationState&) const noexcept = default;
+	};
+
+	struct MultisampleState final
+	{
+		bool sampleShadingEnable{ false };   // glEnable(GL_SAMPLE_SHADING)
+		float minSampleShading{ 1 };         // glMinSampleShading
+		uint32_t sampleMask{ 0xFFFFFFFF };   // glSampleMaski
+		bool alphaToCoverageEnable{ false }; // glEnable(GL_SAMPLE_ALPHA_TO_COVERAGE)
+		bool alphaToOneEnable{ false };      // glEnable(GL_SAMPLE_ALPHA_TO_ONE)
+
+		bool operator==(const MultisampleState&) const noexcept = default;
+	};
+
+	struct DepthState final
+	{
+		bool depthTestEnable{ false };               // gl{Enable, Disable}(GL_DEPTH_TEST)
+		bool depthWriteEnable{ false };              // glDepthMask(depthWriteEnable)
+		CompareOp depthCompareOp{ CompareOp::Less }; // glDepthFunc
+
+		bool operator==(const DepthState&) const noexcept = default;
+	};
+
+	struct StencilOpState final
+	{
+		StencilOp passOp{ StencilOp::Keep };      // glStencilOp (dppass)
+		StencilOp failOp{ StencilOp::Keep };      // glStencilOp (sfail)
+		StencilOp depthFailOp{ StencilOp::Keep }; // glStencilOp (dpfail)
+		CompareOp compareOp{ CompareOp::Always }; // glStencilFunc (func)
+		uint32_t compareMask{ 0 };                // glStencilFunc (mask)
+		uint32_t writeMask{ 0 };                  // glStencilMask
+		uint32_t reference{ 0 };                  // glStencilFunc (ref)
+
+		bool operator==(const StencilOpState&) const noexcept = default;
+	};
+
+	struct StencilState final
+	{
+		bool stencilTestEnable{ false };
+		StencilOpState front{};
+		StencilOpState back{};
+
+		bool operator==(const StencilState&) const noexcept = default;
+	};
+
+	struct ColorBlendAttachmentState final // glBlendFuncSeparatei + glBlendEquationSeparatei
+	{
+		bool blendEnable{ false };                                           // if false, blend factor = one?
+		BlendFactor srcColorBlendFactor{ BlendFactor::One };              // srcRGB
+		BlendFactor dstColorBlendFactor{ BlendFactor::Zero };             // dstRGB
+		BlendOp colorBlendOp{ BlendOp::Add };                  // modeRGB
+		BlendFactor srcAlphaBlendFactor{ BlendFactor::One };              // srcAlpha
+		BlendFactor dstAlphaBlendFactor{ BlendFactor::Zero };             // dstAlpha
+		BlendOp alphaBlendOp{ BlendOp::Add };                  // modeAlpha
+		ColorComponentFlags colorWriteMask{ ColorComponentFlag::RGBA_BITS }; // glColorMaski
+
+		bool operator==(const ColorBlendAttachmentState&) const noexcept = default;
+	};
+
+	struct ColorBlendState final
+	{
+		bool logicOpEnable{ false };          // gl{Enable, Disable}(GL_COLOR_LOGIC_OP)
+		LogicOp logicOp{ LogicOp::Copy };  // glLogicOp(logicOp)
+		std::vector<ColorBlendAttachmentState> attachments{};             // glBlendFuncSeparatei + glBlendEquationSeparatei
+		float blendConstants[4] = { 0, 0, 0, 0 }; // glBlendColor
+
+		bool operator==(const ColorBlendState&) const noexcept = default;
+	};
+
+	// Parameters for the constructor of GraphicsPipeline
+	struct GraphicsPipelineCreateInfo final
+	{
+		std::string_view   debugName;
+
+		std::string_view   vertexShader{ "" };
+		std::string_view   fragmentShader{ "" };
+		std::string_view   tessellationControlShader{ "" };
+		std::string_view   tessellationEvaluationShader{ "" };
+
+		InputAssemblyState inputAssemblyState{};
+		VertexInputState   vertexInputState{};
+		TessellationState  tessellationState{};
+		RasterizationState rasterizationState {};
+		MultisampleState   multisampleState{};
+		DepthState         depthState{};
+		StencilState       stencilState{};
+		ColorBlendState    colorBlendState{};
+	};
+
+	struct GraphicsPipelineId final
+	{
+		std::string_view   debugName;
+
+		ShaderProgramId    program;
+		VertexArrayId      vao;
+		InputAssemblyState inputAssemblyState;
+		VertexInputState   vertexInputState;
+		TessellationState  tessellationState;
+		RasterizationState rasterizationState;
+		MultisampleState   multisampleState;
+		DepthState         depthState;
+		StencilState       stencilState;
+		ColorBlendState    colorBlendState;
+		std::vector<std::pair<std::string, uint32_t>> uniformBlocks;
+		std::vector<std::pair<std::string, uint32_t>> storageBlocks;
+		std::vector<std::pair<std::string, uint32_t>> samplersAndImages;
+
+		bool valid{ false };
+	};
+
+	GraphicsPipelineId CreateGraphicsPipeline(const GraphicsPipelineCreateInfo& createInfo);
+
+	template<>
+	inline void Destroy(GraphicsPipelineId& res)
+	{
+		Destroy(res.program);
+		Destroy(res.vao);
+		res.uniformBlocks.clear();
+		res.storageBlocks.clear();
+		res.samplersAndImages.clear();
+	}
+
+#pragma endregion
+
+	//-------------------------------------------------------------------------
+	// ComputePipeline
+	//-------------------------------------------------------------------------
+#pragma region [ ComputePipeline ]
+
+	struct ComputePipelineInfo final
+	{
+		std::string_view debugName;
+		std::string_view shader;
+	};
+
+	struct ComputePipelineId final
+	{
+		ShaderProgramId program;
+		Extent3D        workgroupSize;
+		std::vector<std::pair<std::string, uint32_t>> uniformBlocks;
+		std::vector<std::pair<std::string, uint32_t>> storageBlocks;
+		std::vector<std::pair<std::string, uint32_t>> samplersAndImages;
+
+		bool            valid{ false };
+	};
+
+	ComputePipelineId CreateComputePipeline(const ComputePipelineInfo& createInfo);
+
+	template<>
+	inline void Destroy(ComputePipelineId& res)
+	{
+		Destroy(res.program);
+		res.uniformBlocks.clear();
+		res.storageBlocks.clear();
+		res.samplersAndImages.clear();
+	}
+
+#pragma endregion
+
+	//-------------------------------------------------------------------------
+	// Cmd
+	//-------------------------------------------------------------------------
+#pragma region [ Cmd ]
+
+	namespace Cmd
+	{
+		//=====================================================================
+		// Rendering scopes
+		//=====================================================================
+
+		// Binds a graphics pipeline to be used for future draw operations
+		void BindGraphicsPipeline(const GraphicsPipelineId& pipeline, bool resetCacheState = false);
+
+		// Binds a compute pipeline to be used for future dispatch operations
+		void BindComputePipeline(const ComputePipelineId& pipeline);
+
+		// Dynamically sets the viewport
+		// Similar to glViewport
+		void SetViewport(const Viewport& viewport);
+
+		// Dynamically sets the scissor rect
+		/// Similar to glScissor.
+		void SetScissor(const Rect2D& scissor);
+
+		// Equivalent to glDrawArraysInstancedBaseInstance or vkCmdDraw
+		// - vertexCount The number of vertices to draw
+		// - instanceCount The number of instances to draw
+		// - firstVertex The index of the first vertex to draw
+		// - firstInstance The instance ID of the first instance to draw
+		void Draw(
+			uint32_t vertexCount,
+			uint32_t instanceCount,
+			uint32_t firstVertex,
+			uint32_t firstInstance);
+
+		// Equivalent to glDrawElementsInstancedBaseVertexBaseInstance or vkCmdDrawIndexed
+		// - indexCount The number of vertices to draw
+		// - instanceCount The number of instances to draw
+		// - firstIndex The base index within the index buffer
+		// - vertexOffset The value added to the vertex index before indexing into the vertex buffer
+		// - firstInstance The instance ID of the first instance to draw
+		void DrawIndexed(
+			uint32_t indexCount,
+			uint32_t instanceCount,
+			uint32_t firstIndex,
+			int32_t vertexOffset,
+			uint32_t firstInstance);
+
+		// Equivalent to glMultiDrawArraysIndirect or vkCmdDrawDrawIndirect
+		// - commandBuffer The buffer containing draw parameters
+		// - commandBufferOffset The byte offset into commandBuffer where parameters begin
+		// - drawCount The number of draws to execute
+		// - stride The byte stride between successive sets of draw parameters
+		void DrawIndirect(
+			const BufferStorageId& commandBuffer,
+			uint64_t commandBufferOffset,
+			uint32_t drawCount,
+			uint32_t stride);
+
+		// Equivalent to glMultiDrawArraysIndirectCount or vkCmdDrawIndirectCount
+		// - commandBuffer The buffer containing draw parameters
+		// - commandBufferOffset The byte offset into commandBuffer where parameters begin
+		// - countBuffer The buffer containing the draw count
+		// - countBufferOffset The byte offset into countBuffer where the draw count begins
+		// - maxDrawCount The maximum number of draws that will be executed
+		// - stride The byte stride between successive sets of draw parameters
+		void DrawIndirectCount(
+			const BufferStorageId& commandBuffer,
+			uint64_t commandBufferOffset,
+			const BufferStorageId& countBuffer,
+			uint64_t countBufferOffset,
+			uint32_t maxDrawCount,
+			uint32_t stride);
+
+		// Equivalent to glMultiDrawElementsIndirect or vkCmdDrawIndexedIndirect
+		// - commandBuffer The buffer containing draw parameters
+		// - commandBufferOffset The byte offset into commandBuffer where parameters begin
+		// - drawCount The number of draws to execute
+		// - stride The byte stride between successive sets of draw parameters
+		void DrawIndexedIndirect(
+			const BufferStorageId& commandBuffer,
+			uint64_t commandBufferOffset,
+			uint32_t drawCount,
+			uint32_t stride);
+
+		// Equivalent to glMultiDrawElementsIndirectCount or vkCmdDrawIndexedIndirectCount
+		// - commandBuffer The buffer containing draw parameters
+		// - commandBufferOffset The byte offset into commandBuffer where parameters begin
+		// - countBuffer The buffer containing the draw count
+		// - countBufferOffset The byte offset into countBuffer where the draw count begins
+		// - maxDrawCount The maximum number of draws that will be executed
+		// - stride The byte stride between successive sets of draw parameters
+		void DrawIndexedIndirectCount(
+			const BufferStorageId& commandBuffer,
+			uint64_t commandBufferOffset,
+			const BufferStorageId& countBuffer,
+			uint64_t countBufferOffset,
+			uint32_t maxDrawCount,
+			uint32_t stride);
+
+		// Binds a buffer to a vertex buffer binding point
+		// Similar to glVertexArrayVertexBuffer.
+		void BindVertexBuffer(uint32_t bindingIndex, const BufferStorageId& buffer, uint64_t offset, uint64_t stride);
+		// Binds an index buffer
+		// Similar to glVertexArrayElementBuffer.
+		void BindIndexBuffer(const BufferStorageId& buffer, IndexType indexType);
+
+		// Binds a range within a buffer as a uniform buffer
+		// Similar to glBindBufferRange(GL_UNIFORM_BUFFER, ...)
+		void BindUniformBuffer(uint32_t index, const BufferStorageId& buffer, uint64_t offset = 0, uint64_t size = WHOLE_BUFFER);
+
+		// Binds a range within a buffer as a uniform buffer
+		// - block The name of the uniform block whose index to bind to
+		// - note: Must be called after a pipeline is bound in order to get reflected program info
+		void BindUniformBuffer(std::string_view block, const BufferStorageId& buffer, uint64_t offset = 0, uint64_t size = WHOLE_BUFFER);
+
+		// Binds a range within a buffer as a storage buffer
+		// Similar to glBindBufferRange(GL_SHADER_STORAGE_BUFFER, ...)
+		void BindStorageBuffer(uint32_t index, const BufferStorageId& buffer, uint64_t offset = 0, uint64_t size = WHOLE_BUFFER);
+
+		// Binds a range within a buffer as a storage buffer
+		// - block The name of the storage block whose index to bind to
+		// - note: Must be called after a pipeline is bound in order to get reflected program info
+		void BindStorageBuffer(std::string_view block, const BufferStorageId& buffer, uint64_t offset = 0, uint64_t size = WHOLE_BUFFER);
+
+		// Binds a texture and a sampler to a texture unit
+		// Similar to glBindTextureUnit + glBindSampler
+		void BindSampledImage(uint32_t index, const TextureId& texture, const SamplerId& sampler);
+
+		// Binds a texture and a sampler to a texture unit
+		// - uniform The name of the uniform whose index to bind to
+		// - note: Must be called after a pipeline is bound in order to get reflected program info
+		void BindSampledImage(std::string_view uniform, const TextureId& texture, const SamplerId& sampler);
+
+		// Binds a texture to an image unit
+		// Similar to glBindImageTexture{s}
+		void BindImage(uint32_t index, const TextureId& texture, uint32_t level);
+
+		// Binds a texture to an image unit
+		// - uniform The name of the uniform whose index to bind to
+		// - note: Must be called after a pipeline is bound in order to get reflected program info
+		void BindImage(std::string_view uniform, const TextureId& texture, uint32_t level);
+
+		//=====================================================================
+		// Compute scopes
+		//=====================================================================
+
+		// Invokes a compute shader
+		// - groupCountX The number of local workgroups to dispatch in the X dimension
+		// - groupCountY The number of local workgroups to dispatch in the Y dimension
+		// - groupCountZ The number of local workgroups to dispatch in the Z dimension
+		void Dispatch(uint32_t groupCountX, uint32_t groupCountY, uint32_t groupCountZ);
+
+		// Invokes a compute shader
+		// - groupCount The number of local workgroups to dispatch
+		void Dispatch(Extent3D groupCount);
+
+		// Invokes a compute shader a specified number of times
+		// - invocationCountX The minimum number of invocations in the X dimension
+		// - invocationCountY The minimum number of invocations in the Y dimension
+		// - invocationCountZ The minimum number of invocations in the Z dimension
+		// Automatically computes the number of workgroups to invoke based on the formula 
+		// groupCount = (invocationCount + workgroupSize - 1) / workgroupSize.
+		void DispatchInvocations(uint32_t invocationCountX, uint32_t invocationCountY, uint32_t invocationCountZ);
+
+		// Invokes a compute shader a specified number of times
+		// - invocationCount The minimum number of invocations
+		// Automatically computes the number of workgroups to invoke based on the formula 
+		// groupCount = (invocationCount + workgroupSize - 1) / workgroupSize.
+		void DispatchInvocations(Extent3D invocationCount);
+
+		// Invokes a compute shader with at least as many threads as there are pixels in the image
+		// - texture The texture from which to infer the dispatch size
+		// - lod The level of detail of the tetxure from which to infer the dispatch size
+		// Automatically computes the number of workgroups to invoke based on the formula
+		// groupCount = (invocationCount + workgroupSize - 1) / workgroupSize.
+		// For 3D images, the depth is used for the Z component of invocationCount. Otherwise, the number of array layers will be used.
+		// For cube textures, the Z component of invocationCount will be equal to 6 times the number of array layers.
+		void DispatchInvocations(const TextureId& texture, uint32_t lod = 0);
+
+		// Invokes a compute shader with the group count provided by a buffer
+		// - commandBuffer The buffer containing dispatch parameters
+		// - commandBufferOffset The byte offset into commandBuffer where the parameters begin
+		void DispatchIndirect(const BufferStorageId& commandBuffer, uint64_t commandBufferOffset);
+	} // namespace Cmd
 
 #pragma endregion
 

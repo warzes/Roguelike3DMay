@@ -59,6 +59,9 @@
     <ClCompile Include="OpenGL4Advance.cpp">
       <Filter>RHI</Filter>
     </ClCompile>
+    <ClCompile Include="OpenGL4Context.cpp">
+      <Filter>RHI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -146,6 +149,12 @@
     </ClInclude>
     <ClInclude Include="Hash.h">
       <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL4Core.h">
+      <Filter>RHI</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL4Context.h">
+      <Filter>RHI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
