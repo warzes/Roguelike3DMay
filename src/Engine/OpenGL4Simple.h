@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "FlagsUtils.h"
+#include "BasicTypes.h"
 
 /*
 TODO:
@@ -828,6 +828,35 @@ namespace gl4
 		return ret;
 	}
 
+	enum class ImageType : uint8_t
+	{
+		Tex1D,
+		Tex2D,
+		Tex3D,
+		Tex1DArray,
+		Tex2DArray,
+		TexCubemap,
+		TexCubemapArray,
+		Tex2DMultisample,
+		Tex2DMultisampleArray,
+	};
+	inline GLint EnumToGL(ImageType imageType)
+	{
+		switch (imageType)
+		{
+		case ImageType::Tex1D:                 return GL_TEXTURE_1D;
+		case ImageType::Tex2D:                 return GL_TEXTURE_2D;
+		case ImageType::Tex3D:                 return GL_TEXTURE_3D;
+		case ImageType::Tex1DArray:            return GL_TEXTURE_1D_ARRAY;
+		case ImageType::Tex2DArray:            return GL_TEXTURE_2D_ARRAY;
+		case ImageType::TexCubemap:            return GL_TEXTURE_CUBE_MAP;
+		case ImageType::TexCubemapArray:       return GL_TEXTURE_CUBE_MAP_ARRAY;
+		case ImageType::Tex2DMultisample:      return GL_TEXTURE_2D_MULTISAMPLE;
+		case ImageType::Tex2DMultisampleArray: return GL_TEXTURE_2D_MULTISAMPLE_ARRAY;
+		default: assert(0);                    return 0;
+		}
+	}
+
 #pragma endregion
 
 	//-------------------------------------------------------------------------
@@ -848,6 +877,7 @@ namespace gl4
 	struct __BufferTag;
 	struct __BufferStorageTag;
 	struct __VertexArrayTag;
+	struct __TextureTag;
 	struct __Texture1DTag;
 	struct __Texture2DTag;
 	struct __Texture3DTag;
@@ -861,13 +891,8 @@ namespace gl4
 
 	using ShaderProgramId = GLObjectId<__ShaderProgramTag>;
 	using BufferId = GLObjectId<__BufferTag>;
-	struct BufferStorageId final : public GLObjectId<__BufferStorageTag>
-	{
-		void* mappedMemory{ nullptr };
-		size_t size{0};
-		BufferStorageFlags storageFlags{0};
-	};
 	using VertexArrayId = GLObjectId<__VertexArrayTag>;
+
 	using Texture1DId = GLObjectId<__Texture1DTag>;
 	using Texture2DId = GLObjectId<__Texture2DTag>;
 	using Texture3DId = GLObjectId<__Texture3DTag>;
@@ -879,30 +904,20 @@ namespace gl4
 	using RenderBufferId = GLObjectId<__RenderBufferTag>;
 	using FrameBufferId = GLObjectId<__FrameBufferTag>;
 
+	struct BufferStorageId final : public GLObjectId<__BufferStorageTag>
+	{
+		void* mappedMemory{ nullptr };
+		size_t size{ 0 };
+		BufferStorageFlags storageFlags{ 0 };
+	};
+
+	struct TextureId final : public GLObjectId<__TextureTag>
+	{
+		uint64_t bindlessHandle{ 0 };
+	};
+
 	template<typename T>
 	bool IsValid(T res) { return res.id > 0; }
-
-	template<typename T>
-	void Create(T& res)
-	{
-		assert(!res.id);
-
-		if constexpr (std::is_same_v<T, ShaderProgramId>) { res.id = glCreateProgram(); }
-		else if constexpr (std::is_same_v<T, BufferId>) { glCreateBuffers(1, &res.id); }
-		else if constexpr (std::is_same_v<T, BufferStorageId>) { glCreateBuffers(1, &res.id); }
-		else if constexpr (std::is_same_v<T, VertexArrayId>) { glCreateVertexArrays(1, &res.id); }
-		else if constexpr (std::is_same_v<T, Texture1DId>) { glCreateTextures(GL_TEXTURE_1D, 1, &res.id); }
-		else if constexpr (std::is_same_v<T, Texture2DId>) { glCreateTextures(GL_TEXTURE_2D, 1, &res.id); }
-		else if constexpr (std::is_same_v<T, Texture3DId>) { glCreateTextures(GL_TEXTURE_3D, 1, &res.id); }
-		else if constexpr (std::is_same_v<T, TextureCubeId>) { glCreateTextures(GL_TEXTURE_CUBE_MAP, 1, &res.id); }
-		else if constexpr (std::is_same_v<T, Texture1DArrayId>) { glCreateTextures(GL_TEXTURE_1D_ARRAY, 1, &res.id); }
-		else if constexpr (std::is_same_v<T, Texture2DArrayId>) { glCreateTextures(GL_TEXTURE_2D_ARRAY, 1, &res.id); }
-		else if constexpr (std::is_same_v<T, TextureCubeArrayId>) { glCreateTextures(GL_TEXTURE_CUBE_MAP_ARRAY, 1, &res.id); }		
-		else if constexpr (std::is_same_v<T, SamplerId>) { glCreateSamplers(1, &res.id); }
-		else if constexpr (std::is_same_v<T, RenderBufferId>) { glCreateRenderbuffers(1, &res.id); }
-		else if constexpr (std::is_same_v<T, FrameBufferId>) { glCreateFramebuffers(1, &res.id); }
-		assert(res.id);
-	}
 
 	template<typename T>
 	void Destroy(T& res)
@@ -921,6 +936,15 @@ namespace gl4
 			glDeleteBuffers(1, &res.id); 
 		}
 		else if constexpr (std::is_same_v<T, VertexArrayId>) { glDeleteVertexArrays(1, &res.id); }
+		else if constexpr (std::is_same_v<T, TextureId>)
+		{
+			if (res.bindlessHandle != 0)
+				glMakeTextureHandleNonResidentARB(res.bindlessHandle);
+			res.bindlessHandle = 0;
+			glDeleteTextures(1, &res.id);
+			void FBOCacheRemoveTexture(TextureId);
+			FBOCacheRemoveTexture(res);
+		}
 		else if constexpr (std::is_same_v<T, Texture1DId>) { glDeleteTextures(1, &res.id); }
 		else if constexpr (std::is_same_v<T, Texture2DId>) { glDeleteTextures(1, &res.id); }
 		else if constexpr (std::is_same_v<T, Texture3DId>) { glDeleteTextures(1, &res.id); }
@@ -933,28 +957,6 @@ namespace gl4
 		else if constexpr (std::is_same_v<T, FrameBufferId>) { glDeleteFramebuffers(1, &res.id); }
 		res.id = 0;
 	}
-
-	/*
-	класс использующий принцип raii для объектов. Возможно в будущем пригодится
-	- реализовать методы перемещения и запретить копирование
-	- реализовать методы каста в базовый тип, чтобы все функции ниже автоматически извлекали нужный тип, без ручного каста
-	*/
-	template<typename T>
-	struct Raii
-	{
-		Raii() : id(m_type.id)
-		{
-			gl4::Create(m_type);
-		}
-		~Raii()
-		{
-			gl4::Destroy(m_type);
-		}
-
-		GLuint& id;
-	private:
-		T m_type;
-	};
 
 #pragma endregion
 		
@@ -1187,7 +1189,6 @@ namespace gl4
 
 #pragma endregion
 
-
 	//-------------------------------------------------------------------------
 	// Vertex Array
 	//-------------------------------------------------------------------------
@@ -1288,13 +1289,35 @@ namespace gl4
 	void CopySubImage(Texture2DId id, GLint level, GLint xoffset, GLint yoffset, GLint x, GLint y, GLsizei width, GLsizei height);
 	void CopySubImage(Texture3DId id, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLint x, GLint y, GLsizei width, GLsizei height);
 
-
 	void Bind(GLuint unit, Texture1DId id);
 	void Bind(GLuint unit, Texture2DId id);
 	void Bind(GLuint unit, Texture3DId id);
 	void Bind(GLuint unit, TextureCubeId id);
 #pragma endregion
 
+	//-------------------------------------------------------------------------
+	// New Texture
+	//-------------------------------------------------------------------------
+#pragma region [ New Texture ]
+
+	struct TextureCreateInfo final
+	{
+		ImageType imageType{};
+		Format format{};
+		Extent3D extent{};
+		uint32_t mipLevels{ 0 };
+		uint32_t arrayLayers{ 0 };
+		SampleCount sampleCount{};
+
+		bool operator==(const TextureCreateInfo&) const noexcept = default;
+	};
+
+
+	// TODO: возможно всеже оставить разделение на 1D/2D/3D/Cube/etc?
+
+	TextureId CreateTexture(const TextureCreateInfo& createInfo, std::string_view name = "");
+
+#pragma endregion
 	//-------------------------------------------------------------------------
 	// Sampler
 	//-------------------------------------------------------------------------

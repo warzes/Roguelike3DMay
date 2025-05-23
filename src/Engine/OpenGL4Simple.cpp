@@ -218,8 +218,7 @@ inline void checkProgramStatus(GLuint program)
 //=============================================================================
 gl4::ShaderProgramId gl4::CreateShaderProgram(const std::string& computeSrc)
 {
-	gl4::ShaderProgramId program;
-	Create(program);
+	gl4::ShaderProgramId program{ glCreateProgram() };
 	GLuint shader = CreateShader(GL_COMPUTE_SHADER, computeSrc);
 	glAttachShader(program, shader);
 	glLinkProgram(program);
@@ -235,8 +234,7 @@ gl4::ShaderProgramId gl4::CreateShaderProgram(const std::string& vertexSrc, cons
 //=============================================================================
 gl4::ShaderProgramId gl4::CreateShaderProgram(const std::string& vertexSrc, const std::string& geometrySrc, const std::string& fragmentSrc)
 {
-	gl4::ShaderProgramId program;
-	Create(program);
+	gl4::ShaderProgramId program{ glCreateProgram() };
 
 	std::pair<GLenum, const std::string&> shaders[] = {
 		{GL_VERTEX_SHADER,          vertexSrc},
@@ -600,7 +598,7 @@ void gl4::SetUniform(ShaderProgramId program, const std::string& locName, const 
 gl4::BufferId gl4::CreateBuffer(GLenum usage, GLsizeiptr size, const void* data)
 {
 	gl4::BufferId buffer;
-	gl4::Create(buffer);
+	glCreateBuffers(1, &buffer.id);
 	glNamedBufferData(buffer, size, data, usage);
 	return buffer;
 }
@@ -608,7 +606,7 @@ gl4::BufferId gl4::CreateBuffer(GLenum usage, GLsizeiptr size, const void* data)
 gl4::BufferId gl4::CreateBufferStorage(GLbitfield flags, GLsizeiptr size, const void* data)
 {
 	gl4::BufferId buffer;
-	gl4::Create(buffer);
+	glCreateBuffers(1, &buffer.id);
 	glNamedBufferStorage(buffer, size, data, flags);
 	return buffer;
 }
@@ -713,7 +711,7 @@ gl4::BufferStorageId gl4::CreateStorageBuffer(TriviallyCopyableByteSpan data, Bu
 gl4::BufferStorageId gl4::CreateStorageBuffer(const void* data, size_t size, BufferStorageFlags storageFlags, std::string_view name)
 {
 	gl4::BufferStorageId id;
-	Create(id);
+	glCreateBuffers(1, &id.id);
 
 	id.size = roundUp(size, 16);
 	id.storageFlags = storageFlags;
@@ -800,7 +798,7 @@ void gl4::SetVertexAttrib(GLuint vao, const std::vector<VertexAttributeRaw>& att
 gl4::VertexArrayId gl4::CreateVertexArray()
 {
 	gl4::VertexArrayId vao;
-	gl4::Create(vao);
+	glCreateVertexArrays(1, &vao.id);
 	return vao;
 }
 //=============================================================================
@@ -833,7 +831,7 @@ gl4::VertexArrayId gl4::CreateVertexArray(const VertexInputStateOwning& inputSta
 	}
 
 	gl4::VertexArrayId id;
-	gl4::Create(id);
+	glCreateVertexArrays(1, &id.id);
 
 	for (uint32_t i = 0; i < inputState.vertexBindingDescriptions.size(); i++)
 	{
@@ -979,7 +977,7 @@ gl4::Texture2DId gl4::CreateTexture2D(GLenum internalFormat, GLsizei width, GLsi
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
 	gl4::Texture2DId texture;
-	gl4::Create(texture);
+	glCreateTextures(GL_TEXTURE_2D, 1, &texture.id);
 	glTextureParameteri(texture, GL_TEXTURE_MAX_LEVEL, numMipmaps - 1);
 	glTextureParameteri(texture, GL_TEXTURE_MIN_FILTER, param.minFilter);
 	glTextureParameteri(texture, GL_TEXTURE_MAG_FILTER, param.magFilter);
@@ -1072,7 +1070,7 @@ gl4::TextureCubeId gl4::LoadCubeMap(const std::vector<std::string>& files, const
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
 	gl4::TextureCubeId texture;
-	gl4::Create(texture);
+	glCreateTextures(GL_TEXTURE_CUBE_MAP, 1, &texture.id);
 
 	stbi_set_flip_vertically_on_load(false);
 	int width, height;
@@ -1189,6 +1187,53 @@ void gl4::Bind(GLuint unit, TextureCubeId id)
 //=============================================================================
 #pragma endregion
 //=============================================================================
+#pragma region [ New Texture ]
+//=============================================================================
+gl4::TextureId gl4::CreateTexture(const TextureCreateInfo& createInfo, std::string_view name)
+{
+	gl4::TextureId id;
+	glCreateTextures(EnumToGL(createInfo.imageType), 1, &id.id);
+
+	switch (createInfo.imageType)
+	{
+	case ImageType::Tex1D:
+		glTextureStorage1D(id, createInfo.mipLevels, FormatToGL(createInfo.format), createInfo.extent.width);
+		break;
+	case ImageType::Tex2D:
+		glTextureStorage2D(id, createInfo.mipLevels, FormatToGL(createInfo.format), createInfo.extent.width, createInfo.extent.height);
+		break;
+	case ImageType::Tex3D:
+		glTextureStorage3D(id, createInfo.mipLevels, FormatToGL(createInfo.format), createInfo.extent.width, createInfo.extent.height, createInfo.extent.depth);
+		break;
+	case ImageType::Tex1DArray:
+		glTextureStorage2D(id, createInfo.mipLevels, FormatToGL(createInfo.format), createInfo.extent.width, createInfo.arrayLayers);
+		break;
+	case ImageType::Tex2DArray:
+		glTextureStorage3D(id, createInfo.mipLevels, FormatToGL(createInfo.format), createInfo.extent.width, createInfo.extent.height, createInfo.arrayLayers);
+		break;
+	case ImageType::TexCubemap:
+		glTextureStorage2D(id, createInfo.mipLevels, FormatToGL(createInfo.format), createInfo.extent.width, createInfo.extent.height);
+		break;
+	case ImageType::TexCubemapArray:
+		glTextureStorage3D(id, createInfo.mipLevels, FormatToGL(createInfo.format), createInfo.extent.width, createInfo.extent.height, createInfo.arrayLayers);
+		break;
+	case ImageType::Tex2DMultisample:
+		glTextureStorage2DMultisample(id, EnumToGL(createInfo.sampleCount), FormatToGL(createInfo.format), createInfo.extent.width, createInfo.extent.height, GL_TRUE);
+		break;
+	case ImageType::Tex2DMultisampleArray:
+		glTextureStorage3DMultisample(id, EnumToGL(createInfo.sampleCount), FormatToGL(createInfo.format), createInfo.extent.width, createInfo.extent.height, createInfo.arrayLayers, GL_TRUE);
+		break;
+	default: assert(0); break;
+	}
+
+	if (!name.empty())
+		glObjectLabel(GL_TEXTURE, id, static_cast<GLsizei>(name.length()), name.data());
+
+	return id;
+}
+//=============================================================================
+#pragma endregion
+//=============================================================================
 #pragma region [ Sampler ]
 //=============================================================================
 gl4::SamplerId gl4::CreateSampler(const SamplerState& createInfo)
@@ -1197,7 +1242,7 @@ gl4::SamplerId gl4::CreateSampler(const SamplerState& createInfo)
 		return it->second;
 
 	SamplerId id;
-	Create(id);
+	glCreateSamplers(1, &id.id);
 
 	glSamplerParameteri(id, GL_TEXTURE_COMPARE_MODE, createInfo.compareEnable ? GL_COMPARE_REF_TO_TEXTURE : GL_NONE);
 	glSamplerParameteri(id, GL_TEXTURE_COMPARE_FUNC, EnumToGL(createInfo.compareOp));
@@ -1284,7 +1329,7 @@ void gl4::Bind(GLuint unit, Texture2DId texture, SamplerId sampler)
 gl4::RenderBufferId gl4::CreateRenderBuffer(GLenum internalFormat, GLsizei width, GLsizei height)
 {
 	RenderBufferId id;
-	Create(id);
+	glCreateRenderbuffers(1, &id.id);
 	glNamedRenderbufferStorage(id, internalFormat, width, height);
 	return id;
 }
@@ -1292,7 +1337,7 @@ gl4::RenderBufferId gl4::CreateRenderBuffer(GLenum internalFormat, GLsizei width
 gl4::RenderBufferId gl4::CreateRenderBuffer(GLsizei samples, GLenum internalFormat, GLsizei width, GLsizei height)
 {
 	RenderBufferId id;
-	Create(id);
+	glCreateRenderbuffers(1, &id.id);
 	glNamedRenderbufferStorageMultisample(id, samples, internalFormat, width, height);
 	return id;
 }
@@ -1327,7 +1372,7 @@ GLuint gl4::CreateDepthBuffer2D(int width, int height, GLenum formatDepth)
 gl4::FrameBufferId gl4::CreateFrameBuffer2D(GLuint colorBuffer, GLuint depthBuffer)
 {
 	gl4::FrameBufferId framebuffer;
-	gl4::Create(framebuffer);
+	glCreateFramebuffers(1, &framebuffer.id);
 
 	if (colorBuffer > 0)
 		glNamedFramebufferTexture(framebuffer, GL_COLOR_ATTACHMENT0, colorBuffer, 0);
@@ -1347,7 +1392,7 @@ gl4::FrameBufferId gl4::CreateFrameBuffer2D(GLuint colorBuffer, GLuint depthBuff
 gl4::FrameBufferId gl4::CreateFrameBuffer2D(Texture2DId colorBuffer, Texture2DId depthBuffer)
 {
 	gl4::FrameBufferId framebuffer;
-	gl4::Create(framebuffer);
+	glCreateFramebuffers(1, &framebuffer.id);
 
 	if (IsValid(colorBuffer))
 	{
@@ -1371,7 +1416,7 @@ gl4::FrameBufferId gl4::CreateFrameBuffer2D(Texture2DId colorBuffer, Texture2DId
 gl4::FrameBufferId gl4::CreateFrameBuffer2D(Texture2DId colorBuffer, RenderBufferId depthBuffer)
 {
 	gl4::FrameBufferId framebuffer;
-	gl4::Create(framebuffer);
+	glCreateFramebuffers(1, &framebuffer.id);
 
 	if (IsValid(colorBuffer))
 	{

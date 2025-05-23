@@ -121,7 +121,7 @@ void main() {
 		glCreateRenderbuffers(1, &rboDepthBuffer);
 		glNamedRenderbufferStorage(rboDepthBuffer, GL_DEPTH_COMPONENT32, width, height);
 
-		gl4::Create(renderFBO);
+		glDeleteFramebuffers(1, &renderFBO.id);
 		glNamedFramebufferRenderbuffer(renderFBO, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, rboColorBuffer);
 		glNamedFramebufferRenderbuffer(renderFBO, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rboDepthBuffer);
 
