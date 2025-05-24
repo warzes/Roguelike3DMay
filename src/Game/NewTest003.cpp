@@ -1,7 +1,8 @@
-п»ї#include "stdafx.h"
-#include "NewTest001.h"
+#include "stdafx.h"
+#include "NewTest003.h"
+#error SceneLoader.h
 //=============================================================================
-// his example renders a simple triangle
+// загрузка gltf
 //=============================================================================
 namespace
 {
@@ -62,20 +63,20 @@ void main()
 			.fragmentShader = &fragmentShader,
 			.inputAssemblyState = {.topology = gl4::PrimitiveTopology::TRIANGLE_LIST},
 			.vertexInputState = {inputDescs},
-		});
+			});
 	}
 }
 //=============================================================================
-EngineConfig NewTest001::GetConfig() const
+EngineConfig NewTest003::GetConfig() const
 {
 	return {};
 }
 //=============================================================================
-bool NewTest001::OnCreate()
+bool NewTest003::OnCreate()
 {
-	static constexpr std::array<float, 6> triPositions = { 
-		 0.0f,  0.4f, 
-		-1.0f, -1.0f, 
+	static constexpr std::array<float, 6> triPositions = {
+		 0.0f,  0.4f,
+		-1.0f, -1.0f,
 		 1.0f, -1.0f };
 	static constexpr std::array<uint8_t, 9> triColors = { 255, 0, 0, 0, 255, 0, 0, 0, 255 };
 	vertexPosBuffer = gl4::Buffer(triPositions);
@@ -85,18 +86,18 @@ bool NewTest001::OnCreate()
 	return true;
 }
 //=============================================================================
-void NewTest001::OnDestroy()
+void NewTest003::OnDestroy()
 {
 	vertexPosBuffer = {};
 	vertexColorBuffer = {};
 	pipeline = {};
 }
 //=============================================================================
-void NewTest001::OnUpdate(float deltaTime)
+void NewTest003::OnUpdate(float deltaTime)
 {
 }
 //=============================================================================
-void NewTest001::OnRender()
+void NewTest003::OnRender()
 {
 	const gl4::SwapchainRenderInfo renderInfo
 	{
@@ -116,7 +117,7 @@ void NewTest001::OnRender()
 	gl4::EndRendering();
 }
 //=============================================================================
-void NewTest001::OnImGuiDraw()
+void NewTest003::OnImGuiDraw()
 {
 	ImGui::Begin("Simple");
 
@@ -130,7 +131,7 @@ void NewTest001::OnImGuiDraw()
 	ImGui::End();
 }
 //=============================================================================
-void NewTest001::OnResize(uint16_t width, uint16_t height)
+void NewTest003::OnResize(uint16_t width, uint16_t height)
 {
 }
 //=============================================================================

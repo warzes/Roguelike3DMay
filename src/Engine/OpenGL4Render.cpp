@@ -202,6 +202,7 @@ void gl4::BeginRendering(const RenderInfo& renderInfo)
 			auto format = attachment.texture.get().GetCreateInfo().format;
 			auto& ccv = attachment.clearValue;
 			glClearNamedFramebufferfv(gContext.currentFbo, GL_COLOR, i, &ccv[0]);
+			break;
 		}
 		case AttachmentLoadOp::DontCare:
 		{

@@ -16,6 +16,8 @@
 #include "TestComplex.h"
 
 #include "NewTest001.h"
+#include "NewTest002.h"
+#include "NewTest003.h"
 //=============================================================================
 #if defined(_MSC_VER)
 #	pragma comment( lib, "3rdparty.lib" )
@@ -43,7 +45,9 @@ int main(
 
 	//TestComplex game;
 
-	NewTest001 game;
+	//NewTest001 game;
+	//NewTest002 game;
+	NewTest003 game;
 
 	game.Run();
 }

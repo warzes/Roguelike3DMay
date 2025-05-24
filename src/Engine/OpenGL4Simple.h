@@ -9,6 +9,7 @@
 #include "OpenGL4Render.h"
 
 // Остается чистой и минимальной оберткой над OpenGL
+// TODO: почистить
 
 /*
 TODO:
