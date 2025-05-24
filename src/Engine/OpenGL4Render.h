@@ -129,44 +129,20 @@ namespace gl4
 		SampleCount framebufferSamples{};
 	};
 
-	namespace detail
-	{
-		void BeginSwapchainRendering(const SwapchainRenderInfo& renderInfo);
-
-		void BeginRendering(const RenderInfo& renderInfo);
-
-		void BeginRenderingNoAttachments(const RenderNoAttachmentsInfo& info);
-
-		void EndRendering();
-
-		void BeginCompute(std::string_view name);
-
-		void EndCompute();
-	}
-
 	/// @brief Renders to the swapchain
 	/// @param renderInfo Rendering parameters
-	/// @param func A callback that invokes rendering commands
 	/// The swapchain can be thought of as "the window". This function is provided because OpenGL nor windowing libraries provide a simple mechanism to access the swapchain as a set of images without interop with an explicit API like Vulkan or D3D12.
-	// TODO: не нужна
-	void RenderToSwapchain(const SwapchainRenderInfo& renderInfo, const std::function<void()>& func);
-
+	void BeginSwapChainRendering(const SwapchainRenderInfo& renderInfo);
 	/// @brief Renders to a set of textures
 	/// @param renderInfo Rendering parameters
-	/// @param func A callback that invokes rendering commands
-	// TODO: не нужна
-	void Render(const RenderInfo& renderInfo, const std::function<void()>& func);
-
+	void BeginRendering(const RenderInfo& renderInfo);
 	/// @brief Renders to a virtual texture
 	/// @param renderInfo Rendering parameters
-	/// @param func A callback that invokes rendering commands
-	// TODO: не нужна
-	void RenderNoAttachments(const RenderNoAttachmentsInfo& renderInfo, const std::function<void()>& func);
+	void BeginRenderingNoAttachments(const RenderNoAttachmentsInfo& info);
+	void EndRendering();
 
-	/// @brief Begins a compute scope
-	/// @param func A callback that invokes dispatch commands
-	// TODO: не нужна
-	void Compute(std::string_view name, const std::function<void()>& func);
+	void BeginCompute(std::string_view name);
+	void EndCompute();
 
 	/// @brief Blits a texture to another texture. Supports minification and magnification
 	void BlitTexture(const Texture& source,

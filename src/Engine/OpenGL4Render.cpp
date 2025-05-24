@@ -60,7 +60,7 @@ void SetViewportInternal(const gl4::Viewport& viewport, const gl4::Viewport& las
 	}
 }
 //=============================================================================
-void gl4::detail::BeginSwapchainRendering(const SwapchainRenderInfo& renderInfo)
+void gl4::BeginSwapChainRendering(const SwapchainRenderInfo& renderInfo)
 {
 	assert(!gContext.isRendering && "Cannot call BeginRendering when rendering");
 	assert(!gContext.isComputeActive && "Cannot nest compute and rendering");
@@ -68,9 +68,9 @@ void gl4::detail::BeginSwapchainRendering(const SwapchainRenderInfo& renderInfo)
 	gContext.isRenderingToSwapChain = true;
 	gContext.lastRenderInfo = nullptr;
 
-#if defined(_DEBUG)
-	ZeroResourceBindings();
-#endif
+//#if defined(_DEBUG)
+//	ZeroResourceBindings();
+//#endif
 
 	const auto& ri = renderInfo;
 
@@ -162,15 +162,15 @@ void gl4::detail::BeginSwapchainRendering(const SwapchainRenderInfo& renderInfo)
 	gContext.initViewport = false;
 }
 //=============================================================================
-void gl4::detail::BeginRendering(const RenderInfo& renderInfo)
+void gl4::BeginRendering(const RenderInfo& renderInfo)
 {
 	assert(!gContext.isRendering && "Cannot call BeginRendering when rendering");
 	assert(!gContext.isComputeActive && "Cannot nest compute and rendering");
 	gContext.isRendering = true;
 
-#if defined(_DEBUG)
-	ZeroResourceBindings();
-#endif
+//#if defined(_DEBUG)
+//	ZeroResourceBindings();
+//#endif
 
 	gContext.lastRenderInfo = &renderInfo;
 
@@ -312,7 +312,7 @@ void gl4::detail::BeginRendering(const RenderInfo& renderInfo)
 	gContext.initViewport = false;
 }
 //=============================================================================
-void gl4::detail::BeginRenderingNoAttachments(const RenderNoAttachmentsInfo& info)
+void gl4::BeginRenderingNoAttachments(const RenderNoAttachmentsInfo& info)
 {
 	RenderInfo renderInfo{ .name = info.name, .viewport = info.viewport };
 	BeginRendering(renderInfo);
@@ -323,7 +323,7 @@ void gl4::detail::BeginRenderingNoAttachments(const RenderNoAttachmentsInfo& inf
 	glNamedFramebufferParameteri(gContext.currentFbo, GL_FRAMEBUFFER_DEFAULT_FIXED_SAMPLE_LOCATIONS, GL_TRUE);
 }
 //=============================================================================
-void gl4::detail::EndRendering()
+void gl4::EndRendering()
 {
 	assert(gContext.isRendering && "Cannot call EndRendering when not rendering");
 	gContext.isRendering = false;
@@ -354,15 +354,15 @@ void gl4::detail::EndRendering()
 	}
 }
 //=============================================================================
-void gl4::detail::BeginCompute(std::string_view name)
+void gl4::BeginCompute(std::string_view name)
 {
 	assert(!gContext.isComputeActive);
 	assert(!gContext.isRendering && "Cannot nest compute and rendering");
 	gContext.isComputeActive = true;
 
-#if defined(_DEBUG)
-	ZeroResourceBindings();
-#endif
+//#if defined(_DEBUG)
+//	ZeroResourceBindings();
+//#endif
 
 	if (!name.empty())
 	{
@@ -371,7 +371,7 @@ void gl4::detail::BeginCompute(std::string_view name)
 	}
 }
 //=============================================================================
-void gl4::detail::EndCompute()
+void gl4::EndCompute()
 {
 	assert(gContext.isComputeActive);
 	gContext.isComputeActive = false;
@@ -387,38 +387,6 @@ void gl4::detail::EndCompute()
 		gContext.isPipelineDebugGroupPushed = false;
 		glPopDebugGroup();
 	}
-}
-//=============================================================================
-void gl4::RenderToSwapchain(const SwapchainRenderInfo& renderInfo, const std::function<void()>& func)
-{
-	// TODO: не нужна
-	gl4::detail::BeginSwapchainRendering(renderInfo);
-	func();
-	gl4::detail::EndRendering();
-}
-//=============================================================================
-void gl4::Render(const RenderInfo& renderInfo, const std::function<void()>& func)
-{
-	// TODO: не нужна
-	gl4::detail::BeginRendering(renderInfo);
-	func();
-	gl4::detail::EndRendering();
-}
-//=============================================================================
-void gl4::RenderNoAttachments(const RenderNoAttachmentsInfo& renderInfo, const std::function<void()>& func)
-{
-	// TODO: не нужна
-	gl4::detail::BeginRenderingNoAttachments(renderInfo);
-	func();
-	gl4::detail::EndRendering();
-}
-//=============================================================================
-void gl4::Compute(std::string_view name, const std::function<void()>& func)
-{
-	// TODO: не нужна
-	gl4::detail::BeginCompute(name);
-	func();
-	gl4::detail::EndCompute();
 }
 //=============================================================================
 void gl4::BlitTexture(const Texture& source,

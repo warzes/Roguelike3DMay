@@ -77,9 +77,6 @@ bool NewTest001::OnCreate()
 	vertexColorBuffer = gl4::Buffer(triColors);
 	pipeline = CreatePipeline();
 
-	glClearColor(0.7f, 0.8f, 0.9f, 1.0f);
-	//glEnable(GL_DEPTH_TEST);
-
 	return true;
 }
 //=============================================================================
@@ -96,31 +93,19 @@ void NewTest001::OnUpdate(float deltaTime)
 //=============================================================================
 void NewTest001::OnRender()
 {
-	// Before we are allowed to render anything, we must declare what we are rendering to.
-	  // In this case we are rendering straight to the screen, so we can use RenderToSwapchain.
-	  // We are also provided with an opportunity to clear any of the render targets here (by setting the load op to clear).
-	  // We will use it to clear the color buffer with a soothing dark magenta.
-	gl4::RenderToSwapchain(
-		gl4::SwapchainRenderInfo{
+	gl4::BeginSwapChainRendering(gl4::SwapchainRenderInfo{
 		  .name = "Render Triangle",
 		  .viewport = gl4::Viewport{.drawRect{.offset = {0, 0}, .extent = {GetWindowWidth(), GetWindowHeight()}}},
 		  .colorLoadOp = gl4::AttachmentLoadOp::Clear,
 		  .clearColorValue = {.2f, .0f, .2f, 1.0f},
-		},
-		[&]
-		{
-			// Functions in Cmd can only be called inside a rendering (Render() or RenderToSwapchain()) or compute scope (Compute()).
-			// Pipelines must be bound before we can issue drawing-related calls.
-			// This is where, under the hood, the actual GL program is bound and all the pipeline state is set.
-			gl4::Cmd::BindGraphicsPipeline(pipeline.value());
-
-			// Vertex buffers are bound at draw time, similar to Vulkan or with glBindVertexBuffer.
-			gl4::Cmd::BindVertexBuffer(0, vertexPosBuffer.value(), 0, 2 * sizeof(float));
-			gl4::Cmd::BindVertexBuffer(1, vertexColorBuffer.value(), 0, 3 * sizeof(uint8_t));
-
-			// Let's draw 1 instance with 3 vertices.
-			gl4::Cmd::Draw(3, 1, 0, 0);
 		});
+	{
+		gl4::Cmd::BindGraphicsPipeline(pipeline.value());
+		gl4::Cmd::BindVertexBuffer(0, vertexPosBuffer.value(), 0, 2 * sizeof(float));
+		gl4::Cmd::BindVertexBuffer(1, vertexColorBuffer.value(), 0, 3 * sizeof(uint8_t));
+		gl4::Cmd::Draw(3, 1, 0, 0);
+	}
+	gl4::EndRendering();
 }
 //=============================================================================
 void NewTest001::OnImGuiDraw()
