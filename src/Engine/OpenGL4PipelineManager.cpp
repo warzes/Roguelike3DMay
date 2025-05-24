@@ -69,12 +69,12 @@ namespace
 
 		auto reflected = std::vector<std::pair<std::string, uint32_t>>(static_cast<size_t>(numActiveResources), { std::string(static_cast<size_t>(maxNameLength), '\0'), 0 });
 
-		for (GLint i = 0; i < numActiveResources; i++)
+		for (size_t i = 0; i < static_cast<size_t>(numActiveResources); i++)
 		{
 			// Reflect the name of the resource
 			glGetProgramResourceName(program,
 				interface,
-				i,
+				static_cast<GLuint>(i),
 				static_cast<GLsizei>(reflected[i].first.size()),
 				nullptr,
 				reflected[i].first.data());
@@ -101,7 +101,7 @@ namespace
 			{
 				GLint binding{ -1 };
 				constexpr GLenum property = GL_BUFFER_BINDING;
-				glGetProgramResourceiv(program, interface, i, 1, &property, 1, nullptr, &binding);
+				glGetProgramResourceiv(program, interface, static_cast<GLuint>(i), 1, &property, 1, nullptr, &binding);
 				reflected[i].second = static_cast<uint32_t>(binding);
 			}
 			else

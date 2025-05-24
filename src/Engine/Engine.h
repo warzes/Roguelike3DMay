@@ -14,9 +14,19 @@
 #include "CoreMath.h"
 
 // RHI
-#include "OpenGL4DeviceProperties.h"
 #include "OpenGL4Simple.h"
 #include "OpenGL4Advance.h"
+
+
+#include "OpenGL4Core.h"
+#include "OpenGL4Shader.h"
+#include "OpenGL4Buffer.h"
+#include "OpenGL4Texture.h"
+#include "OpenGL4Sampler.h"
+#include "OpenGL4Pipeline.h"
+#include "OpenGL4Context.h"
+#include "OpenGL4Render.h"
+#include "OpenGL4Cmd.h"
 
 // Render
 #include "DepthPrepass.h"

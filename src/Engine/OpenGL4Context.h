@@ -1,10 +1,13 @@
 #pragma once
 
+#include "OpenGL4Core.h"
 #include "OpenGL4DeviceProperties.h"
 #include "BasicConstants.h"
 #include "OpenGL4PipelineManager.h"
+#include "OpenGL4FramebufferCache.h"
 #include "OpenGL4VertexArrayCache.h"
 #include "OpenGL4SamplerCache.h"
+#include "OpenGL4Render.h"
 
 namespace gl4
 {
@@ -46,14 +49,14 @@ namespace gl4
 		std::shared_ptr<const detail::ComputePipelineInfoOwning> lastComputePipeline{};
 
 		// Currently unused (and probably shouldn't be used)
-		//const RenderInfo* lastRenderInfo{};
+		const RenderInfo* lastRenderInfo{};
 
 		// These can be set at the start of rendering, so they need to be tracked separately from the other pipeline state.
 		std::array<ColorComponentFlags, MAX_COLOR_ATTACHMENTS> lastColorMask = {};
 		bool lastDepthMask = true;
 		uint32_t lastStencilMask[2] = { static_cast<uint32_t>(-1), static_cast<uint32_t>(-1) };
 		bool initViewport = true;
-		//Viewport lastViewport = {};
+		Viewport lastViewport = {};
 		Rect2D lastScissor = {};
 		bool scissorEnabled = false;
 
@@ -66,7 +69,7 @@ namespace gl4
 		PrimitiveTopology currentTopology{};
 		IndexType currentIndexType{};
 
-		//detail::FramebufferCache fboCache;
+		detail::FramebufferCache fboCache;
 		detail::VertexArrayCache vaoCache;
 		detail::SamplerCache samplerCache;
 	} inline gContext;

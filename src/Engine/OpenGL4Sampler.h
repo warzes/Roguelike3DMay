@@ -1,6 +1,7 @@
 #pragma once
 
 #include "OpenGL4Core.h"
+#include "Hash.h"
 
 namespace gl4
 {
@@ -48,3 +49,27 @@ namespace gl4
 		GLuint m_id{};
 	};
 } // namespace gl4
+
+template<>
+struct std::hash<gl4::SamplerState>
+{
+	std::size_t operator()(const gl4::SamplerState& k) const noexcept;
+};
+
+inline std::size_t std::hash<gl4::SamplerState>::operator()(const gl4::SamplerState& k) const noexcept
+{
+	auto rtup = std::make_tuple(
+		k.minFilter,
+		k.magFilter,
+		k.addressModeU,
+		k.addressModeV,
+		k.addressModeW,
+		k.borderColor,
+		k.anisotropy,
+		k.compareEnable,
+		k.compareOp,
+		k.lodBias,
+		k.minLod,
+		k.maxLod);
+	return detail::hashing::hash<decltype(rtup)>{}(rtup);
+}

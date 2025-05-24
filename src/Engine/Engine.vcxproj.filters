@@ -92,6 +92,15 @@
     <ClCompile Include="OpenGL4PipelineManager.cpp">
       <Filter>RHI\Context</Filter>
     </ClCompile>
+    <ClCompile Include="OpenGL4FramebufferCache.cpp">
+      <Filter>RHI\Context</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenGL4Render.cpp">
+      <Filter>RHI</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenGL4Cmd.cpp">
+      <Filter>RHI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -221,6 +230,15 @@
     </ClInclude>
     <ClInclude Include="OpenGL4PipelineManager.h">
       <Filter>RHI\Context</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL4FramebufferCache.h">
+      <Filter>RHI\Context</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL4Render.h">
+      <Filter>RHI</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL4Cmd.h">
+      <Filter>RHI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

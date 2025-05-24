@@ -2,11 +2,7 @@
 
 #include "OpenGL4Sampler.h"
 
-template<>
-struct std::hash<gl4::SamplerState>
-{
-	std::size_t operator()(const gl4::SamplerState& k) const noexcept;
-};
+
 
 namespace gl4::detail
 {

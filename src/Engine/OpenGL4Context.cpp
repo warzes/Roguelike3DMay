@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "OpenGL4Context.h"
 #include "OpenGL4Core.h"
+
 //=============================================================================
 void gl4::ContextState::Init()
 {
@@ -11,13 +12,14 @@ void gl4::ContextState::Init()
 //=============================================================================
 void gl4::ContextState::Close()
 {
+	fboCache.Clear();
 	vaoCache.Clear();
 	samplerCache.Clear();
 }
 //=============================================================================
 void gl4::ContextState::ResetState()
 {
-#error
+// TODO: сброс текущего стейта?
 }
 //=============================================================================
 void gl4::InvalidatePipelineState()
@@ -28,11 +30,11 @@ void gl4::InvalidatePipelineState()
 	ZeroResourceBindings();
 #endif
 
-	for (int i = 0; i < MAX_COLOR_ATTACHMENTS; i++)
+	for (size_t i = 0; i < MAX_COLOR_ATTACHMENTS; i++)
 	{
 		ColorComponentFlags& flags = gContext.lastColorMask[i];
 		flags = ColorComponentFlag::RGBA_BITS;
-		glColorMaski(i, true, true, true, true);
+		glColorMaski(static_cast<GLuint>(i), true, true, true, true);
 	}
 
 	gContext.lastDepthMask = false;
@@ -58,23 +60,23 @@ void gl4::ZeroResourceBindings()
 	const auto& limits = gl4::gContext.properties.limits;
 	for (int i = 0; i < limits.maxImageUnits; i++)
 	{
-		glBindImageTexture(i, 0, 0, GL_TRUE, 0, GL_READ_WRITE, GL_RGBA32F);
+		glBindImageTexture(static_cast<GLuint>(i), 0, 0, GL_TRUE, 0, GL_READ_WRITE, GL_RGBA32F);
 	}
 
 	for (int i = 0; i < limits.maxShaderStorageBufferBindings; i++)
 	{
-		glBindBufferRange(GL_SHADER_STORAGE_BUFFER, i, 0, 0, 0);
+		glBindBufferRange(GL_SHADER_STORAGE_BUFFER, static_cast<GLuint>(i), 0, 0, 0);
 	}
 
 	for (int i = 0; i < limits.maxUniformBufferBindings; i++)
 	{
-		glBindBufferRange(GL_UNIFORM_BUFFER, i, 0, 0, 0);
+		glBindBufferRange(GL_UNIFORM_BUFFER, static_cast<GLuint>(i), 0, 0, 0);
 	}
 
 	for (int i = 0; i < limits.maxCombinedTextureImageUnits; i++)
 	{
-		glBindTextureUnit(i, 0);
-		glBindSampler(i, 0);
+		glBindTextureUnit(static_cast<GLuint>(i), 0);
+		glBindSampler(static_cast<GLuint>(i), 0);
 	}
 }
 //=============================================================================

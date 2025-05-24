@@ -31,11 +31,11 @@ void main()
 }
 )";
 
-	gl4::BufferStorageId vertexPosBuffer;
-	gl4::BufferStorageId vertexColorBuffer;
-	gl4::GraphicsPipelineId pipeline;
+	std::optional<gl4::Buffer> vertexPosBuffer;
+	std::optional<gl4::Buffer> vertexColorBuffer;
+	std::optional<gl4::GraphicsPipeline> pipeline;
 
-	gl4::GraphicsPipelineId CreatePipeline()
+	gl4::GraphicsPipeline CreatePipeline()
 	{
 		auto descPos = gl4::VertexInputBindingDescription{
 		  .location = 0,
@@ -51,12 +51,15 @@ void main()
 		};
 		auto inputDescs = { descPos, descColor };
 
-		return gl4::CreateGraphicsPipeline({
-			  .debugName = "Triangle Pipeline",
-			  .vertexShader = shaderCodeVertex,
-			  .fragmentShader = shaderCodeFragment,
-			  .inputAssemblyState = {.topology = gl4::PrimitiveTopology::TRIANGLE_LIST},
-			  .vertexInputState = {inputDescs},
+		auto vertexShader = gl4::Shader(gl4::PipelineStage::VertexShader, shaderCodeVertex, "Triangle VS");
+		auto fragmentShader = gl4::Shader(gl4::PipelineStage::FragmentShader, shaderCodeFragment, "Triangle FS");
+
+		return gl4::GraphicsPipeline({
+			 .name = "Triangle Pipeline",
+			.vertexShader = &vertexShader,
+			.fragmentShader = &fragmentShader,
+			.inputAssemblyState = {.topology = gl4::PrimitiveTopology::TRIANGLE_LIST},
+			.vertexInputState = {inputDescs},
 		});
 	}
 }
@@ -70,8 +73,8 @@ bool NewTest001::OnCreate()
 {
 	static constexpr std::array<float, 6> triPositions = { -0, -0, 1, -1, 1, 1 };
 	static constexpr std::array<uint8_t, 9> triColors = { 255, 0, 0, 0, 255, 0, 0, 0, 255 };
-	vertexPosBuffer = gl4::CreateStorageBuffer(triPositions);
-	vertexColorBuffer = gl4::CreateStorageBuffer(triColors);
+	vertexPosBuffer = gl4::Buffer(triPositions);
+	vertexColorBuffer = gl4::Buffer(triColors);
 	pipeline = CreatePipeline();
 
 	glClearColor(0.7f, 0.8f, 0.9f, 1.0f);
@@ -82,9 +85,9 @@ bool NewTest001::OnCreate()
 //=============================================================================
 void NewTest001::OnDestroy()
 {
-	gl4::Destroy(vertexPosBuffer);
-	gl4::Destroy(vertexColorBuffer);
-	gl4::Destroy(pipeline);
+	vertexPosBuffer = {};
+	vertexColorBuffer = {};
+	pipeline = {};
 }
 //=============================================================================
 void NewTest001::OnUpdate(float deltaTime)
@@ -93,14 +96,31 @@ void NewTest001::OnUpdate(float deltaTime)
 //=============================================================================
 void NewTest001::OnRender()
 {
-	gl4::SetFrameBuffer({ 0 }, GetWidth(), GetHeight(), GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // TODO: заменить
+	// Before we are allowed to render anything, we must declare what we are rendering to.
+	  // In this case we are rendering straight to the screen, so we can use RenderToSwapchain.
+	  // We are also provided with an opportunity to clear any of the render targets here (by setting the load op to clear).
+	  // We will use it to clear the color buffer with a soothing dark magenta.
+	gl4::RenderToSwapchain(
+		gl4::SwapchainRenderInfo{
+		  .name = "Render Triangle",
+		  .viewport = gl4::Viewport{.drawRect{.offset = {0, 0}, .extent = {GetWindowWidth(), GetWindowHeight()}}},
+		  .colorLoadOp = gl4::AttachmentLoadOp::Clear,
+		  .clearColorValue = {.2f, .0f, .2f, 1.0f},
+		},
+		[&]
+		{
+			// Functions in Cmd can only be called inside a rendering (Render() or RenderToSwapchain()) or compute scope (Compute()).
+			// Pipelines must be bound before we can issue drawing-related calls.
+			// This is where, under the hood, the actual GL program is bound and all the pipeline state is set.
+			gl4::Cmd::BindGraphicsPipeline(pipeline.value());
 
-	gl4::Cmd::BindGraphicsPipeline(pipeline);
+			// Vertex buffers are bound at draw time, similar to Vulkan or with glBindVertexBuffer.
+			gl4::Cmd::BindVertexBuffer(0, vertexPosBuffer.value(), 0, 2 * sizeof(float));
+			gl4::Cmd::BindVertexBuffer(1, vertexColorBuffer.value(), 0, 3 * sizeof(uint8_t));
 
-	gl4::Cmd::BindVertexBuffer(0, vertexPosBuffer, 0, 2 * sizeof(float));
-	gl4::Cmd::BindVertexBuffer(1, vertexColorBuffer, 0, 3 * sizeof(uint8_t));
-
-	gl4::Cmd::Draw(3, 1, 0, 0);
+			// Let's draw 1 instance with 3 vertices.
+			gl4::Cmd::Draw(3, 1, 0, 0);
+		});
 }
 //=============================================================================
 void NewTest001::OnImGuiDraw()

@@ -1,26 +1,7 @@
 #include "stdafx.h"
 #include "OpenGL4SamplerCache.h"
 #include "OpenGL4ApiToEnum.h"
-#include "Hash.h"
 #include "Log.h"
-//=============================================================================
-std::size_t std::hash<gl4::SamplerState>::operator()(const gl4::SamplerState& k) const noexcept
-{
-	auto rtup = std::make_tuple(
-		k.minFilter,
-		k.magFilter,
-		k.addressModeU,
-		k.addressModeV,
-		k.addressModeW,
-		k.borderColor,
-		k.anisotropy,
-		k.compareEnable,
-		k.compareOp,
-		k.lodBias,
-		k.minLod,
-		k.maxLod);
-	return detail::hashing::hash<decltype(rtup)>{}(rtup);
-}
 //=============================================================================
 gl4::Sampler gl4::detail::SamplerCache::CreateOrGetCachedTextureSampler(const SamplerState& samplerState)
 {

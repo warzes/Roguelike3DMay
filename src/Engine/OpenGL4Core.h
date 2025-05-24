@@ -403,6 +403,6 @@ namespace gl4
 		ALL_BITS = static_cast<uint32_t>(-1),
 		// TODO: add more bits as necessary
 	};
-	SE_DECLARE_FLAG_TYPE(MemoryBarrierBits, MemoryBarrierBit, uint32_t)
+	SE_DECLARE_FLAG_TYPE(MemoryBarrierBits, MemoryBarrierBit, uint32_t)	
 
 } // namespace gl4
