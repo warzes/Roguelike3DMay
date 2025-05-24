@@ -56,11 +56,11 @@
     <ClCompile Include="OpenGL4Advance.cpp">
       <Filter>RHI\old</Filter>
     </ClCompile>
-    <ClCompile Include="OpenGL4DeviceProperties.cpp">
-      <Filter>RHI\old</Filter>
-    </ClCompile>
     <ClCompile Include="OpenGL4Simple.cpp">
       <Filter>RHI\old</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenGL4DeviceProperties.cpp">
+      <Filter>RHI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -150,13 +150,13 @@
     <ClInclude Include="OpenGL4Advance.h">
       <Filter>RHI\old</Filter>
     </ClInclude>
-    <ClInclude Include="OpenGL4DeviceProperties.h">
-      <Filter>RHI\old</Filter>
-    </ClInclude>
     <ClInclude Include="OpenGL4Core.h">
       <Filter>RHI</Filter>
     </ClInclude>
     <ClInclude Include="OpenGL4ApiToEnum.h">
+      <Filter>RHI</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL4DeviceProperties.h">
       <Filter>RHI</Filter>
     </ClInclude>
   </ItemGroup>
