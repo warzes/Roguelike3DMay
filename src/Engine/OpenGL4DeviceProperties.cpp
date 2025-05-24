@@ -1,18 +1,20 @@
 ﻿#include "stdafx.h"
 #include "OpenGL4DeviceProperties.h"
 //=============================================================================
-void gl4::InitDeviceProperties()
+gl4::DeviceProperties gl4::InitDeviceProperties()
 {
-	gDeviceProperties.vendor = reinterpret_cast<const char*>(glGetString(GL_VENDOR));
-	gDeviceProperties.renderer = reinterpret_cast<const char*>(glGetString(GL_RENDERER));
-	gDeviceProperties.version = reinterpret_cast<const char*>(glGetString(GL_VERSION));
-	gDeviceProperties.shadingLanguageVersion = reinterpret_cast<const char*>(glGetString(GL_SHADING_LANGUAGE_VERSION));
+	DeviceProperties prop;
 
-	glGetIntegerv(GL_MAJOR_VERSION, &gDeviceProperties.glVersionMajor);
-	glGetIntegerv(GL_MINOR_VERSION, &gDeviceProperties.glVersionMinor);
+	prop.vendor = reinterpret_cast<const char*>(glGetString(GL_VENDOR));
+	prop.renderer = reinterpret_cast<const char*>(glGetString(GL_RENDERER));
+	prop.version = reinterpret_cast<const char*>(glGetString(GL_VERSION));
+	prop.shadingLanguageVersion = reinterpret_cast<const char*>(glGetString(GL_SHADING_LANGUAGE_VERSION));
+
+	glGetIntegerv(GL_MAJOR_VERSION, &prop.glVersionMajor);
+	glGetIntegerv(GL_MINOR_VERSION, &prop.glVersionMinor);
 
 	// Populate limits
-	auto& limits = gDeviceProperties.limits;
+	auto& limits = prop.limits;
 
 	glGetIntegerv(GL_MAX_TEXTURE_SIZE, &limits.maxTextureSize);
 	glGetIntegerv(GL_MAX_3D_TEXTURE_SIZE, &limits.maxTextureSize3D);
@@ -87,7 +89,7 @@ void gl4::InitDeviceProperties()
 	glGetIntegerv(GL_MAX_SERVER_WAIT_TIMEOUT, &limits.maxServerWaitTimeout);
 
 	// Populate features
-	auto& features = gDeviceProperties.features;
+	auto& features = prop.features;
 
 	GLint numExtensions{};
 	glGetIntegerv(GL_NUM_EXTENSIONS, &numExtensions);
@@ -125,5 +127,7 @@ void gl4::InitDeviceProperties()
 			limits.subgroupLimits.quadSupported = subgroupFeatures & GL_SUBGROUP_FEATURE_QUAD_BIT_KHR;
 		}
 	}
+
+	return prop;
 }
 //=============================================================================

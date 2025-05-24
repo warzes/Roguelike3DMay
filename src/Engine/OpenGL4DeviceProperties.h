@@ -113,9 +113,6 @@ namespace gl4
 		DeviceLimits limits;
 		DeviceFeatures features;
 	};
-
-	inline DeviceProperties gDeviceProperties;
-
-	void InitDeviceProperties();
+	DeviceProperties InitDeviceProperties();
 
 } // namespace gl4

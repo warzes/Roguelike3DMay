@@ -73,7 +73,7 @@ gl4::Shader::Shader(PipelineStage stage, std::string_view source, std::string_vi
 	if (m_id && !name.empty())
 		glObjectLabel(GL_SHADER, m_id, static_cast<GLsizei>(name.length()), name.data());
 
-	Print("Created Shader with handle " + std::to_string(m_id));
+	Debug("Created Shader with handle " + std::to_string(m_id));
 }
 //=============================================================================
 gl4::Shader::Shader(PipelineStage stage, const ShaderSpirvInfo& spirvInfo, std::string_view name)
@@ -82,7 +82,7 @@ gl4::Shader::Shader(PipelineStage stage, const ShaderSpirvInfo& spirvInfo, std::
 	if (m_id && !name.empty())
 		glObjectLabel(GL_SHADER, m_id, static_cast<GLsizei>(name.length()), name.data());
 
-	Print("Created Shader with handle " + std::to_string(m_id));
+	Debug("Created Shader with handle " + std::to_string(m_id));
 }
 //=============================================================================
 gl4::Shader::Shader(Shader&& old) noexcept : m_id(std::exchange(old.m_id, 0)) {}
@@ -97,7 +97,17 @@ gl4::Shader& gl4::Shader::operator=(Shader&& old) noexcept
 //=============================================================================
 gl4::Shader::~Shader()
 {
-	Print("Destroyed Shader with handle " + std::to_string(m_id));
+	Debug("Destroyed Shader with handle " + std::to_string(m_id));
 	glDeleteShader(m_id);
+}
+//=============================================================================
+std::string gl4::Shader::GetShaderSourceCode() const
+{
+	GLint length;
+	glGetShaderiv(m_id, GL_SHADER_SOURCE_LENGTH, &length);
+	std::vector<char> source(static_cast<size_t>(length));
+
+	glGetShaderSource(m_id, length, nullptr, source.data());
+	return std::string(source.data(), static_cast<size_t>(length));
 }
 //=============================================================================

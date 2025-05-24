@@ -3,7 +3,7 @@
 #include "Log.h"
 #include "Profiler.h"
 #include "OpenGL4DebugMarker.h"
-#include "OpenGL4DeviceProperties.h"
+#include "OpenGL4Context.h"
 //=============================================================================
 // Use the high-performance GPU (if available) on Windows laptops
 // https://docs.nvidia.com/gameworks/content/technologies/desktop/optimus.htm
@@ -405,7 +405,7 @@ void IEngineApp::initOpenGL()
 	glDisable(GL_DITHER);
 	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 
-	gl4::InitDeviceProperties();
+	gl4::gContext.Init();
 }
 //=============================================================================
 void IEngineApp::initImGui()
@@ -442,6 +442,8 @@ void IEngineApp::destroy()
 
 	void ClearResourceCache();
 	ClearResourceCache();
+
+	gl4::gContext.Close();
 
 	profiler::Close();
 

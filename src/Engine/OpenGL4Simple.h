@@ -2,6 +2,10 @@
 
 #include "OpenGL4ApiToEnum.h"
 #include "OpenGL4Shader.h"
+#include "OpenGL4Buffer.h"
+#include "OpenGL4Texture.h"
+#include "OpenGL4Sampler.h"
+#include "OpenGL4Pipeline.h"
 
 // Остается чистой и минимальной оберткой над OpenGL
 
@@ -31,8 +35,6 @@ namespace gl4
 	//-------------------------------------------------------------------------
 #pragma region [ OpenGL RHI Types ]
 
-	constexpr inline uint64_t WHOLE_BUFFER = static_cast<uint64_t>(-1);
-
 	template <typename Tag>
 	struct GLObjectId
 	{
@@ -44,8 +46,6 @@ namespace gl4
 	struct __BufferTag;
 	struct __BufferStorageTag;
 	struct __VertexArrayTag;
-	struct __TextureTag;
-	struct __TextureViewTag;
 	struct __Texture1DTag;
 	struct __Texture2DTag;
 	struct __Texture3DTag;
@@ -76,17 +76,6 @@ namespace gl4
 		void* mappedMemory{ nullptr };
 		size_t size{ 0 };
 		BufferStorageFlags storageFlags{ 0 };
-	};
-
-	struct TextureId final : public GLObjectId<__TextureTag>
-	{
-		TextureCreateInfo info{};
-		uint64_t bindlessHandle{ 0 };
-	};
-
-	struct TextureViewId final : public GLObjectId<__TextureViewTag>
-	{
-		TextureViewCreateInfo info{};
 	};
 
 	template<typename T>
@@ -288,52 +277,20 @@ namespace gl4
 	//-------------------------------------------------------------------------
 #pragma region [ BufferStorage ]
 
-	/*
-	EXAMPLE:
-		static constexpr std::array<float, 6> triPositions = {-0, -0, 1, -1, 1, 1};
-		CreateBuffer(triPositions);
-	*/
-	class TriviallyCopyableByteSpan final : public std::span<const std::byte>
-	{
-	public:
-		template<typename T> requires std::is_trivially_copyable_v<T>
-		TriviallyCopyableByteSpan(const T& t)
-			: std::span<const std::byte>(std::as_bytes(std::span{ &t, static_cast<size_t>(1) }))
-		{
-		}
-
-		template<typename T> requires std::is_trivially_copyable_v<T>
-		TriviallyCopyableByteSpan(std::span<const T> t) : std::span<const std::byte>(std::as_bytes(t))
-		{
-		}
-
-		template<typename T> requires std::is_trivially_copyable_v<T>
-		TriviallyCopyableByteSpan(std::span<T> t) : std::span<const std::byte>(std::as_bytes(t))
-		{
-		}
-	};
-
-	struct BufferFillInfo final
-	{
-		uint64_t offset{ 0 };
-		uint64_t size{ WHOLE_BUFFER };
-		uint32_t data{ 0 };
-	};
-
-	BufferStorageId CreateStorageBuffer(size_t size, BufferStorageFlags storageFlags = BufferStorageFlag::NONE, std::string_view name = "");
-	BufferStorageId CreateStorageBuffer(TriviallyCopyableByteSpan data, BufferStorageFlags storageFlags = BufferStorageFlag::NONE, std::string_view name = "");
+	BufferStorageId CreateStorageBuffer(size_t size, BufferStorageFlags storageFlags = BufferStorageFlag::None, std::string_view name = "");
+	BufferStorageId CreateStorageBuffer(TriviallyCopyableByteSpan data, BufferStorageFlags storageFlags = BufferStorageFlag::None, std::string_view name = "");
 	BufferStorageId CreateStorageBuffer(const void* data, size_t size, BufferStorageFlags storageFlags, std::string_view name);
 
 	template<class T>
 		requires(std::is_trivially_copyable_v<T>)
-	BufferStorageId CreateStorageBuffer(BufferStorageFlags storageFlags = BufferStorageFlag::NONE, std::string_view name = "")
+	BufferStorageId CreateStorageBuffer(BufferStorageFlags storageFlags = BufferStorageFlag::None, std::string_view name = "")
 	{
 		return CreateStorageBuffer(sizeof(T), storageFlags, name);
 	}
 
 	template<class T>
 		requires(std::is_trivially_copyable_v<T>)
-	BufferStorageId CreateStorageBuffer(size_t count, BufferStorageFlags storageFlags = BufferStorageFlag::NONE, std::string_view name = "")
+	BufferStorageId CreateStorageBuffer(size_t count, BufferStorageFlags storageFlags = BufferStorageFlag::None, std::string_view name = "")
 	{
 		return CreateStorageBuffer(sizeof(T) * count, storageFlags, name);
 	}
@@ -352,19 +309,6 @@ namespace gl4
 	// Vertex Array
 	//-------------------------------------------------------------------------
 #pragma region [ Vertex Array ]
-
-	struct VertexInputBindingDescription final
-	{
-		uint32_t location; // glEnableVertexArrayAttrib + glVertexArrayAttribFormat
-		uint32_t binding;  // glVertexArrayAttribBinding
-		Format   format;   // glVertexArrayAttribFormat
-		uint32_t offset;   // glVertexArrayAttribFormat
-	};
-
-	struct VertexInputState final
-	{
-		std::vector<VertexInputBindingDescription> vertexBindingDescriptions;
-	};
 
 	struct VertexAttributeRaw final // TODO: old, delete
 	{
@@ -455,105 +399,9 @@ namespace gl4
 #pragma endregion
 
 	//-------------------------------------------------------------------------
-	// New Texture
-	//-------------------------------------------------------------------------
-#pragma region [ (NEW) Texture ]
-
-	struct TextureUpdateInfo final
-	{
-		uint32_t level{ 0 };
-		Offset3D offset{};
-		Extent3D extent{};
-		UploadFormat format{ UploadFormat::INFER_FORMAT };
-		UploadType type{ UploadType::INFER_TYPE };
-		const void* pixels{ nullptr };
-
-		// @brief Specifies, in texels, the size of rows in the array (for 2D and 3D images). If zero, it is assumed to be tightly packed according to size
-		uint32_t rowLength{ 0 };
-
-		// @brief Specifies, in texels, the number of rows in the array (for 3D images. If zero, it is assumed to be tightly packed according to size
-		uint32_t imageHeight{ 0 };
-	};
-
-	struct CompressedTextureUpdateInfo final
-	{
-		uint32_t level{ 0 };
-		Offset3D offset{};
-		Extent3D extent{};
-		const void* data{ nullptr };
-	};
-
-	struct TextureClearInfo final
-	{
-		uint32_t level{ 0 };
-		Offset3D offset{};
-		Extent3D extent{};
-		UploadFormat format{ UploadFormat::INFER_FORMAT };
-		UploadType type{ UploadType::INFER_TYPE };
-
-		/// @brief If null, then the subresource will be cleared with zeroes
-		const void* data{ nullptr };
-	};
-
-	// TODO: возможно всеже оставить разделение на 1D/2D/3D/Cube/etc?
-
-
-	TextureId CreateTexture(const TextureCreateInfo& createInfo, std::string_view name = "");
-	TextureId CreateTexture2D(Extent2D size, Format format, std::string_view name = "");
-	TextureId CreateTexture2DMip(Extent2D size, Format format, uint32_t mipLevels, std::string_view name = "");
-
-	void UpdateImage(TextureId id, const TextureUpdateInfo& info);
-	void UpdateCompressedImage(TextureId id, const CompressedTextureUpdateInfo& info);
-	void ClearImage(TextureId id, const TextureClearInfo& info);
-	void GenMipmaps(TextureId id);
-
-	// TODO: биндесс выделить в одтельный ресурс
-	uint64_t GetBindlessHandle(TextureId id, SamplerId sampler);
-
-#pragma endregion
-	
-	//-------------------------------------------------------------------------
-	// TextureView
-	//-------------------------------------------------------------------------
-#pragma region [ TextureView ]
-
-	TextureViewId CreateTextureView(const TextureViewCreateInfo& viewInfo, TextureId texture, std::string_view name = "");
-	TextureViewId CreateTextureView(TextureId texture, std::string_view name = "");
-
-	// Creates a view of a single mip level of the image
-	TextureViewId CreateSingleMipView(TextureId texture, uint32_t level);
-	// Creates a view of a single array layer of the image
-	TextureViewId CreateSingleLayerView(TextureId texture, uint32_t layer);
-	// Reinterpret the data of this texture
-	TextureViewId CreateFormatView(TextureId texture, Format newFormat);
-	// Creates a view of the texture with a new component mapping
-	TextureViewId CreateSwizzleView(TextureId texture, ComponentMapping components);
-
-#pragma endregion
-
-	//-------------------------------------------------------------------------
 	// Sampler
 	//-------------------------------------------------------------------------
 #pragma region [ Sampler ]
-
-	struct SamplerState final
-	{
-		bool operator==(const SamplerState&) const noexcept = default;
-
-		float lodBias{ 0 };
-		float minLod{ -1000 };
-		float maxLod{ 1000 };
-
-		MinFilter minFilter{ MinFilter::Linear };
-		MagFilter magFilter{ MagFilter::Linear };
-		AddressMode addressModeU{ AddressMode::ClampToEdge };
-		AddressMode addressModeV{ AddressMode::ClampToEdge };
-		AddressMode addressModeW{ AddressMode::ClampToEdge };
-		BorderColor borderColor{ BorderColor::FloatOpaqueWhite };
-		SampleCount anisotropy{ SampleCount::Samples1 };
-		bool compareEnable{ false };
-		CompareOp compareOp{ CompareOp::Never };
-	};
 
 	SamplerId CreateSampler(const SamplerState& createInfo);
 	void Bind(GLuint unit, SamplerId sampler);
@@ -618,101 +466,11 @@ namespace gl4
 	//-------------------------------------------------------------------------
 #pragma region [ GraphicsPipeline ]
 
-	struct InputAssemblyState final
-	{
-		PrimitiveTopology topology = PrimitiveTopology::TRIANGLE_LIST;
-		bool primitiveRestartEnable = false;
+	
 
-		bool operator==(const InputAssemblyState&) const noexcept = default;
-	};
 
-	struct TessellationState final
-	{
-		uint32_t patchControlPoints; // glPatchParameteri(GL_PATCH_VERTICES, ...)
 
-		bool operator==(const TessellationState&) const noexcept = default;
-	};
-
-	struct RasterizationState final
-	{
-		bool        depthClampEnable{ false };
-		PolygonMode polygonMode{ PolygonMode::Fill };
-		CullMode    cullMode{ CullMode::Back };
-		FrontFace   frontFace{ FrontFace::CounterClockwise };
-		bool        depthBiasEnable{ false };
-		float       depthBiasConstantFactor{ 0 };
-		float       depthBiasSlopeFactor{ 0 };
-		float       lineWidth{ 1 }; // glLineWidth
-		float       pointSize{ 1 }; // glPointSize
-
-		bool operator==(const RasterizationState&) const noexcept = default;
-	};
-
-	struct MultisampleState final
-	{
-		bool sampleShadingEnable{ false };   // glEnable(GL_SAMPLE_SHADING)
-		float minSampleShading{ 1 };         // glMinSampleShading
-		uint32_t sampleMask{ 0xFFFFFFFF };   // glSampleMaski
-		bool alphaToCoverageEnable{ false }; // glEnable(GL_SAMPLE_ALPHA_TO_COVERAGE)
-		bool alphaToOneEnable{ false };      // glEnable(GL_SAMPLE_ALPHA_TO_ONE)
-
-		bool operator==(const MultisampleState&) const noexcept = default;
-	};
-
-	struct DepthState final
-	{
-		bool depthTestEnable{ false };               // gl{Enable, Disable}(GL_DEPTH_TEST)
-		bool depthWriteEnable{ false };              // glDepthMask(depthWriteEnable)
-		CompareOp depthCompareOp{ CompareOp::Less }; // glDepthFunc
-
-		bool operator==(const DepthState&) const noexcept = default;
-	};
-
-	struct StencilOpState final
-	{
-		StencilOp passOp{ StencilOp::Keep };      // glStencilOp (dppass)
-		StencilOp failOp{ StencilOp::Keep };      // glStencilOp (sfail)
-		StencilOp depthFailOp{ StencilOp::Keep }; // glStencilOp (dpfail)
-		CompareOp compareOp{ CompareOp::Always }; // glStencilFunc (func)
-		uint32_t compareMask{ 0 };                // glStencilFunc (mask)
-		uint32_t writeMask{ 0 };                  // glStencilMask
-		uint32_t reference{ 0 };                  // glStencilFunc (ref)
-
-		bool operator==(const StencilOpState&) const noexcept = default;
-	};
-
-	struct StencilState final
-	{
-		bool stencilTestEnable{ false };
-		StencilOpState front{};
-		StencilOpState back{};
-
-		bool operator==(const StencilState&) const noexcept = default;
-	};
-
-	struct ColorBlendAttachmentState final // glBlendFuncSeparatei + glBlendEquationSeparatei
-	{
-		bool blendEnable{ false };                                           // if false, blend factor = one?
-		BlendFactor srcColorBlendFactor{ BlendFactor::One };              // srcRGB
-		BlendFactor dstColorBlendFactor{ BlendFactor::Zero };             // dstRGB
-		BlendOp colorBlendOp{ BlendOp::Add };                  // modeRGB
-		BlendFactor srcAlphaBlendFactor{ BlendFactor::One };              // srcAlpha
-		BlendFactor dstAlphaBlendFactor{ BlendFactor::Zero };             // dstAlpha
-		BlendOp alphaBlendOp{ BlendOp::Add };                  // modeAlpha
-		ColorComponentFlags colorWriteMask{ ColorComponentFlag::RGBA_BITS }; // glColorMaski
-
-		bool operator==(const ColorBlendAttachmentState&) const noexcept = default;
-	};
-
-	struct ColorBlendState final
-	{
-		bool logicOpEnable{ false };          // gl{Enable, Disable}(GL_COLOR_LOGIC_OP)
-		LogicOp logicOp{ LogicOp::Copy };  // glLogicOp(logicOp)
-		std::vector<ColorBlendAttachmentState> attachments{};             // glBlendFuncSeparatei + glBlendEquationSeparatei
-		float blendConstants[4] = { 0, 0, 0, 0 }; // glBlendColor
-
-		bool operator==(const ColorBlendState&) const noexcept = default;
-	};
+	
 
 	// Parameters for the constructor of GraphicsPipeline
 	struct GraphicsPipelineCreateInfo final

@@ -78,3 +78,10 @@
 - Исправляются варнинги компиляции
 - Рендер разделяется на две части. Simple - просто обертка над OpenGL. И основной, с разделением на файлы типа OpenGL4Shader, который создается в стиле Vulkan
 - gl4::Shader
+- gl4::Buffer
+- gl4::Texture
+- gl4::Sampler с кешированием в SamplerCache
+- gl4::GraphicsPipeline
+- gl4::ComputePipeline
+- VertexArrayCache
+- gl4::ContextState

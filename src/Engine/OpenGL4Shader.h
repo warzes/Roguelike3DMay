@@ -32,7 +32,6 @@ namespace gl4
 		/// @param stage A pipeline stage
 		/// @param source A GLSL source string
 		/// @param name An optional debug identifier
-		/// @throws ShaderCompilationException if the shader is malformed
 		explicit Shader(PipelineStage stage, std::string_view source, std::string_view name = "");
 		/// @brief Constructs a shader from SPIR-V
 		explicit Shader(PipelineStage stage, const ShaderSpirvInfo& spirvInfo, std::string_view name = "");
@@ -43,10 +42,12 @@ namespace gl4
 		Shader& operator=(Shader&& old) noexcept;
 		~Shader();
 
-		[[nodiscard]] bool IsValid() const { return m_id > 0; }
+		[[nodiscard]] bool IsValid() const noexcept { return m_id > 0; }
 
-		[[nodiscard]] GLuint Handle() const { return m_id; }
-		[[nodiscard]] operator GLuint() const { return m_id; }
+		[[nodiscard]] GLuint Handle() const noexcept { return m_id; }
+		[[nodiscard]] operator GLuint() const noexcept { return m_id; }
+
+		[[nodiscard]] std::string GetShaderSourceCode() const;
 
 	private:
 		GLuint m_id{0};

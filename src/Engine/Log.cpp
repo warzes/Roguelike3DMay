@@ -15,6 +15,13 @@ void Warning(const std::string& msg)
 	Print("\033[33m[WARNING]:\033[0m " + msg);
 }
 //=============================================================================
+void Debug(const std::string& msg)
+{
+#if defined(_DEBUG)
+	Print("\033[36m[DEBUG]:\033[0m " + msg);
+#endif
+}
+//=============================================================================
 void Error(const std::string& msg)
 {
 	Print("\033[31m[ERROR]:\033[0m " + msg);

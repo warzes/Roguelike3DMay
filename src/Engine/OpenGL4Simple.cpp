@@ -94,8 +94,6 @@ struct GraphicsPipelineCache final
 //=============================================================================
 namespace
 {
-	constexpr int MAX_COLOR_ATTACHMENTS = 8;
-
 	// Used for scope error checking
 	bool isComputeActive = false;
 	bool isRendering = false;
@@ -830,7 +828,7 @@ gl4::BufferStorageId gl4::CreateStorageBuffer(const void* data, size_t size, Buf
 	GLbitfield glflags = detail::BufferStorageFlagsToGL(storageFlags);
 	glNamedBufferStorage(id, id.size, data, glflags);
 
-	if (storageFlags & BufferStorageFlag::MAP_MEMORY)
+	if (storageFlags & BufferStorageFlag::MapMemory)
 	{
 		// GL_MAP_UNSYNCHRONIZED_BIT should be used if the user can map and unmap buffers at their own will
 		constexpr GLenum access = GL_MAP_READ_BIT | GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT;
@@ -852,8 +850,8 @@ void gl4::UpdateData(BufferStorageId id, TriviallyCopyableByteSpan data, size_t 
 //=============================================================================
 void gl4::UpdateData(BufferStorageId id, const void* data, size_t size, size_t offset)
 {
-	assert((id.storageFlags & BufferStorageFlag::DYNAMIC_STORAGE) &&
-		"UpdateData can only be called on buffers created with the DYNAMIC_STORAGE flag");
+	assert((id.storageFlags & BufferStorageFlag::DynamicStorage) &&
+		"UpdateData can only be called on buffers created with the DynamicStorage flag");
 	assert(size + offset <= id.size);
 	glNamedBufferSubData(id, static_cast<GLuint>(offset), static_cast<GLuint>(size), data);
 }

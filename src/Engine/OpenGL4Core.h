@@ -404,50 +404,5 @@ namespace gl4
 		// TODO: add more bits as necessary
 	};
 	SE_DECLARE_FLAG_TYPE(MemoryBarrierBits, MemoryBarrierBit, uint32_t)
-	
-	enum class BufferStorageFlag : uint32_t
-	{
-		NONE = 0,
-		// Allows the user to update the buffer's contents with UpdateData
-		DYNAMIC_STORAGE = 1 << 0,
-		// Hints to the implementation to place the buffer storage in host memory
-		CLIENT_STORAGE = 1 << 1,
-		// Maps the buffer (persistently and coherently) upon creation
-		MAP_MEMORY = 1 << 2,
-	};
-	SE_DECLARE_FLAG_TYPE(BufferStorageFlags, BufferStorageFlag, uint32_t)
-	
-	struct TextureCreateInfo final
-	{
-		ImageType imageType{};
-		Format format{};
-		Extent3D extent{};
-		uint32_t mipLevels{ 0 };
-		uint32_t arrayLayers{ 0 };
-		SampleCount sampleCount{};
 
-		bool operator==(const TextureCreateInfo&) const noexcept = default;
-	};
-
-	struct ComponentMapping final
-	{
-		ComponentSwizzle r = ComponentSwizzle::R;
-		ComponentSwizzle g = ComponentSwizzle::G;
-		ComponentSwizzle b = ComponentSwizzle::B;
-		ComponentSwizzle a = ComponentSwizzle::A;
-	};
-
-	struct TextureViewCreateInfo final
-	{
-		/// @note Must be an image type compatible with the base texture as defined by table 8.21 in the OpenGL spec
-		ImageType viewType{};
-		/// @note Must be a format compatible with the base texture as defined by table 8.22 in the OpenGL spec
-		Format format{};
-		ComponentMapping components{};
-		uint32_t minLevel{ 0 };
-		uint32_t numLevels{ 0 };
-		uint32_t minLayer{ 0 };
-		uint32_t numLayers{ 0 };
-	};
-		
 } // namespace gl4
