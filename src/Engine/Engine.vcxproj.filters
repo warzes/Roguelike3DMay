@@ -62,6 +62,12 @@
     <ClCompile Include="OpenGL4DeviceProperties.cpp">
       <Filter>RHI</Filter>
     </ClCompile>
+    <ClCompile Include="OpenGL4DebugMarker.cpp">
+      <Filter>RHI</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenGL4Shader.cpp">
+      <Filter>RHI\Resources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -159,6 +165,12 @@
     <ClInclude Include="OpenGL4DeviceProperties.h">
       <Filter>RHI</Filter>
     </ClInclude>
+    <ClInclude Include="OpenGL4DebugMarker.h">
+      <Filter>RHI</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL4Shader.h">
+      <Filter>RHI\Resources</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="App">
@@ -193,6 +205,9 @@
     </Filter>
     <Filter Include="RHI\old">
       <UniqueIdentifier>{66b1edc4-681a-4be6-ab33-8e0ee4e4e056}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="RHI\Resources">
+      <UniqueIdentifier>{46763eeb-be64-41ac-af68-2b8663fae12f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

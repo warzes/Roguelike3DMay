@@ -2,7 +2,7 @@
 #include "EngineApp.h"
 #include "Log.h"
 #include "Profiler.h"
-#include "OpenGL4Advance.h"
+#include "OpenGL4DebugMarker.h"
 #include "OpenGL4DeviceProperties.h"
 //=============================================================================
 // Use the high-performance GPU (if available) on Windows laptops

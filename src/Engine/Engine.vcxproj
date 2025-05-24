@@ -105,7 +105,9 @@
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="OpenGL4Advance.cpp" />
+    <ClCompile Include="OpenGL4DebugMarker.cpp" />
     <ClCompile Include="OpenGL4DeviceProperties.cpp" />
+    <ClCompile Include="OpenGL4Shader.cpp" />
     <ClCompile Include="OpenGL4Simple.cpp" />
     <ClCompile Include="PipelineBloom.cpp" />
     <ClCompile Include="PipelineDeferredSSAO.cpp" />
@@ -140,8 +142,10 @@
     <ClInclude Include="Model.h" />
     <ClInclude Include="OpenGL4Advance.h" />
     <ClInclude Include="OpenGL4ApiToEnum.h" />
+    <ClInclude Include="OpenGL4DebugMarker.h" />
     <ClInclude Include="OpenGL4DeviceProperties.h" />
     <ClInclude Include="OpenGL4Core.h" />
+    <ClInclude Include="OpenGL4Shader.h" />
     <ClInclude Include="OpenGL4Simple.h" />
     <ClInclude Include="PipelineBloom.h" />
     <ClInclude Include="PipelineDeferredSSAO.h" />

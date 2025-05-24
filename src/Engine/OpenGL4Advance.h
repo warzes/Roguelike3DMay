@@ -4,17 +4,6 @@
 
 namespace gl4
 {
-	class ScopedDebugMarker final
-	{
-	public:
-		ScopedDebugMarker(const char* message);
-		ScopedDebugMarker(const ScopedDebugMarker&) = delete;
-		ScopedDebugMarker(ScopedDebugMarker&&) = default;
-		~ScopedDebugMarker();
-
-		ScopedDebugMarker& operator=(const ScopedDebugMarker&) = delete;
-	};
-
 	class Query final
 	{
 	public:

@@ -1,6 +1,9 @@
 ﻿#pragma once
 
 #include "OpenGL4ApiToEnum.h"
+#include "OpenGL4Shader.h"
+
+// Остается чистой и минимальной оберткой над OpenGL
 
 /*
 TODO:
@@ -133,19 +136,6 @@ namespace gl4
 	// Shader
 	//-------------------------------------------------------------------------
 #pragma region [ Shader ]
-
-	struct SpecializationConstant final
-	{
-		uint32_t index{ 0 };
-		uint32_t value{ 0 };
-	};
-
-	struct ShaderSpirvInfo final
-	{
-		const char* entryPoint = "main";
-		std::span<const uint32_t> code;
-		std::span<const SpecializationConstant> specializationConstants;
-	};
 
 	GLuint CreateShader(GLenum type, const std::string& sourceCode, std::string_view name = "");
 	GLuint CreateShaderSpirv(GLenum type, const ShaderSpirvInfo& spirvInfo, std::string_view name = "");

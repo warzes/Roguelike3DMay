@@ -91,7 +91,7 @@ void gl4::InitDeviceProperties()
 
 	GLint numExtensions{};
 	glGetIntegerv(GL_NUM_EXTENSIONS, &numExtensions);
-	for (GLint i = 0; i < numExtensions; i++)
+	for (GLuint i = 0; i < static_cast<GLuint>(numExtensions); i++)
 	{
 		std::string_view extensionString = reinterpret_cast<const char*>(glGetStringi(GL_EXTENSIONS, i));
 		// printf("%s\n", extensionString.data());

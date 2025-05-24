@@ -1,9 +1,40 @@
 ﻿#pragma once
 
 #include "OpenGL4Core.h"
+#include "OpenGL4Shader.h"
+
+// TODO: все inline в constexpr?
 
 namespace gl4::detail
 {
+	constexpr GLenum EnumToGL(PipelineStage stage)
+	{
+		switch (stage)
+		{
+		case PipelineStage::VertexShader:                 return GL_VERTEX_SHADER;
+		case PipelineStage::TessellationControlShader:    return GL_TESS_CONTROL_SHADER;
+		case PipelineStage::TessellationEvaluationShader: return GL_TESS_EVALUATION_SHADER;
+		case PipelineStage::FragmentShader:               return GL_FRAGMENT_SHADER;
+		case PipelineStage::ComputeShader:                return GL_COMPUTE_SHADER;
+		default: assert(0);                               return 0;
+		}
+	}
+
+	constexpr std::string ShaderStageToString(PipelineStage stage)
+	{
+		switch (stage)
+		{
+		case PipelineStage::VertexShader:                 return "GL_VERTEX_SHADER";
+		case PipelineStage::FragmentShader:               return "GL_FRAGMENT_SHADER";
+		case PipelineStage::TessellationControlShader:    return "GL_TESS_CONTROL_SHADER";
+		case PipelineStage::TessellationEvaluationShader: return "GL_TESS_EVALUATION_SHADER";
+		case PipelineStage::ComputeShader:                return "GL_COMPUTE_SHADER";
+		default: assert(0);                               return "UNKNOWN_SHADER_TYPE";
+		}
+	}
+
+
+
 	inline GLenum EnumToGL(CompareOp op)
 	{
 		switch (op)
