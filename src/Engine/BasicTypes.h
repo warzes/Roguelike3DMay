@@ -118,6 +118,6 @@ struct Rect2D final
 {
 	bool operator==(const Rect2D&) const noexcept = default;
 
-	Offset2D offset;
-	Extent2D extent;
+	Offset2D offset{};
+	Extent2D extent{};
 };

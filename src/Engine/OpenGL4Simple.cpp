@@ -827,7 +827,7 @@ gl4::BufferStorageId gl4::CreateStorageBuffer(const void* data, size_t size, Buf
 	id.size = roundUp(size, 16);
 	id.storageFlags = storageFlags;
 
-	GLbitfield glflags = BufferStorageFlagsToGL(storageFlags);
+	GLbitfield glflags = detail::BufferStorageFlagsToGL(storageFlags);
 	glNamedBufferStorage(id, id.size, data, glflags);
 
 	if (storageFlags & BufferStorageFlag::MAP_MEMORY)
@@ -950,10 +950,10 @@ gl4::VertexArrayId gl4::CreateVertexArray(const VertexInputState& inputState)
 		glEnableVertexArrayAttrib(id, desc.location);
 		glVertexArrayAttribBinding(id, desc.location, desc.binding);
 
-		auto type = FormatToTypeGL(desc.format);
-		auto size = FormatToSizeGL(desc.format);
-		auto normalized = IsFormatNormalizedGL(desc.format);
-		auto internalType = FormatToFormatClass(desc.format);
+		auto type = detail::FormatToTypeGL(desc.format);
+		auto size = detail::FormatToSizeGL(desc.format);
+		auto normalized = detail::IsFormatNormalizedGL(desc.format);
+		auto internalType = detail::FormatToFormatClass(desc.format);
 		switch (internalType)
 		{
 		case GlFormatClass::Float: glVertexArrayAttribFormat(id, desc.location, size, type, normalized, desc.offset); break;
@@ -1304,36 +1304,36 @@ gl4::TextureId gl4::CreateTexture(const TextureCreateInfo& createInfo, std::stri
 {
 	gl4::TextureId id;
 	id.info = createInfo;
-	glCreateTextures(EnumToGL(createInfo.imageType), 1, &id.id);
+	glCreateTextures(detail::EnumToGL(createInfo.imageType), 1, &id.id);
 
 	switch (createInfo.imageType)
 	{
 	case ImageType::Tex1D:
-		glTextureStorage1D(id, createInfo.mipLevels, FormatToGL(createInfo.format), createInfo.extent.width);
+		glTextureStorage1D(id, createInfo.mipLevels, detail::EnumToGL(createInfo.format), createInfo.extent.width);
 		break;
 	case ImageType::Tex2D:
-		glTextureStorage2D(id, createInfo.mipLevels, FormatToGL(createInfo.format), createInfo.extent.width, createInfo.extent.height);
+		glTextureStorage2D(id, createInfo.mipLevels, detail::EnumToGL(createInfo.format), createInfo.extent.width, createInfo.extent.height);
 		break;
 	case ImageType::Tex3D:
-		glTextureStorage3D(id, createInfo.mipLevels, FormatToGL(createInfo.format), createInfo.extent.width, createInfo.extent.height, createInfo.extent.depth);
+		glTextureStorage3D(id, createInfo.mipLevels, detail::EnumToGL(createInfo.format), createInfo.extent.width, createInfo.extent.height, createInfo.extent.depth);
 		break;
 	case ImageType::Tex1DArray:
-		glTextureStorage2D(id, createInfo.mipLevels, FormatToGL(createInfo.format), createInfo.extent.width, createInfo.arrayLayers);
+		glTextureStorage2D(id, createInfo.mipLevels, detail::EnumToGL(createInfo.format), createInfo.extent.width, createInfo.arrayLayers);
 		break;
 	case ImageType::Tex2DArray:
-		glTextureStorage3D(id, createInfo.mipLevels, FormatToGL(createInfo.format), createInfo.extent.width, createInfo.extent.height, createInfo.arrayLayers);
+		glTextureStorage3D(id, createInfo.mipLevels, detail::EnumToGL(createInfo.format), createInfo.extent.width, createInfo.extent.height, createInfo.arrayLayers);
 		break;
 	case ImageType::TexCubemap:
-		glTextureStorage2D(id, createInfo.mipLevels, FormatToGL(createInfo.format), createInfo.extent.width, createInfo.extent.height);
+		glTextureStorage2D(id, createInfo.mipLevels, detail::EnumToGL(createInfo.format), createInfo.extent.width, createInfo.extent.height);
 		break;
 	case ImageType::TexCubemapArray:
-		glTextureStorage3D(id, createInfo.mipLevels, FormatToGL(createInfo.format), createInfo.extent.width, createInfo.extent.height, createInfo.arrayLayers);
+		glTextureStorage3D(id, createInfo.mipLevels, detail::EnumToGL(createInfo.format), createInfo.extent.width, createInfo.extent.height, createInfo.arrayLayers);
 		break;
 	case ImageType::Tex2DMultisample:
-		glTextureStorage2DMultisample(id, EnumToGL(createInfo.sampleCount), FormatToGL(createInfo.format), createInfo.extent.width, createInfo.extent.height, GL_TRUE);
+		glTextureStorage2DMultisample(id, detail::EnumToGL(createInfo.sampleCount), detail::EnumToGL(createInfo.format), createInfo.extent.width, createInfo.extent.height, GL_TRUE);
 		break;
 	case ImageType::Tex2DMultisampleArray:
-		glTextureStorage3DMultisample(id, EnumToGL(createInfo.sampleCount), FormatToGL(createInfo.format), createInfo.extent.width, createInfo.extent.height, createInfo.arrayLayers, GL_TRUE);
+		glTextureStorage3DMultisample(id, detail::EnumToGL(createInfo.sampleCount), detail::EnumToGL(createInfo.format), createInfo.extent.width, createInfo.extent.height, createInfo.arrayLayers, GL_TRUE);
 		break;
 	default: assert(0); break;
 	}
@@ -1374,23 +1374,23 @@ void gl4::UpdateImage(TextureId id, const TextureUpdateInfo& info)
 {
 	glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
 
-	assert(!IsBlockCompressedFormat(id.info.format));
+	assert(!detail::IsBlockCompressedFormat(id.info.format));
 	GLenum format{};
 	if (info.format == UploadFormat::INFER_FORMAT)
-		format = EnumToGL(FormatToUploadFormat(id.info.format));
+		format = detail::EnumToGL(detail::FormatToUploadFormat(id.info.format));
 	else
-		format = EnumToGL(info.format);
+		format = detail::EnumToGL(info.format);
 
 	GLenum type{};
 	if (info.type == UploadType::INFER_TYPE)
-		type = FormatToTypeGL(id.info.format);
+		type = detail::FormatToTypeGL(id.info.format);
 	else
-		type = EnumToGL(info.type);
+		type = detail::EnumToGL(info.type);
 
 	glPixelStorei(GL_UNPACK_ROW_LENGTH, info.rowLength);
 	glPixelStorei(GL_UNPACK_IMAGE_HEIGHT, info.imageHeight);
 
-	switch (ImageTypeToDimension(id.info.imageType))
+	switch (detail::ImageTypeToDimension(id.info.imageType))
 	{
 	case 1:
 		glTextureSubImage1D(
@@ -1433,7 +1433,7 @@ void gl4::UpdateImage(TextureId id, const TextureUpdateInfo& info)
 //=============================================================================
 inline uint64_t getBlockCompressedImageSize(gl4::Format format, uint32_t width, uint32_t height, uint32_t depth)
 {
-	assert(gl4::IsBlockCompressedFormat(format));
+	assert(gl4::detail::IsBlockCompressedFormat(format));
 
 	// BCn formats store 4x4 blocks of pixels, even if the dimensions aren't a multiple of 4
 	// We round up to the nearest multiple of 4 for width and height, but not depth, since
@@ -1471,13 +1471,13 @@ inline uint64_t getBlockCompressedImageSize(gl4::Format format, uint32_t width, 
 void gl4::UpdateCompressedImage(TextureId id, const CompressedTextureUpdateInfo& info)
 {
 	glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
-	assert(IsBlockCompressedFormat(id.info.format));
-	const GLenum format = FormatToGL(id.info.format);
+	assert(detail::IsBlockCompressedFormat(id.info.format));
+	const GLenum format = detail::EnumToGL(id.info.format);
 
 	glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
 	glPixelStorei(GL_UNPACK_IMAGE_HEIGHT, 0);
 
-	switch (ImageTypeToDimension(id.info.imageType))
+	switch (detail::ImageTypeToDimension(id.info.imageType))
 	{
 	case 2:
 		glCompressedTextureSubImage2D(
@@ -1514,16 +1514,16 @@ void gl4::ClearImage(TextureId id, const TextureClearInfo& info)
 	// Infer format
 	GLenum format{};
 	if (info.format == UploadFormat::INFER_FORMAT)
-		format = EnumToGL(FormatToUploadFormat(id.info.format));
+		format = detail::EnumToGL(detail::FormatToUploadFormat(id.info.format));
 	else
-		format = EnumToGL(info.format);
+		format = detail::EnumToGL(info.format);
 
 	// Infer type
 	GLenum type{};
 	if (info.type == UploadType::INFER_TYPE) 
-		type = FormatToTypeGL(id.info.format);
+		type = detail::FormatToTypeGL(id.info.format);
 	else 
-		type = EnumToGL(info.type);
+		type = detail::EnumToGL(info.type);
 
 	// Infer extent
 	Extent3D extent = info.extent;
@@ -1573,18 +1573,18 @@ gl4::TextureViewId gl4::CreateTextureView(const TextureViewCreateInfo& viewInfo,
 	id.info = viewInfo;
 	glGenTextures(1, &id.id); // glCreateTextures does not work here
 	glTextureView(id,
-		EnumToGL(viewInfo.viewType),
+		detail::EnumToGL(viewInfo.viewType),
 		texture,
-		FormatToGL(viewInfo.format),
+		detail::EnumToGL(viewInfo.format),
 		viewInfo.minLevel,
 		viewInfo.numLevels,
 		viewInfo.minLayer,
 		viewInfo.numLayers);
 
-	glTextureParameteri(id, GL_TEXTURE_SWIZZLE_R, EnumToGL(viewInfo.components.r));
-	glTextureParameteri(id, GL_TEXTURE_SWIZZLE_G, EnumToGL(viewInfo.components.g));
-	glTextureParameteri(id, GL_TEXTURE_SWIZZLE_B, EnumToGL(viewInfo.components.b));
-	glTextureParameteri(id, GL_TEXTURE_SWIZZLE_A, EnumToGL(viewInfo.components.a));
+	glTextureParameteri(id, GL_TEXTURE_SWIZZLE_R, detail::EnumToGL(viewInfo.components.r));
+	glTextureParameteri(id, GL_TEXTURE_SWIZZLE_G, detail::EnumToGL(viewInfo.components.g));
+	glTextureParameteri(id, GL_TEXTURE_SWIZZLE_B, detail::EnumToGL(viewInfo.components.b));
+	glTextureParameteri(id, GL_TEXTURE_SWIZZLE_A, detail::EnumToGL(viewInfo.components.a));
 
 	if (!name.empty())
 		glObjectLabel(GL_TEXTURE, id, static_cast<GLsizei>(name.length()), name.data());
@@ -1671,17 +1671,17 @@ gl4::SamplerId gl4::CreateSampler(const SamplerState& createInfo)
 	glCreateSamplers(1, &id.id);
 
 	glSamplerParameteri(id, GL_TEXTURE_COMPARE_MODE, createInfo.compareEnable ? GL_COMPARE_REF_TO_TEXTURE : GL_NONE);
-	glSamplerParameteri(id, GL_TEXTURE_COMPARE_FUNC, EnumToGL(createInfo.compareOp));
+	glSamplerParameteri(id, GL_TEXTURE_COMPARE_FUNC, detail::EnumToGL(createInfo.compareOp));
 
-	GLint magFilter = EnumToGL(createInfo.magFilter);
+	GLint magFilter = detail::EnumToGL(createInfo.magFilter);
 	glSamplerParameteri(id, GL_TEXTURE_MAG_FILTER, magFilter);
 
-	GLint minFilter = EnumToGL(createInfo.minFilter);
+	GLint minFilter = detail::EnumToGL(createInfo.minFilter);
 	glSamplerParameteri(id, GL_TEXTURE_MIN_FILTER, minFilter);
 
-	glSamplerParameteri(id, GL_TEXTURE_WRAP_S, EnumToGL(createInfo.addressModeU));
-	glSamplerParameteri(id, GL_TEXTURE_WRAP_T, EnumToGL(createInfo.addressModeV));
-	glSamplerParameteri(id, GL_TEXTURE_WRAP_R, EnumToGL(createInfo.addressModeW));
+	glSamplerParameteri(id, GL_TEXTURE_WRAP_S, detail::EnumToGL(createInfo.addressModeU));
+	glSamplerParameteri(id, GL_TEXTURE_WRAP_T, detail::EnumToGL(createInfo.addressModeV));
+	glSamplerParameteri(id, GL_TEXTURE_WRAP_R, detail::EnumToGL(createInfo.addressModeW));
 
 	// TODO: determine whether int white values should be 1 or 255
 	switch (createInfo.borderColor)
@@ -1727,7 +1727,7 @@ gl4::SamplerId gl4::CreateSampler(const SamplerState& createInfo)
 	default: assert(0); break;
 	}
 
-	glSamplerParameterf(id, GL_TEXTURE_MAX_ANISOTROPY, static_cast<GLfloat>(EnumToGL(createInfo.anisotropy)));
+	glSamplerParameterf(id, GL_TEXTURE_MAX_ANISOTROPY, static_cast<GLfloat>(detail::EnumToGL(createInfo.anisotropy)));
 
 	glSamplerParameterf(id, GL_TEXTURE_LOD_BIAS, createInfo.lodBias);
 	glSamplerParameterf(id, GL_TEXTURE_MIN_LOD, createInfo.minLod);
@@ -2173,7 +2173,7 @@ void gl4::Cmd::BindGraphicsPipeline(const GraphicsPipelineId& pipeline, bool res
 
 	if (rs.polygonMode != lastGraphicsPipeline.rasterizationState.polygonMode)
 	{
-		glPolygonMode(GL_FRONT_AND_BACK, EnumToGL(rs.polygonMode));
+		glPolygonMode(GL_FRONT_AND_BACK, detail::EnumToGL(rs.polygonMode));
 	}
 
 	if (rs.cullMode != lastGraphicsPipeline.rasterizationState.cullMode)
@@ -2181,13 +2181,13 @@ void gl4::Cmd::BindGraphicsPipeline(const GraphicsPipelineId& pipeline, bool res
 		GLEnableOrDisable(GL_CULL_FACE, rs.cullMode != CullMode::None);
 		if (rs.cullMode != CullMode::None)
 		{
-			glCullFace(EnumToGL(rs.cullMode));
+			glCullFace(detail::EnumToGL(rs.cullMode));
 		}
 	}
 
 	if (rs.frontFace != lastGraphicsPipeline.rasterizationState.frontFace)
 	{
-		glFrontFace(EnumToGL(rs.frontFace));
+		glFrontFace(detail::EnumToGL(rs.frontFace));
 	}
 
 	if (rs.depthBiasEnable != lastGraphicsPipeline.rasterizationState.depthBiasEnable)
@@ -2263,7 +2263,7 @@ void gl4::Cmd::BindGraphicsPipeline(const GraphicsPipelineId& pipeline, bool res
 
 	if (ds.depthCompareOp != lastGraphicsPipeline.depthState.depthCompareOp)
 	{
-		glDepthFunc(EnumToGL(ds.depthCompareOp));
+		glDepthFunc(detail::EnumToGL(ds.depthCompareOp));
 	}
 
 	const auto& ss = pipeline.stencilState;
@@ -2277,10 +2277,10 @@ void gl4::Cmd::BindGraphicsPipeline(const GraphicsPipelineId& pipeline, bool res
 		ss.front != lastGraphicsPipeline.stencilState.front)
 	{
 		glStencilOpSeparate(GL_FRONT,
-			EnumToGL(ss.front.failOp),
-			EnumToGL(ss.front.depthFailOp),
-			EnumToGL(ss.front.passOp));
-		glStencilFuncSeparate(GL_FRONT, EnumToGL(ss.front.compareOp), ss.front.reference, ss.front.compareMask);
+			detail::EnumToGL(ss.front.failOp),
+			detail::EnumToGL(ss.front.depthFailOp),
+			detail::EnumToGL(ss.front.passOp));
+		glStencilFuncSeparate(GL_FRONT, detail::EnumToGL(ss.front.compareOp), ss.front.reference, ss.front.compareMask);
 		if (lastStencilMask[0] != ss.front.writeMask)
 		{
 			glStencilMaskSeparate(GL_FRONT, ss.front.writeMask);
@@ -2293,10 +2293,10 @@ void gl4::Cmd::BindGraphicsPipeline(const GraphicsPipelineId& pipeline, bool res
 		ss.back != lastGraphicsPipeline.stencilState.back)
 	{
 		glStencilOpSeparate(GL_BACK,
-			EnumToGL(ss.back.failOp),
-			EnumToGL(ss.back.depthFailOp),
-			EnumToGL(ss.back.passOp));
-		glStencilFuncSeparate(GL_BACK, EnumToGL(ss.back.compareOp), ss.back.reference, ss.back.compareMask);
+			detail::EnumToGL(ss.back.failOp),
+			detail::EnumToGL(ss.back.depthFailOp),
+			detail::EnumToGL(ss.back.passOp));
+		glStencilFuncSeparate(GL_BACK, detail::EnumToGL(ss.back.compareOp), ss.back.reference, ss.back.compareMask);
 		if (lastStencilMask[1] != ss.back.writeMask)
 		{
 			glStencilMaskSeparate(GL_BACK, ss.back.writeMask);
@@ -2314,7 +2314,7 @@ void gl4::Cmd::BindGraphicsPipeline(const GraphicsPipelineId& pipeline, bool res
 		if (!lastGraphicsPipeline.colorBlendState.logicOpEnable ||
 			(cb.logicOpEnable && cb.logicOp != lastGraphicsPipeline.colorBlendState.logicOp))
 		{
-			glLogicOp(EnumToGL(cb.logicOp));
+			glLogicOp(detail::EnumToGL(cb.logicOp));
 		}
 	}
 
@@ -2342,11 +2342,11 @@ void gl4::Cmd::BindGraphicsPipeline(const GraphicsPipelineId& pipeline, bool res
 		if (cba.blendEnable)
 		{
 			glBlendFuncSeparatei(i,
-				EnumToGL(cba.srcColorBlendFactor),
-				EnumToGL(cba.dstColorBlendFactor),
-				EnumToGL(cba.srcAlphaBlendFactor),
-				EnumToGL(cba.dstAlphaBlendFactor));
-			glBlendEquationSeparatei(i, EnumToGL(cba.colorBlendOp), EnumToGL(cba.alphaBlendOp));
+				detail::EnumToGL(cba.srcColorBlendFactor),
+				detail::EnumToGL(cba.dstColorBlendFactor),
+				detail::EnumToGL(cba.srcAlphaBlendFactor),
+				detail::EnumToGL(cba.dstAlphaBlendFactor));
+			glBlendEquationSeparatei(i, detail::EnumToGL(cba.colorBlendOp), detail::EnumToGL(cba.alphaBlendOp));
 		}
 		else
 		{
@@ -2373,7 +2373,7 @@ void gl4::Cmd::BindGraphicsPipeline(const GraphicsPipelineId& pipeline, bool res
 
 void gl4::Cmd::Draw(uint32_t vertexCount, uint32_t instanceCount, uint32_t firstVertex, uint32_t firstInstance)
 {
-	glDrawArraysInstancedBaseInstance(EnumToGL(currentTopology), firstVertex, vertexCount, instanceCount, firstInstance);
+	glDrawArraysInstancedBaseInstance(detail::EnumToGL(currentTopology), firstVertex, vertexCount, instanceCount, firstInstance);
 }
 //=============================================================================
 void gl4::Cmd::BindVertexBuffer(uint32_t bindingIndex, const BufferStorageId& buffer, uint64_t offset, uint64_t stride)

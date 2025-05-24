@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "OpenGL4Core.h"
+#include "OpenGL4ApiToEnum.h"
 
 /*
 TODO:

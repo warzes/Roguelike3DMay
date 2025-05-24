@@ -2,9 +2,6 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
-    <ClCompile Include="OpenGL4Simple.cpp">
-      <Filter>RHI</Filter>
-    </ClCompile>
     <ClCompile Include="Log.cpp">
       <Filter>Core</Filter>
     </ClCompile>
@@ -57,17 +54,17 @@
       <Filter>Math</Filter>
     </ClCompile>
     <ClCompile Include="OpenGL4Advance.cpp">
-      <Filter>RHI</Filter>
+      <Filter>RHI\old</Filter>
     </ClCompile>
     <ClCompile Include="OpenGL4DeviceProperties.cpp">
-      <Filter>RHI</Filter>
+      <Filter>RHI\old</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenGL4Simple.cpp">
+      <Filter>RHI\old</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
-    <ClInclude Include="OpenGL4Simple.h">
-      <Filter>RHI</Filter>
-    </ClInclude>
     <ClInclude Include="Log.h">
       <Filter>Core</Filter>
     </ClInclude>
@@ -144,16 +141,22 @@
     <ClInclude Include="BasicTypes.h">
       <Filter>Core</Filter>
     </ClInclude>
-    <ClInclude Include="OpenGL4Advance.h">
-      <Filter>RHI</Filter>
-    </ClInclude>
     <ClInclude Include="Hash.h">
       <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL4Simple.h">
+      <Filter>RHI\old</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL4Advance.h">
+      <Filter>RHI\old</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL4DeviceProperties.h">
+      <Filter>RHI\old</Filter>
     </ClInclude>
     <ClInclude Include="OpenGL4Core.h">
       <Filter>RHI</Filter>
     </ClInclude>
-    <ClInclude Include="OpenGL4DeviceProperties.h">
+    <ClInclude Include="OpenGL4ApiToEnum.h">
       <Filter>RHI</Filter>
     </ClInclude>
   </ItemGroup>
@@ -187,6 +190,9 @@
     </Filter>
     <Filter Include="Base">
       <UniqueIdentifier>{fa34636f-7a07-4f3e-984b-943a463ecdc9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="RHI\old">
+      <UniqueIdentifier>{66b1edc4-681a-4be6-ab33-8e0ee4e4e056}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

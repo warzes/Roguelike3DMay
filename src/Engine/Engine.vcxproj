@@ -139,6 +139,7 @@
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="OpenGL4Advance.h" />
+    <ClInclude Include="OpenGL4ApiToEnum.h" />
     <ClInclude Include="OpenGL4DeviceProperties.h" />
     <ClInclude Include="OpenGL4Core.h" />
     <ClInclude Include="OpenGL4Simple.h" />
