@@ -5,7 +5,7 @@
 
 #define MAX_BONE_INFLUENCE 4
 
-struct MeshVertex final
+struct MeshVertexOLD final
 {
 	glm::vec3 Position;
 	glm::vec3 Normal;
@@ -20,12 +20,12 @@ struct MeshVertex final
 // SubMesh - геометрия меша
 // SubMeshGPU - вао/вбо/ибо
 
-class Mesh final
+class MeshOLD final
 {
 public:
-	Mesh() = default;
-	Mesh(
-		std::vector<MeshVertex>&& vertices,
+	MeshOLD() = default;
+	MeshOLD(
+		std::vector<MeshVertexOLD>&& vertices,
 		std::vector<unsigned int>&& indices,
 		std::unordered_map<TextureType, TextureFile>&& textures);
 	
@@ -41,7 +41,7 @@ private:
 	void setupMesh();
 
 	// Mesh Data
-	std::vector<MeshVertex>	  m_vertices{};
+	std::vector<MeshVertexOLD>	  m_vertices{};
 	std::vector<unsigned int> m_indices{};
 	std::unordered_map<TextureType, TextureFile> m_textureMap{};
 

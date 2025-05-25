@@ -1,8 +1,12 @@
 #include "stdafx.h"
 #include "NewTest003.h"
-#error SceneLoader.h
+
 //=============================================================================
-// загрузка gltf
+// дополнительные физи при выводе треугольника
+// - один вершинный буфер
+// - включение Z буфера
+// - рендер в текстуру и вывод текстуры на экран
+// - вывод двух треугольников с Z позицией
 //=============================================================================
 namespace
 {
@@ -14,10 +18,12 @@ layout(location = 1) in vec3 a_color;
 
 layout(location = 0) out vec3 v_color;
 
+layout(binding = 0) uniform Uniforms { float posZ; };
+
 void main()
 {
-  v_color = a_color;
-  gl_Position = vec4(a_pos, 0.0, 1.0);
+	v_color = a_color;
+	gl_Position = vec4(a_pos, posZ, 1.0);
 }
 )";
 
@@ -34,9 +40,35 @@ void main()
 }
 )";
 
-	std::optional<gl4::Buffer> vertexPosBuffer;
-	std::optional<gl4::Buffer> vertexColorBuffer;
+	struct Vertex final
+	{
+		glm::vec2 pos;
+		glm::vec3 color;
+	};
+
+	constexpr std::array<gl4::VertexInputBindingDescription, 2> inputBindingDescs{
+  gl4::VertexInputBindingDescription{
+	.location = 0,
+	.binding = 0,
+	.format = gl4::Format::R32G32B32_FLOAT,
+	.offset = offsetof(Vertex, pos),
+  },
+  gl4::VertexInputBindingDescription{
+	.location = 1,
+	.binding = 0,
+	.format = gl4::Format::R32G32B32_FLOAT,
+	.offset = offsetof(Vertex, color),
+  },
+	};
+
+	std::optional<gl4::Buffer> vertexBuffer1;
+	std::optional<gl4::Buffer> vertexBuffer2;
+
+	std::optional<gl4::TypedBuffer<float>> uniformBuffer1;
+	std::optional<gl4::TypedBuffer<float>> uniformBuffer2;
 	std::optional<gl4::GraphicsPipeline> pipeline;
+	std::optional<gl4::Texture> msColorTex;
+	std::optional<gl4::Texture> gDepth;
 
 	gl4::GraphicsPipeline CreatePipeline()
 	{
@@ -44,13 +76,13 @@ void main()
 		  .location = 0,
 		  .binding = 0,
 		  .format = gl4::Format::R32G32_FLOAT,
-		  .offset = 0,
+		  .offset = offsetof(Vertex, pos),
 		};
 		auto descColor = gl4::VertexInputBindingDescription{
 		  .location = 1,
-		  .binding = 1,
-		  .format = gl4::Format::R8G8B8_UNORM,
-		  .offset = 0,
+		  .binding = 0,
+		  .format = gl4::Format::R32G32B32_FLOAT,
+		  .offset = offsetof(Vertex, color),
 		};
 		auto inputDescs = { descPos, descColor };
 
@@ -62,8 +94,17 @@ void main()
 			.vertexShader = &vertexShader,
 			.fragmentShader = &fragmentShader,
 			.inputAssemblyState = {.topology = gl4::PrimitiveTopology::TRIANGLE_LIST},
-			.vertexInputState = {inputDescs},
+			.vertexInputState = {inputBindingDescs},
+			.depthState = {.depthTestEnable = true},
 			});
+	}
+
+	void resize(uint16_t width, uint16_t height)
+	{
+		// размер уменьшить на 8
+		msColorTex = gl4::CreateTexture2D({ width / 8u, height / 8u }, gl4::Format::R8G8B8A8_SRGB, "gAlbedo");
+
+		gDepth = gl4::CreateTexture2D({ width / 8u, height / 8u }, gl4::Format::D32_FLOAT, "gDepth");
 	}
 }
 //=============================================================================
@@ -74,47 +115,86 @@ EngineConfig NewTest003::GetConfig() const
 //=============================================================================
 bool NewTest003::OnCreate()
 {
-	static constexpr std::array<float, 6> triPositions = {
-		 0.0f,  0.4f,
-		-1.0f, -1.0f,
-		 1.0f, -1.0f };
-	static constexpr std::array<uint8_t, 9> triColors = { 255, 0, 0, 0, 255, 0, 0, 0, 255 };
-	vertexPosBuffer = gl4::Buffer(triPositions);
-	vertexColorBuffer = gl4::Buffer(triColors);
+	std::vector<Vertex> v = {
+		{{  0.0f,  0.4f}, {1, 0, 0}},
+		{{ -1.0f, -1.0f}, {0, 1, 0}},
+		{{  1.0f, -1.0f}, {0, 0, 1}},
+	};
+	vertexBuffer1 = gl4::Buffer(std::span(v));
+
+	std::vector<Vertex> v2 = {
+	{{  0.0f,  1.0f}, {0, 1, 0}},
+	{{ -0.7f, -0.4f}, {0, 1, 1}},
+	{{  0.7f, -0.4f}, {1, 0, 1}},
+	};
+	vertexBuffer2 = gl4::Buffer(std::span(v2));
+
+	uniformBuffer1 = gl4::TypedBuffer<float>(gl4::BufferStorageFlag::DynamicStorage);
+	uniformBuffer2 = gl4::TypedBuffer<float>(gl4::BufferStorageFlag::DynamicStorage);
+
 	pipeline = CreatePipeline();
+
+
+	resize(GetWindowWidth(), GetWindowHeight());
 
 	return true;
 }
 //=============================================================================
 void NewTest003::OnDestroy()
 {
-	vertexPosBuffer = {};
-	vertexColorBuffer = {};
+	vertexBuffer1 = {};
+	vertexBuffer2 = {};
+	uniformBuffer1 = {};
+	uniformBuffer1 = {};
 	pipeline = {};
+	msColorTex = {};
 }
 //=============================================================================
 void NewTest003::OnUpdate(float deltaTime)
 {
+	float posZ = 0.0f;
+	uniformBuffer1->UpdateData(posZ);
+	posZ = 0.5f;
+	uniformBuffer2->UpdateData(posZ);
 }
 //=============================================================================
 void NewTest003::OnRender()
 {
-	const gl4::SwapchainRenderInfo renderInfo
-	{
-		.name = "Render Triangle",
-		.viewport = {.drawRect{.offset = {0, 0}, .extent = {GetWindowWidth(), GetWindowHeight()}}},
-		.colorLoadOp = gl4::AttachmentLoadOp::Clear,
-		.clearColorValue = {.1f, .5f, .8f, 1.0f},
+	auto attachment = gl4::RenderColorAttachment{
+		.texture = msColorTex.value(),
+		.loadOp = gl4::AttachmentLoadOp::Clear,
+		.clearValue = {.1f, .5f, .8f, 1.0f},
 	};
 
-	gl4::BeginSwapChainRendering(renderInfo);
+	auto gDepthAttachment = gl4::RenderDepthStencilAttachment{
+	  .texture = gDepth.value(),
+	  .loadOp = gl4::AttachmentLoadOp::Clear,
+	  .clearValue = {.depth = 1.0f},
+	};
+
+	gl4::BeginRendering({ 
+		.colorAttachments = {&attachment, 1},
+		.depthAttachment = gDepthAttachment
+		});
 	{
 		gl4::Cmd::BindGraphicsPipeline(pipeline.value());
-		gl4::Cmd::BindVertexBuffer(0, vertexPosBuffer.value(), 0, 2 * sizeof(float));
-		gl4::Cmd::BindVertexBuffer(1, vertexColorBuffer.value(), 0, 3 * sizeof(uint8_t));
+		gl4::Cmd::BindVertexBuffer(0, vertexBuffer1.value(), 0, sizeof(Vertex));
+		gl4::Cmd::BindUniformBuffer(0, uniformBuffer1.value());
+		gl4::Cmd::Draw(3, 1, 0, 0);
+
+		gl4::Cmd::BindGraphicsPipeline(pipeline.value());
+		gl4::Cmd::BindVertexBuffer(0, vertexBuffer2.value(), 0, sizeof(Vertex));
+		gl4::Cmd::BindUniformBuffer(0, uniformBuffer2.value());
 		gl4::Cmd::Draw(3, 1, 0, 0);
 	}
 	gl4::EndRendering();
+
+	gl4::BlitTextureToSwapchain(*msColorTex,
+		{},
+		{},
+		msColorTex->Extent(),
+		{ GetWindowWidth(), GetWindowHeight(), 1 },
+		gl4::MagFilter::Nearest);
 }
 //=============================================================================
 void NewTest003::OnImGuiDraw()

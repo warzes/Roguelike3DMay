@@ -15,7 +15,7 @@ Model::Model(const std::string& path)
 //=============================================================================
 Model::~Model()
 {
-	for (Mesh& mesh : m_meshes)
+	for (MeshOLD& mesh : m_meshes)
 	{
 		mesh.Delete();
 	}
@@ -23,7 +23,7 @@ Model::~Model()
 //=============================================================================
 void Model::AddTextureIfEmpty(TextureType tType, const std::string& filePath)
 {
-	for (Mesh& mesh : m_meshes)
+	for (MeshOLD& mesh : m_meshes)
 	{
 		mesh.AddTextureIfEmpty(tType, filePath);
 	}
@@ -32,7 +32,7 @@ void Model::AddTextureIfEmpty(TextureType tType, const std::string& filePath)
 // Draws the model, and thus all its meshes
 void Model::Draw(GLuint shaderProgram, bool skipTexture) const
 {
-	for (const Mesh& mesh : m_meshes)
+	for (const MeshOLD& mesh : m_meshes)
 	{
 		mesh.Draw(shaderProgram, skipTexture);
 	}
@@ -80,10 +80,10 @@ void Model::processNode(const aiNode* node, const aiScene* scene, const glm::mat
 	}
 }
 //=============================================================================
-Mesh Model::processMesh(const aiMesh* mesh, const aiScene* scene, const glm::mat4& transform)
+MeshOLD Model::processMesh(const aiMesh* mesh, const aiScene* scene, const glm::mat4& transform)
 {
 	// Data to fill
-	std::vector<MeshVertex> vertices;
+	std::vector<MeshVertexOLD> vertices;
 	std::vector<unsigned int> indices;
 	std::unordered_map<TextureType, TextureFile> textures;
 
@@ -92,7 +92,7 @@ Mesh Model::processMesh(const aiMesh* mesh, const aiScene* scene, const glm::mat
 	// Walk through each of the mesh's vertices
 	for (unsigned int i = 0; i < mesh->mNumVertices; ++i)
 	{
-		MeshVertex vertex;
+		MeshVertexOLD vertex;
 		glm::vec4 vector; // We declare a placeholder vector since assimp uses its own vector class that doesn't directly convert to glm's vec3 class so we transfer the data to this placeholder glm::vec3 first.
 		// Positions
 		vector.x = mesh->mVertices[i].x;

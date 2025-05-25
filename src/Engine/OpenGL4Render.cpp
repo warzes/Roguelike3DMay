@@ -68,10 +68,6 @@ void gl4::BeginSwapChainRendering(const SwapchainRenderInfo& renderInfo)
 	gContext.isRenderingToSwapChain = true;
 	gContext.lastRenderInfo = nullptr;
 
-//#if defined(_DEBUG)
-//	ZeroResourceBindings();
-//#endif
-
 	const auto& ri = renderInfo;
 
 	if (!ri.name.empty())

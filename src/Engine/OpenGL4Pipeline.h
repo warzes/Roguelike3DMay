@@ -24,7 +24,7 @@ namespace gl4
 
 	struct VertexInputState final
 	{
-		std::vector<VertexInputBindingDescription> vertexBindingDescriptions;
+		std::span<const VertexInputBindingDescription> vertexBindingDescriptions = {};
 	};
 
 	struct TessellationState final
