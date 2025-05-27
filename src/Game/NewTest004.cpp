@@ -1,12 +1,11 @@
 ﻿#include "stdafx.h"
-#include "NewTest003.h"
+#include "NewTest004.h"
 
 //=============================================================================
-// дополнительные фичи при выводе треугольника
-// - один вершинный буфер
-// - включение Z буфера
-// - рендер в текстуру и вывод текстуры на экран
-// - вывод двух треугольников с Z позицией
+плоскость как пол, возможно сверху куб
+камера и движение (на основе имеющегося)
+плоскость с текстурой
+что-нибудь из демо pbr (или потом)
 //=============================================================================
 namespace
 {
@@ -108,12 +107,12 @@ void main()
 	}
 }
 //=============================================================================
-EngineConfig NewTest003::GetConfig() const
+EngineConfig NewTest004::GetConfig() const
 {
 	return {};
 }
 //=============================================================================
-bool NewTest003::OnCreate()
+bool NewTest004::OnCreate()
 {
 	std::vector<Vertex> v = {
 		{{  0.0f,  0.4f}, {1, 0, 0}},
@@ -140,7 +139,7 @@ bool NewTest003::OnCreate()
 	return true;
 }
 //=============================================================================
-void NewTest003::OnDestroy()
+void NewTest004::OnDestroy()
 {
 	vertexBuffer1 = {};
 	vertexBuffer2 = {};
@@ -150,7 +149,7 @@ void NewTest003::OnDestroy()
 	msColorTex = {};
 }
 //=============================================================================
-void NewTest003::OnUpdate(float deltaTime)
+void NewTest004::OnUpdate(float deltaTime)
 {
 	float posZ = 0.0f;
 	uniformBuffer1->UpdateData(posZ);
@@ -158,7 +157,7 @@ void NewTest003::OnUpdate(float deltaTime)
 	uniformBuffer2->UpdateData(posZ);
 }
 //=============================================================================
-void NewTest003::OnRender()
+void NewTest004::OnRender()
 {
 	auto attachment = gl4::RenderColorAttachment{
 		.texture = msColorTex.value(),
@@ -172,7 +171,7 @@ void NewTest003::OnRender()
 	  .clearValue = {.depth = 1.0f},
 	};
 
-	gl4::BeginRendering({ 
+	gl4::BeginRendering({
 		.colorAttachments = {&attachment, 1},
 		.depthAttachment = gDepthAttachment
 		});
@@ -197,7 +196,7 @@ void NewTest003::OnRender()
 		gl4::MagFilter::Nearest);
 }
 //=============================================================================
-void NewTest003::OnImGuiDraw()
+void NewTest004::OnImGuiDraw()
 {
 	ImGui::Begin("Simple");
 
@@ -211,7 +210,7 @@ void NewTest003::OnImGuiDraw()
 	ImGui::End();
 }
 //=============================================================================
-void NewTest003::OnResize(uint16_t width, uint16_t height)
+void NewTest004::OnResize(uint16_t width, uint16_t height)
 {
 }
 //=============================================================================

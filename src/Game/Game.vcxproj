@@ -99,6 +99,7 @@
     <ClCompile Include="NewTest001.cpp" />
     <ClCompile Include="NewTest002.cpp" />
     <ClCompile Include="NewTest003.cpp" />
+    <ClCompile Include="NewTest004.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
@@ -123,6 +124,7 @@
     <ClInclude Include="NewTest001.h" />
     <ClInclude Include="NewTest002.h" />
     <ClInclude Include="NewTest003.h" />
+    <ClInclude Include="NewTest004.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="TestBlinnPhong.h" />
     <ClInclude Include="TestBloom.h" />

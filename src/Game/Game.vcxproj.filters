@@ -54,6 +54,9 @@
     <ClCompile Include="NewTest003.cpp">
       <Filter>GameApp\NewTest1</Filter>
     </ClCompile>
+    <ClCompile Include="NewTest004.cpp">
+      <Filter>GameApp\NewTest1</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -107,6 +110,9 @@
       <Filter>GameApp\NewTest1</Filter>
     </ClInclude>
     <ClInclude Include="NewTest003.h">
+      <Filter>GameApp\NewTest1</Filter>
+    </ClInclude>
+    <ClInclude Include="NewTest004.h">
       <Filter>GameApp\NewTest1</Filter>
     </ClInclude>
   </ItemGroup>
