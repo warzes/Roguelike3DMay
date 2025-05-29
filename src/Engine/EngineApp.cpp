@@ -87,17 +87,17 @@ void openGLErrorCallback(GLenum source, GLenum type, GLuint id, GLenum severity,
 }
 #endif
 //=============================================================================
-void windowIconifyCallback(GLFWwindow* window, int minimized) noexcept
+void windowIconifyCallback([[maybe_unused]] GLFWwindow* window, [[maybe_unused]] int minimized) noexcept
 {
 
 }
 //=============================================================================
-void windowMaximizeCallback(GLFWwindow* window, int maximized) noexcept
+void windowMaximizeCallback([[maybe_unused]] GLFWwindow* window, [[maybe_unused]] int maximized) noexcept
 {
 
 }
 //=============================================================================
-void cursorEnterCallback(GLFWwindow* window, int entered) noexcept
+void cursorEnterCallback([[maybe_unused]] GLFWwindow* window, [[maybe_unused]] int entered) noexcept
 {
 
 }
@@ -118,19 +118,19 @@ void keyCallback(GLFWwindow* window, int key, int scanCode, int action, int mods
 
 	ImGui_ImplGlfw_KeyCallback(window, key, scanCode, action, mods);
 
-	if (key >= 0 && key < MaxKeys)
+	if (key >= 0 && key < (int)MaxKeys)
 	{
 		if (action == GLFW_PRESS)
 		{
-			thisIEngineApp->m_keys[key] = true;
+			thisIEngineApp->m_keys[static_cast<size_t>(key)] = true;
 		}
 		else if (action == GLFW_RELEASE)
 		{
-			thisIEngineApp->m_keys[key] = false;
+			thisIEngineApp->m_keys[static_cast<size_t>(key)] = false;
 		}
 		else if (action == GLFW_REPEAT)
 		{
-			thisIEngineApp->m_repeatKeys[key] = true;
+			thisIEngineApp->m_repeatKeys[static_cast<size_t>(key)] = true;
 		}
 	}
 	//std::string keyName = glfwGetKeyName(key, 0);
@@ -140,15 +140,15 @@ void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods) n
 {
 	ImGui_ImplGlfw_MouseButtonCallback(window, button, action, mods);
 
-	if (button >= 0 && button < MaxMouseButtons)
+	if (button >= 0 && button < (int)MaxMouseButtons)
 	{
 		if (action == GLFW_PRESS)
 		{
-			thisIEngineApp->m_mouseButtons[button] = true;
+			thisIEngineApp->m_mouseButtons[static_cast<size_t>(button)] = true;
 		}
 		else if (action == GLFW_RELEASE)
 		{
-			thisIEngineApp->m_mouseButtons[button] = false;
+			thisIEngineApp->m_mouseButtons[static_cast<size_t>(button)] = false;
 		}
 	}
 }
@@ -242,17 +242,20 @@ float IEngineApp::GetAspect() const
 //=============================================================================
 bool IEngineApp::GetKeyDown(int key)
 {
-	return m_keys[key];
+	if (key < 0 || key >= (int)MaxKeys) return false;
+	return m_keys[static_cast<size_t>(key)];
 }
 //=============================================================================
 bool IEngineApp::GetKeyPressed(int key)
 {
-	return m_repeatKeys[key];
+	if (key < 0 || key >= (int)MaxKeys) return false;
+	return m_repeatKeys[static_cast<size_t>(key)];
 }
 //=============================================================================
 bool IEngineApp::GetMouseButton(int button)
 {
-	return m_mouseButtons[button];
+	if (button < 0 || button >= (int)MaxMouseButtons) return false;
+	return m_mouseButtons[static_cast<size_t>(button)];
 }
 //=============================================================================
 double IEngineApp::GetTimeInSec() const
@@ -465,8 +468,8 @@ void IEngineApp::destroy()
 //=============================================================================
 void IEngineApp::windowResize(int width, int height)
 {
-	m_width = static_cast<uint32_t>(width);
-	m_height = static_cast<uint32_t>(height);
+	m_width = static_cast<uint16_t>(width);
+	m_height = static_cast<uint16_t>(height);
 	OnResize(m_width, m_height);
 }
 //=============================================================================

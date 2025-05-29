@@ -107,9 +107,9 @@ private:
 	double      m_mouseDeltaY{ 0.0 };
 	bool        m_cursorVisible{ true };
 
-	std::array<bool, MaxKeys> m_keys{ false };
-	std::array<bool, MaxKeys> m_repeatKeys{ false };
-	std::array<bool, MaxMouseButtons> m_mouseButtons{ false };
+	std::array<bool, MaxKeys> m_keys{ { false } };
+	std::array<bool, MaxKeys> m_repeatKeys{ { false } };
+	std::array<bool, MaxMouseButtons> m_mouseButtons{ { false } };
 
 	GraphicSystem m_graphics;
 };
