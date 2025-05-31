@@ -95,6 +95,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="GameApp.cpp" />
+    <ClCompile Include="GameAppOld.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="NewTest001.cpp" />
     <ClCompile Include="NewTest002.cpp" />
@@ -120,6 +121,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameApp.h" />
+    <ClInclude Include="GameAppOld.h" />
     <ClInclude Include="GameConfig.h" />
     <ClInclude Include="NewTest001.h" />
     <ClInclude Include="NewTest002.h" />

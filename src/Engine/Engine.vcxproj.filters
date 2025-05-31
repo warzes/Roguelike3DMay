@@ -15,37 +15,37 @@
       <Filter>Core</Filter>
     </ClCompile>
     <ClCompile Include="GraphicSystem.cpp">
-      <Filter>Graphics</Filter>
+      <Filter>OLD\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Camera.cpp">
-      <Filter>Graphics</Filter>
+      <Filter>OLD\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Material.cpp">
-      <Filter>Graphics</Filter>
+      <Filter>OLD\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Mesh.cpp">
-      <Filter>Graphics</Filter>
+      <Filter>OLD\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Model.cpp">
-      <Filter>Graphics</Filter>
+      <Filter>OLD\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="PipelineShadowMapping.cpp">
-      <Filter>Render\Pipelines</Filter>
+      <Filter>OLD\Render\Pipelines</Filter>
     </ClCompile>
     <ClCompile Include="Light.cpp">
-      <Filter>Graphics</Filter>
+      <Filter>OLD\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="PipelineDeferredSSAO.cpp">
-      <Filter>Render\Pipelines</Filter>
+      <Filter>OLD\Render\Pipelines</Filter>
     </ClCompile>
     <ClCompile Include="PipelineBloom.cpp">
-      <Filter>Render\Pipelines</Filter>
+      <Filter>OLD\Render\Pipelines</Filter>
     </ClCompile>
     <ClCompile Include="RenderData.cpp">
-      <Filter>Render</Filter>
+      <Filter>OLD\Render</Filter>
     </ClCompile>
     <ClCompile Include="DepthPrepass.cpp">
-      <Filter>Render\RenderPass</Filter>
+      <Filter>OLD\Render\RenderPass</Filter>
     </ClCompile>
     <ClCompile Include="FileUtils.cpp">
       <Filter>Core</Filter>
@@ -54,10 +54,10 @@
       <Filter>Math</Filter>
     </ClCompile>
     <ClCompile Include="OpenGL4Advance.cpp">
-      <Filter>RHI\old</Filter>
+      <Filter>OLD\RHI\old</Filter>
     </ClCompile>
     <ClCompile Include="OpenGL4Simple.cpp">
-      <Filter>RHI\old</Filter>
+      <Filter>OLD\RHI\old</Filter>
     </ClCompile>
     <ClCompile Include="OpenGL4DebugMarker.cpp">
       <Filter>RHI</Filter>
@@ -118,40 +118,40 @@
       <Filter>Core</Filter>
     </ClInclude>
     <ClInclude Include="GraphicSystem.h">
-      <Filter>Graphics</Filter>
+      <Filter>OLD\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Camera.h">
-      <Filter>Graphics</Filter>
+      <Filter>OLD\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Material.h">
-      <Filter>Graphics</Filter>
+      <Filter>OLD\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Mesh.h">
-      <Filter>Graphics</Filter>
+      <Filter>OLD\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Model.h">
-      <Filter>Graphics</Filter>
+      <Filter>OLD\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="PipelineShadowMapping.h">
-      <Filter>Render\Pipelines</Filter>
+      <Filter>OLD\Render\Pipelines</Filter>
     </ClInclude>
     <ClInclude Include="Light.h">
-      <Filter>Graphics</Filter>
+      <Filter>OLD\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="PipelineDeferredSSAO.h">
-      <Filter>Render\Pipelines</Filter>
+      <Filter>OLD\Render\Pipelines</Filter>
     </ClInclude>
     <ClInclude Include="PipelineDeferredSSAOShaders.h">
-      <Filter>Render\Pipelines</Filter>
+      <Filter>OLD\Render\Pipelines</Filter>
     </ClInclude>
     <ClInclude Include="PipelineBloom.h">
-      <Filter>Render\Pipelines</Filter>
+      <Filter>OLD\Render\Pipelines</Filter>
     </ClInclude>
     <ClInclude Include="RenderData.h">
-      <Filter>Render</Filter>
+      <Filter>OLD\Render</Filter>
     </ClInclude>
     <ClInclude Include="DepthPrepass.h">
-      <Filter>Render\RenderPass</Filter>
+      <Filter>OLD\Render\RenderPass</Filter>
     </ClInclude>
     <ClInclude Include="BaseHeader.h">
       <Filter>Base</Filter>
@@ -184,10 +184,10 @@
       <Filter>Core</Filter>
     </ClInclude>
     <ClInclude Include="OpenGL4Simple.h">
-      <Filter>RHI\old</Filter>
+      <Filter>OLD\RHI\old</Filter>
     </ClInclude>
     <ClInclude Include="OpenGL4Advance.h">
-      <Filter>RHI\old</Filter>
+      <Filter>OLD\RHI\old</Filter>
     </ClInclude>
     <ClInclude Include="OpenGL4Core.h">
       <Filter>RHI</Filter>
@@ -254,32 +254,38 @@
     <Filter Include="Scene">
       <UniqueIdentifier>{7c3bc350-aa8a-420d-b6db-71b56f1171f2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Graphics">
-      <UniqueIdentifier>{31c8c2b4-7516-41ba-994f-903862b1b25e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Core">
       <UniqueIdentifier>{dd46222f-db0a-4949-8c3b-dfa5952befcf}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Render">
-      <UniqueIdentifier>{9ac3560a-13ac-4264-a284-4742be8f1525}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Render\Pipelines">
-      <UniqueIdentifier>{c688fb09-8a0a-4990-9f32-e7fa1a4414b7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Render\RenderPass">
-      <UniqueIdentifier>{5180e80b-7898-4e76-9a65-b53a9689645c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Base">
       <UniqueIdentifier>{fa34636f-7a07-4f3e-984b-943a463ecdc9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="RHI\old">
-      <UniqueIdentifier>{66b1edc4-681a-4be6-ab33-8e0ee4e4e056}</UniqueIdentifier>
     </Filter>
     <Filter Include="RHI\Resources">
       <UniqueIdentifier>{46763eeb-be64-41ac-af68-2b8663fae12f}</UniqueIdentifier>
     </Filter>
     <Filter Include="RHI\Context">
       <UniqueIdentifier>{d76b5ed9-72b7-426b-bcb7-28bc576c9ff0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="OLD">
+      <UniqueIdentifier>{03d6bf79-bc13-4117-9833-eeccf7a9507d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="OLD\Graphics">
+      <UniqueIdentifier>{31c8c2b4-7516-41ba-994f-903862b1b25e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="OLD\Render">
+      <UniqueIdentifier>{9ac3560a-13ac-4264-a284-4742be8f1525}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="OLD\Render\Pipelines">
+      <UniqueIdentifier>{c688fb09-8a0a-4990-9f32-e7fa1a4414b7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="OLD\Render\RenderPass">
+      <UniqueIdentifier>{5180e80b-7898-4e76-9a65-b53a9689645c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="OLD\RHI">
+      <UniqueIdentifier>{521f9e23-610a-46c3-8008-437af5269368}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="OLD\RHI\old">
+      <UniqueIdentifier>{66b1edc4-681a-4be6-ab33-8e0ee4e4e056}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

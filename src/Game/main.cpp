@@ -1,5 +1,5 @@
 ﻿#include "stdafx.h"
-#include "GameApp.h"
+#include "GameAppOld.h"
 #include "TestBlinnPhong.h"
 #include "TestModelLoading.h"
 #include "TestShadowMapping.h"
@@ -19,6 +19,8 @@
 #include "NewTest002.h"
 #include "NewTest003.h"
 #include "NewTest004.h"
+
+#include "GameApp.h"
 //=============================================================================
 #if defined(_MSC_VER)
 #	pragma comment( lib, "3rdparty.lib" )
@@ -29,7 +31,7 @@ int main(
 	[[maybe_unused]] int   argc,
 	[[maybe_unused]] char* argv[])
 {
-	//GameApp game;
+	//GameAppOld game;
 
 	//TestBlinnPhong game;
 	//TestModelLoading game;
@@ -49,8 +51,12 @@ int main(
 	//NewTest001 game;
 	//NewTest002 game;
 	//NewTest003 game;
-	NewTest004 game;
+	//NewTest004 game;
 
+
+
+
+	GameApp game;
 	game.Run();
 }
 //=============================================================================

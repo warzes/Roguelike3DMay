@@ -4,6 +4,15 @@
 
 void ExitApp();
 
+uint16_t GetWindowWidth();
+uint16_t GetWindowHeight();
+float GetWindowAspect();
+
+bool GetKeyDown(int key);
+bool GetMouseButton(int button);
+int GetMousePositionX();
+int GetMousePositionY();
+
 struct EngineConfig final
 {
 	struct Window final
@@ -113,12 +122,3 @@ private:
 
 	GraphicSystem m_graphics;
 };
-
-uint16_t GetWindowWidth();
-uint16_t GetWindowHeight();
-float GetWindowAspect();
-
-bool GetKeyDown(int key);
-bool GetMouseButton(int button);
-int GetMousePositionX();
-int GetMousePositionY();

@@ -3,9 +3,6 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="stdafx.cpp" />
-    <ClCompile Include="GameApp.cpp">
-      <Filter>GameApp</Filter>
-    </ClCompile>
     <ClCompile Include="TestBlinnPhong.cpp">
       <Filter>GameApp\_OLD\Test</Filter>
     </ClCompile>
@@ -57,13 +54,16 @@
     <ClCompile Include="NewTest004.cpp">
       <Filter>GameApp\NewTest1</Filter>
     </ClCompile>
+    <ClCompile Include="GameAppOld.cpp">
+      <Filter>GameApp\_OLD</Filter>
+    </ClCompile>
+    <ClCompile Include="GameApp.cpp">
+      <Filter>GameApp</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="GameConfig.h" />
-    <ClInclude Include="GameApp.h">
-      <Filter>GameApp</Filter>
-    </ClInclude>
     <ClInclude Include="TestBlinnPhong.h">
       <Filter>GameApp\_OLD\Test</Filter>
     </ClInclude>
@@ -114,6 +114,12 @@
     </ClInclude>
     <ClInclude Include="NewTest004.h">
       <Filter>GameApp\NewTest1</Filter>
+    </ClInclude>
+    <ClInclude Include="GameAppOld.h">
+      <Filter>GameApp\_OLD</Filter>
+    </ClInclude>
+    <ClInclude Include="GameApp.h">
+      <Filter>GameApp</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
