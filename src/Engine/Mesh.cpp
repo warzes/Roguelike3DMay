@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "Mesh.h"
 //=============================================================================
 Mesh::Mesh(std::span<const MeshVertex> vertices, std::span<const uint32_t> indices, Material* material)

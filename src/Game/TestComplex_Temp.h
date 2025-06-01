@@ -171,7 +171,7 @@ public:
 
 #pragma region Material
 
-class Material
+class MaterialOld
 {
     std::map<std::string, Texture2D*> textures;
     std::map<std::string, int> properties_i;
@@ -184,9 +184,9 @@ class Material
     void loadTexturesAssimp(aiMaterial* mat, const std::string& dir = "");
 
 public:
-    Material();
+    MaterialOld();
 
-    Material(aiMaterial* mat, const std::string& dir = "");
+    MaterialOld(aiMaterial* mat, const std::string& dir = "");
 
     void load(aiMaterial* mat, const std::string& dir = "");
 
@@ -201,7 +201,7 @@ class Mesh2
 {
     std::vector<GLfloat> vertices_;
     std::vector<GLuint> indices_;
-    Material material_;
+    MaterialOld material_;
 
     GLuint vao_;
     GLuint vbo_;

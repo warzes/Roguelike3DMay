@@ -53,17 +53,21 @@ namespace
 	const char* shaderCodeVertex = R"(
 #version 460 core
 
-layout(location = 0) in vec2 a_pos;
+layout(location = 0) in vec3 a_pos;
 layout(location = 1) in vec3 a_color;
 
 layout(location = 0) out vec3 v_color;
 
-layout(binding = 0) uniform Uniforms { float posZ; };
+layout(binding = 0) uniform Uniforms { 
+	uniform mat4 model;
+	uniform mat4 view;
+	uniform mat4 proj;
+};
 
 void main()
 {
+	gl_Position = proj * view * model * vec4(a_pos, 1.0);
 	v_color = a_color;
-	gl_Position = vec4(a_pos, posZ, 1.0);
 }
 )";
 
@@ -82,30 +86,36 @@ void main()
 
 	struct Vertex final
 	{
-		glm::vec2 pos;
+		glm::vec3 pos;
 		glm::vec3 color;
 	};
 
+	struct UBO final
+	{
+		glm::mat4 model;
+		glm::mat4 view;
+		glm::mat4 proj;
+	};
+
 	constexpr std::array<gl4::VertexInputBindingDescription, 2> inputBindingDescs{
-  gl4::VertexInputBindingDescription{
-	.location = 0,
-	.binding = 0,
-	.format = gl4::Format::R32G32B32_FLOAT,
-	.offset = offsetof(Vertex, pos),
-  },
-  gl4::VertexInputBindingDescription{
-	.location = 1,
-	.binding = 0,
-	.format = gl4::Format::R32G32B32_FLOAT,
-	.offset = offsetof(Vertex, color),
-  },
+	  gl4::VertexInputBindingDescription{
+		.location = 0,
+		.binding = 0,
+		.format = gl4::Format::R32G32B32_FLOAT,
+		.offset = offsetof(Vertex, pos),
+	  },
+	  gl4::VertexInputBindingDescription{
+		.location = 1,
+		.binding = 0,
+		.format = gl4::Format::R32G32B32_FLOAT,
+		.offset = offsetof(Vertex, color),
+	  },
 	};
 
 	std::optional<gl4::Buffer> vertexBuffer1;
-	std::optional<gl4::Buffer> vertexBuffer2;
+	std::optional<gl4::Buffer> indexBuffer;
 
-	std::optional<gl4::TypedBuffer<float>> uniformBuffer1;
-	std::optional<gl4::TypedBuffer<float>> uniformBuffer2;
+	std::optional<gl4::TypedBuffer<UBO>> uniformBuffer1;
 	std::optional<gl4::GraphicsPipeline> pipeline;
 	std::optional<gl4::Texture> msColorTex;
 	std::optional<gl4::Texture> gDepth;
@@ -156,21 +166,16 @@ EngineCreateInfo GameApp::GetCreateInfo() const
 bool GameApp::OnInit()
 {
 	std::vector<Vertex> v = {
-		{{  0.0f,  0.4f}, {1, 0, 0}},
-		{{ -1.0f, -1.0f}, {0, 1, 0}},
-		{{  1.0f, -1.0f}, {0, 0, 1}},
+		{{  0.0f,  0.4f, 1.0f}, {1, 0, 0}},
+		{{ -1.0f, -1.0f, 1.0f}, {0, 1, 0}},
+		{{  1.0f, -1.0f, 1.0f}, {0, 0, 1}},
 	};
 	vertexBuffer1 = gl4::Buffer(std::span(v));
 
-	std::vector<Vertex> v2 = {
-	{{  0.0f,  1.0f}, {0, 1, 0}},
-	{{ -0.7f, -0.4f}, {0, 1, 1}},
-	{{  0.7f, -0.4f}, {1, 0, 1}},
-	};
-	vertexBuffer2 = gl4::Buffer(std::span(v2));
+	std::vector<uint32_t> iv = { 0, 1, 2 };
+	indexBuffer = gl4::Buffer(std::span(iv));
 
-	uniformBuffer1 = gl4::TypedBuffer<float>(gl4::BufferStorageFlag::DynamicStorage);
-	uniformBuffer2 = gl4::TypedBuffer<float>(gl4::BufferStorageFlag::DynamicStorage);
+	uniformBuffer1 = gl4::TypedBuffer<UBO>(gl4::BufferStorageFlag::DynamicStorage);
 
 	pipeline = CreatePipeline();
 
@@ -183,7 +188,7 @@ bool GameApp::OnInit()
 void GameApp::OnClose()
 {
 	vertexBuffer1 = {};
-	vertexBuffer2 = {};
+	indexBuffer = {};
 	uniformBuffer1 = {};
 	uniformBuffer1 = {};
 	pipeline = {};
@@ -192,10 +197,13 @@ void GameApp::OnClose()
 //=============================================================================
 void GameApp::OnUpdate(float deltaTime)
 {
-	float posZ = 0.0f;
-	uniformBuffer1->UpdateData(posZ);
-	posZ = 0.5f;
-	uniformBuffer2->UpdateData(posZ);
+	UBO ubo;
+	ubo.model = glm::mat4(1.0f);
+	ubo.view = glm::mat4(1.0f);
+	ubo.proj = glm::perspective(glm::radians(65.0f), GetWindowAspect(), 0.01f, 1000.0f);
+
+
+	uniformBuffer1->UpdateData(ubo);
 }
 //=============================================================================
 void GameApp::OnRender()
@@ -219,13 +227,9 @@ void GameApp::OnRender()
 	{
 		gl4::Cmd::BindGraphicsPipeline(pipeline.value());
 		gl4::Cmd::BindVertexBuffer(0, vertexBuffer1.value(), 0, sizeof(Vertex));
+		gl4::Cmd::BindIndexBuffer(indexBuffer.value(), gl4::IndexType::UNSIGNED_INT);
 		gl4::Cmd::BindUniformBuffer(0, uniformBuffer1.value());
-		gl4::Cmd::Draw(3, 1, 0, 0);
-
-		gl4::Cmd::BindGraphicsPipeline(pipeline.value());
-		gl4::Cmd::BindVertexBuffer(0, vertexBuffer2.value(), 0, sizeof(Vertex));
-		gl4::Cmd::BindUniformBuffer(0, uniformBuffer2.value());
-		gl4::Cmd::Draw(3, 1, 0, 0);
+		gl4::Cmd::DrawIndexed(3, 1, 0, 0, 0);
 	}
 	gl4::EndRendering();
 
@@ -239,15 +243,15 @@ void GameApp::OnRender()
 //=============================================================================
 void GameApp::OnImGuiDraw()
 {
-	ImGui::Begin("Simple");
-	ImGui::TextColored(ImVec4(0.4f, 0.4f, 1.0f, 1.00f), "Vendor: %s", (char*)glGetString(GL_VENDOR));
-	ImGui::TextColored(ImVec4(0.4f, 0.4f, 1.0f, 1.00f), "Version: %s", (char*)glGetString(GL_VERSION));
-	ImGui::TextColored(ImVec4(0.4f, 0.4f, 1.0f, 1.00f), "Renderer: %s", (char*)glGetString(GL_RENDERER));
-	ImGui::Separator();
-	//ImGui::Text("Framerate: %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-	ImGui::End();
+	//ImGui::Begin("Simple");
+	//ImGui::TextColored(ImVec4(0.4f, 0.4f, 1.0f, 1.00f), "Vendor: %s", (char*)glGetString(GL_VENDOR));
+	//ImGui::TextColored(ImVec4(0.4f, 0.4f, 1.0f, 1.00f), "Version: %s", (char*)glGetString(GL_VERSION));
+	//ImGui::TextColored(ImVec4(0.4f, 0.4f, 1.0f, 1.00f), "Renderer: %s", (char*)glGetString(GL_RENDERER));
+	//ImGui::Separator();
+	////ImGui::Text("Framerate: %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+	//ImGui::End();
 
-	DrawProfilerInfo();
+	//DrawProfilerInfo();
 	DrawFPS();
 }
 //=============================================================================

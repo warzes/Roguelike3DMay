@@ -1,50 +1,5 @@
 ﻿#include "stdafx.h"
 #include "NewTest004.h"
-
-//=============================================================================
-// ЗА ОСНОВУ TESTSHADOWMAPPING
-// 
-//плоскость как пол, возможно сверху куб
-//камера и движение (на основе имеющегося)
-//плоскость с текстурой
-//что-нибудь из демо pbr (или потом)
-//
-//#version 460 core
-//layout (location = 0) in vec3 aPos;
-//layout (location = 1) in vec3 aNormal;
-//layout (location = 2) in vec2 aTexCoord;
-//
-//layout (location = 0) out vec3 normal;
-//layout (location = 1) out vec2 texCoord;
-//
-//layout (std140, binding = 0) uniform Matrices {
-//    mat4 view;
-//    mat4 projection;
-//};
-//
-//void main() {
-//  gl_Position = projection * view * vec4(aPos, 1.0);
-//  normal = aNormal;
-//  texCoord = aTexCoord;
-//}
-//
-//#version 460 core
-//layout (location = 0) in vec3 normal;
-//layout (location = 1) in vec2 texCoord;
-//
-//out vec4 FragColor;
-//
-//uniform sampler2D tex;
-//vec3 lightPos = vec3(4.0, 5.0, -3.0);
-//vec3 lightColor = vec3(1.0, 1.0, 1.0);
-//
-//void main() {
-//  float lightAngle = max(dot(normalize(normal), normalize(lightPos)), 0.0);
-//  FragColor = texture(tex, texCoord) * vec4((0.3 + 0.7 * lightAngle) * lightColor, 1.0);
-//}
-
-
-
 //=============================================================================
 namespace
 {

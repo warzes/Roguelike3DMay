@@ -462,9 +462,9 @@ void FramebufferObject::use()
 
 #pragma region Material
 
-std::map<std::string, Texture2D*> Material::texture_pool;
+std::map<std::string, Texture2D*> MaterialOld::texture_pool;
 
-void Material::loadTexturesAssimpType(aiTextureType type, const std::string& type_name, aiMaterial* mat, const std::string& dir)
+void MaterialOld::loadTexturesAssimpType(aiTextureType type, const std::string& type_name, aiMaterial* mat, const std::string& dir)
 {
     for (int i = 0; i < mat->GetTextureCount(type); i++)
     {
@@ -487,7 +487,7 @@ void Material::loadTexturesAssimpType(aiTextureType type, const std::string& typ
     }
 }
 
-void Material::loadTexturesAssimp(aiMaterial* mat, const std::string& dir)
+void MaterialOld::loadTexturesAssimp(aiMaterial* mat, const std::string& dir)
 {
     float t;
     if (AI_SUCCESS != mat->Get(AI_MATKEY_SHININESS, t))
@@ -523,23 +523,23 @@ void Material::loadTexturesAssimp(aiMaterial* mat, const std::string& dir)
     loadTexturesAssimpType(aiTextureType_SPECULAR, "texture_specular", mat, dir);
 }
 
-Material::Material()
+MaterialOld::MaterialOld()
 {
 }
 
-Material::Material(aiMaterial* mat, const std::string& dir)
-{
-    // load from material file, directly load textures
-    loadTexturesAssimp(mat, dir);
-}
-
-void Material::load(aiMaterial* mat, const std::string& dir)
+MaterialOld::MaterialOld(aiMaterial* mat, const std::string& dir)
 {
     // load from material file, directly load textures
     loadTexturesAssimp(mat, dir);
 }
 
-void Material::use(Shader& shader)
+void MaterialOld::load(aiMaterial* mat, const std::string& dir)
+{
+    // load from material file, directly load textures
+    loadTexturesAssimp(mat, dir);
+}
+
+void MaterialOld::use(Shader& shader)
 {
     // put textures into shader
     GLuint shader_id = shader.id();
