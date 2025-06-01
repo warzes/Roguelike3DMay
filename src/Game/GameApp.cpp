@@ -53,10 +53,16 @@ namespace
 	const char* shaderCodeVertex = R"(
 #version 460 core
 
-layout(location = 0) in vec3 a_pos;
-layout(location = 1) in vec3 a_color;
+layout (location = 0) in vec3 aPos;
+layout (location = 1) in vec3 aNormal;
+layout (location = 2) in vec2 aTexCoords;
 
-layout(location = 0) out vec3 v_color;
+// Interface block
+out VS_OUT {
+	vec3 FragPos;
+	vec3 Normal;
+	vec2 TexCoords;
+} vs_out;
 
 layout(binding = 0) uniform Uniforms { 
 	uniform mat4 model;
@@ -66,28 +72,40 @@ layout(binding = 0) uniform Uniforms {
 
 void main()
 {
-	gl_Position = proj * view * model * vec4(a_pos, 1.0);
-	v_color = a_color;
+	vs_out.FragPos = aPos;
+	vs_out.Normal = aNormal; // TODO transpose(inverse(mat3(model))) * aNormal;
+	vs_out.TexCoords = aTexCoords;
+	gl_Position = proj * view * model * vec4(aPos, 1.0);
 }
 )";
 
 	const char* shaderCodeFragment = R"(
 #version 460 core
 
-layout(location = 0) out vec4 o_color;
+in VS_OUT {
+	vec3 FragPos;
+	vec3 Normal;
+	vec2 TexCoords;
+} fs_in;
 
-layout(location = 0) in vec3 v_color;
+uniform sampler2D floorTexture;
+
+layout(location = 0) out vec4 FragColor;
 
 void main()
 {
-  o_color = vec4(v_color, 1.0);
+	vec3 color = texture(floorTexture, fs_in.TexCoords).rgb;
+
+
+	FragColor = vec4(color, 1.0);
 }
 )";
 
-	struct Vertex final
+	struct Vertex
 	{
 		glm::vec3 pos;
-		glm::vec3 color;
+		glm::vec3 normals;
+		glm::vec2 uv;
 	};
 
 	struct UBO final
@@ -97,7 +115,7 @@ void main()
 		glm::mat4 proj;
 	};
 
-	constexpr std::array<gl4::VertexInputBindingDescription, 2> inputBindingDescs{
+	constexpr std::array<gl4::VertexInputBindingDescription, 3> inputBindingDescs{
 	  gl4::VertexInputBindingDescription{
 		.location = 0,
 		.binding = 0,
@@ -108,12 +126,20 @@ void main()
 		.location = 1,
 		.binding = 0,
 		.format = gl4::Format::R32G32B32_FLOAT,
-		.offset = offsetof(Vertex, color),
+		.offset = offsetof(Vertex, normals),
+	  },
+		gl4::VertexInputBindingDescription{
+		.location = 2,
+		.binding = 0,
+		.format = gl4::Format::R32G32_FLOAT,
+		.offset = offsetof(Vertex, uv),
 	  },
 	};
 
 	std::optional<gl4::Buffer> vertexBuffer1;
 	std::optional<gl4::Buffer> indexBuffer;
+	std::optional<gl4::Texture> diffuse;
+	std::optional<gl4::Sampler> sampler;
 
 	std::optional<gl4::TypedBuffer<UBO>> uniformBuffer1;
 	std::optional<gl4::GraphicsPipeline> pipeline;
@@ -122,20 +148,6 @@ void main()
 
 	gl4::GraphicsPipeline CreatePipeline()
 	{
-		auto descPos = gl4::VertexInputBindingDescription{
-		  .location = 0,
-		  .binding = 0,
-		  .format = gl4::Format::R32G32_FLOAT,
-		  .offset = offsetof(Vertex, pos),
-		};
-		auto descColor = gl4::VertexInputBindingDescription{
-		  .location = 1,
-		  .binding = 0,
-		  .format = gl4::Format::R32G32B32_FLOAT,
-		  .offset = offsetof(Vertex, color),
-		};
-		auto inputDescs = { descPos, descColor };
-
 		auto vertexShader = gl4::Shader(gl4::PipelineStage::VertexShader, shaderCodeVertex, "Triangle VS");
 		auto fragmentShader = gl4::Shader(gl4::PipelineStage::FragmentShader, shaderCodeFragment, "Triangle FS");
 
@@ -156,6 +168,8 @@ void main()
 
 		gDepth = gl4::CreateTexture2D({ width, height }, gl4::Format::D32_FLOAT, "gDepth");
 	}
+
+	Camera camera;
 }
 //=============================================================================
 EngineCreateInfo GameApp::GetCreateInfo() const
@@ -165,20 +179,47 @@ EngineCreateInfo GameApp::GetCreateInfo() const
 //=============================================================================
 bool GameApp::OnInit()
 {
-	std::vector<Vertex> v = {
-		{{  0.0f,  0.4f, 1.0f}, {1, 0, 0}},
-		{{ -1.0f, -1.0f, 1.0f}, {0, 1, 0}},
-		{{  1.0f, -1.0f, 1.0f}, {0, 0, 1}},
+	std::vector<Vertex> vertices = {
+		// positions            // normals            // texcoords
+		{{-10.0f, -0.5f,  10.0f},  {0.0f, 1.0f, 0.0f},  { 0.0f,  0.0f}},
+		{{-10.0f, -0.5f, -10.0f},  {0.0f, 1.0f, 0.0f},  { 0.0f, 10.0f}},
+		{{ 10.0f, -0.5f,  10.0f},  {0.0f, 1.0f, 0.0f},  {10.0f,  0.0f}},
+		{{ 10.0f, -0.5f,  10.0f},  {0.0f, 1.0f, 0.0f},  {10.0f,  0.0f}},
+		{{-10.0f, -0.5f, -10.0f},  {0.0f, 1.0f, 0.0f},  { 0.0f, 10.0f}},
+		{{ 10.0f, -0.5f, -10.0f},  {0.0f, 1.0f, 0.0f},  {10.0f, 10.0f}}
 	};
-	vertexBuffer1 = gl4::Buffer(std::span(v));
+	vertexBuffer1 = gl4::Buffer(std::span(vertices));
 
 	std::vector<uint32_t> iv = { 0, 1, 2 };
 	indexBuffer = gl4::Buffer(std::span(iv));
 
 	uniformBuffer1 = gl4::TypedBuffer<UBO>(gl4::BufferStorageFlag::DynamicStorage);
 
+	{
+		int x = 0;
+		int y = 0;
+		const auto noise = stbi_load("CoreData/textures/colorful.png", &x, &y, nullptr, 4);
+		assert(noise);
+		diffuse = gl4::CreateTexture2D({ static_cast<uint32_t>(x), static_cast<uint32_t>(y) }, gl4::Format::R8G8B8A8_UNORM);
+		diffuse->UpdateImage({
+		  .extent = {static_cast<uint32_t>(x), static_cast<uint32_t>(y)},
+		  .format = gl4::UploadFormat::RGBA,
+		  .type = gl4::UploadType::UBYTE,
+		  .pixels = noise,
+			});
+		stbi_image_free(noise);
+	}
+
+	gl4::SamplerState ss;
+	ss.minFilter = gl4::MinFilter::Nearest;
+	ss.magFilter = gl4::MagFilter::Nearest;
+	ss.addressModeU = gl4::AddressMode::Repeat;
+	ss.addressModeV = gl4::AddressMode::Repeat;
+	sampler = gl4::Sampler(ss);	
+
 	pipeline = CreatePipeline();
 
+	camera.SetPosition(glm::vec3(0.0f, 0.0f, -1.0f));
 
 	resize(GetWindowWidth(), GetWindowHeight());
 
@@ -197,9 +238,29 @@ void GameApp::OnClose()
 //=============================================================================
 void GameApp::OnUpdate(float deltaTime)
 {
+	if (glfwGetKey(GetGLFWWindow(), GLFW_KEY_W) == GLFW_PRESS)
+		camera.ProcessKeyboard(CameraForward, deltaTime);
+	if (glfwGetKey(GetGLFWWindow(), GLFW_KEY_S) == GLFW_PRESS)
+		camera.ProcessKeyboard(CameraBackward, deltaTime);
+	if (glfwGetKey(GetGLFWWindow(), GLFW_KEY_A) == GLFW_PRESS)
+		camera.ProcessKeyboard(CameraLeft, deltaTime);
+	if (glfwGetKey(GetGLFWWindow(), GLFW_KEY_D) == GLFW_PRESS)
+		camera.ProcessKeyboard(CameraRight, deltaTime);
+
+	if (glfwGetMouseButton(GetGLFWWindow(), GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
+	{
+		SetCursorVisible(false);
+		camera.ProcessMouseMovement(-GetMouseDeltaX(), -GetMouseDeltaY());
+	}
+	else if (glfwGetMouseButton(GetGLFWWindow(), GLFW_MOUSE_BUTTON_RIGHT) == GLFW_RELEASE)
+	{
+		glfwSetInputMode(GetGLFWWindow(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+		SetCursorVisible(true);
+	}
+
 	UBO ubo;
 	ubo.model = glm::mat4(1.0f);
-	ubo.view = glm::mat4(1.0f);
+	ubo.view = camera.GetViewMatrix();
 	ubo.proj = glm::perspective(glm::radians(65.0f), GetWindowAspect(), 0.01f, 1000.0f);
 
 
@@ -227,9 +288,12 @@ void GameApp::OnRender()
 	{
 		gl4::Cmd::BindGraphicsPipeline(pipeline.value());
 		gl4::Cmd::BindVertexBuffer(0, vertexBuffer1.value(), 0, sizeof(Vertex));
-		gl4::Cmd::BindIndexBuffer(indexBuffer.value(), gl4::IndexType::UNSIGNED_INT);
+		//gl4::Cmd::BindIndexBuffer(indexBuffer.value(), gl4::IndexType::UNSIGNED_INT);
 		gl4::Cmd::BindUniformBuffer(0, uniformBuffer1.value());
-		gl4::Cmd::DrawIndexed(3, 1, 0, 0, 0);
+		gl4::Cmd::BindSampledImage(0, diffuse.value(), sampler.value());
+
+		gl4::Cmd::Draw(6, 1, 0, 0);
+		//gl4::Cmd::DrawIndexed(3, 1, 0, 0, 0);
 	}
 	gl4::EndRendering();
 
@@ -257,6 +321,7 @@ void GameApp::OnImGuiDraw()
 //=============================================================================
 void GameApp::OnResize(uint16_t width, uint16_t height)
 {
+	resize(width, height);
 }
 //=============================================================================
 void GameApp::OnMouseButton(int button, int action, int mods)
