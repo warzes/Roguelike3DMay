@@ -17,9 +17,6 @@
     <ClCompile Include="GraphicSystem.cpp">
       <Filter>OLD\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="Camera.cpp">
-      <Filter>OLD\Graphics</Filter>
-    </ClCompile>
     <ClCompile Include="MaterialOLD.cpp">
       <Filter>OLD\Graphics</Filter>
     </ClCompile>
@@ -104,6 +101,18 @@
     <ClCompile Include="BoundingBox.cpp">
       <Filter>Math</Filter>
     </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Render</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh.cpp">
+      <Filter>Render</Filter>
+    </ClCompile>
+    <ClCompile Include="Material.cpp">
+      <Filter>Render</Filter>
+    </ClCompile>
+    <ClCompile Include="Model.cpp">
+      <Filter>Render</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -121,9 +130,6 @@
       <Filter>Core</Filter>
     </ClInclude>
     <ClInclude Include="GraphicSystem.h">
-      <Filter>OLD\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Camera.h">
       <Filter>OLD\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="MaterialOLD.h">
@@ -246,6 +252,18 @@
     <ClInclude Include="BoundingBox.h">
       <Filter>Math</Filter>
     </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Render</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>Render</Filter>
+    </ClInclude>
+    <ClInclude Include="Material.h">
+      <Filter>Render</Filter>
+    </ClInclude>
+    <ClInclude Include="Model.h">
+      <Filter>Render</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="App">
@@ -292,6 +310,9 @@
     </Filter>
     <Filter Include="OLD\RHI\old">
       <UniqueIdentifier>{66b1edc4-681a-4be6-ab33-8e0ee4e4e056}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Render">
+      <UniqueIdentifier>{2aae9673-9a65-476a-bebe-2d7a0b38ebed}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

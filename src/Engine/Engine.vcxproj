@@ -102,8 +102,11 @@
     <ClCompile Include="GraphicSystem.cpp" />
     <ClCompile Include="LightOLD.cpp" />
     <ClCompile Include="Log.cpp" />
+    <ClCompile Include="Material.cpp" />
     <ClCompile Include="MaterialOLD.cpp" />
+    <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="MeshOLD.cpp" />
+    <ClCompile Include="Model.cpp" />
     <ClCompile Include="ModelOLD.cpp" />
     <ClCompile Include="OpenGL4Advance.cpp" />
     <ClCompile Include="OpenGL4Buffer.cpp" />
@@ -150,9 +153,12 @@
     <ClInclude Include="Input.h" />
     <ClInclude Include="LightOLD.h" />
     <ClInclude Include="Log.h" />
+    <ClInclude Include="Material.h" />
     <ClInclude Include="MaterialOLD.h" />
     <ClInclude Include="BasicTypes.h" />
+    <ClInclude Include="Mesh.h" />
     <ClInclude Include="MeshOLD.h" />
+    <ClInclude Include="Model.h" />
     <ClInclude Include="ModelOLD.h" />
     <ClInclude Include="OpenGL4Advance.h" />
     <ClInclude Include="OpenGL4ApiToEnum.h" />

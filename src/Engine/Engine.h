@@ -36,6 +36,10 @@
 
 // Graphics
 #include "Camera.h"
+#include "Material.h"
+#include "Mesh.h"
+#include "Model.h"
+
 #include "ModelOLD.h"
 #include "LightOLD.h"
 
