@@ -112,18 +112,18 @@ void main()
 
 	Camera camera;
 
-	Model* model;
+	ModelOLD* model;
 
 	const glm::vec3 lightPos(0.0f, 0.5f, 5.0f);
 	auto modelRotation = 0.0f;
 }
 //=============================================================================
-EngineConfig TestModelLoading::GetConfig() const
+EngineCreateInfo TestModelLoading::GetCreateInfo() const
 {
 	return {};
 }
 //=============================================================================
-bool TestModelLoading::OnCreate()
+bool TestModelLoading::OnInit()
 {
 	modelProgram = gl4::CreateShaderProgram(modelShaderCodeVertex, modelShaderCodeFragment);
 	modelModelLoc = gl4::GetUniformLocation(modelProgram, "model");
@@ -138,7 +138,7 @@ bool TestModelLoading::OnCreate()
 	lightProjLoc = gl4::GetUniformLocation(lightProgram, "projection");
 
 
-	model = new Model("ExampleData/mesh/Tachikoma/Tachikoma.gltf");
+	model = new ModelOLD("ExampleData/mesh/Tachikoma/Tachikoma.gltf");
 
 	camera.SetPosition(glm::vec3(0.0f, 0.0f, -1.0f));
 
@@ -148,7 +148,7 @@ bool TestModelLoading::OnCreate()
 	return true;
 }
 //=============================================================================
-void TestModelLoading::OnDestroy()
+void TestModelLoading::OnClose()
 {
 }
 //=============================================================================
@@ -177,10 +177,10 @@ void TestModelLoading::OnUpdate(float deltaTime)
 //=============================================================================
 void TestModelLoading::OnRender()
 {
-	gl4::SetFrameBuffer({ 0 }, GetWidth(), GetHeight(), GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	gl4::SetFrameBuffer({ 0 }, GetWindowWidth(), GetWindowHeight(), GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glm::mat4 view = camera.GetViewMatrix();
-	glm::mat4 proj = glm::perspective(glm::radians(60.0f), GetAspect(), 0.01f, 1000.0f);
+	glm::mat4 proj = glm::perspective(glm::radians(60.0f), GetWindowAspect(), 0.01f, 1000.0f);
 
 	// вывод модели
 	{

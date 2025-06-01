@@ -9,10 +9,10 @@ public:
 	void operator=(const TestBloom&) = delete;
 	void operator=(TestBloom&&) = delete;
 
-	EngineConfig GetConfig() const final;
+	EngineCreateInfo GetCreateInfo() const final;
 
-	bool OnCreate() final;
-	void OnDestroy() final;
+	bool OnInit() final;
+	void OnClose() final;
 	void OnUpdate(float deltaTime) final;
 	void OnRender() final;
 	void OnImGuiDraw() final;

@@ -219,7 +219,7 @@ void main()
 
 	Camera camera;
 
-	Model* model;
+	ModelOLD* model;
 
 	gl4::BufferId planevbo;
 	gl4::VertexArrayId planevao;
@@ -232,7 +232,7 @@ void main()
 	constexpr float lightSpeed = 0.1f;
 	float lightTimer = 0.0f;
 	bool moveLight = true;
-	Light light(glm::vec3(0.f), glm::vec3(1.f));
+	LightOLD light(glm::vec3(0.f), glm::vec3(1.f));
 	glm::vec3 target(0.f);
 
 	// Shadow parameters
@@ -246,12 +246,12 @@ void main()
 	float ambientPower = 0.5;
 }
 //=============================================================================
-EngineConfig TestShadowMapping::GetConfig() const
+EngineCreateInfo TestShadowMapping::GetCreateInfo() const
 {
 	return {};
 }
 //=============================================================================
-bool TestShadowMapping::OnCreate()
+bool TestShadowMapping::OnInit()
 {
 	mainProgram = gl4::CreateShaderProgram(mainShaderCodeVertex, mainShaderCodeFragment);
 	mainProjLoc = gl4::GetUniformLocation(mainProgram, "projection");
@@ -276,7 +276,7 @@ bool TestShadowMapping::OnCreate()
 
 	texture = gl4::LoadTexture2D("CoreData/textures/White1x1.png");
 
-	model = new Model("ExampleData/mesh/Zaku/scene.gltf");
+	model = new ModelOLD("ExampleData/mesh/Zaku/scene.gltf");
 
 	struct Vertex
 	{
@@ -319,7 +319,7 @@ bool TestShadowMapping::OnCreate()
 	return true;
 }
 //=============================================================================
-void TestShadowMapping::OnDestroy()
+void TestShadowMapping::OnClose()
 {
 	delete pipeline;
 }
@@ -360,7 +360,7 @@ void TestShadowMapping::OnUpdate(float deltaTime)
 void TestShadowMapping::OnRender()
 {
 	glm::mat4 view = camera.GetViewMatrix();
-	glm::mat4 proj = glm::perspective(glm::radians(60.0f), GetAspect(), 0.01f, 1000.0f);
+	glm::mat4 proj = glm::perspective(glm::radians(60.0f), GetWindowAspect(), 0.01f, 1000.0f);
 
 	// Generate depth map
 	pipeline->StartRenderDepth(shadowNearPlane, shadowFarPlane, light.Position, target);
@@ -369,7 +369,7 @@ void TestShadowMapping::OnRender()
 	RenderScene(depthShader, depthModelLoc);
 
 	// Render Scene
-	gl4::SetFrameBuffer({ 0 }, GetWidth(), GetHeight(), GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	gl4::SetFrameBuffer({ 0 }, GetWindowWidth(), GetWindowHeight(), GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glUseProgram(mainProgram);
 	gl4::SetUniform(mainProgram, mainTextureDiffuse1Loc, 0);
 	gl4::SetUniform(mainProgram, mainShadowMapLoc, 1);

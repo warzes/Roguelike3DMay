@@ -1,7 +1,7 @@
 #include "stdafx.h"
-#include "Light.h"
+#include "LightOLD.h"
 //=============================================================================
-Light::Light(glm::vec3 position, glm::vec3 color) 
+LightOLD::LightOLD(glm::vec3 position, glm::vec3 color) 
 	: Position(position)
 	, Color(color)
 {

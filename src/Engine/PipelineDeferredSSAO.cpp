@@ -229,7 +229,7 @@ void PipelineDeferredSSAO::StartBlurPass()
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 //=============================================================================
-void PipelineDeferredSSAO::StartLightingPass(const std::vector<Light>& lights, const glm::mat4& cameraView, const glm::vec3& cameraPosition)
+void PipelineDeferredSSAO::StartLightingPass(const std::vector<LightOLD>& lights, const glm::mat4& cameraView, const glm::vec3& cameraPosition)
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glUseProgram(m_shaderLighting);

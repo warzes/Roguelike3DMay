@@ -108,12 +108,12 @@ void main()
 	Shader* post_shader;
 }
 //=============================================================================
-EngineConfig TestComplex::GetConfig() const
+EngineCreateInfo TestComplex::GetCreateInfo() const
 {
 	return {};
 }
 //=============================================================================
-bool TestComplex::OnCreate()
+bool TestComplex::OnInit()
 {
 	program = gl4::CreateShaderProgram(shaderCodeVertex, shaderCodeFragment);
 
@@ -166,18 +166,18 @@ bool TestComplex::OnCreate()
 
 	scene_desc = new SceneDesc(scene);
 	
-	active_camera.aspect = 1.0f * GetAspect();
+	active_camera.aspect = 1.0f * GetWindowAspect();
 	camera_control.bind(&active_camera);
 
 	shadow_map_point_light = new ShadowMapper();
 
-	deferred = new Deferred(GetWidth(), GetHeight());
+	deferred = new Deferred(GetWindowWidth(), GetWindowHeight());
 
-	for (int i = 0; i < GetWidth() * GetHeight(); i++)
+	for (int i = 0; i < GetWindowWidth() * GetWindowHeight(); i++)
 	{
 		screen_rnd.push_back(random_float(generator));
 	}
-	screen_rnd_tex = new Texture2D(GetWidth(), GetHeight(), screen_rnd.data(), GL_R16F, GL_RED, GL_FLOAT);
+	screen_rnd_tex = new Texture2D(GetWindowWidth(), GetWindowHeight(), screen_rnd.data(), GL_R16F, GL_RED, GL_FLOAT);
 
 	for (int i = 0; i < 1024; i++)
 	{
@@ -189,20 +189,20 @@ bool TestComplex::OnCreate()
 	rnd_ubo->use(1);
 
 	ssao_shader = new Shader("ExampleData/shaders/TestComplex/ssao.vert", "ExampleData/shaders/TestComplex/ssao.frag");
-	ssao_texture = new Texture2D(GetWidth(), GetHeight());
-	ssao_fbo = new FramebufferObject({ ssao_texture }, GetWidth(), GetHeight());
+	ssao_texture = new Texture2D(GetWindowWidth(), GetWindowHeight());
+	ssao_fbo = new FramebufferObject({ ssao_texture }, GetWindowWidth(), GetWindowHeight());
 
 	lighting_shader = new Shader("ExampleData/shaders/TestComplex/lighting.vs", "ExampleData/shaders/TestComplex/lighting.fs");
-	lighting_tex = new Texture2D(GetWidth(), GetHeight());
-	lighting_fbo = new FramebufferObject({ lighting_tex }, GetWidth(), GetHeight());
+	lighting_tex = new Texture2D(GetWindowWidth(), GetWindowHeight());
+	lighting_fbo = new FramebufferObject({ lighting_tex }, GetWindowWidth(), GetWindowHeight());
 
 	rsm_shader = new Shader("ExampleData/shaders/TestComplex/rsm.vs", "ExampleData/shaders/TestComplex/rsm.fs");
-	rsm_tex = new Texture2D(GetWidth(), GetHeight());
-	rsm_fbo = new FramebufferObject({ rsm_tex }, GetWidth(), GetHeight());
+	rsm_tex = new Texture2D(GetWindowWidth(), GetWindowHeight());
+	rsm_fbo = new FramebufferObject({ rsm_tex }, GetWindowWidth(), GetWindowHeight());
 
 	ssr_shader = new Shader("ExampleData/shaders/TestComplex/ssr.vs", "ExampleData/shaders/TestComplex/ssr.fs");
-	ssr_tex = new Texture2D(GetWidth(), GetHeight());
-	ssr_fbo = new FramebufferObject({ ssr_tex }, GetWidth(), GetHeight());
+	ssr_tex = new Texture2D(GetWindowWidth(), GetWindowHeight());
+	ssr_fbo = new FramebufferObject({ ssr_tex }, GetWindowWidth(), GetWindowHeight());
 
 	post_shader = new Shader("ExampleData/shaders/TestComplex/post.vert", "ExampleData/shaders/TestComplex/post.frag");
 
@@ -233,7 +233,7 @@ bool TestComplex::OnCreate()
 	return true;
 }
 //=============================================================================
-void TestComplex::OnDestroy()
+void TestComplex::OnClose()
 {
 }
 //=============================================================================
@@ -266,7 +266,7 @@ void TestComplex::OnRender()
 
 	// SHADOW STAGE
 	shadow_map_point_light->lightPass(scene_desc->point_lights[0].position, scene_desc->point_lights[0].intensity, &scene_desc->models);
-	glViewport(0, 0, GetWidth(), GetHeight());
+	glViewport(0, 0, GetWindowWidth(), GetWindowHeight());
 
 	// GEOMETRY STAGE
 	deferred->drawGeometry(&scene_desc->models, active_camera);

@@ -2,7 +2,7 @@
 
 #include "OpenGL4Simple.h"
 
-class Model;
+class ModelOLD;
 
 class DepthPrepass final
 {
@@ -11,7 +11,7 @@ public:
 	void Destroy();
 
 	void Start(int width, int heigh, const glm::mat4& vp);
-	void DrawModel(Model* model, const glm::mat4& modelMat);
+	void DrawModel(ModelOLD* model, const glm::mat4& modelMat);
 
 	void BindTexture(uint32_t index);
 

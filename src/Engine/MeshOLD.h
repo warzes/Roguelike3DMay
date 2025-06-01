@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "Material.h"
+#include "MaterialOLD.h"
 #include "OpenGL4Simple.h"
 
 #define MAX_BONE_INFLUENCE 4

@@ -36,8 +36,8 @@
 
 // Graphics
 #include "Camera.h"
-#include "Model.h"
-#include "Light.h"
+#include "ModelOLD.h"
+#include "LightOLD.h"
 
 #include "GraphicSystem.h"
 

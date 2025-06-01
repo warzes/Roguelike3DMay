@@ -67,11 +67,11 @@ void main()
 
 	gl4::ShaderProgramId lightSphereShader;
 
-	std::vector<Light> lights{};
+	std::vector<LightOLD> lights{};
 	std::vector<float> lightAngles{};
 	std::vector<float> lightRadii{};
 
-	Model* model;
+	ModelOLD* model;
 
 	PipelineDeferredSSAO* pipeline;
 	constexpr int noiseSize = 4;
@@ -80,12 +80,12 @@ void main()
 	float bias = 0.025f;
 }
 //=============================================================================
-EngineConfig TestDeferredSSAO::GetConfig() const
+EngineCreateInfo TestDeferredSSAO::GetCreateInfo() const
 {
 	return {};
 }
 //=============================================================================
-bool TestDeferredSSAO::OnCreate()
+bool TestDeferredSSAO::OnInit()
 {	
 	camera.SetPosition(glm::vec3(0.0f, 0.0f, -1.0f));
 
@@ -100,7 +100,7 @@ bool TestDeferredSSAO::OnCreate()
 	return true;
 }
 //=============================================================================
-void TestDeferredSSAO::OnDestroy()
+void TestDeferredSSAO::OnClose()
 {
 	delete pipeline;
 }
@@ -130,10 +130,10 @@ void TestDeferredSSAO::OnUpdate(float deltaTime)
 //=============================================================================
 void TestDeferredSSAO::OnRender()
 {
-	gl4::SetFrameBuffer({ 0 }, GetWidth(), GetHeight(), GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	gl4::SetFrameBuffer({ 0 }, GetWindowWidth(), GetWindowHeight(), GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glm::mat4 view = camera.GetViewMatrix();
-	glm::mat4 proj = glm::perspective(glm::radians(60.0f), GetAspect(), 0.01f, 1000.0f);
+	glm::mat4 proj = glm::perspective(glm::radians(60.0f), GetWindowAspect(), 0.01f, 1000.0f);
 
 	// 1 Geometry pass: render scene's geometry/color data into G buffer
 	pipeline->StartGeometryPass(proj, view);
@@ -182,7 +182,7 @@ void TestDeferredSSAO::OnResize(uint16_t width, uint16_t height)
 //=============================================================================
 void TestDeferredSSAO::InitScene()
 {
-	model = new Model("ExampleData/mesh/Sponza/Sponza.gltf");
+	model = new ModelOLD("ExampleData/mesh/Sponza/Sponza.gltf");
 }
 //=============================================================================
 void TestDeferredSSAO::UpdateLightPositions()
@@ -235,12 +235,12 @@ void TestDeferredSSAO::InitLights()
 //=============================================================================
 void TestDeferredSSAO::RenderLights()
 {
-	glm::mat4 proj = glm::perspective(glm::radians(60.0f), GetAspect(), 0.01f, 1000.0f);
+	glm::mat4 proj = glm::perspective(glm::radians(60.0f), GetWindowAspect(), 0.01f, 1000.0f);
 
 	glUseProgram(lightSphereShader);
 	gl4::SetUniform(lightSphereShader, "projection", proj);
 	gl4::SetUniform(lightSphereShader, "view", camera.GetViewMatrix());
-	for (const Light& light : lights)
+	for (const LightOLD& light : lights)
 	{
 		gl4::SetUniform(lightSphereShader, "lightPosition", light.Position);
 		gl4::SetUniform(lightSphereShader, "radius", 0.4f);

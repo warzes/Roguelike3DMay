@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "Light.h"
+#include "LightOLD.h"
 #include "OpenGL4Simple.h"
 
 class PipelineDeferredSSAO final
@@ -13,7 +13,7 @@ public:
 	void EndGeometryPass();
 	void StartSSAOPass(const glm::mat4& projection, int kernelSize, float radius, float bias );
 	void StartBlurPass();
-	void StartLightingPass(const std::vector<Light>& lights, const glm::mat4& cameraView, const glm::vec3& cameraPosition);
+	void StartLightingPass(const std::vector<LightOLD>& lights, const glm::mat4& cameraView, const glm::vec3& cameraPosition);
 	void Blit();
 
 	[[nodiscard]] auto GetGeometryShader() const

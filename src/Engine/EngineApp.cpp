@@ -16,93 +16,138 @@ extern "C"
 }
 #endif
 //=============================================================================
-bool IsExitApp{ false };
 IEngineApp* thisIEngineApp{ nullptr };
 //=============================================================================
 void ExitApp()
 {
-	IsExitApp = true;
-	// TODO: возможно выходить средствами glfw
+	if (thisIEngineApp)
+		thisIEngineApp->Exit();
+}
+//=============================================================================
+uint16_t GetWindowWidth()
+{
+	return thisIEngineApp->GetWindowWidth();
+}
+//=============================================================================
+uint16_t GetWindowHeight()
+{
+	return thisIEngineApp->GetWindowHeight();
+}
+//=============================================================================
+float GetWindowAspect()
+{
+	return thisIEngineApp->GetWindowAspect();
+}
+//=============================================================================
+bool GetKeyDown(int key)
+{
+	return thisIEngineApp->GetKeyDown(key);
+}
+//=============================================================================
+bool GetMouseButton(int button)
+{
+	return thisIEngineApp->GetMouseButton(button);
+}
+//=============================================================================
+int GetMousePositionX()
+{
+	return thisIEngineApp->GetMousePositionX();
+}
+//=============================================================================
+int GetMousePositionY()
+{
+	return thisIEngineApp->GetMousePositionY();
 }
 //=============================================================================
 #if defined(_DEBUG)
-void openGLErrorCallback(GLenum source, GLenum type, GLuint id, GLenum severity, [[maybe_unused]] GLsizei length, const GLchar* message, [[maybe_unused]] const void* user_param) noexcept
+namespace
 {
-	// Ignore certain verbose info messages (particularly ones on Nvidia).
-	if (id == 131169 ||
-		id == 131185 || // NV: Buffer will use video memory
-		id == 131218 ||
-		id == 131204 || // Texture cannot be used for texture mapping
-		id == 131222 ||
-		id == 131154 || // NV: pixel transfer is synchronized with 3D rendering
-		id == 0         // gl{Push, Pop}DebugGroup
-		)
-		return;
+	void openGLErrorCallback(GLenum source, GLenum type, GLuint id, GLenum severity, [[maybe_unused]] GLsizei length, const GLchar* message, [[maybe_unused]] const void* user_param) noexcept
+	{
+		// Ignore certain verbose info messages (particularly ones on Nvidia).
+		if (id == 131169 ||
+			id == 131185 || // NV: Buffer will use video memory
+			id == 131218 ||
+			id == 131204 || // Texture cannot be used for texture mapping
+			id == 131222 ||
+			id == 131154 || // NV: pixel transfer is synchronized with 3D rendering
+			id == 0         // gl{Push, Pop}DebugGroup
+			)
+			return;
 
-	const auto sourceStr = [source]() {
-		switch (source)
-		{
-		case GL_DEBUG_SOURCE_API:             return "Source: API";
-		case GL_DEBUG_SOURCE_WINDOW_SYSTEM:   return "Source: Window Manager";
-		case GL_DEBUG_SOURCE_SHADER_COMPILER: return "Source: Shader Compiler";
-		case GL_DEBUG_SOURCE_THIRD_PARTY:     return "Source: Third Party";
-		case GL_DEBUG_SOURCE_APPLICATION:     return "Source: Application";
-		case GL_DEBUG_SOURCE_OTHER:           return "Source: Other";
-		}
-		return "";
-		}();
+		const auto sourceStr = [source]() {
+			switch (source)
+			{
+			case GL_DEBUG_SOURCE_API:             return "Source: API";
+			case GL_DEBUG_SOURCE_WINDOW_SYSTEM:   return "Source: Window Manager";
+			case GL_DEBUG_SOURCE_SHADER_COMPILER: return "Source: Shader Compiler";
+			case GL_DEBUG_SOURCE_THIRD_PARTY:     return "Source: Third Party";
+			case GL_DEBUG_SOURCE_APPLICATION:     return "Source: Application";
+			case GL_DEBUG_SOURCE_OTHER:           return "Source: Other";
+			}
+			return "";
+			}();
 
-	const auto typeStr = [type]() {
-		switch (type)
-		{
-		case GL_DEBUG_TYPE_ERROR:               return "Type: Error";
-		case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR: return "Type: Deprecated Behavior";
-		case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:  return "Type: Undefined Behavior";
-		case GL_DEBUG_TYPE_PORTABILITY:         return "Type: Portability";
-		case GL_DEBUG_TYPE_PERFORMANCE:         return "Type: Performance";
-		case GL_DEBUG_TYPE_MARKER:              return "Type: Marker";
-		case GL_DEBUG_TYPE_PUSH_GROUP:          return "Type: Push Group";
-		case GL_DEBUG_TYPE_POP_GROUP:           return "Type: Pop Group";
-		case GL_DEBUG_TYPE_OTHER:               return "Type: Other";
-		}
-		return "";
-		}();
+		const auto typeStr = [type]() {
+			switch (type)
+			{
+			case GL_DEBUG_TYPE_ERROR:               return "Type: Error";
+			case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR: return "Type: Deprecated Behavior";
+			case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:  return "Type: Undefined Behavior";
+			case GL_DEBUG_TYPE_PORTABILITY:         return "Type: Portability";
+			case GL_DEBUG_TYPE_PERFORMANCE:         return "Type: Performance";
+			case GL_DEBUG_TYPE_MARKER:              return "Type: Marker";
+			case GL_DEBUG_TYPE_PUSH_GROUP:          return "Type: Push Group";
+			case GL_DEBUG_TYPE_POP_GROUP:           return "Type: Pop Group";
+			case GL_DEBUG_TYPE_OTHER:               return "Type: Other";
+			}
+			return "";
+			}();
 
-	const auto severityStr = [severity]() {
-		switch (severity) {
-		case GL_DEBUG_SEVERITY_NOTIFICATION: return "Severity: notification";
-		case GL_DEBUG_SEVERITY_LOW:          return "Severity: low";
-		case GL_DEBUG_SEVERITY_MEDIUM:       return "Severity: medium";
-		case GL_DEBUG_SEVERITY_HIGH:         return "Severity: high";
-		}
-		return "";
-		}();
+		const auto severityStr = [severity]() {
+			switch (severity) {
+			case GL_DEBUG_SEVERITY_NOTIFICATION: return "Severity: notification";
+			case GL_DEBUG_SEVERITY_LOW:          return "Severity: low";
+			case GL_DEBUG_SEVERITY_MEDIUM:       return "Severity: medium";
+			case GL_DEBUG_SEVERITY_HIGH:         return "Severity: high";
+			}
+			return "";
+			}();
 
-	const std::string msg = "OpenGL Debug message(id=" + std::to_string(id) + "):\n"
-		+ sourceStr + '\n'
-		+ typeStr + '\n'
-		+ severityStr + '\n'
-		+ "Message: " + std::string(message) + '\n';
-	Error(msg);
+		const std::string msg = "OpenGL Debug message(id=" + std::to_string(id) + "):\n"
+			+ sourceStr + '\n'
+			+ typeStr + '\n'
+			+ severityStr + '\n'
+			+ "Message: " + std::string(message) + '\n';
+		Error(msg);
+	}
 }
 #endif
 //=============================================================================
-void windowIconifyCallback([[maybe_unused]] GLFWwindow* window, [[maybe_unused]] int minimized) noexcept
+void windowIconifyCallback(
+	[[maybe_unused]] GLFWwindow* window,
+	[[maybe_unused]] int minimized) noexcept
 {
 
 }
 //=============================================================================
-void windowMaximizeCallback([[maybe_unused]] GLFWwindow* window, [[maybe_unused]] int maximized) noexcept
+void windowMaximizeCallback(
+	[[maybe_unused]] GLFWwindow* window,
+	[[maybe_unused]] int maximized) noexcept
 {
 
 }
 //=============================================================================
-void cursorEnterCallback([[maybe_unused]] GLFWwindow* window, [[maybe_unused]] int entered) noexcept
+void cursorEnterCallback(
+	[[maybe_unused]] GLFWwindow* window,
+	[[maybe_unused]] int entered) noexcept
 {
 
 }
 //=============================================================================
-void framebufferSizeCallback([[maybe_unused]] GLFWwindow* window, int width, int height) noexcept
+void framebufferSizeCallback(
+	[[maybe_unused]] GLFWwindow* window,
+	int width, int height) noexcept
 {
 	if (width < 0 || height < 0) return;
 	width = std::max(width, 1);
@@ -134,6 +179,7 @@ void keyCallback(GLFWwindow* window, int key, int scanCode, int action, int mods
 		}
 	}
 	//std::string keyName = glfwGetKeyName(key, 0);
+	thisIEngineApp->OnKey(key, scanCode, action, mods);
 }
 //=============================================================================
 void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods) noexcept
@@ -151,17 +197,22 @@ void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods) n
 			thisIEngineApp->m_mouseButtons[static_cast<size_t>(button)] = false;
 		}
 	}
+
+	thisIEngineApp->OnMouseButton(button, action, mods);
 }
 //=============================================================================
 void mouseCursorPosCallback([[maybe_unused]] GLFWwindow* window, double xpos, double ypos) noexcept
 {
 	thisIEngineApp->m_currentMousePositionX = xpos;
 	thisIEngineApp->m_currentMousePositionY = ypos;
+
+	thisIEngineApp->OnMousePos(xpos, ypos);
 }
 //=============================================================================
 void mouseScrollCallback(GLFWwindow* window, double xoffset, double yoffset) noexcept
 {
 	ImGui_ImplGlfw_ScrollCallback(window, xoffset, yoffset);
+	thisIEngineApp->OnScroll(xoffset, yoffset);
 }
 //=============================================================================
 void charCallback(GLFWwindow* window, unsigned int c) noexcept
@@ -171,53 +222,61 @@ void charCallback(GLFWwindow* window, unsigned int c) noexcept
 //=============================================================================
 void IEngineApp::Run()
 {
-	if (create())
+	if (init())
 	{
-		float lastTime = 0.0f;
+		double lastTime = glfwGetTime();
 		while (!shouldWindowClose())
 		{
-			// calc deltatime
-			float currentTime = static_cast<float>(glfwGetTime());
-			m_deltaTime = currentTime - lastTime;
-			lastTime = currentTime;
-
-			m_mouseDeltaX = m_currentMousePositionX - m_mouseLastX;
-			m_mouseDeltaY = m_currentMousePositionY - m_mouseLastY;
-			m_mouseLastX = m_currentMousePositionX;
-			m_mouseLastY = m_currentMousePositionY;
-
 			profiler::BeginFrame();
 
+			// update
 			{
 				SE_SCOPED_SAMPLE("Update");
+
+				// calc deltatime
+				const double currentTime = glfwGetTime();
+				m_deltaTime = static_cast<float>(currentTime - lastTime);
+				lastTime = currentTime;
+				// calc fps
+				fpsTick(m_deltaTime);
+
+				m_mouseDeltaX = m_currentMousePositionX - m_mouseLastX;
+				m_mouseDeltaY = m_currentMousePositionY - m_mouseLastY;
+				m_mouseLastX = m_currentMousePositionX;
+				m_mouseLastY = m_currentMousePositionY;
+
 				OnUpdate(m_deltaTime);
 			}
 
+			// render
+			if (m_canRender)
 			{
-				SE_SCOPED_SAMPLE("Render");
-				OnRender();
-			}
-			
-			{
-				SE_SCOPED_SAMPLE("ImGui Frame");
-				// Start a new ImGUi frame
-				ImGui_ImplOpenGL3_NewFrame();
-				ImGui_ImplGlfw_NewFrame();
-				ImGui::NewFrame();
-					
-				OnImGuiDraw();
-
-				// Updates ImGui
-				ImGui::Render();
-				auto* drawData = ImGui::GetDrawData();
-				if (drawData->CmdListsCount > 0)
 				{
-					// A frame marker is inserted to distinguish ImGui rendering from the application's in a debugger.
-					auto marker = gl4::ScopedDebugMarker("Draw ImGui");
-					glDisable(GL_FRAMEBUFFER_SRGB);
-					glBindFramebuffer(GL_FRAMEBUFFER, 0);
-					ImGui_ImplOpenGL3_RenderDrawData(drawData);
-					glEnable(GL_FRAMEBUFFER_SRGB);
+					SE_SCOPED_SAMPLE("Render");
+					OnRender();
+				}
+
+				{
+					SE_SCOPED_SAMPLE("ImGui Frame");
+					// Start a new ImGUi frame
+					ImGui_ImplOpenGL3_NewFrame();
+					ImGui_ImplGlfw_NewFrame();
+					ImGui::NewFrame();
+
+					OnImGuiDraw();
+
+					// Updates ImGui
+					ImGui::Render();
+					auto* drawData = ImGui::GetDrawData();
+					if (drawData->CmdListsCount > 0)
+					{
+						// A frame marker is inserted to distinguish ImGui rendering from the application's in a debugger.
+						auto marker = gl4::ScopedDebugMarker("Draw ImGui");
+						glDisable(GL_FRAMEBUFFER_SRGB);
+						glBindFramebuffer(GL_FRAMEBUFFER, 0);
+						ImGui_ImplOpenGL3_RenderDrawData(drawData);
+						glEnable(GL_FRAMEBUFFER_SRGB);
+					}
 				}
 			}
 
@@ -226,18 +285,18 @@ void IEngineApp::Run()
 			{
 				SetCursorPosition({ m_width / 2, m_height / 2 });
 			}
-			
-			profiler::EndFrame();
 			glfwSwapBuffers(m_window);
 			glfwPollEvents();
+
+			profiler::EndFrame();
 		}
 	}
-	destroy();
+	close();
 }
 //=============================================================================
-float IEngineApp::GetAspect() const
+void IEngineApp::Exit()
 {
-	return (float)m_width / (float)m_height;
+	glfwSetWindowShouldClose(m_window, GLFW_TRUE);
 }
 //=============================================================================
 bool IEngineApp::GetKeyDown(int key)
@@ -276,6 +335,23 @@ void IEngineApp::DrawProfilerInfo()
 	profiler::Ui();
 }
 //=============================================================================
+void IEngineApp::DrawFPS()
+{
+	if (const ImGuiViewport* v = ImGui::GetMainViewport()) {
+		ImGui::SetNextWindowPos({ v->WorkPos.x + v->WorkSize.x - 15.0f, v->WorkPos.y + 15.0f }, ImGuiCond_Always, { 1.0f, 0.0f });
+	}
+	ImGui::SetNextWindowBgAlpha(0.30f);
+	ImGui::SetNextWindowSize(ImVec2(ImGui::CalcTextSize("FPS : _______").x, 0));
+	if (ImGui::Begin("##FPS",
+		nullptr,
+		ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings |
+		ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoMove)) {
+		ImGui::Text("FPS : %i", (int)m_currentFPS);
+		ImGui::Text("Ms  : %.1f", m_currentFPS > 0 ? 1000.0 / m_currentFPS : 0);
+	}
+	ImGui::End();
+}
+//=============================================================================
 void IEngineApp::SetCursorVisible(bool visible)
 {
 	if (m_cursorVisible != visible)
@@ -285,14 +361,14 @@ void IEngineApp::SetCursorVisible(bool visible)
 	}
 }
 //=============================================================================
-bool IEngineApp::create()
+bool IEngineApp::init()
 {
-	auto engineConfig = GetConfig();
+	auto engineConfig = GetCreateInfo();
 
 	void ClearOpenGLState();
 	ClearOpenGLState();
 
-	if (!createWindow(engineConfig))
+	if (!initWindow(engineConfig))
 		return false;
 	initOpenGL();
 	initImGui();
@@ -302,13 +378,12 @@ bool IEngineApp::create()
 
 	profiler::Init();
 	thisIEngineApp = this;
-	IsExitApp = false;
-	return OnCreate();
+	return OnInit();
 }
 //=============================================================================
-bool IEngineApp::createWindow(const EngineConfig& config)
+bool IEngineApp::initWindow(const EngineCreateInfo& config)
 {
-	glfwSetErrorCallback([](int e, const char* str) { Fatal("GLTF Context error(" + std::to_string(e) + "): " + str); });
+	glfwSetErrorCallback([](int e, const char* str) noexcept { Fatal("GLTF Context error(" + std::to_string(e) + "): " + str); });
 
 	if (!glfwInit())
 	{
@@ -330,6 +405,7 @@ bool IEngineApp::createWindow(const EngineConfig& config)
 	glfwWindowHint(GLFW_SRGB_CAPABLE, GLFW_TRUE);
 
 	glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
+	glfwWindowHint(GLFW_RESIZABLE, config.window.resizable ? GLFW_TRUE : GLFW_FALSE);
 	glfwWindowHint(GLFW_MAXIMIZED, config.window.maximized ? GL_TRUE : GL_FALSE);
 	glfwWindowHint(GLFW_DECORATED, config.window.decorate ? GL_TRUE : GL_FALSE);
 
@@ -436,12 +512,12 @@ void IEngineApp::initImGui()
 //=============================================================================
 bool IEngineApp::shouldWindowClose() const
 {
-	return IsExitApp || glfwWindowShouldClose(m_window);
+	return glfwWindowShouldClose(m_window);
 }
 //=============================================================================
-void IEngineApp::destroy()
+void IEngineApp::close()
 {
-	OnDestroy();
+	OnClose();
 
 	void ClearResourceCache();
 	ClearResourceCache();
@@ -468,43 +544,25 @@ void IEngineApp::destroy()
 //=============================================================================
 void IEngineApp::windowResize(int width, int height)
 {
+	if (width == m_width && height == m_height) return;
 	m_width = static_cast<uint16_t>(width);
 	m_height = static_cast<uint16_t>(height);
+	m_windowAspect = static_cast<float>(width) / static_cast<float>(height);
 	OnResize(m_width, m_height);
 }
 //=============================================================================
-uint16_t GetWindowWidth()
+void IEngineApp::fpsTick(float deltaSeconds, bool frameRendered)
 {
-	return thisIEngineApp->GetWidth();
-}
-//=============================================================================
-uint16_t GetWindowHeight()
-{
-	return thisIEngineApp->GetHeight();
-}
-//=============================================================================
-float GetWindowAspect()
-{
-	return thisIEngineApp->GetAspect();
-}
-//=============================================================================
-bool GetKeyDown(int key)
-{
-	return thisIEngineApp->GetKeyDown(key);
-}
-//=============================================================================
-bool GetMouseButton(int button)
-{
-	return thisIEngineApp->GetMouseButton(button);
-}
-//=============================================================================
-int GetMousePositionX()
-{
-	return thisIEngineApp->GetMousePositionX();
-}
-//=============================================================================
-int GetMousePositionY()
-{
-	return thisIEngineApp->GetMousePositionY();
+	if (frameRendered)
+		m_numFrames++;
+
+	m_accumulatedTime += deltaSeconds;
+
+	if (m_accumulatedTime > m_avgInterval)
+	{
+		m_currentFPS = static_cast<float>(m_numFrames / m_accumulatedTime);
+		m_numFrames = 0;
+		m_accumulatedTime = 0;
+	}
 }
 //=============================================================================

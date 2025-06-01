@@ -1,7 +1,7 @@
 ﻿#include "stdafx.h"
 #include "DepthPrepass.h"
 #include "OpenGL4Simple.h"
-#include "Model.h"
+#include "ModelOLD.h"
 //=============================================================================
 void DepthPrepass::Create(int width, int height)
 {
@@ -56,7 +56,7 @@ void DepthPrepass::Start(int width, int height, const glm::mat4& vp)
 	gl4::SetUniform(m_program, m_uniformVPLoc, vp);
 }
 //=============================================================================
-void DepthPrepass::DrawModel(Model* model, const glm::mat4& modelMat)
+void DepthPrepass::DrawModel(ModelOLD* model, const glm::mat4& modelMat)
 {
 	gl4::SetUniform(m_program, m_uniformModelLoc, modelMat);
 	model->Draw(m_program, true);

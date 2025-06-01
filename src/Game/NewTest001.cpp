@@ -70,12 +70,12 @@ void main()
 	}
 }
 //=============================================================================
-EngineConfig NewTest001::GetConfig() const
+EngineCreateInfo NewTest001::GetCreateInfo() const
 {
 	return {};
 }
 //=============================================================================
-bool NewTest001::OnCreate()
+bool NewTest001::OnInit()
 {
 	static constexpr std::array<float, 6> triPositions = { 
 		 0.0f,  0.4f, 
@@ -89,7 +89,7 @@ bool NewTest001::OnCreate()
 	return true;
 }
 //=============================================================================
-void NewTest001::OnDestroy()
+void NewTest001::OnClose()
 {
 	vertexPosBuffer = {};
 	vertexColorBuffer = {};

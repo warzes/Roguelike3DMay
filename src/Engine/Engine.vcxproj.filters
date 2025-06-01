@@ -20,19 +20,19 @@
     <ClCompile Include="Camera.cpp">
       <Filter>OLD\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="Material.cpp">
+    <ClCompile Include="MaterialOLD.cpp">
       <Filter>OLD\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="Mesh.cpp">
+    <ClCompile Include="MeshOLD.cpp">
       <Filter>OLD\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="Model.cpp">
+    <ClCompile Include="ModelOLD.cpp">
       <Filter>OLD\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="PipelineShadowMapping.cpp">
       <Filter>OLD\Render\Pipelines</Filter>
     </ClCompile>
-    <ClCompile Include="Light.cpp">
+    <ClCompile Include="LightOLD.cpp">
       <Filter>OLD\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="PipelineDeferredSSAO.cpp">
@@ -101,6 +101,9 @@
     <ClCompile Include="OpenGL4Cmd.cpp">
       <Filter>RHI</Filter>
     </ClCompile>
+    <ClCompile Include="BoundingBox.cpp">
+      <Filter>Math</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -123,19 +126,19 @@
     <ClInclude Include="Camera.h">
       <Filter>OLD\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="Material.h">
+    <ClInclude Include="MaterialOLD.h">
       <Filter>OLD\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="Mesh.h">
+    <ClInclude Include="MeshOLD.h">
       <Filter>OLD\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="Model.h">
+    <ClInclude Include="ModelOLD.h">
       <Filter>OLD\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="PipelineShadowMapping.h">
       <Filter>OLD\Render\Pipelines</Filter>
     </ClInclude>
-    <ClInclude Include="Light.h">
+    <ClInclude Include="LightOLD.h">
       <Filter>OLD\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="PipelineDeferredSSAO.h">
@@ -239,6 +242,9 @@
     </ClInclude>
     <ClInclude Include="OpenGL4Cmd.h">
       <Filter>RHI</Filter>
+    </ClInclude>
+    <ClInclude Include="BoundingBox.h">
+      <Filter>Math</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

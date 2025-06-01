@@ -137,15 +137,15 @@ void main()
 
 	glm::vec3 lightPos(1.0f, 0.5f, 0.0f);
 
-	Model* model;
+	ModelOLD* model;
 }
 //=============================================================================
-EngineConfig TestCascadedShadowMaps::GetConfig() const
+EngineCreateInfo TestCascadedShadowMaps::GetCreateInfo() const
 {
 	return {};
 }
 //=============================================================================
-bool TestCascadedShadowMaps::OnCreate()
+bool TestCascadedShadowMaps::OnInit()
 {
 	program = gl4::CreateShaderProgram(shaderCodeVertex, shaderCodeFragment);
 
@@ -159,7 +159,7 @@ bool TestCascadedShadowMaps::OnCreate()
 
 	texture = gl4::LoadTexture2D("ExampleData/textures/wood.png", false);
 
-	model = new Model("ExampleData/mesh/Sponza/Sponza.gltf");
+	model = new ModelOLD("ExampleData/mesh/Sponza/Sponza.gltf");
 
 	struct Vertex
 	{
@@ -198,7 +198,7 @@ bool TestCascadedShadowMaps::OnCreate()
 	return true;
 }
 //=============================================================================
-void TestCascadedShadowMaps::OnDestroy()
+void TestCascadedShadowMaps::OnClose()
 {
 	glDeleteTextures(1, &texture);
 	gl4::Destroy(program);
@@ -231,11 +231,11 @@ void TestCascadedShadowMaps::OnUpdate(float deltaTime)
 //=============================================================================
 void TestCascadedShadowMaps::OnRender()
 {
-	gl4::SetFrameBuffer({ 0 }, GetWidth(), GetHeight(), GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	gl4::SetFrameBuffer({ 0 }, GetWindowWidth(), GetWindowHeight(), GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	mvpData.model = glm::mat4(1.0f);
 	mvpData.view = camera.GetViewMatrix();
-	mvpData.projection = glm::perspective(glm::radians(60.0f), GetAspect(), 0.01f, 1000.0f);
+	mvpData.projection = glm::perspective(glm::radians(60.0f), GetWindowAspect(), 0.01f, 1000.0f);
 
 	lightData.lightPos = lightPos;
 	lightData.viewPos = camera.Position;

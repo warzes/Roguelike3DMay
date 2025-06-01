@@ -146,12 +146,12 @@ void main()
 	}
 }
 //=============================================================================
-EngineConfig NewTest004::GetConfig() const
+EngineCreateInfo NewTest004::GetCreateInfo() const
 {
 	return {};
 }
 //=============================================================================
-bool NewTest004::OnCreate()
+bool NewTest004::OnInit()
 {
 	std::vector<Vertex> v = {
 		{{  0.0f,  0.4f}, {1, 0, 0}},
@@ -178,7 +178,7 @@ bool NewTest004::OnCreate()
 	return true;
 }
 //=============================================================================
-void NewTest004::OnDestroy()
+void NewTest004::OnClose()
 {
 	vertexBuffer1 = {};
 	vertexBuffer2 = {};

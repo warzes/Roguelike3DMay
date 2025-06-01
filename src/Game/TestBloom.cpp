@@ -70,8 +70,8 @@ void main()
 
 	Camera camera;
 
-	Model* model;
-	Light light(glm::vec3(0.0f, 0.5f, 5.0f), glm::vec3(1.f));
+	ModelOLD* model;
+	LightOLD light(glm::vec3(0.0f, 0.5f, 5.0f), glm::vec3(1.f));
 
 	auto modelRotation = acos(-1.f);
 	unsigned int blurIter = 50;
@@ -79,19 +79,19 @@ void main()
 	PipelineBloom* pipeline;
 }
 //=============================================================================
-EngineConfig TestBloom::GetConfig() const
+EngineCreateInfo TestBloom::GetCreateInfo() const
 {
 	return {};
 }
 //=============================================================================
-bool TestBloom::OnCreate()
+bool TestBloom::OnInit()
 {
 	program = gl4::CreateShaderProgram(lightShaderCodeVertex, lightShaderCodeFragment);
 	lightPositionLoc = gl4::GetUniformLocation(program, "lightPosition");
 	radiusLoc = gl4::GetUniformLocation(program, "radius");
 	lightColorLoc = gl4::GetUniformLocation(program, "lightColor");
 
-	model = new Model("ExampleData/mesh/Zaku/scene.gltf");
+	model = new ModelOLD("ExampleData/mesh/Zaku/scene.gltf");
 
 	pipeline = new PipelineBloom(blurIter);
 
@@ -101,7 +101,7 @@ bool TestBloom::OnCreate()
 	return true;
 }
 //=============================================================================
-void TestBloom::OnDestroy()
+void TestBloom::OnClose()
 {
 	delete model;
 	delete pipeline;
@@ -133,10 +133,10 @@ void TestBloom::OnUpdate(float deltaTime)
 //=============================================================================
 void TestBloom::OnRender()
 {
-	gl4::SetFrameBuffer({ 0 }, GetWidth(), GetHeight(), GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	gl4::SetFrameBuffer({ 0 }, GetWindowWidth(), GetWindowHeight(), GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glm::mat4 view = camera.GetViewMatrix();
-	glm::mat4 proj = glm::perspective(glm::radians(60.0f), GetAspect(), 0.01f, 1000.0f);
+	glm::mat4 proj = glm::perspective(glm::radians(60.0f), GetWindowAspect(), 0.01f, 1000.0f);
 
 
 	// First pass

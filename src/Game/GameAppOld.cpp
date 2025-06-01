@@ -149,7 +149,7 @@ void main()
 
 	Camera camera;
 
-	Model* model;
+	ModelOLD* model;
 
 	// World space positions of our cubes
 	const glm::vec3 cubePositions[]{
@@ -166,12 +166,12 @@ void main()
 	};
 }
 //=============================================================================
-EngineConfig GameAppOld::GetConfig() const
+EngineCreateInfo GameAppOld::GetCreateInfo() const
 {
 	return {};
 }
 //=============================================================================
-bool GameAppOld::OnCreate()
+bool GameAppOld::OnInit()
 {
 	program = gl4::CreateShaderProgram(shaderCodeVertex, shaderCodeFragment);
 	ModelLoc = gl4::GetUniformLocation(program, "Model");
@@ -223,7 +223,7 @@ bool GameAppOld::OnCreate()
 
 	camera.SetPosition(glm::vec3(0.0f, 0.0f, -1.0f));
 
-	model = new Model("ExampleData/mesh/Sponza/Sponza.gltf");
+	model = new ModelOLD("ExampleData/mesh/Sponza/Sponza.gltf");
 
 	glClearColor(0.7f, 0.8f, 0.9f, 1.0f);
 	glEnable(GL_DEPTH_TEST);
@@ -231,7 +231,7 @@ bool GameAppOld::OnCreate()
 	return true;
 }
 //=============================================================================
-void GameAppOld::OnDestroy()
+void GameAppOld::OnClose()
 {
 	glDeleteTextures(1, &texture);
 	gl4::Destroy(program);
@@ -265,11 +265,11 @@ void GameAppOld::OnUpdate(float deltaTime)
 //=============================================================================
 void GameAppOld::OnRender()
 {
-	gl4::SetFrameBuffer({ 0 }, GetWidth(), GetHeight(), GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	gl4::SetFrameBuffer({ 0 }, GetWindowWidth(), GetWindowHeight(), GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glm::mat4 matmodel = glm::mat4(1.0f);
 	glm::mat4 view = camera.GetViewMatrix();
-	glm::mat4 proj = glm::perspective(glm::radians(60.0f), GetAspect(), 0.01f, 1000.0f);
+	glm::mat4 proj = glm::perspective(glm::radians(60.0f), GetWindowAspect(), 0.01f, 1000.0f);
 
 	// вывод квада
 	{
@@ -325,5 +325,21 @@ void GameAppOld::OnImGuiDraw()
 void GameAppOld::OnResize(uint16_t width, uint16_t height)
 {
 
+}
+//=============================================================================
+void GameAppOld::OnMouseButton(int button, int action, int mods)
+{
+}
+//=============================================================================
+void GameAppOld::OnMousePos(double x, double y)
+{
+}
+//=============================================================================
+void GameAppOld::OnScroll(double dx, double dy)
+{
+}
+//=============================================================================
+void GameAppOld::OnKey(int key, int scanCode, int action, int mods)
+{
 }
 //=============================================================================

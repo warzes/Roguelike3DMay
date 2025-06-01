@@ -53,9 +53,6 @@ int main(
 	//NewTest003 game;
 	//NewTest004 game;
 
-
-
-
 	GameApp game;
 	game.Run();
 }

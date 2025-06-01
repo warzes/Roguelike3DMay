@@ -100,12 +100,12 @@ void main()
 	Camera camera;
 }
 //=============================================================================
-EngineConfig TestSkyboxWithCube::GetConfig() const
+EngineCreateInfo TestSkyboxWithCube::GetCreateInfo() const
 {
 	return {};
 }
 //=============================================================================
-bool TestSkyboxWithCube::OnCreate()
+bool TestSkyboxWithCube::OnInit()
 {
 	cubeProgram = gl4::CreateShaderProgram(cubeShaderVertex, cubeShaderFragment);
 	cubeModelLoc = gl4::GetUniformLocation(cubeProgram, "model");
@@ -138,7 +138,7 @@ bool TestSkyboxWithCube::OnCreate()
 	return true;
 }
 //=============================================================================
-void TestSkyboxWithCube::OnDestroy()
+void TestSkyboxWithCube::OnClose()
 {
 
 }
@@ -168,10 +168,10 @@ void TestSkyboxWithCube::OnUpdate(float deltaTime)
 //=============================================================================
 void TestSkyboxWithCube::OnRender()
 {
-	gl4::SetFrameBuffer({ 0 }, GetWidth(), GetHeight(), GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	gl4::SetFrameBuffer({ 0 }, GetWindowWidth(), GetWindowHeight(), GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glm::mat4 view = camera.GetViewMatrix();
-	glm::mat4 proj = glm::perspective(glm::radians(60.0f), GetAspect(), 0.01f, 1000.0f);
+	glm::mat4 proj = glm::perspective(glm::radians(60.0f), GetWindowAspect(), 0.01f, 1000.0f);
 
 	// Draw Cube
 	{

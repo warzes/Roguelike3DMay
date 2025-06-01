@@ -9,10 +9,10 @@ public:
 	void operator=(const NewTest004&) = delete;
 	void operator=(NewTest004&&) = delete;
 
-	EngineConfig GetConfig() const final;
+	EngineCreateInfo GetCreateInfo() const final;
 
-	bool OnCreate() final;
-	void OnDestroy() final;
+	bool OnInit() final;
+	void OnClose() final;
 	void OnUpdate(float deltaTime) final;
 	void OnRender() final;
 	void OnImGuiDraw() final;

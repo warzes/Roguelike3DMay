@@ -249,18 +249,18 @@ void main()
 
 	Camera camera;
 
-	std::vector<Light> lights;
+	std::vector<LightOLD> lights;
 
-	Model* renderModel1;
-	Model* renderModel2;
+	ModelOLD* renderModel1;
+	ModelOLD* renderModel2;
 }
 //=============================================================================
-EngineConfig TestPBR::GetConfig() const
+EngineCreateInfo TestPBR::GetCreateInfo() const
 {
 	return {};
 }
 //=============================================================================
-bool TestPBR::OnCreate()
+bool TestPBR::OnInit()
 {
 	shader = gl4::CreateShaderProgram(shaderCodeVertex, shaderCodeFragment);
 	lightSphereShader = gl4::CreateShaderProgram(shaderLightCodeVertex, shaderLightCodeFragment);
@@ -296,8 +296,8 @@ bool TestPBR::OnCreate()
 
 	camera.SetPosition(glm::vec3(0.0f, 0.0f, -1.0f));
 
-	renderModel1 = new Model("ExampleData/mesh/DamagedHelmet/DamagedHelmet.gltf");
-	renderModel2 = new Model("ExampleData/mesh/Tachikoma/Tachikoma.gltf");
+	renderModel1 = new ModelOLD("ExampleData/mesh/DamagedHelmet/DamagedHelmet.gltf");
+	renderModel2 = new ModelOLD("ExampleData/mesh/Tachikoma/Tachikoma.gltf");
 
 	glClearColor(0.7f, 0.8f, 0.9f, 1.0f);
 	glEnable(GL_DEPTH_TEST);
@@ -306,7 +306,7 @@ bool TestPBR::OnCreate()
 	return true;
 }
 //=============================================================================
-void TestPBR::OnDestroy()
+void TestPBR::OnClose()
 {
 }
 //=============================================================================
@@ -335,10 +335,10 @@ void TestPBR::OnUpdate(float deltaTime)
 //=============================================================================
 void TestPBR::OnRender()
 {
-	gl4::SetFrameBuffer({ 0 }, GetWidth(), GetHeight(), GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	gl4::SetFrameBuffer({ 0 }, GetWindowWidth(), GetWindowHeight(), GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glm::mat4 view = camera.GetViewMatrix();
-	glm::mat4 proj = glm::perspective(glm::radians(60.0f), GetAspect(), 0.01f, 1000.0f);
+	glm::mat4 proj = glm::perspective(glm::radians(60.0f), GetWindowAspect(), 0.01f, 1000.0f);
 
 	// вывод квада
 	{

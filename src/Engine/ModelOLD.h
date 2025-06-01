@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "Mesh.h"
+#include "MeshOLD.h"
 
 // TODO: добавить модельную матрицу
 
@@ -18,11 +18,11 @@
                            aiProcess_MakeLeftHanded |           \
                            aiProcess_CalcTangentSpace)
 
-class Model final
+class ModelOLD final
 {
 public:
-	Model(const std::string& path);
-	~Model();
+	ModelOLD(const std::string& path);
+	~ModelOLD();
 
 	void Draw(GLuint shaderProgram, bool skipTexture = false) const;
 

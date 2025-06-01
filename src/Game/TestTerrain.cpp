@@ -82,12 +82,12 @@ void main()
 	glm::vec3 lightPos(0.0f, 0.0f, 0.0f);
 }
 //=============================================================================
-EngineConfig TestTerrain::GetConfig() const
+EngineCreateInfo TestTerrain::GetCreateInfo() const
 {
 	return {};
 }
 //=============================================================================
-bool TestTerrain::OnCreate()
+bool TestTerrain::OnInit()
 {
 	program = gl4::CreateShaderProgram(shaderCodeVertex, shaderCodeFragment);
 	ViewLoc = gl4::GetUniformLocation(program, "view");
@@ -136,7 +136,7 @@ bool TestTerrain::OnCreate()
 	return true;
 }
 //=============================================================================
-void TestTerrain::OnDestroy()
+void TestTerrain::OnClose()
 {
 	glDeleteTextures(1, &texture);
 	gl4::Destroy(program);
@@ -169,10 +169,10 @@ void TestTerrain::OnUpdate(float deltaTime)
 //=============================================================================
 void TestTerrain::OnRender()
 {
-	gl4::SetFrameBuffer({ 0 }, GetWidth(), GetHeight(), GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	gl4::SetFrameBuffer({ 0 }, GetWindowWidth(), GetWindowHeight(), GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glm::mat4 view = camera.GetViewMatrix();
-	glm::mat4 proj = glm::perspective(glm::radians(60.0f), GetAspect(), 0.01f, 1000.0f);
+	glm::mat4 proj = glm::perspective(glm::radians(60.0f), GetWindowAspect(), 0.01f, 1000.0f);
 
 	// вывод квада
 	{

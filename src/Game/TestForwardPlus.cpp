@@ -6,7 +6,7 @@
 namespace
 {
 	Camera camera;
-	Model* model;
+	ModelOLD* model;
 
 #define MAX_POINT_LIGHT_PER_TILE 2049
 #define TILE_SIZE 16
@@ -176,24 +176,24 @@ void main() {
 	}
 }
 //=============================================================================
-EngineConfig TestForwardPlus::GetConfig() const
+EngineCreateInfo TestForwardPlus::GetCreateInfo() const
 {
 	return {};
 }
 //=============================================================================
-bool TestForwardPlus::OnCreate()
+bool TestForwardPlus::OnInit()
 {
-	model = new Model("ExampleData/mesh/Sponza/Sponza.gltf");
+	model = new ModelOLD("ExampleData/mesh/Sponza/Sponza.gltf");
 	camera.SetPosition(glm::vec3(0.0f, 0.0f, -1.0f));
 
 	ViewModes = Modes::SHADED;
 
-	tileCountPerRow = (GetWidth() - 1) / TILE_SIZE + 1;
-	tileCountPerCol = (GetHeight() - 1) / TILE_SIZE + 1;
+	tileCountPerRow = (GetWindowWidth() - 1) / TILE_SIZE + 1;
+	tileCountPerCol = (GetWindowHeight() - 1) / TILE_SIZE + 1;
 
 	GLuint tilesCount = tileCountPerRow * tileCountPerCol;
 
-	depthPrepass.Create(GetWidth(), GetHeight());
+	depthPrepass.Create(GetWindowWidth(), GetWindowHeight());
 	depthDebugProgram = gl4::CreateShaderProgram(depthDebugShaderCodeVertex, depthDebugShaderCodeFragment);
 	lightCullingProgram = gl4::CreateShaderProgram(FileUtils::ReadShaderCode("ExampleData/shaders/TestForwardPlus/lightculling.comp", {}).c_str());
 
@@ -224,7 +224,7 @@ bool TestForwardPlus::OnCreate()
 	SetupLights();
 	
 	// Output buffer + color
-	ReCreateForwardPlusFBO(GetWidth(), GetHeight());
+	ReCreateForwardPlusFBO(GetWindowWidth(), GetWindowHeight());
 
 	glClearColor(0.7f, 0.8f, 0.9f, 1.0f);
 
@@ -238,7 +238,7 @@ bool TestForwardPlus::OnCreate()
 	return true;
 }
 //=============================================================================
-void TestForwardPlus::OnDestroy()
+void TestForwardPlus::OnClose()
 {
 	depthPrepass.Destroy();
 }
@@ -269,7 +269,7 @@ void TestForwardPlus::OnUpdate(float deltaTime)
 void TestForwardPlus::OnRender()
 {
 	glm::mat4 view = camera.GetViewMatrix();
-	glm::mat4 projection = glm::perspective(glm::radians(60.0f), GetAspect(), nearPlane, farPlane);
+	glm::mat4 projection = glm::perspective(glm::radians(60.0f), GetWindowAspect(), nearPlane, farPlane);
 	glm::mat4 viewProjection = projection * view;
 	glm::mat4 invViewProjection = glm::inverse(viewProjection);
 	glm::mat4 modelMat = glm::mat4(1.0f);
@@ -281,7 +281,7 @@ void TestForwardPlus::OnRender()
 		//glEnable(GL_POLYGON_OFFSET_FILL);
 		//glPolygonOffset(4.0f, 4.0f);
 
-		depthPrepass.Start(GetWidth(), GetHeight(), viewProjection);
+		depthPrepass.Start(GetWindowWidth(), GetWindowHeight(), viewProjection);
 		depthPrepass.DrawModel(model, modelMat); // TODO: модельную матрицу добавить в модель
 			
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -297,7 +297,7 @@ void TestForwardPlus::OnRender()
 		gl4::SetUniform(depthDebugProgram, "model", modelMat);
 		gl4::SetUniform(depthDebugProgram, "near", nearPlane);
 		gl4::SetUniform(depthDebugProgram, "far", farPlane);
-		gl4::SetFrameBuffer({ 0 }, GetWidth(), GetHeight(), GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		gl4::SetFrameBuffer({ 0 }, GetWindowWidth(), GetWindowHeight(), GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		model->Draw(depthDebugProgram, true);
 	}
 	else
@@ -309,7 +309,7 @@ void TestForwardPlus::OnRender()
 			gl4::SetUniform(lightCullingProgram, lightCullingInvViewProjectionLoc, invViewProjection);
 			gl4::SetUniform(lightCullingProgram, lightCullingCamPosLoc, camera.Position);
 			gl4::SetUniform(lightCullingProgram, lightCullingLightCountLoc, numberOfLights);
-			gl4::SetUniform(lightCullingProgram, lightCullingViewportSizeLoc, glm::ivec2(GetWidth(), GetHeight()));
+			gl4::SetUniform(lightCullingProgram, lightCullingViewportSizeLoc, glm::ivec2(GetWindowWidth(), GetWindowHeight()));
 			gl4::SetUniform(lightCullingProgram, lightCullingTileNumsLoc, glm::ivec2(tileCountPerRow, tileCountPerCol));
 
 			depthPrepass.BindTexture(0);
@@ -325,7 +325,7 @@ void TestForwardPlus::OnRender()
 		{
 			glEnable(GL_DEPTH_TEST);
 			glDepthFunc(GL_LESS);
-			gl4::SetFrameBuffer(renderFBO, GetWidth(), GetHeight(), GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+			gl4::SetFrameBuffer(renderFBO, GetWindowWidth(), GetWindowHeight(), GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 			glUseProgram(lightProgram);
 			gl4::SetUniform(lightProgram, lightProgramProjectionLoc, projection);
@@ -333,7 +333,7 @@ void TestForwardPlus::OnRender()
 			gl4::SetUniform(lightProgram, lightProgramModelLoc, modelMat);
 			gl4::SetUniform(lightProgram, lightProgramProjViewLoc, viewProjection);
 			gl4::SetUniform(lightProgram, lightProgramViewPositionLoc, camera.Position);
-			gl4::SetUniform(lightProgram, lightProgramViewportSizeLoc, glm::ivec2(GetWidth(), GetHeight()));
+			gl4::SetUniform(lightProgram, lightProgramViewportSizeLoc, glm::ivec2(GetWindowWidth(), GetWindowHeight()));
 			gl4::SetUniform(lightProgram, lightProgramTileNumsLoc, glm::ivec2(tileCountPerRow, tileCountPerCol));
 			gl4::SetUniform(lightProgram, lightProgramLightDebugLoc, (ViewModes == LIGHT) ? 1 : 0);
 
@@ -342,7 +342,7 @@ void TestForwardPlus::OnRender()
 
 		// 4) final draw
 		{
-			glBlitNamedFramebuffer(renderFBO, 0, 0, 0, GetWidth(), GetHeight(), 0, 0, GetWidth(), GetHeight(), GL_COLOR_BUFFER_BIT, GL_NEAREST);
+			glBlitNamedFramebuffer(renderFBO, 0, 0, 0, GetWindowWidth(), GetWindowHeight(), 0, 0, GetWindowWidth(), GetWindowHeight(), GL_COLOR_BUFFER_BIT, GL_NEAREST);
 		}
 	}
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, 0);

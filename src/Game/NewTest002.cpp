@@ -105,12 +105,12 @@ void main()
 	}
 }
 //=============================================================================
-EngineConfig NewTest002::GetConfig() const
+EngineCreateInfo NewTest002::GetCreateInfo() const
 {
 	return {};
 }
 //=============================================================================
-bool NewTest002::OnCreate()
+bool NewTest002::OnInit()
 {
 	static constexpr std::array<float, 6> triPositions = { -0.5, -0.5, 0.5, -0.5, 0.0, 0.5 };
 	static constexpr std::array<uint8_t, 9> triColors = { 255, 0, 0, 0, 255, 0, 0, 0, 255 };
@@ -124,7 +124,7 @@ bool NewTest002::OnCreate()
 	return true;
 }
 //=============================================================================
-void NewTest002::OnDestroy()
+void NewTest002::OnClose()
 {
 	vertexPosBuffer = {};
 	vertexColorBuffer = {};

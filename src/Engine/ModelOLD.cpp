@@ -1,5 +1,5 @@
 ﻿#include "stdafx.h"
-#include "Model.h"
+#include "ModelOLD.h"
 #include "Log.h"
 #include "OpenGL4Simple.h"
 //=============================================================================
@@ -8,12 +8,12 @@ inline glm::mat4 mat4_cast(const aiMatrix4x4& m)
 	return glm::transpose(glm::make_mat4(&m.a1));
 }
 //=============================================================================
-Model::Model(const std::string& path)
+ModelOLD::ModelOLD(const std::string& path)
 {
 	loadModel(path);
 }
 //=============================================================================
-Model::~Model()
+ModelOLD::~ModelOLD()
 {
 	for (MeshOLD& mesh : m_meshes)
 	{
@@ -21,7 +21,7 @@ Model::~Model()
 	}
 }
 //=============================================================================
-void Model::AddTextureIfEmpty(TextureType tType, const std::string& filePath)
+void ModelOLD::AddTextureIfEmpty(TextureType tType, const std::string& filePath)
 {
 	for (MeshOLD& mesh : m_meshes)
 	{
@@ -30,7 +30,7 @@ void Model::AddTextureIfEmpty(TextureType tType, const std::string& filePath)
 }
 //=============================================================================
 // Draws the model, and thus all its meshes
-void Model::Draw(GLuint shaderProgram, bool skipTexture) const
+void ModelOLD::Draw(GLuint shaderProgram, bool skipTexture) const
 {
 	for (const MeshOLD& mesh : m_meshes)
 	{
@@ -39,7 +39,7 @@ void Model::Draw(GLuint shaderProgram, bool skipTexture) const
 }
 //=============================================================================
 // Loads a model with supported ASSIMP extensions from file and stores the resulting meshes in the meshes vector.
-void Model::loadModel(const std::string& path)
+void ModelOLD::loadModel(const std::string& path)
 {
 	// Read file via ASSIMP
 	Assimp::Importer importer;
@@ -59,7 +59,7 @@ void Model::loadModel(const std::string& path)
 }
 //=============================================================================
 // Processes a node in a recursive fashion. Processes each individual mesh located at the node and repeats this process on its children nodes (if any).
-void Model::processNode(const aiNode* node, const aiScene* scene, const glm::mat4& parentTransform)
+void ModelOLD::processNode(const aiNode* node, const aiScene* scene, const glm::mat4& parentTransform)
 {
 	const glm::mat4 nodeTransform = mat4_cast(node->mTransformation);
 	const glm::mat4 totalTransform = parentTransform * nodeTransform;
@@ -80,7 +80,7 @@ void Model::processNode(const aiNode* node, const aiScene* scene, const glm::mat
 	}
 }
 //=============================================================================
-MeshOLD Model::processMesh(const aiMesh* mesh, const aiScene* scene, const glm::mat4& transform)
+MeshOLD ModelOLD::processMesh(const aiMesh* mesh, const aiScene* scene, const glm::mat4& transform)
 {
 	// Data to fill
 	std::vector<MeshVertexOLD> vertices;
