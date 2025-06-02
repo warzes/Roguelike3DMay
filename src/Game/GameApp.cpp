@@ -11,42 +11,6 @@
 //плоскость с текстурой
 //что-нибудь из демо pbr (или потом)
 //
-//#version 460 core
-//layout (location = 0) in vec3 aPos;
-//layout (location = 1) in vec3 aNormal;
-//layout (location = 2) in vec2 aTexCoord;
-//
-//layout (location = 0) out vec3 normal;
-//layout (location = 1) out vec2 texCoord;
-//
-//layout (std140, binding = 0) uniform Matrices {
-//    mat4 view;
-//    mat4 projection;
-//};
-//
-//void main() {
-//  gl_Position = projection * view * vec4(aPos, 1.0);
-//  normal = aNormal;
-//  texCoord = aTexCoord;
-//}
-//
-//#version 460 core
-//layout (location = 0) in vec3 normal;
-//layout (location = 1) in vec2 texCoord;
-//
-//out vec4 FragColor;
-//
-//uniform sampler2D tex;
-//vec3 lightPos = vec3(4.0, 5.0, -3.0);
-//vec3 lightColor = vec3(1.0, 1.0, 1.0);
-//
-//void main() {
-//  float lightAngle = max(dot(normalize(normal), normalize(lightPos)), 0.0);
-//  FragColor = texture(tex, texCoord) * vec4((0.3 + 0.7 * lightAngle) * lightColor, 1.0);
-//}
-
-
-
 //=============================================================================
 namespace
 {
@@ -64,7 +28,7 @@ out VS_OUT {
 	vec2 TexCoords;
 } vs_out;
 
-layout(binding = 0) uniform Uniforms { 
+layout(binding = 0) uniform Matrices { 
 	uniform mat4 model;
 	uniform mat4 view;
 	uniform mat4 proj;
@@ -88,16 +52,19 @@ in VS_OUT {
 	vec2 TexCoords;
 } fs_in;
 
-uniform sampler2D floorTexture;
+uniform sampler2D diffuseTex;
+
+vec3 lightPos = vec3(4.0, 5.0, -3.0);
+vec3 lightColor = vec3(1.0, 1.0, 1.0);
 
 layout(location = 0) out vec4 FragColor;
 
 void main()
 {
-	vec3 color = texture(floorTexture, fs_in.TexCoords).rgb;
+	float lightAngle = max(dot(normalize(fs_in.Normal), normalize(lightPos)), 0.0);
+	vec4 color = texture(diffuseTex, fs_in.TexCoords);
 
-
-	FragColor = vec4(color, 1.0);
+	FragColor = vec4(color.rgb, color.a) * vec4((0.3 + 0.7 * lightAngle) * lightColor, 1.0);
 }
 )";
 
@@ -146,6 +113,14 @@ void main()
 	std::optional<gl4::Texture> msColorTex;
 	std::optional<gl4::Texture> gDepth;
 
+	// tes mesh
+	std::vector<Vertex> mv;
+	std::vector<uint32_t> miv;
+	std::optional<gl4::Buffer> mVB;
+	std::optional<gl4::Buffer> mIB;
+
+
+
 	gl4::GraphicsPipeline CreatePipeline()
 	{
 		auto vertexShader = gl4::Shader(gl4::PipelineStage::VertexShader, shaderCodeVertex, "Triangle VS");
@@ -193,6 +168,54 @@ bool GameApp::OnInit()
 	std::vector<uint32_t> iv = { 0, 1, 2 };
 	indexBuffer = gl4::Buffer(std::span(iv));
 
+
+	{
+		const aiScene* scene = aiImportFile("CoreData/mesh/Cube/Cube.gltf", ASSIMP_LOAD_FLAGS);
+		if (!scene || !scene->HasMeshes())
+		{
+			Fatal("Not load mesh");
+			return false;
+		}
+
+		const aiMesh* mesh = scene->mMeshes[0];
+		mv.resize(mesh->mNumVertices);
+		for (size_t i = 0; i < mesh->mNumVertices; i++)
+		{
+			Vertex& nv = mv[i];
+
+			nv.pos.x = mesh->mVertices[i].x;
+			nv.pos.y = mesh->mVertices[i].y;
+			nv.pos.z = mesh->mVertices[i].z;
+
+			//if (mesh->HasNormals())
+			{
+				nv.normals.x = mesh->mNormals[i].x;
+				nv.normals.y = mesh->mNormals[i].y;
+				nv.normals.z = mesh->mNormals[i].z;
+			}
+
+			//if (mesh->HasTextureCoords(0))
+			{
+				nv.uv.x = mesh->mTextureCoords[0][i].x;
+				nv.uv.y = mesh->mTextureCoords[0][i].y;
+				const auto tc = mesh->mTextureCoords[0][i];
+			}
+		}
+		//miv.resize(mesh->mNumFaces * 3);
+		for (size_t i = 0; i < mesh->mNumFaces; i++)
+		{
+			for (size_t j = 0; j < 3; j++)
+			{
+				miv.emplace_back(mesh->mFaces[i].mIndices[j]);
+			}
+		}
+
+		aiReleaseImport(scene);
+
+		mVB = gl4::Buffer(std::span(mv));
+		mIB = gl4::Buffer(std::span(miv));
+	}
+
 	uniformBuffer1 = gl4::TypedBuffer<UBO>(gl4::BufferStorageFlag::DynamicStorage);
 
 	{
@@ -209,7 +232,6 @@ bool GameApp::OnInit()
 			});
 		stbi_image_free(noise);
 	}
-
 	gl4::SamplerState ss;
 	ss.minFilter = gl4::MinFilter::Nearest;
 	ss.magFilter = gl4::MagFilter::Nearest;
@@ -261,7 +283,7 @@ void GameApp::OnUpdate(float deltaTime)
 	UBO ubo;
 	ubo.model = glm::mat4(1.0f);
 	ubo.view = camera.GetViewMatrix();
-	ubo.proj = glm::perspective(glm::radians(65.0f), GetWindowAspect(), 0.01f, 1000.0f);
+	ubo.proj = glm::perspective(glm::radians(45.0f), GetWindowAspect(), 0.01f, 1000.0f);
 
 
 	uniformBuffer1->UpdateData(ubo);
@@ -292,8 +314,15 @@ void GameApp::OnRender()
 		gl4::Cmd::BindUniformBuffer(0, uniformBuffer1.value());
 		gl4::Cmd::BindSampledImage(0, diffuse.value(), sampler.value());
 
-		gl4::Cmd::Draw(6, 1, 0, 0);
+		//gl4::Cmd::Draw(6, 1, 0, 0);
 		//gl4::Cmd::DrawIndexed(3, 1, 0, 0, 0);
+
+		gl4::Cmd::BindGraphicsPipeline(pipeline.value());
+		gl4::Cmd::BindVertexBuffer(0, mVB.value(), 0, sizeof(Vertex));
+		gl4::Cmd::BindIndexBuffer(mIB.value(), gl4::IndexType::UNSIGNED_INT);
+		gl4::Cmd::BindUniformBuffer(0, uniformBuffer1.value());
+		gl4::Cmd::BindSampledImage(0, diffuse.value(), sampler.value());
+		gl4::Cmd::DrawIndexed(miv.size(), 1, 0, 0, 0);
 	}
 	gl4::EndRendering();
 
