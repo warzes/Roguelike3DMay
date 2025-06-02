@@ -123,6 +123,7 @@
     <ClCompile Include="OpenGL4Shader.cpp" />
     <ClCompile Include="OpenGL4Simple.cpp" />
     <ClCompile Include="OpenGL4Texture.cpp" />
+    <ClCompile Include="OpenGL4Timer.cpp" />
     <ClCompile Include="OpenGL4VertexArrayCache.cpp" />
     <ClCompile Include="PipelineBloom.cpp" />
     <ClCompile Include="PipelineDeferredSSAO.cpp" />
@@ -177,6 +178,7 @@
     <ClInclude Include="OpenGL4Shader.h" />
     <ClInclude Include="OpenGL4Simple.h" />
     <ClInclude Include="OpenGL4Texture.h" />
+    <ClInclude Include="OpenGL4Timer.h" />
     <ClInclude Include="OpenGL4VertexArrayCache.h" />
     <ClInclude Include="PipelineBloom.h" />
     <ClInclude Include="PipelineDeferredSSAO.h" />

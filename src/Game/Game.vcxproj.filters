@@ -60,6 +60,9 @@
     <ClCompile Include="GameApp.cpp">
       <Filter>GameApp</Filter>
     </ClCompile>
+    <ClCompile Include="RsmTechnique.cpp">
+      <Filter>GameApp\NewTest1</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -120,6 +123,9 @@
     </ClInclude>
     <ClInclude Include="GameApp.h">
       <Filter>GameApp</Filter>
+    </ClInclude>
+    <ClInclude Include="RsmTechnique.h">
+      <Filter>GameApp\NewTest1</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -443,6 +443,7 @@ bool IEngineApp::initWindow(const EngineCreateInfo& config)
 	glfwGetFramebufferSize(m_window, &displayW, &displayH);
 	m_width = static_cast<uint16_t>(displayW);
 	m_height = static_cast<uint16_t>(displayH);
+	m_windowAspect = static_cast<float>(m_width) / static_cast<float>(m_height);
 
 	int monitorLeft, monitorTop;
 	glfwGetMonitorPos(monitor, &monitorLeft, &monitorTop);

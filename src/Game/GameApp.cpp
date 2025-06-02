@@ -71,7 +71,7 @@ void main()
 	struct Vertex
 	{
 		glm::vec3 pos;
-		glm::vec3 normals;
+		glm::vec3 normal;
 		glm::vec2 uv;
 	};
 
@@ -93,7 +93,7 @@ void main()
 		.location = 1,
 		.binding = 0,
 		.format = gl4::Format::R32G32B32_FLOAT,
-		.offset = offsetof(Vertex, normals),
+		.offset = offsetof(Vertex, normal),
 	  },
 		gl4::VertexInputBindingDescription{
 		.location = 2,
@@ -189,9 +189,9 @@ bool GameApp::OnInit()
 
 			//if (mesh->HasNormals())
 			{
-				nv.normals.x = mesh->mNormals[i].x;
-				nv.normals.y = mesh->mNormals[i].y;
-				nv.normals.z = mesh->mNormals[i].z;
+				nv.normal.x = mesh->mNormals[i].x;
+				nv.normal.y = mesh->mNormals[i].y;
+				nv.normal.z = mesh->mNormals[i].z;
 			}
 
 			//if (mesh->HasTextureCoords(0))
@@ -310,12 +310,9 @@ void GameApp::OnRender()
 	{
 		gl4::Cmd::BindGraphicsPipeline(pipeline.value());
 		gl4::Cmd::BindVertexBuffer(0, vertexBuffer1.value(), 0, sizeof(Vertex));
-		//gl4::Cmd::BindIndexBuffer(indexBuffer.value(), gl4::IndexType::UNSIGNED_INT);
 		gl4::Cmd::BindUniformBuffer(0, uniformBuffer1.value());
 		gl4::Cmd::BindSampledImage(0, diffuse.value(), sampler.value());
-
-		//gl4::Cmd::Draw(6, 1, 0, 0);
-		//gl4::Cmd::DrawIndexed(3, 1, 0, 0, 0);
+		gl4::Cmd::Draw(6, 1, 0, 0);
 
 		gl4::Cmd::BindGraphicsPipeline(pipeline.value());
 		gl4::Cmd::BindVertexBuffer(0, mVB.value(), 0, sizeof(Vertex));

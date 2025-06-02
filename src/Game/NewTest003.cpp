@@ -209,9 +209,28 @@ void NewTest003::OnImGuiDraw()
 	ImGui::Text("Framerate: %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 
 	ImGui::End();
+
+	DrawFPS();
 }
 //=============================================================================
 void NewTest003::OnResize(uint16_t width, uint16_t height)
+{
+	resize(width, height);
+}
+//=============================================================================
+void NewTest003::OnMouseButton(int button, int action, int mods)
+{
+}
+//=============================================================================
+void NewTest003::OnMousePos(double x, double y)
+{
+}
+//=============================================================================
+void NewTest003::OnScroll(double dx, double dy)
+{
+}
+//=============================================================================
+void NewTest003::OnKey(int key, int scanCode, int action, int mods)
 {
 }
 //=============================================================================

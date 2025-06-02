@@ -51,9 +51,9 @@ int main(
 	//NewTest001 game;
 	//NewTest002 game;
 	//NewTest003 game;
-	//NewTest004 game;
+	NewTest004 game;
 
-	GameApp game;
+	//GameApp game;
 	game.Run();
 }
 //=============================================================================

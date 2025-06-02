@@ -113,6 +113,9 @@
     <ClCompile Include="Model.cpp">
       <Filter>Render</Filter>
     </ClCompile>
+    <ClCompile Include="OpenGL4Timer.cpp">
+      <Filter>RHI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -263,6 +266,9 @@
     </ClInclude>
     <ClInclude Include="Model.h">
       <Filter>Render</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL4Timer.h">
+      <Filter>RHI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

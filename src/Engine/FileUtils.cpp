@@ -33,7 +33,22 @@ std::string FileUtils::GetFileDirectory(const std::string& filePath)
 	return path.parent_path().string() + "/";
 }
 //=============================================================================
-std::string FileUtils::ReadTextFile(const std::string& filename)
+std::string FileUtils::LoadFile(const std::filesystem::path& path)
+{
+	std::ifstream file{ path };
+	return { std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>() };
+}
+//=============================================================================
+std::pair<std::unique_ptr<std::byte[]>, std::size_t> FileUtils::LoadBinaryFile(const std::filesystem::path& path)
+{
+	std::size_t fileSize = std::filesystem::file_size(path);
+	auto memory = std::make_unique<std::byte[]>(fileSize);
+	std::ifstream file{ path, std::ifstream::binary };
+	std::copy(std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>(), reinterpret_cast<char*>(memory.get()));
+	return { std::move(memory), fileSize };
+}
+//=============================================================================
+std::string FileUtils::ReadTextFile_Old(const std::string& filename)
 {
 	struct FileRaw
 	{
@@ -110,7 +125,7 @@ bool preprocessShader(const std::string& path, const std::string& src, std::stri
 
 			std::string includeSource;
 
-			std::string source = FileUtils::ReadTextFile(pathToShader + includePath);
+			std::string source = FileUtils::ReadTextFile_Old(pathToShader + includePath);
 			if (source.empty()) return false;
 
 			if (!preprocessShader(pathToShader + includePath, source, includeSource))
@@ -144,7 +159,7 @@ bool preprocessShader(const std::string& path, const std::string& src, std::stri
 //=============================================================================
 std::string FileUtils::ReadShaderCode(const std::string& filename, const std::vector<std::string>& defines)
 {
-	std::string source = ReadTextFile(filename);
+	std::string source = ReadTextFile_Old(filename);
 	if (source.empty()) return "";
 
 	std::string finalSource;

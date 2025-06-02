@@ -17,8 +17,8 @@
 #include "OpenGL4Simple.h"
 #include "OpenGL4Advance.h"
 
-
 #include "OpenGL4Core.h"
+#include "OpenGL4DebugMarker.h"
 #include "OpenGL4Shader.h"
 #include "OpenGL4Buffer.h"
 #include "OpenGL4Texture.h"
@@ -27,6 +27,7 @@
 #include "OpenGL4Context.h"
 #include "OpenGL4Render.h"
 #include "OpenGL4Cmd.h"
+#include "OpenGL4Timer.h"
 
 // Render
 #include "DepthPrepass.h"
