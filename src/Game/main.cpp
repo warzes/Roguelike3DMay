@@ -19,6 +19,7 @@
 #include "NewTest002.h"
 #include "NewTest003.h"
 #include "NewTest004.h"
+#include "NewTest005.h"
 
 #include "GameApp.h"
 //=============================================================================
@@ -51,7 +52,8 @@ int main(
 	//NewTest001 game;
 	//NewTest002 game;
 	//NewTest003 game;
-	NewTest004 game;
+	//NewTest004 game;
+	NewTest005 game;
 
 	//GameApp game;
 	game.Run();

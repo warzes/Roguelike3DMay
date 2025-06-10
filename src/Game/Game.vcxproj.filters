@@ -63,6 +63,12 @@
     <ClCompile Include="RsmTechnique.cpp">
       <Filter>GameApp\NewTest1</Filter>
     </ClCompile>
+    <ClCompile Include="NewTest005.cpp">
+      <Filter>GameApp\NewTest1</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneLoader.cpp">
+      <Filter>GameApp\NewTest1</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -125,6 +131,12 @@
       <Filter>GameApp</Filter>
     </ClInclude>
     <ClInclude Include="RsmTechnique.h">
+      <Filter>GameApp\NewTest1</Filter>
+    </ClInclude>
+    <ClInclude Include="NewTest005.h">
+      <Filter>GameApp\NewTest1</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneLoader.h">
       <Filter>GameApp\NewTest1</Filter>
     </ClInclude>
   </ItemGroup>
