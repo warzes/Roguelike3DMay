@@ -124,6 +124,23 @@ namespace
 }
 #endif
 //=============================================================================
+void windowPosCallback(
+	[[maybe_unused]] GLFWwindow* window,
+	int xpos, int ypos) noexcept
+{
+	if (thisIEngineApp)
+	{
+		thisIEngineApp->m_windowPosition.x = xpos;
+		thisIEngineApp->m_windowPosition.y = ypos;
+	}
+}
+//=============================================================================
+void windowFocusCallback([[maybe_unused]] GLFWwindow* window,
+	[[maybe_unused]] int focused) noexcept
+{
+
+}
+//=============================================================================
 void windowIconifyCallback(
 	[[maybe_unused]] GLFWwindow* window,
 	[[maybe_unused]] int minimized) noexcept
@@ -138,9 +155,7 @@ void windowMaximizeCallback(
 
 }
 //=============================================================================
-void cursorEnterCallback(
-	[[maybe_unused]] GLFWwindow* window,
-	[[maybe_unused]] int entered) noexcept
+void windowCloseCallback([[maybe_unused]] GLFWwindow* window) noexcept
 {
 
 }
@@ -155,6 +170,13 @@ void framebufferSizeCallback(
 
 	if (thisIEngineApp)
 		thisIEngineApp->windowResize(width, height);
+}
+//=============================================================================
+void cursorEnterCallback(
+	[[maybe_unused]] GLFWwindow* window,
+	[[maybe_unused]] int entered) noexcept
+{
+
 }
 //=============================================================================
 void keyCallback(GLFWwindow* window, int key, int scanCode, int action, int mods) noexcept
@@ -428,12 +450,19 @@ bool IEngineApp::initWindow(const EngineCreateInfo& config)
 		return false;
 	}
 
+	// Window callbacks
+	glfwSetWindowPosCallback(m_window, windowPosCallback);
+	glfwSetWindowFocusCallback(m_window, windowFocusCallback);
 	glfwSetWindowIconifyCallback(m_window, windowIconifyCallback);
 	glfwSetWindowMaximizeCallback(m_window, windowMaximizeCallback);
 	glfwSetFramebufferSizeCallback(m_window, framebufferSizeCallback);
+	glfwSetWindowCloseCallback(m_window, windowCloseCallback);
 
+	// Key callbacks 
 	glfwSetKeyCallback(m_window, keyCallback);
 	glfwSetCharCallback(m_window, charCallback);
+
+	// Mouse callbacks 
 	glfwSetMouseButtonCallback(m_window, mouseButtonCallback);
 	glfwSetCursorPosCallback(m_window, mouseCursorPosCallback);
 	glfwSetScrollCallback(m_window, mouseScrollCallback);

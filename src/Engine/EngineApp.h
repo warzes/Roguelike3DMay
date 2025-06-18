@@ -93,6 +93,7 @@ protected:
 	virtual void OnKey(int key, int scanCode, int action, int mods) = 0;
 
 private:
+	friend void windowPosCallback(GLFWwindow*, int, int) noexcept;
 	friend void framebufferSizeCallback(GLFWwindow*, int, int) noexcept;
 	friend void keyCallback(GLFWwindow*, int, int, int, int) noexcept;
 	friend void mouseButtonCallback(GLFWwindow*, int, int, int) noexcept;
@@ -113,6 +114,7 @@ private:
 
 	// window config
 	GLFWwindow* m_window{ nullptr };
+	glm::ivec2  m_windowPosition{ 0 };
 	uint16_t    m_width{ 0 };
 	uint16_t    m_height{ 0 };
 	float       m_windowAspect{ 1.0f };
