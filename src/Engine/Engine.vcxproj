@@ -92,14 +92,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="BoundingBox.cpp" />
+    <ClCompile Include="AABB.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CoreFunc.cpp" />
     <ClCompile Include="CoreMath.cpp" />
     <ClCompile Include="DepthPrepass.cpp" />
     <ClCompile Include="EngineApp.cpp" />
     <ClCompile Include="FileUtils.cpp" />
+    <ClCompile Include="Frustum.cpp" />
     <ClCompile Include="GraphicSystem.cpp" />
+    <ClCompile Include="Light.cpp" />
     <ClCompile Include="LightOLD.cpp" />
     <ClCompile Include="Log.cpp" />
     <ClCompile Include="Material.cpp" />
@@ -139,7 +141,7 @@
     <ClInclude Include="BasicConstants.h" />
     <ClInclude Include="BaseHeader.h" />
     <ClInclude Include="BasePlatform.h" />
-    <ClInclude Include="BoundingBox.h" />
+    <ClInclude Include="AABB.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CoreFunc.h" />
     <ClInclude Include="CoreMath.h" />
@@ -149,9 +151,11 @@
     <ClInclude Include="EngineConfig.h" />
     <ClInclude Include="FileUtils.h" />
     <ClInclude Include="FlagsUtils.h" />
+    <ClInclude Include="Frustum.h" />
     <ClInclude Include="GraphicSystem.h" />
     <ClInclude Include="Hash.h" />
     <ClInclude Include="Input.h" />
+    <ClInclude Include="Light.h" />
     <ClInclude Include="LightOLD.h" />
     <ClInclude Include="Log.h" />
     <ClInclude Include="Material.h" />

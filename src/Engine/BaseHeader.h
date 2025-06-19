@@ -65,6 +65,7 @@
 #include <glm/gtx/dual_quaternion.hpp>
 #include <glm/gtx/type_aligned.hpp>
 #include <glm/gtx/euler_angles.hpp>
+#include <glm/gtx/hash.hpp>
 
 #include <stb/stb_image.h>
 #include <stb/stb_image_write.h>

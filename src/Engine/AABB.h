@@ -1,15 +1,15 @@
-#pragma once
+﻿#pragma once
 
-class BoundingBox final
+class AABB final
 {
 public:
-	BoundingBox() = default;
-	BoundingBox(const glm::vec3& Min, const glm::vec3& Max)
+	AABB() = default;
+	AABB(const glm::vec3& Min, const glm::vec3& Max)
 		: min(glm::min(Min, Max))
 		, max(glm::max(Min, Max))
 	{
 	}
-	BoundingBox(const glm::vec3* points, size_t numPoints)
+	AABB(const glm::vec3* points, size_t numPoints)
 	{
 		glm::vec3 vmin(std::numeric_limits<float>::max());
 		glm::vec3 vmax(std::numeric_limits<float>::lowest());
@@ -23,36 +23,46 @@ public:
 		max = vmax;
 	}
 
-	void Transform(const glm::mat4& t)
+	void Set(const std::vector<glm::vec3>& vertexData, const std::vector<uint32_t>& indexData);
+
+	void CombinePoint(const glm::vec3& point)
 	{
-		glm::vec3 corners[] = {
-			glm::vec3(min.x, min.y, min.z), glm::vec3(min.x, max.y, min.z), glm::vec3(min.x, min.y, max.z), glm::vec3(min.x, max.y, max.z),
-			glm::vec3(max.x, min.y, min.z), glm::vec3(max.x, max.y, min.z), glm::vec3(max.x, min.y, max.z), glm::vec3(max.x, max.y, max.z),
+		min = glm::min(min, point);
+		max = glm::max(max, point);
+	}
+
+	void Transform(const glm::mat4& transform)
+	{
+		glm::vec3 corners[] = 
+		{
+			glm::vec3(min.x, min.y, min.z), 
+			glm::vec3(min.x, max.y, min.z), 
+			glm::vec3(min.x, min.y, max.z), 
+			glm::vec3(min.x, max.y, max.z),
+			glm::vec3(max.x, min.y, min.z), 
+			glm::vec3(max.x, max.y, min.z), 
+			glm::vec3(max.x, min.y, max.z), 
+			glm::vec3(max.x, max.y, max.z),
 		};
 		for (auto& v : corners)
-			v = glm::vec3(t * glm::vec4(v, 1.0f));
-		*this = BoundingBox(corners, 8);
+			v = glm::vec3(transform * glm::vec4(v, 1.0f));
+		*this = AABB(corners, 8);
 	}
-	BoundingBox GetTransformed(const glm::mat4& t) const
+	AABB GetTransformed(const glm::mat4& t) const
 	{
-		BoundingBox b = *this;
+		AABB b = *this;
 		b.Transform(t);
 		return b;
 	}
-	void CombinePoint(const glm::vec3& p)
-	{
-		min = glm::min(min, p);
-		max = glm::max(max, p);
-	}
 
-	glm::vec3 GetSize() const { return glm::vec3(max[0] - min[0], max[1] - min[1], max[2] - min[2]); }
-	glm::vec3 GetCenter() const { return 0.5f * glm::vec3(max[0] + min[0], max[1] + min[1], max[2] + min[2]); }
+	glm::vec3 GetSize() const { return max - min; }
+	glm::vec3 GetCenter() const { return (max + min) * 0.5f; }
 
-	glm::vec3 min;
-	glm::vec3 max;
+	glm::vec3 min{ std::numeric_limits<float>::max() };
+	glm::vec3 max{ -std::numeric_limits<float>::max() };
 };
 
-inline BoundingBox CombineBoxes(const std::vector<BoundingBox>& boxes)
+inline AABB CombineBoxes(const std::vector<AABB>& boxes)
 {
 	std::vector<glm::vec3> allPoints;
 	allPoints.reserve(boxes.size() * 8);
@@ -70,10 +80,10 @@ inline BoundingBox CombineBoxes(const std::vector<BoundingBox>& boxes)
 		allPoints.emplace_back(b.max.x, b.max.y, b.max.z);
 	}
 
-	return BoundingBox(allPoints.data(), allPoints.size());
+	return AABB(allPoints.data(), allPoints.size());
 }
 
-inline bool IsBoxInFrustum(glm::vec4* frustumPlanes, glm::vec4* frustumCorners, const BoundingBox& box)
+inline bool IsBoxInFrustum(glm::vec4* frustumPlanes, glm::vec4* frustumCorners, const AABB& box)
 {
 	for (int i = 0; i < 6; i++)
 	{

@@ -31,3 +31,15 @@ template <typename T>
 {
 	return min + (max - min) * RandomNumber<T>();
 }
+
+/*
+id = 0;
+HashCombine(id, first_index);
+HashCombine(id, index_count);
+*/
+template <class T>
+inline void HashCombine(size_t& seed, const T& v)
+{
+	std::hash<T> hasher;
+	glm::detail::hash_combine(seed, hasher(v));
+}
