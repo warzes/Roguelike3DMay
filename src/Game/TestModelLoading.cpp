@@ -42,7 +42,7 @@ in VS_OUT
 	vec2 TexCoords;
 } fs_in;
 
-uniform sampler2D texture_diffuse1; // Texture from glTF model
+layout(binding = 0) uniform sampler2D texture_diffuse1; // Texture from glTF model
 uniform vec3 lightPos;
 uniform vec3 viewPos;
 

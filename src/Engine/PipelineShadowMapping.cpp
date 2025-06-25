@@ -95,7 +95,7 @@ void main()
 
 in vec2 TexCoords;
 
-uniform sampler2D DepthMap;
+layout(binding = 0) uniform sampler2D DepthMap;
 
 out vec4 FragColor;
 

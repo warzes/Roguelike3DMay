@@ -40,7 +40,7 @@ in VS_OUT {
 	vec2 TexCoords;
 } fs_in;
 
-uniform sampler2D floorTexture;
+layout(binding = 0) uniform sampler2D floorTexture;
 uniform vec3 lightPos;
 uniform vec3 viewPos;
 

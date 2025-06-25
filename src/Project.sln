@@ -18,6 +18,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DOC", "DOC", "{36D591C7-65C
 		DOC.md = DOC.md
 		History.md = History.md
 		Idea.md = Idea.md
+		ref.md = ref.md
 		TODO.md = TODO.md
 	EndProjectSection
 EndProject
