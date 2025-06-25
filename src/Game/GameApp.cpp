@@ -1,6 +1,15 @@
 ﻿#include "stdafx.h"
 #include "GameApp.h"
 
+вот такие тайлы
+https://youtu.be/lztrCpn9mlw?t=6
+
+вот отсюда графу
+https://github.com/ChristosAlexan/GameEngine
+
+https://github.com/NadirRoGue/RenderEngine
+
+
 //=============================================================================
 // ЗА ОСНОВУ TESTSHADOWMAPPING
 // Nikola - шейдер света
