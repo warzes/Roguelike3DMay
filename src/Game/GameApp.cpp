@@ -3,6 +3,12 @@
 
 или это в основу
 https://github.com/Noctiluce/Deferred_and_post-process
+azdo (посмотреть обязательно)
+https://github.com/deni2312/prisma-engine
+https://github.com/MorcilloSanz/RendererGL
+
+
+
 
 //=============================================================================
 // ЗА ОСНОВУ TESTSHADOWMAPPING
