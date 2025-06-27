@@ -3,6 +3,10 @@
 
 или это в основу
 https://github.com/Noctiluce/Deferred_and_post-process
+
+тут освещение есть и multi draw indirect
+https://github.com/potato3d/modern-opengl
+
 azdo (посмотреть обязательно)
 https://github.com/deni2312/prisma-engine
 https://github.com/MorcilloSanz/RendererGL
