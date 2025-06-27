@@ -1,14 +1,8 @@
 ﻿#include "stdafx.h"
 #include "GameApp.h"
 
-вот такие тайлы
-https://youtu.be/lztrCpn9mlw?t=6
-
-вот отсюда графу
-https://github.com/ChristosAlexan/GameEngine
-
-https://github.com/NadirRoGue/RenderEngine
-
+или это в основу
+https://github.com/Noctiluce/Deferred_and_post-process
 
 //=============================================================================
 // ЗА ОСНОВУ TESTSHADOWMAPPING
@@ -127,7 +121,6 @@ void main()
 	std::vector<uint32_t> miv;
 	std::optional<gl4::Buffer> mVB;
 	std::optional<gl4::Buffer> mIB;
-
 
 
 	gl4::GraphicsPipeline CreatePipeline()

@@ -3,6 +3,7 @@
 #include "Engine/Engine.h"
 
 #include <execution>
+#include <numbers>
 #include <iostream>
 
 #include <fastgltf/glm_element_traits.hpp>

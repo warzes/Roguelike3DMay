@@ -1,4 +1,12 @@
-﻿- в ogre/irrlight есть ландшафт
+﻿вот такие тайлы
+https://youtu.be/lztrCpn9mlw?t=6
+
+вот отсюда графу
+https://github.com/ChristosAlexan/GameEngine
+
+https://github.com/NadirRoGue/RenderEngine
+
+в ogre/irrlight есть ландшафт
 
 https://github.com/potato3d/glbase
 https://github.com/potato3d/instancing
