@@ -1,6 +1,9 @@
 ﻿#include "stdafx.h"
 #include "GameApp.h"
 
+https://threejs.org/
+есть интересные демо. плюс есть копия на с++
+
 или это в основу
 https://github.com/Noctiluce/Deferred_and_post-process
 
