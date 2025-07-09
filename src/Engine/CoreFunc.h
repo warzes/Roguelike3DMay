@@ -32,14 +32,27 @@ template <typename T>
 	return min + (max - min) * RandomNumber<T>();
 }
 
+///*
+//id = 0;
+//HashCombine(id, first_index);
+//HashCombine(id, index_count);
+//*/
+//template <class T>
+//inline void HashCombine(size_t& seed, const T& v)
+//{
+//	std::hash<T> hasher;
+//	glm::detail::hash_combine(seed, hasher(v));
+//}
+
 /*
-id = 0;
-HashCombine(id, first_index);
-HashCombine(id, index_count);
+std::size_t seed = 0;
+HashCombine(seed, h1, h2, h3);
 */
-template <class T>
-inline void HashCombine(size_t& seed, const T& v)
+void HashCombine([[maybe_unused]] std::size_t& seed) {}
+template <typename T, typename... Rest>
+void HashCombine(std::size_t& seed, const T& v, Rest... rest)
 {
 	std::hash<T> hasher;
-	glm::detail::hash_combine(seed, hasher(v));
+	seed ^= hasher(v) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+	HashCombine(seed, rest...);
 }

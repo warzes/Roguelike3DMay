@@ -47,6 +47,7 @@
 #include "GraphicSystem.h"
 
 // Scene
+#include "Transform.h"
 
 // App
 #include "Profiler.h"

@@ -122,6 +122,9 @@
     <ClCompile Include="Light.cpp">
       <Filter>Render</Filter>
     </ClCompile>
+    <ClCompile Include="Transform.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -281,6 +284,9 @@
     </ClInclude>
     <ClInclude Include="Light.h">
       <Filter>Render</Filter>
+    </ClInclude>
+    <ClInclude Include="Transform.h">
+      <Filter>Scene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -69,6 +69,15 @@
     <ClCompile Include="SceneLoader.cpp">
       <Filter>GameApp\NewTest1</Filter>
     </ClCompile>
+    <ClCompile Include="TempApp.cpp">
+      <Filter>TempApp</Filter>
+    </ClCompile>
+    <ClCompile Include="TmpObject.cpp">
+      <Filter>TempApp</Filter>
+    </ClCompile>
+    <ClCompile Include="TmpMesh.cpp">
+      <Filter>TempApp</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -139,6 +148,15 @@
     <ClInclude Include="SceneLoader.h">
       <Filter>GameApp\NewTest1</Filter>
     </ClInclude>
+    <ClInclude Include="TempApp.h">
+      <Filter>TempApp</Filter>
+    </ClInclude>
+    <ClInclude Include="TmpObject.h">
+      <Filter>TempApp</Filter>
+    </ClInclude>
+    <ClInclude Include="TmpMesh.h">
+      <Filter>TempApp</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="GameApp">
@@ -170,6 +188,9 @@
     </Filter>
     <Filter Include="GameApp\_OLD\Test3\shaders\TestComplex">
       <UniqueIdentifier>{b2b7cdb4-6be4-41d9-8274-d9a0bd9c3972}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="TempApp">
+      <UniqueIdentifier>{073ad6ff-996d-435e-a112-abf409de8e95}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

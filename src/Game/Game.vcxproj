@@ -108,6 +108,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="TempApp.cpp" />
     <ClCompile Include="TestBlinnPhong.cpp" />
     <ClCompile Include="TestBloom.cpp" />
     <ClCompile Include="TestCascadedShadowMaps.cpp" />
@@ -121,6 +122,8 @@
     <ClCompile Include="TestSimple.cpp" />
     <ClCompile Include="TestSkyboxWithCube.cpp" />
     <ClCompile Include="TestTerrain.cpp" />
+    <ClCompile Include="TmpMesh.cpp" />
+    <ClCompile Include="TmpObject.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameApp.h" />
@@ -134,6 +137,7 @@
     <ClInclude Include="RsmTechnique.h" />
     <ClInclude Include="SceneLoader.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="TempApp.h" />
     <ClInclude Include="TestBlinnPhong.h" />
     <ClInclude Include="TestBloom.h" />
     <ClInclude Include="TestCascadedShadowMaps.h" />
@@ -147,6 +151,8 @@
     <ClInclude Include="TestSimple.h" />
     <ClInclude Include="TestSkyboxWithCube.h" />
     <ClInclude Include="TestTerrain.h" />
+    <ClInclude Include="TmpMesh.h" />
+    <ClInclude Include="TmpObject.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\bin\ExampleData\shaders\TestComplex\gbuf.fs" />
