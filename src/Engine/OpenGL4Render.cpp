@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "OpenGL4Render.h"
 #include "OpenGL4ApiToEnum.h"
 #include "OpenGL4Texture.h"
@@ -528,12 +528,132 @@ void gl4::CopyBufferToTexture(const CopyBufferToTextureInfo& copy)
 	glBindBuffer(GL_PIXEL_UNPACK_BUFFER, copy.sourceBuffer.Handle());
 
 	copy.targetTexture.subImageInternal({ copy.level,
-	copy.targetOffset,
-	copy.extent,
-	copy.format,
-	copy.type,
-	reinterpret_cast<void*>(static_cast<uintptr_t>(copy.sourceOffset)),
-	copy.bufferRowLength,
-	copy.bufferImageHeight });
+		copy.targetOffset,
+		copy.extent,
+		copy.format,
+		copy.type,
+		reinterpret_cast<void*>(static_cast<uintptr_t>(copy.sourceOffset)),
+		copy.bufferRowLength,
+		copy.bufferImageHeight });
+}
+//=============================================================================
+void gl4::SetUniform(uint64_t id, const std::string& label, bool value)
+{
+	assert(id != 0);
+	glProgramUniform1i(id, glGetUniformLocation(id, label.c_str()), static_cast<int>(value));
+}
+//=============================================================================
+void gl4::SetUniform(uint64_t id, const std::string& label, int value)
+{
+	assert(id != 0);
+	glProgramUniform1i(id, glGetUniformLocation(id, label.c_str()), value);
+}
+//=============================================================================
+void gl4::SetUniform(uint64_t id, const std::string& label, unsigned value)
+{
+	assert(id != 0);
+	glProgramUniform1ui(id, glGetUniformLocation(id, label.c_str()), value);
+}
+//=============================================================================
+void gl4::SetUniform(uint64_t id, const std::string& label, float value)
+{
+	assert(id != 0);
+	glProgramUniform1f(id, glGetUniformLocation(id, label.c_str()), value);
+}
+//=============================================================================
+void gl4::SetUniform(uint64_t id, const std::string& label, std::span<const float> value)
+{
+	assert(id != 0);
+	glProgramUniform1fv(id, glGetUniformLocation(id, label.c_str()), static_cast<GLsizei>(value.size()), value.data());
+}
+//=============================================================================
+void gl4::SetUniform(uint64_t id, const std::string& label, const float* value, int count)
+{
+	assert(id != 0);
+	glProgramUniform1fv(id, glGetUniformLocation(id, label.c_str()), count, value);
+}
+//=============================================================================
+void gl4::SetUniform(uint64_t id, const std::string& label, std::span<const glm::vec2> value)
+{
+	assert(id != 0);
+	glProgramUniform2fv(id, glGetUniformLocation(id, label.c_str()), static_cast<GLsizei>(value.size()), glm::value_ptr(value.front()));
+}
+//=============================================================================
+void gl4::SetUniform(uint64_t id, const std::string& label, std::span<const glm::vec3> value)
+{
+	assert(id != 0);
+	glProgramUniform3fv(id, glGetUniformLocation(id, label.c_str()), static_cast<GLsizei>(value.size()), glm::value_ptr(value.front()));
+}
+//=============================================================================
+void gl4::SetUniform(uint64_t id, const std::string& label, std::span<const glm::vec4> value)
+{
+	assert(id != 0);
+	glProgramUniform4fv(id, glGetUniformLocation(id, label.c_str()), static_cast<GLsizei>(value.size()), glm::value_ptr(value.front()));
+}
+//=============================================================================
+void gl4::SetUniform(uint64_t id, const std::string& label, std::span<const int> value)
+{
+	assert(id != 0);
+	glProgramUniform1iv(id, glGetUniformLocation(id, label.c_str()), static_cast<GLsizei>(value.size()), value.data());
+}
+//=============================================================================
+void gl4::SetUniform(uint64_t id, const std::string& label, const glm::vec2& value)
+{
+	assert(id != 0);
+	glProgramUniform2fv(id, glGetUniformLocation(id, label.c_str()), 1, glm::value_ptr(value));
+}
+//=============================================================================
+void gl4::SetUniform(uint64_t id, const std::string& label, float x, float y)
+{
+	assert(id != 0);
+	glProgramUniform2f(id, glGetUniformLocation(id, label.c_str()), x, y);
+}
+//=============================================================================
+void gl4::SetUniform(uint64_t id, const std::string& label, const glm::ivec2& value)
+{
+	assert(id != 0);
+	glProgramUniform2iv(id, glGetUniformLocation(id, label.c_str()), 1, glm::value_ptr(value));
+}
+//=============================================================================
+void gl4::SetUniform(uint64_t id, const std::string& label, int x, int y)
+{
+	assert(id != 0);
+	glProgramUniform2i(id, glGetUniformLocation(id, label.c_str()), x, y);
+}
+//=============================================================================
+void gl4::SetUniform(uint64_t id, const std::string& label, const glm::vec3& value)
+{
+	assert(id != 0);
+	glProgramUniform3fv(id, glGetUniformLocation(id, label.c_str()), 1, glm::value_ptr(value));
+}
+//=============================================================================
+void gl4::SetUniform(uint64_t id, const std::string& label, float x, float y, float z)
+{
+	assert(id != 0);
+	glProgramUniform3f(id, glGetUniformLocation(id, label.c_str()), x, y, z);
+}
+//=============================================================================
+void gl4::SetUniform(uint64_t id, const std::string& label, const glm::vec4& value)
+{
+	assert(id != 0);
+	glProgramUniform4fv(id, glGetUniformLocation(id, label.c_str()), 1, glm::value_ptr(value));
+}
+//=============================================================================
+void gl4::SetUniform(uint64_t id, const std::string& label, float x, float y, float z, float w)
+{
+	assert(id != 0);
+	glProgramUniform4f(id, glGetUniformLocation(id, label.c_str()), x, y, z, w);
+}
+//=============================================================================
+void gl4::SetUniform(uint64_t id, const std::string& label, const glm::mat3& mat)
+{
+	assert(id != 0);
+	glProgramUniformMatrix3fv(id, glGetUniformLocation(id, label.c_str()), 1, GL_FALSE, glm::value_ptr(mat));
+}
+//=============================================================================
+void gl4::SetUniform(uint64_t id, const std::string& label, const glm::mat4& mat)
+{
+	assert(id != 0);
+	glProgramUniformMatrix4fv(id, glGetUniformLocation(id, label.c_str()), 1, GL_FALSE, glm::value_ptr(mat));
 }
 //=============================================================================

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 namespace gl4
 {
@@ -28,12 +28,7 @@ namespace gl4
 	class Shader final
 	{
 	public:
-		/// @brief Constructs a shader from GLSL
-		/// @param stage A pipeline stage
-		/// @param source A GLSL source string
-		/// @param name An optional debug identifier
 		explicit Shader(PipelineStage stage, std::string_view source, std::string_view name = "");
-		/// @brief Constructs a shader from SPIR-V
 		explicit Shader(PipelineStage stage, const ShaderSpirvInfo& spirvInfo, std::string_view name = "");
 
 		Shader(const Shader&) = delete;

@@ -1,4 +1,40 @@
-﻿вот такие тайлы
+﻿
+https://github.com/iauns/cpm-glm-aabb/blob/master/glm-aabb/AABB.hpp
+https://github.com/stuarthayhurst/ammonite-engine
+https://github.com/diharaw/cascaded-shadow-maps
+https://github.com/diharaw/area-light-shadows
+https://github.com/JuanDiegoMontoya/GLest-Rendererer
+https://github.com/pboechat/PCSS
+https://github.com/aryaman-gupta/Realistic-Soft-Shadows
+https://github.com/proskur1n/vwa-code
+тут освещение есть и multi draw indirect
+https://github.com/potato3d/modern-opengl
+https://github.com/lnicosia/HumanGL
+
+
+
+https://github.com/ChristosAlexan/GameEngine
+тут шейдеры 
+
+
+
+https://threejs.org/
+есть интересные демо. плюс есть копия на с++
+
+
+
+или это в основу
+https://github.com/Noctiluce/Deferred_and_post-process
+
+
+
+azdo (посмотреть обязательно)
+https://github.com/deni2312/prisma-engine
+https://github.com/MorcilloSanz/RendererGL
+
+https://gamedev.ru/code/articles/tags/OpenGL
+
+вот такие тайлы
 https://youtu.be/lztrCpn9mlw?t=6
 
 вот отсюда графу
