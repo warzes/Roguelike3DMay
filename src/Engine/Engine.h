@@ -29,6 +29,8 @@
 #include "OpenGL4Cmd.h"
 #include "OpenGL4Timer.h"
 
+#include "TextureManager.h"
+
 // Render
 #include "DepthPrepass.h"
 #include "PipelineBloom.h"

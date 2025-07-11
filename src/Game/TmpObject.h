@@ -9,7 +9,7 @@ struct ObjectMeshed
 struct ObjectBatched
 {
 	Transform transform;
-	std::vector<MeshInfo> meshes;
+	//std::vector<MeshInfo> meshes;
 };
 
 struct alignas(16) ObjectUniforms // sent to GPU

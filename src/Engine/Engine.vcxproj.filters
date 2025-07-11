@@ -125,6 +125,12 @@
     <ClCompile Include="Transform.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
+    <ClCompile Include="Input.cpp">
+      <Filter>App</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureManager.cpp">
+      <Filter>RHI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -287,6 +293,12 @@
     </ClInclude>
     <ClInclude Include="Transform.h">
       <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="KeyCode.h">
+      <Filter>App</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureManager.h">
+      <Filter>RHI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

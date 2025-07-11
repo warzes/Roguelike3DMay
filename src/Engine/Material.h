@@ -6,7 +6,6 @@ namespace gl4
 {
 	class Texture;
 }
-https://github.com/JuanDiegoMontoya/GLest-Rendererer
 
 class Material final
 {

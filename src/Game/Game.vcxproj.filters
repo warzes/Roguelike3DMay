@@ -75,9 +75,6 @@
     <ClCompile Include="TmpObject.cpp">
       <Filter>TempApp</Filter>
     </ClCompile>
-    <ClCompile Include="TmpMesh.cpp">
-      <Filter>TempApp</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -152,9 +149,6 @@
       <Filter>TempApp</Filter>
     </ClInclude>
     <ClInclude Include="TmpObject.h">
-      <Filter>TempApp</Filter>
-    </ClInclude>
-    <ClInclude Include="TmpMesh.h">
       <Filter>TempApp</Filter>
     </ClInclude>
   </ItemGroup>

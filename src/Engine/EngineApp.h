@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "GraphicSystem.h"
+#include "Input.h"
 
 void ExitApp();
 
@@ -28,13 +29,10 @@ struct EngineCreateInfo final
 
 	struct Render final
 	{
-		bool             vsync{ false };
+		bool             vsync{ true };
 		bool             srgb{ false };
 	} render;
 };
-
-constexpr inline size_t MaxKeys{ 512 };
-constexpr inline size_t MaxMouseButtons{ 5 };
 
 class IEngineApp
 {
@@ -51,33 +49,46 @@ public:
 
 	void Exit();
 
+	void DrawProfilerInfo();
+	void DrawFPS();
+
 	double GetTimeInSec() const;
 
-	int GetMousePositionX() const { return static_cast<int>(m_currentMousePositionX); }
-	int GetMousePositionY() const { return static_cast<int>(m_currentMousePositionY); }
-	glm::ivec2 GetMousePosition() const { return { GetMousePositionX(), GetMousePositionY() }; }
-	int GetMouseDeltaX() const { return static_cast<int>(m_mouseDeltaX); }
-	int GetMouseDeltaY() const { return static_cast<int>(m_mouseDeltaY); }
-	glm::ivec2 GetMouseDelta() const { return { GetMouseDeltaX(), GetMouseDeltaY() }; }
-	void SetCursorPosition(const glm::uvec2& position);
-	void SetCursorVisible(bool visible);
+	GraphicSystem& GetGraphicSystem() { return m_graphics; }
 
-	bool GetMouseButton(int button);
-	bool GetKeyDown(int key);
-	bool GetKeyPressed(int key);
 
+	auto GetDeltaTime() const { return m_deltaTime; }
+	auto GetFPS() const { return m_currentFPS; }
+
+#pragma region Window
 	GLFWwindow* GetGLFWWindow() { return m_window; }
 	uint16_t GetWindowWidth() const { return m_width; }
 	uint16_t GetWindowHeight() const { return m_height; }
 	float GetWindowAspect() const { return m_windowAspect; }
-	
-	float GetDeltaTime() const { return m_deltaTime; }
-	unsigned GetFPS() const { return m_currentFPS; }
+#pragma endregion
 
-	void DrawProfilerInfo();
-	void DrawFPS();
+#pragma region Mouse
 
-	GraphicSystem& GetGraphicSystem() { return m_graphics; }
+	auto GetMousePositionX() const { return static_cast<int>(m_currentMousePositionX); }
+	auto GetMousePositionY() const { return static_cast<int>(m_currentMousePositionY); }
+	auto GetMouseDeltaX() const { return static_cast<int>(m_mouseDeltaX); }
+	auto GetMouseDeltaY() const { return static_cast<int>(m_mouseDeltaY); }
+
+	auto GetMousePosition() const { return glm::ivec2{ GetMousePositionX(), GetMousePositionY() }; }
+	auto GetMouseDelta() const { return glm::ivec2{ GetMouseDeltaX(), GetMouseDeltaY() }; }
+
+	void SetCursorPosition(const glm::uvec2& position);
+	void SetCursorVisible(bool visible);
+
+	bool GetMouseButton(int button);
+
+#pragma endregion
+
+#pragma region Keyboard
+	bool GetKeyDown(int key); // TODO: OLD, delete
+	bool GetKeyPressed(int key); // TODO: OLD, delete
+
+#pragma endregion
 
 protected:
 	virtual EngineCreateInfo GetCreateInfo() const = 0;
@@ -109,6 +120,11 @@ private:
 	void windowResize(int width, int height);
 	void fpsTick(float deltaSeconds, bool frameRendered = true);
 
+	void keypress(int key, int scanCode, int action, int mods);
+	void mousePos(double xpos, double ypos);
+	void mouseScroll(double xoffset, double yoffset);
+	void mouseButton(int button, int action, int mods);
+
 	// system
 	GraphicSystem m_graphics;
 
@@ -136,9 +152,9 @@ private:
 	double      m_mouseDeltaX{ 0.0 };
 	double      m_mouseDeltaY{ 0.0 };
 	bool        m_cursorVisible{ true };
-	std::array<bool, MaxKeys> m_keys{ { false } };
-	std::array<bool, MaxKeys> m_repeatKeys{ { false } };
-	std::array<bool, MaxMouseButtons> m_mouseButtons{ { false } };
+	std::array<bool, MaxKeys> m_keys{ { false } }; // TODO: OLD, delete
+	std::array<bool, MaxKeys> m_repeatKeys{ { false } }; // TODO: OLD, delete
+	std::array<bool, MaxMouseButtons> m_mouseButtons{ { false } }; // TODO: OLD, delete
 
 	// state
 	bool        m_canRender{ true };

@@ -122,7 +122,6 @@
     <ClCompile Include="TestSimple.cpp" />
     <ClCompile Include="TestSkyboxWithCube.cpp" />
     <ClCompile Include="TestTerrain.cpp" />
-    <ClCompile Include="TmpMesh.cpp" />
     <ClCompile Include="TmpObject.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -151,7 +150,6 @@
     <ClInclude Include="TestSimple.h" />
     <ClInclude Include="TestSkyboxWithCube.h" />
     <ClInclude Include="TestTerrain.h" />
-    <ClInclude Include="TmpMesh.h" />
     <ClInclude Include="TmpObject.h" />
   </ItemGroup>
   <ItemGroup>

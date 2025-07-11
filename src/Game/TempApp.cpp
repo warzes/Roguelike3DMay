@@ -1,5 +1,8 @@
 ﻿#include "stdafx.h"
 #include "TempApp.h"
+
+https://github.com/JuanDiegoMontoya/GLest-Rendererer
+
 namespace
 {
 	const char* shaderCodeVertex = R"(
@@ -93,7 +96,7 @@ void main()
 
 	std::optional<gl4::Buffer> vertexBuffer1;
 	std::optional<gl4::Buffer> indexBuffer;
-	std::optional<gl4::Texture> diffuse;
+	gl4::Texture* diffuse;
 	std::optional<gl4::Sampler> sampler;
 
 	std::optional<gl4::TypedBuffer<UBO>> uniformBuffer1;
@@ -205,20 +208,9 @@ bool TempApp::OnInit()
 
 	uniformBuffer1 = gl4::TypedBuffer<UBO>(gl4::BufferStorageFlag::DynamicStorage);
 
-	{
-		int x = 0;
-		int y = 0;
-		const auto noise = stbi_load("CoreData/textures/colorful.png", &x, &y, nullptr, 4);
-		assert(noise);
-		diffuse = gl4::CreateTexture2D({ static_cast<uint32_t>(x), static_cast<uint32_t>(y) }, gl4::Format::R8G8B8A8_UNORM);
-		diffuse->UpdateImage({
-		  .extent = {static_cast<uint32_t>(x), static_cast<uint32_t>(y)},
-		  .format = gl4::UploadFormat::RGBA,
-		  .type = gl4::UploadType::UBYTE,
-		  .pixels = noise,
-			});
-		stbi_image_free(noise);
-	}
+	// Load Texture
+	diffuse = TextureManager::GetTexture("CoreData/textures/colorful.png");
+
 	gl4::SamplerState ss;
 	ss.minFilter = gl4::MinFilter::Nearest;
 	ss.magFilter = gl4::MagFilter::Nearest;
@@ -247,31 +239,25 @@ void TempApp::OnClose()
 //=============================================================================
 void TempApp::OnUpdate(float deltaTime)
 {
-	if (glfwGetKey(GetGLFWWindow(), GLFW_KEY_W) == GLFW_PRESS)
-		camera.ProcessKeyboard(CameraForward, deltaTime);
-	if (glfwGetKey(GetGLFWWindow(), GLFW_KEY_S) == GLFW_PRESS)
-		camera.ProcessKeyboard(CameraBackward, deltaTime);
-	if (glfwGetKey(GetGLFWWindow(), GLFW_KEY_A) == GLFW_PRESS)
-		camera.ProcessKeyboard(CameraLeft, deltaTime);
-	if (glfwGetKey(GetGLFWWindow(), GLFW_KEY_D) == GLFW_PRESS)
-		camera.ProcessKeyboard(CameraRight, deltaTime);
+	if (Input::IsKeyDown(GLFW_KEY_W)) camera.ProcessKeyboard(CameraForward, deltaTime);
+	if (Input::IsKeyDown(GLFW_KEY_S)) camera.ProcessKeyboard(CameraBackward, deltaTime);
+	if (Input::IsKeyDown(GLFW_KEY_A)) camera.ProcessKeyboard(CameraLeft, deltaTime);
+	if (Input::IsKeyDown(GLFW_KEY_D)) camera.ProcessKeyboard(CameraRight, deltaTime);
 
-	if (glfwGetMouseButton(GetGLFWWindow(), GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
+	if (Input::IsMouseDown(GLFW_MOUSE_BUTTON_RIGHT))
 	{
-		SetCursorVisible(false);
-		camera.ProcessMouseMovement(-GetMouseDeltaX(), -GetMouseDeltaY());
+		Input::SetCursorVisible(false);
+		camera.ProcessMouseMovement(-Input::GetScreenOffset().x, Input::GetScreenOffset().y);
 	}
-	else if (glfwGetMouseButton(GetGLFWWindow(), GLFW_MOUSE_BUTTON_RIGHT) == GLFW_RELEASE)
+	else if (Input::IsMouseReleased(GLFW_MOUSE_BUTTON_RIGHT))
 	{
-		glfwSetInputMode(GetGLFWWindow(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-		SetCursorVisible(true);
+		Input::SetCursorVisible(true);
 	}
 
 	UBO ubo;
 	ubo.model = glm::mat4(1.0f);
 	ubo.view = camera.GetViewMatrix();
 	ubo.proj = glm::perspective(glm::radians(45.0f), GetWindowAspect(), 0.01f, 1000.0f);
-
 
 	uniformBuffer1->UpdateData(ubo);
 }
@@ -298,14 +284,14 @@ void TempApp::OnRender()
 		gl4::Cmd::BindGraphicsPipeline(pipeline.value());
 		gl4::Cmd::BindVertexBuffer(0, vertexBuffer1.value(), 0, sizeof(Vertex));
 		gl4::Cmd::BindUniformBuffer(0, uniformBuffer1.value());
-		gl4::Cmd::BindSampledImage(0, diffuse.value(), sampler.value());
+		gl4::Cmd::BindSampledImage(0, *diffuse, sampler.value());
 		gl4::Cmd::Draw(6, 1, 0, 0);
 
 		gl4::Cmd::BindGraphicsPipeline(pipeline.value());
 		gl4::Cmd::BindVertexBuffer(0, mVB.value(), 0, sizeof(Vertex));
 		gl4::Cmd::BindIndexBuffer(mIB.value(), gl4::IndexType::UNSIGNED_INT);
 		gl4::Cmd::BindUniformBuffer(0, uniformBuffer1.value());
-		gl4::Cmd::BindSampledImage(0, diffuse.value(), sampler.value());
+		gl4::Cmd::BindSampledImage(0, *diffuse, sampler.value());
 		gl4::Cmd::DrawIndexed(miv.size(), 1, 0, 0, 0);
 	}
 	gl4::EndRendering();

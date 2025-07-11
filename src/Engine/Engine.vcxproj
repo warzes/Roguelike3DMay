@@ -101,6 +101,7 @@
     <ClCompile Include="FileUtils.cpp" />
     <ClCompile Include="Frustum.cpp" />
     <ClCompile Include="GraphicSystem.cpp" />
+    <ClCompile Include="Input.cpp" />
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="LightOLD.cpp" />
     <ClCompile Include="Log.cpp" />
@@ -136,6 +137,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="TextureManager.cpp" />
     <ClCompile Include="Transform.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -156,6 +158,7 @@
     <ClInclude Include="GraphicSystem.h" />
     <ClInclude Include="Hash.h" />
     <ClInclude Include="Input.h" />
+    <ClInclude Include="KeyCode.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="LightOLD.h" />
     <ClInclude Include="Log.h" />
@@ -193,6 +196,7 @@
     <ClInclude Include="RenderData.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="StrUtils.h" />
+    <ClInclude Include="TextureManager.h" />
     <ClInclude Include="Transform.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

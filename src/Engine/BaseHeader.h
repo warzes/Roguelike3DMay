@@ -39,6 +39,7 @@
 #include <span>
 #include <array>
 #include <stack>
+#include <unordered_map>
 
 #include <glad/gl.h>
 #include <glfw/glfw3.h>

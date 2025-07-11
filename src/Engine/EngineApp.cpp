@@ -4,6 +4,7 @@
 #include "Profiler.h"
 #include "OpenGL4DebugMarker.h"
 #include "OpenGL4Context.h"
+#include "TextureManager.h"
 //=============================================================================
 // Use the high-performance GPU (if available) on Windows laptops
 // https://docs.nvidia.com/gameworks/content/technologies/desktop/optimus.htm
@@ -181,60 +182,37 @@ void cursorEnterCallback(
 //=============================================================================
 void keyCallback(GLFWwindow* window, int key, int scanCode, int action, int mods) noexcept
 {
-	if (key < 0) return;
-
 	ImGui_ImplGlfw_KeyCallback(window, key, scanCode, action, mods);
+	
+	// TODO: зачем?
+	ImGuiIO& io = ImGui::GetIO();
+	if (action == GLFW_PRESS) io.KeysData[key].Down = true;
+	if (action == GLFW_RELEASE) io.KeysData[key].Down = false;
 
-	if (key >= 0 && key < (int)MaxKeys)
-	{
-		if (action == GLFW_PRESS)
-		{
-			thisIEngineApp->m_keys[static_cast<size_t>(key)] = true;
-		}
-		else if (action == GLFW_RELEASE)
-		{
-			thisIEngineApp->m_keys[static_cast<size_t>(key)] = false;
-		}
-		else if (action == GLFW_REPEAT)
-		{
-			thisIEngineApp->m_repeatKeys[static_cast<size_t>(key)] = true;
-		}
-	}
-	//std::string keyName = glfwGetKeyName(key, 0);
-	thisIEngineApp->OnKey(key, scanCode, action, mods);
+	io.KeyCtrl = io.KeysData[GLFW_KEY_LEFT_CONTROL].Down || io.KeysData[GLFW_KEY_RIGHT_CONTROL].Down;
+	io.KeyShift = io.KeysData[GLFW_KEY_LEFT_SHIFT].Down || io.KeysData[GLFW_KEY_RIGHT_SHIFT].Down;
+	io.KeyAlt = io.KeysData[GLFW_KEY_LEFT_ALT].Down || io.KeysData[GLFW_KEY_RIGHT_ALT].Down;
+	io.KeySuper = io.KeysData[GLFW_KEY_LEFT_SUPER].Down || io.KeysData[GLFW_KEY_RIGHT_SUPER].Down;
+	// TODO: зачем?
+
+	thisIEngineApp->keypress(key, scanCode, action, mods);
 }
 //=============================================================================
 void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods) noexcept
 {
 	ImGui_ImplGlfw_MouseButtonCallback(window, button, action, mods);
-
-	if (button >= 0 && button < (int)MaxMouseButtons)
-	{
-		if (action == GLFW_PRESS)
-		{
-			thisIEngineApp->m_mouseButtons[static_cast<size_t>(button)] = true;
-		}
-		else if (action == GLFW_RELEASE)
-		{
-			thisIEngineApp->m_mouseButtons[static_cast<size_t>(button)] = false;
-		}
-	}
-
-	thisIEngineApp->OnMouseButton(button, action, mods);
+	thisIEngineApp->mouseButton(button, action, mods);
 }
 //=============================================================================
 void mouseCursorPosCallback([[maybe_unused]] GLFWwindow* window, double xpos, double ypos) noexcept
 {
-	thisIEngineApp->m_currentMousePositionX = xpos;
-	thisIEngineApp->m_currentMousePositionY = ypos;
-
-	thisIEngineApp->OnMousePos(xpos, ypos);
+	thisIEngineApp->mousePos(xpos, ypos);
 }
 //=============================================================================
 void mouseScrollCallback(GLFWwindow* window, double xoffset, double yoffset) noexcept
 {
 	ImGui_ImplGlfw_ScrollCallback(window, xoffset, yoffset);
-	thisIEngineApp->OnScroll(xoffset, yoffset);
+	thisIEngineApp->mouseScroll(xoffset, yoffset);
 }
 //=============================================================================
 void charCallback(GLFWwindow* window, unsigned int c) noexcept
@@ -308,7 +286,8 @@ void IEngineApp::Run()
 				SetCursorPosition({ m_width / 2, m_height / 2 });
 			}
 			glfwSwapBuffers(m_window);
-			glfwPollEvents();
+
+			Input::Update();
 
 			profiler::EndFrame();
 		}
@@ -398,6 +377,9 @@ bool IEngineApp::init()
 	if (!m_graphics.Create())
 		return false;
 
+	if (!TextureManager::Init())
+		return false;
+
 	profiler::Init();
 	thisIEngineApp = this;
 	return OnInit();
@@ -467,6 +449,8 @@ bool IEngineApp::initWindow(const EngineCreateInfo& config)
 	glfwSetCursorPosCallback(m_window, mouseCursorPosCallback);
 	glfwSetScrollCallback(m_window, mouseScrollCallback);
 	glfwSetCursorEnterCallback(m_window, cursorEnterCallback);
+
+	Input::Init(m_window);
 
 	int displayW, displayH;
 	glfwGetFramebufferSize(m_window, &displayW, &displayH);
@@ -549,6 +533,8 @@ void IEngineApp::close()
 {
 	OnClose();
 
+	TextureManager::Close();
+
 	void ClearResourceCache();
 	ClearResourceCache();
 
@@ -594,5 +580,60 @@ void IEngineApp::fpsTick(float deltaSeconds, bool frameRendered)
 		m_numFrames = 0;
 		m_accumulatedTime = 0;
 	}
+}
+//=============================================================================
+void IEngineApp::keypress(int key, int scanCode, int action, int mods)
+{
+	if (key >= 0 && key < (int)MaxKeys)
+	{
+		if (action == GLFW_PRESS)
+		{
+			m_keys[static_cast<size_t>(key)] = true;
+		}
+		else if (action == GLFW_RELEASE)
+		{
+			m_keys[static_cast<size_t>(key)] = false;
+		}
+		else if (action == GLFW_REPEAT)
+		{
+			m_repeatKeys[static_cast<size_t>(key)] = true;
+		}
+	}
+	//std::string keyName = glfwGetKeyName(key, 0);
+	
+	Input::keypress(key, action);	
+	
+	OnKey(key, scanCode, action, mods);
+}
+//=============================================================================
+void IEngineApp::mousePos(double xpos, double ypos)
+{
+	m_currentMousePositionX = xpos;
+	m_currentMousePositionY = ypos;
+	Input::mousePos(xpos, ypos);
+	OnMousePos(xpos, ypos);
+}
+//=============================================================================
+void IEngineApp::mouseScroll(double xoffset, double yoffset)
+{
+	Input::mouseScroll(xoffset, yoffset);
+	OnScroll(xoffset, yoffset);
+}
+//=============================================================================
+void IEngineApp::mouseButton(int button, int action, int mods)
+{
+	if (button >= 0 && button < (int)MaxMouseButtons)
+	{
+		if (action == GLFW_PRESS)
+		{
+			m_mouseButtons[static_cast<size_t>(button)] = true;
+		}
+		else if (action == GLFW_RELEASE)
+		{
+			m_mouseButtons[static_cast<size_t>(button)] = false;
+		}
+	}
+	Input::mouseButton(button, action);
+	OnMouseButton(button, action, mods);
 }
 //=============================================================================

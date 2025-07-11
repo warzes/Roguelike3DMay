@@ -48,9 +48,9 @@ template <typename T>
 std::size_t seed = 0;
 HashCombine(seed, h1, h2, h3);
 */
-void HashCombine([[maybe_unused]] std::size_t& seed) {}
+inline void HashCombine([[maybe_unused]] std::size_t& seed) {}
 template <typename T, typename... Rest>
-void HashCombine(std::size_t& seed, const T& v, Rest... rest)
+inline void HashCombine(std::size_t& seed, const T& v, Rest... rest)
 {
 	std::hash<T> hasher;
 	seed ^= hasher(v) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
