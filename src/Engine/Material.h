@@ -33,3 +33,35 @@ public:
 	//alignas(16) glm::vec4 baseColorFactor = glm::vec4(1.0f);
 	//alignas(16) glm::vec3 emissiveFactor = glm::vec3(1.0f);
 };
+
+// sent to GPU
+struct BindlessMaterial final
+{
+	uint64_t albedoHandle{};
+	uint64_t roughnessHandle{};
+	uint64_t metalnessHandle{};
+	uint64_t normalHandle{};
+	uint64_t ambientOcclusionHandle{};
+};
+
+class MaterialManager final
+{
+public:
+	~MaterialManager();
+
+	std::optional<Material> GetMaterial(const std::string& mat);
+	Material& MakeMaterial(std::string name,
+		std::string albedoTexName,
+		std::string roughnessTexName,
+		std::string metalnessTexName,
+		std::string normalTexName,
+		std::string ambientOcclusionTexName);
+
+	std::vector<std::pair<std::string, Material>> GetLinearMaterials()
+	{
+		return { m_materials.begin(), m_materials.end() };
+	}
+
+private:
+	std::unordered_map<std::string, Material> m_materials;
+};

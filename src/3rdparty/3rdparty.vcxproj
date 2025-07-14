@@ -104,6 +104,7 @@
     <ClCompile Include="imgui\imgui_widgets.cpp" />
     <ClCompile Include="simdjson\simdjson.cpp" />
     <ClCompile Include="stb\stb.cpp" />
+    <ClCompile Include="tinyobjloader\tinyobjloader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="3rdpartyConfig.h" />
@@ -420,6 +421,7 @@
     <ClInclude Include="stb\stb_image_write.h" />
     <ClInclude Include="stb\stb_include.h" />
     <ClInclude Include="stb\stb_truetype.h" />
+    <ClInclude Include="tinyobjloader\tiny_obj_loader.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="glm\detail\func_common.inl" />

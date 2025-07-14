@@ -37,6 +37,9 @@
     <ClCompile Include="simdjson\simdjson.cpp">
       <Filter>simdjson</Filter>
     </ClCompile>
+    <ClCompile Include="tinyobjloader\tinyobjloader.cpp">
+      <Filter>tinyobjloader</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="glad">
@@ -80,6 +83,9 @@
     </Filter>
     <Filter Include="ktx">
       <UniqueIdentifier>{8a83a15d-7659-428d-8d86-7cdd20898b78}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="tinyobjloader">
+      <UniqueIdentifier>{96338b43-6843-458c-b79e-11f5a78bfa51}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1022,6 +1028,9 @@
     </ClInclude>
     <ClInclude Include="simdjson\simdjson.h">
       <Filter>simdjson</Filter>
+    </ClInclude>
+    <ClInclude Include="tinyobjloader\tiny_obj_loader.h">
+      <Filter>tinyobjloader</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

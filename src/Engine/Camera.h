@@ -31,19 +31,21 @@ public:
 	void SetPosition(const glm::vec3& position);
 
 	// Attributes
-	glm::vec3 Position{};
-	glm::vec3 Front{};
-	glm::vec3 Up{};
-	glm::vec3 Right{};
-	glm::vec3 WorldUp{};
+	glm::vec3 Position{ 0.0f };
+
+	glm::vec3 Front{ 0.0f };
+	glm::vec3 Up{ 0.0f };
+	glm::vec3 Right{ 0.0f };
+
+	glm::vec3 WorldUp{ 0.0f };
 
 	// Euler Angles
-	float Yaw{};
-	float Pitch{};
+	float Yaw{ 0.0f };
+	float Pitch{ 0.0f };
 
 	// Options
-	float MovementSpeed{};
-	float MouseSensitivity{};
+	float MovementSpeed{ 0.0f };
+	float MouseSensitivity{ 0.0f };
 
 private:
 	void updateInternal();

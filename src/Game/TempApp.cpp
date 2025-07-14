@@ -1,8 +1,6 @@
 ﻿#include "stdafx.h"
 #include "TempApp.h"
 
-https://github.com/JuanDiegoMontoya/GLest-Rendererer
-
 namespace
 {
 	const char* shaderCodeVertex = R"(
@@ -94,8 +92,9 @@ void main()
 	  },
 	};
 
-	std::optional<gl4::Buffer> vertexBuffer1;
-	std::optional<gl4::Buffer> indexBuffer;
+	Mesh* mesh;
+	//std::optional<gl4::Buffer> vertexBuffer1;
+	//std::optional<gl4::Buffer> indexBuffer;
 	gl4::Texture* diffuse;
 	std::optional<gl4::Sampler> sampler;
 
@@ -144,7 +143,7 @@ EngineCreateInfo TempApp::GetCreateInfo() const
 //=============================================================================
 bool TempApp::OnInit()
 {
-	std::vector<Vertex> vertices = {
+	std::vector<MeshVertex> vertices = {
 		// positions            // normals            // texcoords
 		{{-10.0f, -0.5f,  10.0f},  {0.0f, 1.0f, 0.0f},  { 0.0f,  0.0f}},
 		{{-10.0f, -0.5f, -10.0f},  {0.0f, 1.0f, 0.0f},  { 0.0f, 10.0f}},
@@ -153,10 +152,9 @@ bool TempApp::OnInit()
 		{{-10.0f, -0.5f, -10.0f},  {0.0f, 1.0f, 0.0f},  { 0.0f, 10.0f}},
 		{{ 10.0f, -0.5f, -10.0f},  {0.0f, 1.0f, 0.0f},  {10.0f, 10.0f}}
 	};
-	vertexBuffer1 = gl4::Buffer(std::span(vertices));
+	std::vector<uint32_t> iv = { 0, 1, 2, 3, 5 };
 
-	std::vector<uint32_t> iv = { 0, 1, 2 };
-	indexBuffer = gl4::Buffer(std::span(iv));
+	mesh = new Mesh(vertices, iv, std::nullopt);
 
 
 	{
@@ -229,8 +227,9 @@ bool TempApp::OnInit()
 //=============================================================================
 void TempApp::OnClose()
 {
-	vertexBuffer1 = {};
-	indexBuffer = {};
+	delete mesh;
+	//vertexBuffer1 = {};
+	//indexBuffer = {};
 	uniformBuffer1 = {};
 	uniformBuffer1 = {};
 	pipeline = {};
@@ -282,7 +281,8 @@ void TempApp::OnRender()
 		});
 	{
 		gl4::Cmd::BindGraphicsPipeline(pipeline.value());
-		gl4::Cmd::BindVertexBuffer(0, vertexBuffer1.value(), 0, sizeof(Vertex));
+		mesh->Bind();
+		//gl4::Cmd::BindVertexBuffer(0, vertexBuffer1.value(), 0, sizeof(Vertex));
 		gl4::Cmd::BindUniformBuffer(0, uniformBuffer1.value());
 		gl4::Cmd::BindSampledImage(0, *diffuse, sampler.value());
 		gl4::Cmd::Draw(6, 1, 0, 0);

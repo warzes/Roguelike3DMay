@@ -2,6 +2,7 @@
 
 #include "Material.h"
 #include "CoreFunc.h"
+#include "OpenGL4Buffer.h"
 
 struct MeshVertex final
 {
@@ -32,18 +33,26 @@ namespace std
 	};
 }
 
+// TODO: сделать возможность хранить буфер вершин/индексов в Model, а здесь хранить смещения в буфере
 class Mesh final
 {
 public:
 	Mesh() = default;
 	Mesh(std::span<const MeshVertex> vertices,
 		std::span<const uint32_t> indices,
-		Material* material);
+		std::optional<Material> material);
+	~Mesh();
 
 	uint32_t GetVertexCount() const { return m_vertexCount; }
 	uint32_t GetIndexCount() const { return m_indicesCount; }
 
+	void Bind();
+
 private:
 	uint32_t m_vertexCount{ 0 };
 	uint32_t m_indicesCount{ 0 };
+
+	gl4::Buffer* m_vertexBuffer{ nullptr };
+	gl4::Buffer* m_indexBuffer{ nullptr };
+	std::optional<Material> m_material{};
 };

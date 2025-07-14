@@ -81,6 +81,8 @@
 #include <assimp/version.h>
 #include <assimp/GltfMaterial.h>
 
+#include <tinyobjloader/tiny_obj_loader.h>
+
 #if defined(_MSC_VER)
 #	pragma warning(pop)
 #endif
