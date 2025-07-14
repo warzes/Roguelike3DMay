@@ -15,6 +15,5 @@ struct ObjectBatched
 struct alignas(16) ObjectUniforms // sent to GPU
 {
 	glm::mat4 modelMatrix{};
-	//glm::mat4 normalMatrix{};
 	uint32_t materialIndex{};
 };

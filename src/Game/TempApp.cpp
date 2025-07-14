@@ -109,7 +109,6 @@ void main()
 	std::optional<gl4::Buffer> mVB;
 	std::optional<gl4::Buffer> mIB;
 
-
 	gl4::GraphicsPipeline CreatePipeline()
 	{
 		auto vertexShader = gl4::Shader(gl4::PipelineStage::VertexShader, shaderCodeVertex, "Triangle VS");
@@ -222,14 +221,14 @@ bool TempApp::OnInit()
 
 	resize(GetWindowWidth(), GetWindowHeight());
 
+	glEnable(GL_MULTISAMPLE); // for shadows
+
 	return true;
 }
 //=============================================================================
 void TempApp::OnClose()
 {
 	delete mesh;
-	//vertexBuffer1 = {};
-	//indexBuffer = {};
 	uniformBuffer1 = {};
 	uniformBuffer1 = {};
 	pipeline = {};
