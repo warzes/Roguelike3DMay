@@ -4,240 +4,240 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="TestBlinnPhong.cpp">
-      <Filter>GameApp\_OLD\Test</Filter>
+      <Filter>_test\_OLD\Test</Filter>
     </ClCompile>
     <ClCompile Include="TestModelLoading.cpp">
-      <Filter>GameApp\_OLD\Test</Filter>
+      <Filter>_test\_OLD\Test</Filter>
     </ClCompile>
     <ClCompile Include="TestShadowMapping.cpp">
-      <Filter>GameApp\_OLD\Test</Filter>
+      <Filter>_test\_OLD\Test</Filter>
     </ClCompile>
     <ClCompile Include="TestSkyboxWithCube.cpp">
-      <Filter>GameApp\_OLD\Test</Filter>
+      <Filter>_test\_OLD\Test</Filter>
     </ClCompile>
     <ClCompile Include="TestDeferredSSAO.cpp">
-      <Filter>GameApp\_OLD\Test</Filter>
+      <Filter>_test\_OLD\Test</Filter>
     </ClCompile>
     <ClCompile Include="TestPBR.cpp">
-      <Filter>GameApp\_OLD\Test</Filter>
+      <Filter>_test\_OLD\Test</Filter>
     </ClCompile>
     <ClCompile Include="TestBloom.cpp">
-      <Filter>GameApp\_OLD\Test</Filter>
+      <Filter>_test\_OLD\Test</Filter>
     </ClCompile>
     <ClCompile Include="TestTerrain.cpp">
-      <Filter>GameApp\_OLD\Test2</Filter>
+      <Filter>_test\_OLD\Test2</Filter>
     </ClCompile>
     <ClCompile Include="TestForwardPlus.cpp">
-      <Filter>GameApp\_OLD\Test2</Filter>
+      <Filter>_test\_OLD\Test2</Filter>
     </ClCompile>
     <ClCompile Include="TestSimple.cpp">
-      <Filter>GameApp\_OLD\Test2</Filter>
+      <Filter>_test\_OLD\Test2</Filter>
     </ClCompile>
     <ClCompile Include="TestCascadedShadowMaps.cpp">
-      <Filter>GameApp\_OLD\Test2</Filter>
+      <Filter>_test\_OLD\Test2</Filter>
     </ClCompile>
     <ClCompile Include="TestComplex.cpp">
-      <Filter>GameApp\_OLD\Test3</Filter>
+      <Filter>_test\_OLD\Test3</Filter>
     </ClCompile>
     <ClCompile Include="TestComplex_Temp.cpp">
-      <Filter>GameApp\_OLD\Test3</Filter>
+      <Filter>_test\_OLD\Test3</Filter>
     </ClCompile>
     <ClCompile Include="NewTest001.cpp">
-      <Filter>GameApp\NewTest1</Filter>
+      <Filter>_test\NewTest1</Filter>
     </ClCompile>
     <ClCompile Include="NewTest002.cpp">
-      <Filter>GameApp\NewTest1</Filter>
+      <Filter>_test\NewTest1</Filter>
     </ClCompile>
     <ClCompile Include="NewTest003.cpp">
-      <Filter>GameApp\NewTest1</Filter>
+      <Filter>_test\NewTest1</Filter>
     </ClCompile>
     <ClCompile Include="NewTest004.cpp">
-      <Filter>GameApp\NewTest1</Filter>
+      <Filter>_test\NewTest1</Filter>
     </ClCompile>
     <ClCompile Include="GameAppOld.cpp">
-      <Filter>GameApp\_OLD</Filter>
+      <Filter>_test\_OLD</Filter>
     </ClCompile>
     <ClCompile Include="GameApp.cpp">
-      <Filter>GameApp</Filter>
+      <Filter>Game</Filter>
     </ClCompile>
     <ClCompile Include="RsmTechnique.cpp">
-      <Filter>GameApp\NewTest1</Filter>
+      <Filter>_test\NewTest1</Filter>
     </ClCompile>
     <ClCompile Include="NewTest005.cpp">
-      <Filter>GameApp\NewTest1</Filter>
+      <Filter>_test\NewTest1</Filter>
     </ClCompile>
     <ClCompile Include="SceneLoader.cpp">
-      <Filter>GameApp\NewTest1</Filter>
-    </ClCompile>
-    <ClCompile Include="TempApp.cpp">
-      <Filter>TempApp</Filter>
-    </ClCompile>
-    <ClCompile Include="TmpObject.cpp">
-      <Filter>TempApp</Filter>
+      <Filter>_test\NewTest1</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="GameConfig.h" />
     <ClInclude Include="TestBlinnPhong.h">
-      <Filter>GameApp\_OLD\Test</Filter>
+      <Filter>_test\_OLD\Test</Filter>
     </ClInclude>
     <ClInclude Include="TestModelLoading.h">
-      <Filter>GameApp\_OLD\Test</Filter>
+      <Filter>_test\_OLD\Test</Filter>
     </ClInclude>
     <ClInclude Include="TestShadowMapping.h">
-      <Filter>GameApp\_OLD\Test</Filter>
+      <Filter>_test\_OLD\Test</Filter>
     </ClInclude>
     <ClInclude Include="TestSkyboxWithCube.h">
-      <Filter>GameApp\_OLD\Test</Filter>
+      <Filter>_test\_OLD\Test</Filter>
     </ClInclude>
     <ClInclude Include="TestDeferredSSAO.h">
-      <Filter>GameApp\_OLD\Test</Filter>
+      <Filter>_test\_OLD\Test</Filter>
     </ClInclude>
     <ClInclude Include="TestPBR.h">
-      <Filter>GameApp\_OLD\Test</Filter>
+      <Filter>_test\_OLD\Test</Filter>
     </ClInclude>
     <ClInclude Include="TestBloom.h">
-      <Filter>GameApp\_OLD\Test</Filter>
+      <Filter>_test\_OLD\Test</Filter>
     </ClInclude>
     <ClInclude Include="TestTerrain.h">
-      <Filter>GameApp\_OLD\Test2</Filter>
+      <Filter>_test\_OLD\Test2</Filter>
     </ClInclude>
     <ClInclude Include="TestForwardPlus.h">
-      <Filter>GameApp\_OLD\Test2</Filter>
+      <Filter>_test\_OLD\Test2</Filter>
     </ClInclude>
     <ClInclude Include="TestSimple.h">
-      <Filter>GameApp\_OLD\Test2</Filter>
+      <Filter>_test\_OLD\Test2</Filter>
     </ClInclude>
     <ClInclude Include="TestCascadedShadowMaps.h">
-      <Filter>GameApp\_OLD\Test2</Filter>
+      <Filter>_test\_OLD\Test2</Filter>
     </ClInclude>
     <ClInclude Include="TestComplex.h">
-      <Filter>GameApp\_OLD\Test3</Filter>
+      <Filter>_test\_OLD\Test3</Filter>
     </ClInclude>
     <ClInclude Include="TestComplex_Temp.h">
-      <Filter>GameApp\_OLD\Test3</Filter>
+      <Filter>_test\_OLD\Test3</Filter>
     </ClInclude>
     <ClInclude Include="NewTest001.h">
-      <Filter>GameApp\NewTest1</Filter>
+      <Filter>_test\NewTest1</Filter>
     </ClInclude>
     <ClInclude Include="NewTest002.h">
-      <Filter>GameApp\NewTest1</Filter>
+      <Filter>_test\NewTest1</Filter>
     </ClInclude>
     <ClInclude Include="NewTest003.h">
-      <Filter>GameApp\NewTest1</Filter>
+      <Filter>_test\NewTest1</Filter>
     </ClInclude>
     <ClInclude Include="NewTest004.h">
-      <Filter>GameApp\NewTest1</Filter>
+      <Filter>_test\NewTest1</Filter>
     </ClInclude>
     <ClInclude Include="GameAppOld.h">
-      <Filter>GameApp\_OLD</Filter>
+      <Filter>_test\_OLD</Filter>
     </ClInclude>
     <ClInclude Include="GameApp.h">
-      <Filter>GameApp</Filter>
+      <Filter>Game</Filter>
     </ClInclude>
     <ClInclude Include="RsmTechnique.h">
-      <Filter>GameApp\NewTest1</Filter>
+      <Filter>_test\NewTest1</Filter>
     </ClInclude>
     <ClInclude Include="NewTest005.h">
-      <Filter>GameApp\NewTest1</Filter>
+      <Filter>_test\NewTest1</Filter>
     </ClInclude>
     <ClInclude Include="SceneLoader.h">
-      <Filter>GameApp\NewTest1</Filter>
-    </ClInclude>
-    <ClInclude Include="TempApp.h">
-      <Filter>TempApp</Filter>
-    </ClInclude>
-    <ClInclude Include="TmpObject.h">
-      <Filter>TempApp</Filter>
+      <Filter>_test\NewTest1</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Filter Include="GameApp">
-      <UniqueIdentifier>{88bd236d-eb32-4804-86a2-89192bf60a32}</UniqueIdentifier>
+    <Filter Include="_test">
+      <UniqueIdentifier>{f1436d02-0db8-489e-89c8-01a32ac5f029}</UniqueIdentifier>
     </Filter>
-    <Filter Include="GameApp\NewTest1">
+    <Filter Include="_test\NewTest1">
       <UniqueIdentifier>{2e1fcf20-4c6c-44a2-aaf8-6b72ca4e0687}</UniqueIdentifier>
     </Filter>
-    <Filter Include="GameApp\_OLD">
+    <Filter Include="_test\_OLD">
       <UniqueIdentifier>{02be8a71-90a3-4468-bc75-d0c36dee26d7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="GameApp\_OLD\Test">
+    <Filter Include="_test\_OLD\Test">
       <UniqueIdentifier>{a4afc0a1-64ea-4061-9112-24639dedacdf}</UniqueIdentifier>
     </Filter>
-    <Filter Include="GameApp\_OLD\Test2">
+    <Filter Include="_test\_OLD\Test2">
       <UniqueIdentifier>{6ec12468-041f-4337-b2b4-1980b07aee4f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="GameApp\_OLD\Test2\shaders">
+    <Filter Include="_test\_OLD\Test2\shaders">
       <UniqueIdentifier>{e9433f5d-1e2e-4389-88a1-81bfb14e769e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="GameApp\_OLD\Test2\shaders\TestForwardPlus">
+    <Filter Include="_test\_OLD\Test2\shaders\TestForwardPlus">
       <UniqueIdentifier>{f7a0e9c4-15ba-4dd6-a059-56e0c26fbc19}</UniqueIdentifier>
     </Filter>
-    <Filter Include="GameApp\_OLD\Test3">
+    <Filter Include="_test\_OLD\Test3">
       <UniqueIdentifier>{54477bab-d8f1-478b-950a-fb905a0f54a6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="GameApp\_OLD\Test3\shaders">
+    <Filter Include="_test\_OLD\Test3\shaders">
       <UniqueIdentifier>{8790c819-e030-446d-abdb-7de2b5e9c76f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="GameApp\_OLD\Test3\shaders\TestComplex">
+    <Filter Include="_test\_OLD\Test3\shaders\TestComplex">
       <UniqueIdentifier>{b2b7cdb4-6be4-41d9-8274-d9a0bd9c3972}</UniqueIdentifier>
     </Filter>
-    <Filter Include="TempApp">
-      <UniqueIdentifier>{073ad6ff-996d-435e-a112-abf409de8e95}</UniqueIdentifier>
+    <Filter Include="Game">
+      <UniqueIdentifier>{88bd236d-eb32-4804-86a2-89192bf60a32}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Graphics">
+      <UniqueIdentifier>{48491af8-3c6b-4438-960b-746ea8c87aab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Graphics\shaders">
+      <UniqueIdentifier>{ca0b287f-549a-4db2-9333-939bc019d0ce}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\bin\ExampleData\shaders\TestForwardPlus\forwardplus.frag">
-      <Filter>GameApp\_OLD\Test2\shaders\TestForwardPlus</Filter>
+      <Filter>_test\_OLD\Test2\shaders\TestForwardPlus</Filter>
     </None>
     <None Include="..\..\bin\ExampleData\shaders\TestForwardPlus\forwardplus.vert">
-      <Filter>GameApp\_OLD\Test2\shaders\TestForwardPlus</Filter>
+      <Filter>_test\_OLD\Test2\shaders\TestForwardPlus</Filter>
     </None>
     <None Include="..\..\bin\ExampleData\shaders\TestForwardPlus\lightculling.comp">
-      <Filter>GameApp\_OLD\Test2\shaders\TestForwardPlus</Filter>
+      <Filter>_test\_OLD\Test2\shaders\TestForwardPlus</Filter>
     </None>
     <None Include="..\..\bin\ExampleData\shaders\TestComplex\lighting.fs">
-      <Filter>GameApp\_OLD\Test3\shaders\TestComplex</Filter>
+      <Filter>_test\_OLD\Test3\shaders\TestComplex</Filter>
     </None>
     <None Include="..\..\bin\ExampleData\shaders\TestComplex\lighting.vs">
-      <Filter>GameApp\_OLD\Test3\shaders\TestComplex</Filter>
+      <Filter>_test\_OLD\Test3\shaders\TestComplex</Filter>
     </None>
     <None Include="..\..\bin\ExampleData\shaders\TestComplex\post.frag">
-      <Filter>GameApp\_OLD\Test3\shaders\TestComplex</Filter>
+      <Filter>_test\_OLD\Test3\shaders\TestComplex</Filter>
     </None>
     <None Include="..\..\bin\ExampleData\shaders\TestComplex\post.vert">
-      <Filter>GameApp\_OLD\Test3\shaders\TestComplex</Filter>
+      <Filter>_test\_OLD\Test3\shaders\TestComplex</Filter>
     </None>
     <None Include="..\..\bin\ExampleData\shaders\TestComplex\rsm.fs">
-      <Filter>GameApp\_OLD\Test3\shaders\TestComplex</Filter>
+      <Filter>_test\_OLD\Test3\shaders\TestComplex</Filter>
     </None>
     <None Include="..\..\bin\ExampleData\shaders\TestComplex\rsm.vs">
-      <Filter>GameApp\_OLD\Test3\shaders\TestComplex</Filter>
+      <Filter>_test\_OLD\Test3\shaders\TestComplex</Filter>
     </None>
     <None Include="..\..\bin\ExampleData\shaders\TestComplex\shadow.fs">
-      <Filter>GameApp\_OLD\Test3\shaders\TestComplex</Filter>
+      <Filter>_test\_OLD\Test3\shaders\TestComplex</Filter>
     </None>
     <None Include="..\..\bin\ExampleData\shaders\TestComplex\shadow.vs">
-      <Filter>GameApp\_OLD\Test3\shaders\TestComplex</Filter>
+      <Filter>_test\_OLD\Test3\shaders\TestComplex</Filter>
     </None>
     <None Include="..\..\bin\ExampleData\shaders\TestComplex\ssao.frag">
-      <Filter>GameApp\_OLD\Test3\shaders\TestComplex</Filter>
+      <Filter>_test\_OLD\Test3\shaders\TestComplex</Filter>
     </None>
     <None Include="..\..\bin\ExampleData\shaders\TestComplex\ssao.vert">
-      <Filter>GameApp\_OLD\Test3\shaders\TestComplex</Filter>
+      <Filter>_test\_OLD\Test3\shaders\TestComplex</Filter>
     </None>
     <None Include="..\..\bin\ExampleData\shaders\TestComplex\ssr.fs">
-      <Filter>GameApp\_OLD\Test3\shaders\TestComplex</Filter>
+      <Filter>_test\_OLD\Test3\shaders\TestComplex</Filter>
     </None>
     <None Include="..\..\bin\ExampleData\shaders\TestComplex\ssr.vs">
-      <Filter>GameApp\_OLD\Test3\shaders\TestComplex</Filter>
+      <Filter>_test\_OLD\Test3\shaders\TestComplex</Filter>
     </None>
     <None Include="..\..\bin\ExampleData\shaders\TestComplex\gbuf.fs">
-      <Filter>GameApp\_OLD\Test3\shaders\TestComplex</Filter>
+      <Filter>_test\_OLD\Test3\shaders\TestComplex</Filter>
     </None>
     <None Include="..\..\bin\ExampleData\shaders\TestComplex\gbuf.vs">
-      <Filter>GameApp\_OLD\Test3\shaders\TestComplex</Filter>
+      <Filter>_test\_OLD\Test3\shaders\TestComplex</Filter>
+    </None>
+    <None Include="..\..\bin\GameData\shaders\Minimal.frag">
+      <Filter>Game\Graphics\shaders</Filter>
+    </None>
+    <None Include="..\..\bin\GameData\shaders\Minimal.vert">
+      <Filter>Game\Graphics\shaders</Filter>
     </None>
   </ItemGroup>
 </Project>
