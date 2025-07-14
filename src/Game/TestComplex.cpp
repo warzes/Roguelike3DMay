@@ -157,7 +157,7 @@ bool TestComplex::OnInit()
 
 
 	scene.add(std::make_shared<Model2>("ExampleData/mesh/Sponza/Sponza.gltf"), glm::scale(glm::mat4(1.0f), glm::vec3(0.01f)));
-	scene.add(std::make_shared<PointLight>(glm::vec3(17.0f, 13.0f, 4.0f) * 300.0f, glm::vec3(0.0f, 20.0f, -3.0f), 3.0f));
+	scene.add(std::make_shared<PointLight2>(glm::vec3(17.0f, 13.0f, 4.0f) * 300.0f, glm::vec3(0.0f, 20.0f, -3.0f), 3.0f));
 	// scene.add(std::make_shared<Model>("mitsuba.obj"));
 	// scene.add(std::make_shared<Model>("spot.obj"), glm::translate(glm::mat4(1.0f), glm::vec3(-1.8f, 0.7f, 0.0f)));
 	// scene.add(std::make_shared<PointLight>(glm::vec3(500.0f, 500.0f, 500.0f), glm::vec3(-15.0f, 10.0f, 0.0f), 1.0f));

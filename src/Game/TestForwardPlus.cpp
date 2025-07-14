@@ -46,7 +46,7 @@ void main() {
 )";
 #pragma endregion
 
-	struct alignas(16) PointLight final
+	struct alignas(16) PointLight3 final
 	{
 		glm::vec3 position;
 		float radius;
@@ -136,11 +136,11 @@ void main() {
 	{
 		if (SSBOLights == 0) return;
 
-		PointLight* lights = (PointLight*)glMapNamedBuffer(SSBOLights, GL_WRITE_ONLY);
+		PointLight3* lights = (PointLight3*)glMapNamedBuffer(SSBOLights, GL_WRITE_ONLY);
 
 		for (size_t i = 0; i < numberOfLights; i++)
 		{
-			PointLight& light = lights[i];
+			PointLight3& light = lights[i];
 
 			light.position.x = minLightBoundaries.x + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX / (maxLightBoundaries.x - minLightBoundaries.x)));
 			light.position.y = minLightBoundaries.y + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX / (maxLightBoundaries.y - minLightBoundaries.y)));
@@ -160,11 +160,11 @@ void main() {
 
 	void UpdateLights(float deltaTime)
 	{
-		PointLight* lights = (PointLight*)glMapNamedBuffer(SSBOLights, GL_WRITE_ONLY);
+		PointLight3* lights = (PointLight3*)glMapNamedBuffer(SSBOLights, GL_WRITE_ONLY);
 
 		for (int i = 0; i < numberOfLights; i++)
 		{
-			PointLight& light = lights[i];
+			PointLight3& light = lights[i];
 			light.position += glm::vec3(0, 3.0f, 0) * deltaTime;
 			if (light.position.y > maxLightBoundaries.y)
 			{
@@ -217,7 +217,7 @@ bool TestForwardPlus::OnInit()
 	lightProgramLightDebugLoc = gl4::GetUniformLocation(lightProgram, "debugViewIndex");
 
 	// create light buffer
-	SSBOLights = gl4::CreateBufferStorage(GL_MAP_READ_BIT | GL_MAP_WRITE_BIT, MAX_POINT_LIGHT_PER_TILE * sizeof(PointLight), nullptr);
+	SSBOLights = gl4::CreateBufferStorage(GL_MAP_READ_BIT | GL_MAP_WRITE_BIT, MAX_POINT_LIGHT_PER_TILE * sizeof(PointLight3), nullptr);
 	SSBOVisibleLights = gl4::CreateBuffer(GL_DYNAMIC_DRAW, tileCountPerRow * tileCountPerCol * sizeof(DummyVisibleLightsForTile), nullptr);
 
 	// Generate lights

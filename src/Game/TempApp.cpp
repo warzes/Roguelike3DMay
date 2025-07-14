@@ -223,6 +223,10 @@ bool TempApp::OnInit()
 
 	glEnable(GL_MULTISAMPLE); // for shadows
 
+
+	bluenoiseTex = TextureManager::GetTexture("CoreData/textures/bluenoise_64.png");
+	createFramebuffers();
+
 	return true;
 }
 //=============================================================================
@@ -281,7 +285,6 @@ void TempApp::OnRender()
 	{
 		gl4::Cmd::BindGraphicsPipeline(pipeline.value());
 		mesh->Bind();
-		//gl4::Cmd::BindVertexBuffer(0, vertexBuffer1.value(), 0, sizeof(Vertex));
 		gl4::Cmd::BindUniformBuffer(0, uniformBuffer1.value());
 		gl4::Cmd::BindSampledImage(0, *diffuse, sampler.value());
 		gl4::Cmd::Draw(6, 1, 0, 0);
@@ -327,5 +330,46 @@ void TempApp::OnScroll(double dx, double dy)
 //=============================================================================
 void TempApp::OnKey(int key, int scanCode, int action, int mods)
 {
+}
+//=============================================================================
+void TempApp::createFramebuffers()
+{
+	auto width = GetWindowWidth();
+	auto height = GetWindowHeight();
+
+	// create SSAO framebuffer
+	//m_ssao.texture = gl4::CreateTexture2D({ width, height}, gl4::Format::R8_UNORM, "SSAO"); // add swizzleMask =>  GLint swizzleMask[] = { GL_RED, GL_RED, GL_RED, GL_ONE };
+	//m_ssao.textureBlurred = gl4::CreateTexture2D({ width, height }, gl4::Format::R8_UNORM, "SSAOBlurred");
+
+	//// create HDR framebuffer
+	//m_hdr.colorTex = gl4::CreateTexture2D({ width, height }, gl4::Format::R16G16B16A16_FLOAT, "ColorHDR");
+	//m_hdr.depthTex = gl4::CreateTexture2D({ width, height }, gl4::Format::D32_FLOAT, "DepthHDR");
+
+	//// create SSR framebuffer + textures
+	//m_ssr.framebuffer_width = width / 2.0f;
+	//m_ssr.framebuffer_height = height / 2.0f;
+	//m_ssr.tex = gl4::CreateTexture2D({ m_ssr.framebuffer_width, m_ssr.framebuffer_height }, gl4::Format::R16G16B16A16_FLOAT, "ColorSSR");
+	//m_ssr.texBlur = gl4::CreateTexture2D({ m_ssr.framebuffer_width, m_ssr.framebuffer_height }, gl4::Format::R16G16B16A16_FLOAT, "ColorSSRBlur");
+
+	//// create volumetrics texture + fbo + intermediate (for blurring)
+	//m_volumetrics.tex = gl4::CreateTexture2D({ width, height }, gl4::Format::R16_FLOAT, "ColorColumetrics"); // add GL_TEXTURE_SWIZZLE_RGBA
+	//m_volumetrics.texBlur = gl4::CreateTexture2D({ width, height }, gl4::Format::R16_FLOAT, "ColorColumetricsBlur"); // add GL_TEXTURE_SWIZZLE_RGBA
+
+	//// create a-trous fbo and texture
+	//m_volumetrics.atrousTex = gl4::CreateTexture2D({ width, height }, gl4::Format::R16_FLOAT, "ColorColumetrics"); // add GL_TEXTURE_SWIZZLE_RGBA
+
+	//// create tone mapping buffers
+	//std::vector<int> zeros(m_hdr.NUM_BUCKETS, 0);
+	//float expo[] = { m_hdr.exposureFactor, 0 };
+
+	//m_hdr.exposureBuffer = gl4::Buffer(expo);
+	//m_hdr.histogramBuffer = gl4::Buffer(std::span(zeros));
+
+
+
+	//shadowDepth = gl4::CreateTexture2D({ width, height }, gl4::Format::D32_FLOAT, "DepthHDR");
+
+	// VSM textures + fbo
+	// TODO:
 }
 //=============================================================================

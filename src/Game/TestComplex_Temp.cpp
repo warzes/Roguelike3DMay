@@ -8,7 +8,7 @@ void Object::addChildren(std::shared_ptr<Object> obj, const glm::mat4& offset)
     children.push_back({ obj, offset });
 }
 
-PointLight::PointLight(const glm::vec3& i, const glm::vec3& p, float w) : intensity(i), position(p), width(w) {}
+PointLight2::PointLight2(const glm::vec3& i, const glm::vec3& p, float w) : intensity(i), position(p), width(w) {}
 
 Scene::Scene() : root(std::make_shared<Object>())
 {
@@ -326,7 +326,7 @@ void Shader::setUniblock(const std::string& name, int idx)
     glUniformBlockBinding(sp_, glGetUniformBlockIndex(sp_, name.c_str()), idx);
 }
 
-void Shader::setLights(const std::vector<PointLight>& lights)
+void Shader::setLights(const std::vector<PointLight2>& lights)
 {
     setUniformi("n_point_light", lights.size());
     for (int i = 0; i < lights.size(); i++)
@@ -723,9 +723,9 @@ void SceneDesc::load(std::shared_ptr<Object> obj)
             {
                 models.addChildren(std::dynamic_pointer_cast<Model2>(p), model);
             }
-            if (std::dynamic_pointer_cast<PointLight>(p))
+            if (std::dynamic_pointer_cast<PointLight2>(p))
             {
-                PointLight tmp = *std::dynamic_pointer_cast<PointLight>(p);
+                PointLight2 tmp = *std::dynamic_pointer_cast<PointLight2>(p);
                 tmp.position = glm::vec3(model * glm::vec4(tmp.position, 1.0f));
                 point_lights.push_back(tmp);
             }

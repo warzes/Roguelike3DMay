@@ -13,13 +13,13 @@ struct Object
     std::vector<std::pair<std::shared_ptr<Object>, glm::mat4>> children;
 };
 
-struct PointLight : public Object
+struct PointLight2 : public Object
 {
     glm::vec3 intensity;
     glm::vec3 position;
     float width;
 
-    PointLight(const glm::vec3& i, const glm::vec3& p, float w = 0.1f);
+    PointLight2(const glm::vec3& i, const glm::vec3& p, float w = 0.1f);
 };
 
 struct Scene
@@ -125,7 +125,7 @@ public:
     void setUniform(const std::string& name, const glm::vec3& value);
     void setUniform(const std::string& name, const glm::mat4& value);
     void setUniblock(const std::string& name, int idx);
-    void setLights(const std::vector<PointLight>& lights);
+    void setLights(const std::vector<PointLight2>& lights);
     void setMVP(const glm::mat4& view, const glm::mat4& projection);
     void setCamera(const Camera2& camera);
     void setTexture(const std::string& name, Texture* texture);
@@ -244,7 +244,7 @@ struct SceneDesc
 {
     Model2 models;
     glm::vec3 ambient_light_irradiance;
-    std::vector<PointLight> point_lights;
+    std::vector<PointLight2> point_lights;
 
     SceneDesc();
 
