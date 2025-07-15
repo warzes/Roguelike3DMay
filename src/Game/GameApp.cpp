@@ -40,6 +40,9 @@ bool GameApp::OnInit()
 
 	m_camera.SetPosition(glm::vec3(0.0f, 0.0f, -1.0f));
 
+	if (!m_scene.Init())
+		return false;
+
 	return true;
 }
 //=============================================================================
@@ -48,6 +51,7 @@ void GameApp::OnClose()
 	delete m_model1.mesh;
 	delete m_model2.mesh;
 	delete m_model3.mesh;
+	m_scene.Close();
 	m_graphics.Close();
 }
 //=============================================================================
@@ -69,15 +73,16 @@ void GameApp::OnUpdate(float deltaTime)
 	}
 
 	m_graphics.Update(deltaTime);
+	m_scene.Update(m_camera);
 }
 //=============================================================================
 void GameApp::OnRender()
 {
-	m_graphics.SetModel(&m_model1);
-	m_graphics.SetModel(&m_model2);
-	m_graphics.SetModel(&m_model3);
+	m_scene.SetModel(&m_model1);
+	m_scene.SetModel(&m_model2);
+	m_scene.SetModel(&m_model3);
 
-	m_graphics.Render();
+	m_graphics.Render(m_scene);
 }
 //=============================================================================
 void GameApp::OnImGuiDraw()

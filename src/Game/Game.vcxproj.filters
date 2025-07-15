@@ -75,6 +75,12 @@
     <ClCompile Include="GameModelManager.cpp">
       <Filter>Game\Graphics</Filter>
     </ClCompile>
+    <ClCompile Include="GameModel.cpp">
+      <Filter>Game\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="GameSceneManager.cpp">
+      <Filter>Game\Graphics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -149,6 +155,12 @@
       <Filter>Game\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="GameModelManager.h">
+      <Filter>Game\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="GameModel.h">
+      <Filter>Game\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="GameSceneManager.h">
       <Filter>Game\Graphics</Filter>
     </ClInclude>
   </ItemGroup>
