@@ -17,6 +17,10 @@ namespace modelUBO
 	struct ObjectUniforms final
 	{
 		glm::mat4 model;
+	};
+
+	struct SceneUniforms final
+	{
 		float NumLight;
 	};
 }
@@ -54,6 +58,7 @@ private:
 	std::optional<gl4::GraphicsPipeline>                      m_pipeline;
 	std::optional<gl4::TypedBuffer<modelUBO::GlobalUniforms>> m_globalUniformsUbo;
 	std::optional<gl4::TypedBuffer<modelUBO::ObjectUniforms>> m_objectUniformUbo;
+	std::optional<gl4::TypedBuffer<modelUBO::SceneUniforms>>  m_sceneUniformUbo;
 
 	std::optional<gl4::Sampler>                               m_nearestSampler;
 	std::optional<gl4::Sampler>                               m_linearSampler;

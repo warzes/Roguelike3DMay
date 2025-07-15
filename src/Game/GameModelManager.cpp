@@ -88,6 +88,7 @@ bool GameModelManager::Init()
 
 	m_globalUniformsUbo = gl4::TypedBuffer<modelUBO::GlobalUniforms>(gl4::BufferStorageFlag::DynamicStorage);
 	m_objectUniformUbo = gl4::TypedBuffer<modelUBO::ObjectUniforms>(gl4::BufferStorageFlag::DynamicStorage);
+	m_sceneUniformUbo = gl4::TypedBuffer<modelUBO::SceneUniforms>(gl4::BufferStorageFlag::DynamicStorage);
 
 	gl4::SamplerState sampleDesc;
 	sampleDesc.minFilter    = gl4::MinFilter::Nearest;
@@ -108,7 +109,7 @@ bool GameModelManager::Init()
 
 	m_lights.resize(4);
 
-	m_lights[0].diffuseColor = glm::vec3(1.0f, 1.0f, 1.0f);  // Red
+	m_lights[0].diffuseColor = glm::vec3(1.0f, 0.1f, 0.2f);  // Red
 	m_lights[0].position = glm::vec3(4.0, 5.0, -3.0);
 
 	m_lights[1].diffuseColor = glm::vec3(0.0f, 1.0f, 0.0f);  // Green
@@ -150,13 +151,16 @@ void GameModelManager::SetModel(GameModel* model)
 //=============================================================================
 void GameModelManager::Draw()
 {
-	modelUBO::ObjectUniforms trMat;
-	trMat.NumLight = 4;
+	modelUBO::SceneUniforms sceneUbo;
+	sceneUbo.NumLight = 1;
+	m_sceneUniformUbo->UpdateData(sceneUbo);
 
 	gl4::Cmd::BindGraphicsPipeline(m_pipeline.value());
 	gl4::Cmd::BindUniformBuffer(0, m_globalUniformsUbo.value());
-	gl4::Cmd::BindStorageBuffer(2, *m_lightSSBO);
+	gl4::Cmd::BindUniformBuffer(1, m_sceneUniformUbo.value());
+	gl4::Cmd::BindStorageBuffer(0, *m_lightSSBO);
 
+	modelUBO::ObjectUniforms trMat;
 	for (size_t i = 0; i < m_currentModel; i++)
 	{
 		auto model = m_models[i];
@@ -165,7 +169,7 @@ void GameModelManager::Draw()
 
 		m_objectUniformUbo->UpdateData(trMat);
 
-		gl4::Cmd::BindUniformBuffer(1, m_objectUniformUbo.value());
+		gl4::Cmd::BindUniformBuffer(2, m_objectUniformUbo.value());
 		gl4::Cmd::BindSampledImage(0, *model->diffuse, (model->textureFilter == gl4::MagFilter::Linear) ? m_linearSampler.value() : m_nearestSampler.value());
 		model->mesh->Bind();
 	}
