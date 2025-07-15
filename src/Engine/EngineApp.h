@@ -29,7 +29,7 @@ struct EngineCreateInfo final
 
 	struct Render final
 	{
-		bool             vsync{ true };
+		bool             vsync{ false };
 		bool             srgb{ false };
 	} render;
 };

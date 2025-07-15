@@ -7,6 +7,15 @@ namespace gl4
 	class Texture;
 }
 
+class PhongMaterial final
+{
+public:
+	gl4::Texture* diffuseTexture{ nullptr };
+	glm::vec3     diffuse{ 1.0f };
+	glm::vec3     specular{ 1.0f };
+	float         shininess{ 1.0f };
+};
+
 class Material final
 {
 public:
