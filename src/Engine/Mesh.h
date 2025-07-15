@@ -3,6 +3,7 @@
 #include "Material.h"
 #include "CoreFunc.h"
 #include "OpenGL4Buffer.h"
+#include "OpenGL4Pipeline.h"
 
 struct MeshVertex final
 {
@@ -32,6 +33,33 @@ namespace std
 		}
 	};
 }
+
+constexpr std::array<gl4::VertexInputBindingDescription, 4> MeshVertexInputBindingDescs{
+  gl4::VertexInputBindingDescription{
+	.location = 0,
+	.binding = 0,
+	.format = gl4::Format::R32G32B32_FLOAT,
+	.offset = offsetof(MeshVertex, position),
+  },
+  gl4::VertexInputBindingDescription{
+	.location = 1,
+	.binding = 0,
+	.format = gl4::Format::R32G32B32_FLOAT,
+	.offset = offsetof(MeshVertex, normal),
+  },
+	gl4::VertexInputBindingDescription{
+	.location = 2,
+	.binding = 0,
+	.format = gl4::Format::R32G32_FLOAT,
+	.offset = offsetof(MeshVertex, uv),
+  },
+	gl4::VertexInputBindingDescription{
+	.location = 3,
+	.binding = 0,
+	.format = gl4::Format::R32G32B32_FLOAT,
+	.offset = offsetof(MeshVertex, tangent),
+  },
+};
 
 // TODO: сделать возможность хранить буфер вершин/индексов в Model, а здесь хранить смещения в буфере
 class Mesh final

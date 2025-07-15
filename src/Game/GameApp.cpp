@@ -10,27 +10,6 @@ namespace
 		glm::mat4 proj;
 	};
 
-	constexpr std::array<gl4::VertexInputBindingDescription, 3> inputBindingDescs{
-	  gl4::VertexInputBindingDescription{
-		.location = 0,
-		.binding = 0,
-		.format = gl4::Format::R32G32B32_FLOAT,
-		.offset = offsetof(MeshVertex, position),
-	  },
-	  gl4::VertexInputBindingDescription{
-		.location = 1,
-		.binding = 0,
-		.format = gl4::Format::R32G32B32_FLOAT,
-		.offset = offsetof(MeshVertex, normal),
-	  },
-		gl4::VertexInputBindingDescription{
-		.location = 2,
-		.binding = 0,
-		.format = gl4::Format::R32G32_FLOAT,
-		.offset = offsetof(MeshVertex, uv),
-	  },
-	};
-
 	Mesh* mesh1;
 	gl4::Texture* diffuse;
 	std::optional<gl4::Sampler> sampler;
@@ -53,7 +32,7 @@ namespace
 			.vertexShader = &vertexShader,
 			.fragmentShader = &fragmentShader,
 			.inputAssemblyState = {.topology = gl4::PrimitiveTopology::TRIANGLE_LIST},
-			.vertexInputState = {inputBindingDescs},
+			.vertexInputState = {MeshVertexInputBindingDescs},
 			.depthState = {.depthTestEnable = true},
 			});
 	}
@@ -85,7 +64,7 @@ bool GameApp::OnInit()
 		{{-10.0f, -0.5f, -10.0f},  {0.0f, 1.0f, 0.0f},  { 0.0f, 10.0f}},
 		{{ 10.0f, -0.5f, -10.0f},  {0.0f, 1.0f, 0.0f},  {10.0f, 10.0f}}
 	};
-	std::vector<uint32_t> iv = { 0, 1, 2, 3, 5 };
+	std::vector<uint32_t> iv = { 0, 1, 2, 3, 4, 5 };
 
 	mesh1 = new Mesh(vertices, iv, std::nullopt);
 
@@ -218,7 +197,6 @@ void GameApp::OnRender()
 		mesh1->Bind();
 
 		gl4::Cmd::BindGraphicsPipeline(pipeline.value());
-		mesh2->Bind();
 		gl4::Cmd::BindUniformBuffer(0, uniformBuffer1.value());
 		gl4::Cmd::BindSampledImage(0, *diffuse, sampler.value());
 		mesh2->Bind();
