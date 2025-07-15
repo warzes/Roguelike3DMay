@@ -16,7 +16,6 @@ MeshDescriptor LoadObjBase(const std::string& path, MaterialManager& materialMan
 	reader_config.triangulate = true;
 
 	tinyobj::ObjReader reader;
-
 	if (!reader.ParseFromFile(std::string(path), reader_config))
 	{
 		if (!reader.Error().empty())
@@ -25,11 +24,10 @@ MeshDescriptor LoadObjBase(const std::string& path, MaterialManager& materialMan
 			return {};
 		}
 	}
-
-	//if (!reader.Warning().empty())
-	//{
-	//  std::cout << "TinyObjReader: " << reader.Warning();
-	//}
+	if (!reader.Warning().empty())
+	{
+		Warning("TinyObjReader: " + reader.Warning());
+	}
 
 	auto& attrib = reader.GetAttrib();
 	auto& shapes = reader.GetShapes();
@@ -152,8 +150,7 @@ MeshDescriptor LoadObjBase(const std::string& path, MaterialManager& materialMan
 
 
 				//std::cout << "Creating material: " << prevName << std::endl;
-				materialManager.MakeMaterial(prevName, albedoName,
-					roughnessName, metalnessName, normalName, ambientOcclusionName);
+				materialManager.MakeMaterial(prevName, albedoName, roughnessName, metalnessName, normalName, ambientOcclusionName);
 
 				uint32_t currentVertexIndex = 0;
 				std::unordered_map<MeshVertex, uint32_t> verticesUnique;
@@ -186,8 +183,7 @@ MeshDescriptor LoadObjBase(const std::string& path, MaterialManager& materialMan
 		}
 	}
 
-	assert(meshDescriptor.vertices.size() == meshDescriptor.vertices.size() &&
-		meshDescriptor.vertices.size() == meshDescriptor.materials.size());
+	assert(meshDescriptor.vertices.size() == meshDescriptor.vertices.size() && meshDescriptor.vertices.size() == meshDescriptor.materials.size());
 	return meshDescriptor;
 }
 //=============================================================================

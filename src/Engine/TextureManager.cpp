@@ -16,7 +16,7 @@ void TextureManager::Close()
 	m_textures.clear();
 }
 //=============================================================================
-gl4::Texture* TextureManager::GetTexture(const std::string& name)
+gl4::Texture* TextureManager::GetTexture(const std::string& name, bool flipVertical)
 {
 	auto it = m_textures.find(name);
 	if (it != m_textures.end())
@@ -32,7 +32,7 @@ gl4::Texture* TextureManager::GetTexture(const std::string& name)
 			return nullptr;
 		}
 
-		stbi_set_flip_vertically_on_load(true);
+		stbi_set_flip_vertically_on_load(flipVertical);
 
 		int imgW, imgH, nrChannels;
 		auto pixels = stbi_loadf(name.c_str(), &imgW, &imgH, &nrChannels, 0);

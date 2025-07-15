@@ -12,10 +12,13 @@ out VS_OUT {
 	vec2 TexCoords;
 } vs_out;
 
-layout(binding = 0) uniform Matrices { 
-	uniform mat4 model;
+layout(binding = 0) uniform ViewMatrices { 
 	uniform mat4 view;
 	uniform mat4 proj;
+};
+
+layout(binding = 1) uniform TransformMatrices { 
+	uniform mat4 model;
 };
 
 void main()

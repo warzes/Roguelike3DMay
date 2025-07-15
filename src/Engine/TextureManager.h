@@ -8,7 +8,7 @@ public:
 	static bool Init();
 	static void Close();
 
-	static gl4::Texture* GetTexture(const std::string& name);
+	static gl4::Texture* GetTexture(const std::string& name, bool flipVertical = true);
 
 private:
 	static inline std::unordered_map<std::string, gl4::Texture*> m_textures;
