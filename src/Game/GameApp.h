@@ -24,6 +24,14 @@ public:
 	void OnScroll(double dx, double dy) final;
 	void OnKey(int key, int scanCode, int action, int mods) final;
 
+	Camera& GetCamera() { return m_camera; }
+
 private:
 	GameGraphics m_graphics;
+
+	Camera    m_camera;
+
+	GameModel m_model1;
+	GameModel m_model2;
+	GameModel m_model3;
 };

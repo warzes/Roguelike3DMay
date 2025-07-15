@@ -97,6 +97,7 @@
     <ClCompile Include="GameApp.cpp" />
     <ClCompile Include="GameAppOld.cpp" />
     <ClCompile Include="GameGraphics.cpp" />
+    <ClCompile Include="GameModelManager.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="NewTest001.cpp" />
     <ClCompile Include="NewTest002.cpp" />
@@ -128,6 +129,7 @@
     <ClInclude Include="GameAppOld.h" />
     <ClInclude Include="GameConfig.h" />
     <ClInclude Include="GameGraphics.h" />
+    <ClInclude Include="GameModelManager.h" />
     <ClInclude Include="NewTest001.h" />
     <ClInclude Include="NewTest002.h" />
     <ClInclude Include="NewTest003.h" />

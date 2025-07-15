@@ -72,6 +72,9 @@
     <ClCompile Include="GameGraphics.cpp">
       <Filter>Game\Graphics</Filter>
     </ClCompile>
+    <ClCompile Include="GameModelManager.cpp">
+      <Filter>Game\Graphics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -143,6 +146,9 @@
       <Filter>_test\NewTest1</Filter>
     </ClInclude>
     <ClInclude Include="GameGraphics.h">
+      <Filter>Game\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="GameModelManager.h">
       <Filter>Game\Graphics</Filter>
     </ClInclude>
   </ItemGroup>
