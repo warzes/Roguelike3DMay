@@ -86,8 +86,8 @@ bool GameModelManager::Init()
 	if (!createPipeline())
 		return false;
 
-	m_viewUbo = gl4::TypedBuffer<modelUBO::ViewUBO>(gl4::BufferStorageFlag::DynamicStorage);
-	m_transformUbo = gl4::TypedBuffer<modelUBO::TransformUBO>(gl4::BufferStorageFlag::DynamicStorage);
+	m_globalUniformsUbo = gl4::TypedBuffer<modelUBO::GlobalUniforms>(gl4::BufferStorageFlag::DynamicStorage);
+	m_objectUniformUbo = gl4::TypedBuffer<modelUBO::ObjectUniforms>(gl4::BufferStorageFlag::DynamicStorage);
 
 	gl4::SamplerState sampleDesc;
 	sampleDesc.minFilter    = gl4::MinFilter::Nearest;
@@ -106,13 +106,30 @@ bool GameModelManager::Init()
 	m_models.resize(MaxModelDraw);
 	m_currentModel = 0;
 
+	m_lights.resize(4);
+
+	m_lights[0].diffuseColor = glm::vec3(1.0f, 1.0f, 1.0f);  // Red
+	m_lights[0].position = glm::vec3(4.0, 5.0, -3.0);
+
+	m_lights[1].diffuseColor = glm::vec3(0.0f, 1.0f, 0.0f);  // Green
+	m_lights[1].position = glm::vec3(3.0f, 1.0f, 3.0f);
+
+	m_lights[2].diffuseColor = glm::vec3(0.0f, 0.0f, 1.0f);  // Blue
+	m_lights[2].position = glm::vec3(-3.0f, 1.0f, -3.0f);
+
+	m_lights[3].diffuseColor = glm::vec3(1.0f, 1.0f, 1.0f);  // White
+	m_lights[3].position = glm::vec3(3.0f, 1.0f, -3.0f);
+
+	m_lightSSBO.emplace(std::span(m_lights), gl4::BufferStorageFlag::DynamicStorage);
+
 	return true;
 }
 //=============================================================================
 void GameModelManager::Close()
 {
-	m_viewUbo = {};
-	m_transformUbo = {};
+	m_lightSSBO = {};
+	m_globalUniformsUbo = {};
+	m_objectUniformUbo = {};
 	m_nearestSampler = {};
 	m_linearSampler = {};
 	m_pipeline = {};
@@ -120,10 +137,10 @@ void GameModelManager::Close()
 //=============================================================================
 void GameModelManager::Update(Camera& cam)
 {
-	modelUBO::ViewUBO ubo;
+	modelUBO::GlobalUniforms ubo;
 	ubo.view = cam.GetViewMatrix();
 	ubo.proj = glm::perspective(glm::radians(65.0f), GetWindowAspect(), 0.01f, 1000.0f);
-	m_viewUbo->UpdateData(ubo);
+	m_globalUniformsUbo->UpdateData(ubo);
 }
 //=============================================================================
 void GameModelManager::SetModel(GameModel* model)
@@ -133,19 +150,22 @@ void GameModelManager::SetModel(GameModel* model)
 //=============================================================================
 void GameModelManager::Draw()
 {
-	modelUBO::TransformUBO trMat;
+	modelUBO::ObjectUniforms trMat;
+	trMat.NumLight = 4;
 
 	gl4::Cmd::BindGraphicsPipeline(m_pipeline.value());
-	gl4::Cmd::BindUniformBuffer(0, m_viewUbo.value());
+	gl4::Cmd::BindUniformBuffer(0, m_globalUniformsUbo.value());
+	gl4::Cmd::BindStorageBuffer(2, *m_lightSSBO);
 
 	for (size_t i = 0; i < m_currentModel; i++)
 	{
 		auto model = m_models[i];
 		assert(model);
 		trMat.model = model->GetModelMat();
-		m_transformUbo->UpdateData(trMat);
 
-		gl4::Cmd::BindUniformBuffer(1, m_transformUbo.value());
+		m_objectUniformUbo->UpdateData(trMat);
+
+		gl4::Cmd::BindUniformBuffer(1, m_objectUniformUbo.value());
 		gl4::Cmd::BindSampledImage(0, *model->diffuse, (model->textureFilter == gl4::MagFilter::Linear) ? m_linearSampler.value() : m_nearestSampler.value());
 		model->mesh->Bind();
 	}
@@ -154,9 +174,9 @@ void GameModelManager::Draw()
 //=============================================================================
 bool GameModelManager::createPipeline()
 {
-	auto vertexShader = gl4::Shader(gl4::PipelineStage::VertexShader, FileUtils::ReadShaderCode("GameData/shaders/Minimal.vert"), "min VS");
+	auto vertexShader = gl4::Shader(gl4::PipelineStage::VertexShader, FileUtils::ReadShaderCode("GameData/shaders/GameMesh.vert"), "GameMesh VS");
 	if (!vertexShader.IsValid()) return false;
-	auto fragmentShader = gl4::Shader(gl4::PipelineStage::FragmentShader, FileUtils::ReadShaderCode("GameData/shaders/Minimal.frag"), "min FS");
+	auto fragmentShader = gl4::Shader(gl4::PipelineStage::FragmentShader, FileUtils::ReadShaderCode("GameData/shaders/GameMesh.frag"), "GameMesh FS");
 	if (!fragmentShader.IsValid()) return false;
 
 	m_pipeline = gl4::GraphicsPipeline({

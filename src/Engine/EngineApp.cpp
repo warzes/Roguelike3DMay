@@ -526,7 +526,7 @@ void IEngineApp::initImGui()
 //=============================================================================
 bool IEngineApp::shouldWindowClose() const
 {
-	return glfwWindowShouldClose(m_window);
+	return glfwWindowShouldClose(m_window) == GLFW_TRUE;
 }
 //=============================================================================
 void IEngineApp::close()

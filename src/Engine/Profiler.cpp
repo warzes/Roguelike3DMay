@@ -1,6 +1,16 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "Profiler.h"
-#include <Windows.h> // TODO:
+#if defined(_MSC_VER)
+#	pragma warning(push, 3)
+#	pragma warning(disable : 5039)
+#endif
+#if defined(_WIN32)
+#	undef APIENTRY
+#	include <Windows.h> // TODO:
+#endif
+#if defined(_MSC_VER)
+#	pragma warning(pop)
+#endif
 //=============================================================================
 #define BUFFER_COUNT 3
 #define MAX_SAMPLES 256
@@ -29,7 +39,7 @@ struct Profiler final
 	struct Buffer final
 	{
 		std::vector<std::unique_ptr<Sample>> samples;
-		int32_t                              index = 0;
+		size_t                               index = 0u;
 
 		Buffer()
 		{
@@ -49,7 +59,7 @@ struct Profiler final
 
 	void BeginSample(std::string name)
 	{
-		int32_t idx = m_sampleBuffers[m_writeBufferIdx].index++;
+		size_t idx = m_sampleBuffers[m_writeBufferIdx].index++;
 
 		if (!m_sampleBuffers[m_writeBufferIdx].samples[idx])
 			m_sampleBuffers[m_writeBufferIdx].samples[idx] = std::make_unique<Sample>();
@@ -64,7 +74,7 @@ struct Profiler final
 #ifdef _WIN32
 		LARGE_INTEGER cpu_time;
 		QueryPerformanceCounter(&cpu_time);
-		sample->cpu_time = cpu_time.QuadPart * (1000000.0 / m_frequency.QuadPart);
+		sample->cpu_time = (double)cpu_time.QuadPart * (1000000.0 / (double)m_frequency.QuadPart);
 #else
 		timeval cpu_time;
 		gettimeofday(&cpu_time, nullptr);
@@ -76,7 +86,7 @@ struct Profiler final
 
 	void EndSample(std::string name)
 	{
-		int32_t idx = m_sampleBuffers[m_writeBufferIdx].index++;
+		size_t idx = m_sampleBuffers[m_writeBufferIdx].index++;
 
 		if (!m_sampleBuffers[m_writeBufferIdx].samples[idx])
 			m_sampleBuffers[m_writeBufferIdx].samples[idx] = std::make_unique<Sample>();
@@ -91,7 +101,7 @@ struct Profiler final
 #ifdef _WIN32
 		LARGE_INTEGER cpu_time;
 		QueryPerformanceCounter(&cpu_time);
-		sample->cpu_time = cpu_time.QuadPart * (1000000.0 / m_frequency.QuadPart);
+		sample->cpu_time = (double)cpu_time.QuadPart * (1000000.0 / (double)m_frequency.QuadPart);
 #else
 		timeval cpu_time;
 		gettimeofday(&cpu_time, nullptr);
@@ -127,7 +137,7 @@ struct Profiler final
 	{
 		if (m_readBufferIdx >= 0)
 		{
-			for (int32_t i = 0; i < m_sampleBuffers[m_readBufferIdx].index; i++)
+			for (size_t i = 0; i < m_sampleBuffers[m_readBufferIdx].index; i++)
 			{
 				auto& sample = m_sampleBuffers[m_readBufferIdx].samples[i];
 
@@ -152,8 +162,8 @@ struct Profiler final
 
 					uint64_t gpu_time_diff = end_time - start_time;
 
-					float gpu_time = float(gpu_time_diff / 1000000.0);
-					float cpu_time = (sample->end_sample->cpu_time - sample->cpu_time) * 0.001f;
+					float gpu_time = float((double)gpu_time_diff / 1000000.0);
+					float cpu_time = float(sample->end_sample->cpu_time - sample->cpu_time) * 0.001f;
 
 					if (ImGui::TreeNode(id.c_str(), "%s | %f ms (CPU) | %f ms (GPU)", sample->name.c_str(), cpu_time, gpu_time))
 						m_shouldPopStack.push(true);

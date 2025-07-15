@@ -170,6 +170,8 @@
     <None Include="..\..\bin\ExampleData\shaders\TestForwardPlus\forwardplus.frag" />
     <None Include="..\..\bin\ExampleData\shaders\TestForwardPlus\forwardplus.vert" />
     <None Include="..\..\bin\ExampleData\shaders\TestForwardPlus\lightculling.comp" />
+    <None Include="..\..\bin\GameData\shaders\GameMesh.frag" />
+    <None Include="..\..\bin\GameData\shaders\GameMesh.vert" />
     <None Include="..\..\bin\GameData\shaders\Minimal.frag" />
     <None Include="..\..\bin\GameData\shaders\Minimal.vert" />
   </ItemGroup>

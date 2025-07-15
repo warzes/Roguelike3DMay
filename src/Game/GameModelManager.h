@@ -8,15 +8,16 @@ constexpr size_t MaxModelDraw = 1'000'000;
 
 namespace modelUBO
 {
-	struct ViewUBO final
+	struct GlobalUniforms final
 	{
 		glm::mat4 view;
 		glm::mat4 proj;
 	};
 
-	struct TransformUBO final
+	struct ObjectUniforms final
 	{
 		glm::mat4 model;
+		float NumLight;
 	};
 }
 
@@ -50,12 +51,16 @@ public:
 
 private:
 	bool createPipeline();
-	std::optional<gl4::GraphicsPipeline>                    m_pipeline;
-	std::optional<gl4::TypedBuffer<modelUBO::ViewUBO>>      m_viewUbo;
-	std::optional<gl4::TypedBuffer<modelUBO::TransformUBO>> m_transformUbo;
-	std::optional<gl4::Sampler>                             m_nearestSampler;
-	std::optional<gl4::Sampler>                             m_linearSampler;
+	std::optional<gl4::GraphicsPipeline>                      m_pipeline;
+	std::optional<gl4::TypedBuffer<modelUBO::GlobalUniforms>> m_globalUniformsUbo;
+	std::optional<gl4::TypedBuffer<modelUBO::ObjectUniforms>> m_objectUniformUbo;
+
+	std::optional<gl4::Sampler>                               m_nearestSampler;
+	std::optional<gl4::Sampler>                               m_linearSampler;
 
 	std::vector<GameModel*> m_models;
 	size_t                  m_currentModel{ 0 };
+
+	std::vector<Light> m_lights;
+	std::optional<gl4::Buffer> m_lightSSBO;
 };

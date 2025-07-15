@@ -70,6 +70,8 @@ gl4::Texture* TextureManager::GetTexture(const std::string& name, bool flipVerti
 			});
 		stbi_image_free(pixels);
 
+		Debug("Load Texture: " + name);
+
 		return &texture;
 	}
 }
