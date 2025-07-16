@@ -111,6 +111,28 @@ void GameModelManager::Draw()
 	m_currentModel = 0;
 }
 //=============================================================================
+void GameModelManager::DrawInDepth()
+{
+	gl4::Cmd::BindGraphicsPipeline(m_pipelineInDepth.value());
+	gl4::Cmd::BindUniformBuffer(0, m_globalUniformsUbo.value());
+
+	modelUBO::ObjectUniforms trMat;
+	for (size_t i = 0; i < m_currentModel; i++)
+	{
+		auto model = m_models[i];
+		assert(model);
+
+		// 
+		{
+			trMat.model = model->GetModelMat();
+			m_objectUniformUbo->UpdateData(trMat);
+		}
+
+		model->mesh->Bind();
+	}
+	//m_currentModel = 0;
+}
+//=============================================================================
 bool GameModelManager::createPipeline()
 {
 	auto vertexShader = gl4::Shader(gl4::PipelineStage::VertexShader, FileUtils::ReadShaderCode("GameData/shaders/GameMesh.vert"), "GameMesh VS");
@@ -124,10 +146,27 @@ bool GameModelManager::createPipeline()
 		.fragmentShader = &fragmentShader,
 		.inputAssemblyState = {.topology = gl4::PrimitiveTopology::TRIANGLE_LIST},
 		.vertexInputState = {MeshVertexInputBindingDescs},
-		.depthState = {.depthTestEnable = true},
+		.depthState = {.depthTestEnable = true, .depthWriteEnable = true},
 		});
 
 	if (!m_pipeline.has_value()) return false;
+
+	vertexShader = gl4::Shader(gl4::PipelineStage::VertexShader, FileUtils::ReadShaderCode("GameData/shaders/Depth.vert"), "Depth VS");
+	if (!vertexShader.IsValid()) return false;
+	fragmentShader = gl4::Shader(gl4::PipelineStage::FragmentShader, FileUtils::ReadShaderCode("GameData/shaders/Depth.frag"), "Depth FS");
+	if (!fragmentShader.IsValid()) return false;
+
+	m_pipelineInDepth = gl4::GraphicsPipeline({
+		 .name = "Model In Depth Pipeline",
+		.vertexShader = &vertexShader,
+		.fragmentShader = &fragmentShader,
+		.inputAssemblyState = {.topology = gl4::PrimitiveTopology::TRIANGLE_LIST},
+		.vertexInputState = {MeshVertexInputBindingDescs},
+		.depthState = {.depthTestEnable = true},
+		});
+
+	if (!m_pipelineInDepth.has_value()) return false;
+
 
 	return true;
 }

@@ -269,5 +269,11 @@
     <None Include="..\..\bin\GameData\shaders\GameMesh.frag">
       <Filter>Game\Graphics\shaders</Filter>
     </None>
+    <None Include="..\..\bin\GameData\shaders\Depth.vert">
+      <Filter>Game\Graphics\shaders</Filter>
+    </None>
+    <None Include="..\..\bin\GameData\shaders\Depth.frag">
+      <Filter>Game\Graphics\shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

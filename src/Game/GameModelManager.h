@@ -52,10 +52,12 @@ public:
 	void SetModel(GameModel* model);
 
 	void Draw();
+	void DrawInDepth();
 
 private:
 	bool createPipeline();
 	std::optional<gl4::GraphicsPipeline>                      m_pipeline;
+	std::optional<gl4::GraphicsPipeline>                      m_pipelineInDepth;
 	std::optional<gl4::TypedBuffer<modelUBO::GlobalUniforms>> m_globalUniformsUbo;
 	std::optional<gl4::TypedBuffer<modelUBO::ObjectUniforms>> m_objectUniformUbo;
 	std::optional<gl4::TypedBuffer<modelUBO::MaterialUniform>> m_materialUniformUbo;

@@ -19,4 +19,6 @@ private:
 	GameApp*                    m_gameApp{ nullptr };
 	std::optional<gl4::Texture> m_colorBuffer;
 	std::optional<gl4::Texture> m_depthBuffer;
+
+	std::optional<gl4::Texture> m_depthBuffer2;
 };

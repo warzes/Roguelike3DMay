@@ -22,6 +22,7 @@ public:
 	void SetModel(GameModel* model);
 
 	void Draw();
+	void DrawInDepth();
 
 private:
 	GameModelManager m_modelManager;

@@ -83,3 +83,8 @@ void GameSceneManager::Draw()
 	m_modelManager.Draw();
 }
 //=============================================================================
+void GameSceneManager::DrawInDepth()
+{
+	m_modelManager.DrawInDepth();
+}
+//=============================================================================
