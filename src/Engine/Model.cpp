@@ -70,7 +70,7 @@ MeshDescriptor LoadObjBase(const std::string& path, MaterialManager& materialMan
 					ty = attrib.texcoords[2 * idx.texcoord_index + 1];
 				}
 
-				MeshVertex vertex{ {vx, vy, vz}, { nx, ny, nz }, {tx, ty} };
+				MeshVertex vertex{ {vx, vy, vz}, glm::vec3(1.0f), { nx, ny, nz }, {tx, ty} };
 				vertices.push_back(vertex);
 			}
 			index_offset += fv;

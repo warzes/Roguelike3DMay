@@ -4,11 +4,10 @@
 
 namespace sceneUBO
 {
-	struct SceneUniforms final
+	struct alignas(16) SceneUniforms final
 	{
-		int NumDirectionalLight;
-		int NumPointLight;
 		glm::vec3 CameraPos;
+		int NumLight;
 	};
 }
 
@@ -29,8 +28,6 @@ private:
 
 	std::optional<gl4::TypedBuffer<sceneUBO::SceneUniforms>> m_sceneUniformUbo;
 
-	std::vector<DirectionalLight> m_directionalLights;
-	std::vector<PointLight> m_pointLights;
-	std::optional<gl4::Buffer> m_directionalLightSSBO;
-	std::optional<gl4::Buffer> m_pointLightSSBO;
+	std::vector<Light> m_lights;
+	std::optional<gl4::Buffer> m_lightSSBO;
 };

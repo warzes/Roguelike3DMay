@@ -7,7 +7,7 @@ struct GameModel final
 {
 	Mesh* mesh{ nullptr };
 
-	gl4::Texture* diffuse{ nullptr };
+	PhongMaterial material;
 	gl4::MagFilter textureFilter{};
 
 	glm::vec3 position{ 0.0f };

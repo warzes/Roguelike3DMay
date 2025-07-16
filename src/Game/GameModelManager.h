@@ -10,15 +10,34 @@ constexpr size_t MaxModelDraw = 1'000'000;
 
 namespace modelUBO
 {
-	struct GlobalUniforms final
+	struct alignas(16) GlobalUniforms final
 	{
 		glm::mat4 view;
 		glm::mat4 proj;
 	};
 
-	struct ObjectUniforms final
+	struct alignas(16) ObjectUniforms final
 	{
 		glm::mat4 model;
+	};
+
+	struct alignas(16) MaterialUniform final
+	{
+		glm::vec3 diffuseMaterial;
+		float pag0;
+		glm::vec3 specularMaterial;
+		float shininessMaterial;
+
+		int hasDiffuse;
+		int hasSpecular;
+		int hasEmission;
+		int hasNormalMap;
+		int hasDepthMap;
+		float emissionStrength;
+
+		int blinn{ true };
+
+		float heightScale;
 	};
 }
 
@@ -39,6 +58,7 @@ private:
 	std::optional<gl4::GraphicsPipeline>                      m_pipeline;
 	std::optional<gl4::TypedBuffer<modelUBO::GlobalUniforms>> m_globalUniformsUbo;
 	std::optional<gl4::TypedBuffer<modelUBO::ObjectUniforms>> m_objectUniformUbo;
+	std::optional<gl4::TypedBuffer<modelUBO::MaterialUniform>> m_materialUniformUbo;
 
 	std::optional<gl4::Sampler>                               m_nearestSampler;
 	std::optional<gl4::Sampler>                               m_linearSampler;

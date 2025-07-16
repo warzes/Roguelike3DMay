@@ -1,5 +1,23 @@
 ﻿#include "stdafx.h"
 #include "GameSceneManager.h"
+
+struct Attenuation
+{
+	float constant;
+	float linear;
+	float quadratic;
+};
+
+Attenuation calculateAttenuation(float radius, float targetIntensity)
+{
+	Attenuation att;
+	att.constant = 1.0f;
+	att.linear = 0.35f;
+
+	float totalAttenuation = 1.0f / targetIntensity;
+	att.quadratic = (totalAttenuation - att.constant - att.linear * radius) / (radius * radius);
+	return att;
+}
 //=============================================================================
 bool GameSceneManager::Init()
 {
@@ -8,40 +26,36 @@ bool GameSceneManager::Init()
 
 	m_sceneUniformUbo = gl4::TypedBuffer<sceneUBO::SceneUniforms>(gl4::BufferStorageFlag::DynamicStorage);
 
-	m_directionalLights.resize(4);
+	m_lights.resize(3);
 
-	m_directionalLights[0].position = glm::vec3(1);
-	m_directionalLights[0].color = glm::vec3(1);
+	Attenuation att = calculateAttenuation(23.0f, 0.01f);
 
-	m_pointLights.resize(4);
+	m_lights[0].position = glm::vec3(1);
+	m_lights[0].color = glm::vec3(1);
+	m_lights[0].type = DirectionalLight;
 
-	m_pointLights[0].position = glm::vec3(2, 0, 2);
-	m_pointLights[0].color = glm::vec3(1, 0, 0);
+	m_lights[1].position = glm::vec3(5, 0, 0);
+	m_lights[1].color = glm::vec3(1, 0, 0);
+	m_lights[1].type = PointLight;
+	m_lights[1].constant = att.constant;
+	m_lights[1].linear = att.linear;
+	m_lights[1].quadratic = att.quadratic;
 
-	//m_directionalLights[0].color = glm::vec3(1.0f, 0.1f, 0.2f);  // Red
-	//m_directionalLights[0].position = glm::vec3(4.0, 5.0, -3.0);
+	m_lights[2].position = glm::vec3(-5, 0, 0);
+	m_lights[2].color = glm::vec3(0, 1, 0);
+	m_lights[2].type = PointLight;
+	m_lights[2].constant = 1.0f;
+	m_lights[2].linear = 0.35f;
+	m_lights[2].quadratic = 0.44f;
 
-	//m_directionalLights[1].color = glm::vec3(0.0f, 1.0f, 0.0f);  // Green
-	//m_directionalLights[1].position = glm::vec3(3.0f, 1.0f, 3.0f);
-
-	//m_directionalLights[2].color = glm::vec3(0.0f, 0.0f, 1.0f);  // Blue
-	//m_directionalLights[2].position = glm::vec3(-3.0f, 1.0f, -3.0f);
-
-	//m_directionalLights[3].color = glm::vec3(1.0f, 1.0f, 1.0f);  // White
-	//m_directionalLights[3].position = glm::vec3(3.0f, 1.0f, -3.0f);
-
-
-
-	m_directionalLightSSBO.emplace(std::span(m_directionalLights), gl4::BufferStorageFlag::DynamicStorage);
-	m_pointLightSSBO.emplace(std::span(m_pointLights), gl4::BufferStorageFlag::DynamicStorage);
+	m_lightSSBO.emplace(std::span(m_lights), gl4::BufferStorageFlag::DynamicStorage);
 
 	return true;
 }
 //=============================================================================
 void GameSceneManager::Close()
 {
-	m_directionalLightSSBO = {};
-	m_pointLightSSBO = {};
+	m_lightSSBO = {};
 	m_modelManager.Close();
 }
 //=============================================================================
@@ -50,13 +64,11 @@ void GameSceneManager::Update(Camera& cam)
 	m_modelManager.Update(cam);
 
 	sceneUBO::SceneUniforms sceneUbo;
-	sceneUbo.NumDirectionalLight = 1;
-	sceneUbo.NumPointLight = 1;
 	sceneUbo.CameraPos = cam.Position;
+	sceneUbo.NumLight = 3;
 	m_sceneUniformUbo->UpdateData(sceneUbo);
 
-	m_directionalLightSSBO->UpdateData(std::span(m_directionalLights));
-	m_pointLightSSBO->UpdateData(std::span(m_pointLights));
+	m_lightSSBO->UpdateData(std::span(m_lights));
 }
 //=============================================================================
 void GameSceneManager::SetModel(GameModel* model)
@@ -67,8 +79,7 @@ void GameSceneManager::SetModel(GameModel* model)
 void GameSceneManager::Draw()
 {
 	gl4::Cmd::BindUniformBuffer(1, m_sceneUniformUbo.value());
-	gl4::Cmd::BindStorageBuffer(0, *m_directionalLightSSBO);
-	gl4::Cmd::BindStorageBuffer(1, *m_pointLightSSBO);
+	gl4::Cmd::BindStorageBuffer(0, *m_lightSSBO);
 	m_modelManager.Draw();
 }
 //=============================================================================

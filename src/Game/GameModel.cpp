@@ -26,6 +26,17 @@ Mesh* LoadAssimpMesh(const std::string& filename)
 		nv.position.y = mesh->mVertices[i].y;
 		nv.position.z = mesh->mVertices[i].z;
 
+		if (mesh->HasVertexColors(0))
+		{
+			nv.color.x = mesh->mColors[0][i].r;
+			nv.color.y = mesh->mColors[0][i].g;
+			nv.color.z = mesh->mColors[0][i].b;
+		}
+		else
+		{
+			nv.color = glm::vec3(1.0f);
+		}
+
 		//if (mesh->HasNormals())
 		{
 			nv.normal.x = mesh->mNormals[i].x;

@@ -1,11 +1,5 @@
 ﻿#pragma once
 
-//enum class LightType : uint8_t
-//{
-//	Point,
-//	Spot,
-//	Directional
-//};
 //
 //struct LightProperties final
 //{
@@ -79,30 +73,27 @@
 #define DIFFUSE_STRENGTH 0.5f
 #define SPECULAR_STRENGTH 0.5f
 
-class Light
-{
-public:
-	glm::vec3 position = glm::vec3(0.0f);
-	glm::vec3 color = glm::vec3(1.0f);
-	glm::vec3 ambient = glm::vec3(AMBIENT_STRENGTH);
-	glm::vec3 diffuse = glm::vec3(DIFFUSE_STRENGTH);
-	glm::vec3 specular = glm::vec3(SPECULAR_STRENGTH);
-	float     intensity = 1.0f;
-};
-
-class DirectionalLight final : public Light
-{
-public:
-	glm::vec3 direction{ 0.0f };
-};
-
 #define CONSTANT 1.0f
 #define LINEAR 0.09f
 #define QUADRATIC 0.032f
 
-class PointLight final : public Light
+constexpr float PointLight = 0.0f;
+constexpr float DirectionalLight = 2.0f;
+
+struct alignas(16) Light final
 {
-public:
+	glm::aligned_vec3 position = glm::vec3(0.0f);
+	glm::aligned_vec3 color = glm::vec3(1.0f);
+	glm::aligned_vec3 ambient = glm::vec3(AMBIENT_STRENGTH);
+	glm::aligned_vec3 diffuse = glm::vec3(DIFFUSE_STRENGTH);
+	glm::aligned_vec3 specular = glm::vec3(SPECULAR_STRENGTH);
+	float     intensity = 1.0f;
+
+	glm::aligned_vec3 direction{ 0.0f }; // LightType::Directional
+	//LightType type = LightType::Point;
+	float  type{ PointLight };
+
+	// LightType::Point
 	float constant{ CONSTANT };
 	float linear{ LINEAR };
 	float quadratic{ QUADRATIC };

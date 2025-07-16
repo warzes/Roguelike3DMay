@@ -8,6 +8,7 @@
 struct MeshVertex final
 {
 	glm::vec3 position{};
+	glm::vec3 color{};
 	glm::vec3 normal{};
 	glm::vec2 uv{};
 	glm::vec3 tangent{};
@@ -34,27 +35,33 @@ namespace std
 	};
 }
 
-constexpr std::array<gl4::VertexInputBindingDescription, 4> MeshVertexInputBindingDescs{
+constexpr std::array<gl4::VertexInputBindingDescription, 5> MeshVertexInputBindingDescs{
   gl4::VertexInputBindingDescription{
 	.location = 0,
 	.binding = 0,
 	.format = gl4::Format::R32G32B32_FLOAT,
 	.offset = offsetof(MeshVertex, position),
   },
-  gl4::VertexInputBindingDescription{
+	gl4::VertexInputBindingDescription{
 	.location = 1,
+	.binding = 0,
+	.format = gl4::Format::R32G32B32_FLOAT,
+	.offset = offsetof(MeshVertex, color),
+  },
+  gl4::VertexInputBindingDescription{
+	.location = 2,
 	.binding = 0,
 	.format = gl4::Format::R32G32B32_FLOAT,
 	.offset = offsetof(MeshVertex, normal),
   },
 	gl4::VertexInputBindingDescription{
-	.location = 2,
+	.location = 3,
 	.binding = 0,
 	.format = gl4::Format::R32G32_FLOAT,
 	.offset = offsetof(MeshVertex, uv),
   },
 	gl4::VertexInputBindingDescription{
-	.location = 3,
+	.location = 4,
 	.binding = 0,
 	.format = gl4::Format::R32G32B32_FLOAT,
 	.offset = offsetof(MeshVertex, tangent),

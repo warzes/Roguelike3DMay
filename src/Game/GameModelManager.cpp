@@ -8,6 +8,7 @@ bool GameModelManager::Init()
 
 	m_globalUniformsUbo = gl4::TypedBuffer<modelUBO::GlobalUniforms>(gl4::BufferStorageFlag::DynamicStorage);
 	m_objectUniformUbo = gl4::TypedBuffer<modelUBO::ObjectUniforms>(gl4::BufferStorageFlag::DynamicStorage);
+	m_materialUniformUbo = gl4::TypedBuffer<modelUBO::MaterialUniform>(gl4::BufferStorageFlag::DynamicStorage);
 
 	gl4::SamplerState sampleDesc;
 	sampleDesc.minFilter    = gl4::MinFilter::Nearest;
@@ -57,16 +58,54 @@ void GameModelManager::Draw()
 	gl4::Cmd::BindUniformBuffer(0, m_globalUniformsUbo.value());
 
 	modelUBO::ObjectUniforms trMat;
+	modelUBO::MaterialUniform materialUbo;
 	for (size_t i = 0; i < m_currentModel; i++)
 	{
 		auto model = m_models[i];
 		assert(model);
-		trMat.model = model->GetModelMat();
+		
+		// 
+		{
+			trMat.model = model->GetModelMat();
+			m_objectUniformUbo->UpdateData(trMat);
+		}
 
-		m_objectUniformUbo->UpdateData(trMat);
+		// material set
+		{
+			auto& mat = model->material;
+
+			materialUbo.diffuseMaterial = mat.diffuse;
+			materialUbo.specularMaterial = mat.specular;
+			materialUbo.shininessMaterial = mat.shininess;
+
+			materialUbo.hasDiffuse =  mat.diffuseTexture != nullptr;
+			materialUbo.hasSpecular = mat.specularTexture != nullptr;
+			materialUbo.hasEmission = mat.emissionTexture != nullptr;
+			materialUbo.hasNormalMap = mat.normalTexture != nullptr;
+			materialUbo.hasDepthMap = mat.depthTexture != nullptr;
+			materialUbo.emissionStrength = mat.emissionStrength;
+			materialUbo.blinn = true;
+			materialUbo.heightScale = mat.heightScale;
+
+			m_materialUniformUbo->UpdateData(materialUbo);
+		}
 
 		gl4::Cmd::BindUniformBuffer(2, m_objectUniformUbo.value());
-		gl4::Cmd::BindSampledImage(0, *model->diffuse, (model->textureFilter == gl4::MagFilter::Linear) ? m_linearSampler.value() : m_nearestSampler.value());
+		gl4::Cmd::BindUniformBuffer(3, m_materialUniformUbo.value());
+
+		const gl4::Sampler& sampler = (model->textureFilter == gl4::MagFilter::Linear) ? m_linearSampler.value() : m_nearestSampler.value();
+
+		if (materialUbo.hasDiffuse)
+			gl4::Cmd::BindSampledImage(0, *model->material.diffuseTexture, sampler);
+		if (materialUbo.hasSpecular)
+			gl4::Cmd::BindSampledImage(1, *model->material.specularTexture, sampler);
+		if (materialUbo.hasEmission)
+			gl4::Cmd::BindSampledImage(2, *model->material.emissionTexture, sampler);
+		if (materialUbo.hasNormalMap)
+			gl4::Cmd::BindSampledImage(3, *model->material.normalTexture, sampler);
+		if (materialUbo.hasDepthMap)
+			gl4::Cmd::BindSampledImage(4, *model->material.depthTexture, sampler);
+
 		model->mesh->Bind();
 	}
 	m_currentModel = 0;
