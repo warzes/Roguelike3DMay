@@ -9,6 +9,8 @@ namespace sceneUBO
 	{
 		glm::vec3 CameraPos;
 		int NumLight;
+		glm::mat4 lightSpaceMatrix;
+		glm::vec3 lightPos;
 	};
 }
 

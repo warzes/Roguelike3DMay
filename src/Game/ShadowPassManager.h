@@ -7,6 +7,9 @@ struct ShadowPass final
 	gl4::RenderDepthStencilAttachment* rtAttachment{ nullptr };
 	uint32_t                           width{ 1024 };
 	uint32_t                           height{ 1024 };
+
+	glm::mat4 lightSpaceMatrix;
+	glm::vec3 lightPos;
 };
 
 class ShadowPassManager final

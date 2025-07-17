@@ -22,6 +22,16 @@ bool ShadowPassManager::Init()
 	//gl4::Viewport view{ .drawRect = {m_shadow.width, m_shadow.height} };
 	m_shadow.viewport = new gl4::RenderInfo( { /*.viewport = view,*/ .depthAttachment = *m_shadow.rtAttachment } );
 
+	glm::vec3 shadowLightPos = { 1.0f, 1.0f, 1.0f };
+
+	// Shaders
+	float nearPlane = 0.1f, farPlane = 17.5f;
+	glm::mat4 lightProjection = glm::ortho(-10.f, 10.f, -10.f, 10.f, nearPlane, farPlane);
+	glm::mat4 lightView = glm::lookAt(shadowLightPos, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+
+	m_shadow.lightSpaceMatrix = lightProjection * lightView;
+	m_shadow.lightPos = shadowLightPos;
+
 	return true;
 }
 //=============================================================================

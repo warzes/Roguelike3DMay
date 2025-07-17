@@ -4,6 +4,8 @@
 
 constexpr size_t MaxModelDraw = 1'000'000;
 
+class ShadowPassManager;
+
 /*
 Класс отвечающий за работу с моделями/мешами в рамках игры
 */
@@ -52,7 +54,7 @@ public:
 	void SetModel(GameModel* model);
 
 	void Draw(Camera& cam);
-	void DrawInDepth(Camera& cam);
+	void DrawInDepth(Camera& cam, ShadowPassManager& shadowPassMgr);
 
 private:
 	bool createPipeline();

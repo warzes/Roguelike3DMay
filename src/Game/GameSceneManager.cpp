@@ -36,6 +36,7 @@ bool GameSceneManager::Init()
 	m_lights[0].position = glm::vec3(1);
 	m_lights[0].color = glm::vec3(1);
 	m_lights[0].type = DirectionalLight;
+	m_lights[0].ambient = glm::vec3(0.1f);
 
 	m_lights[1].position = glm::vec3(5, 0, 0);
 	m_lights[1].color = glm::vec3(1, 0, 0);
@@ -78,7 +79,9 @@ void GameSceneManager::Draw(Camera& cam)
 {
 	sceneUBO::SceneUniforms sceneUbo;
 	sceneUbo.CameraPos = cam.Position;
-	sceneUbo.NumLight = 3;
+	sceneUbo.NumLight = 1;
+	sceneUbo.lightSpaceMatrix = m_shadowPassMgr.GetShadowPass().lightSpaceMatrix;
+	sceneUbo.lightPos = m_shadowPassMgr.GetShadowPass().lightPos;
 	m_sceneUniformUbo->UpdateData(sceneUbo);
 
 	gl4::Cmd::BindUniformBuffer(1, m_sceneUniformUbo.value());
@@ -90,7 +93,7 @@ void GameSceneManager::DrawInDepth(Camera& cam)
 {
 	gl4::BeginRendering(*m_shadowPassMgr.GetShadowPass().viewport);
 	{
-		m_modelManager.DrawInDepth(cam);
+		m_modelManager.DrawInDepth(cam, m_shadowPassMgr);
 	}
 	gl4::EndRendering();
 }

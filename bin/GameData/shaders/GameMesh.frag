@@ -25,10 +25,10 @@ layout(location = 0) in vec3 FragPosition;
 layout(location = 1) in vec3 FragColor;
 layout(location = 2) in vec3 FragNormal;
 layout(location = 3) in vec2 FragTexCoords;
-//layout(location = ) in vec4 FragPosLightSpace;
-//layout(location = ) in vec3 TangentLightPos;
-layout(location = 4) in vec3 TangentViewPos;
-layout(location = 5) in vec3 TangentFragPos;
+layout(location = 4) in vec4 FragPosLightSpace;
+layout(location = 5) in vec3 TangentLightPos;
+layout(location = 6) in vec3 TangentViewPos;
+layout(location = 7) in vec3 TangentFragPos;
 
 layout(binding = 0) uniform sampler2D diffuseTex;
 layout(binding = 1) uniform sampler2D specularTex;
@@ -36,13 +36,13 @@ layout(binding = 2) uniform sampler2D emissionTex;
 layout(binding = 3) uniform sampler2D normalTex;
 layout(binding = 4) uniform sampler2D depthTex;
 
-//uniform bool shadowMapping;
-//uniform sampler2D shadowMap;
-//uniform vec3 lightPos;
+layout(binding = 5) uniform sampler2D shadowMap;
 
 layout(binding = 1, std140) uniform SceneUniforms { 
 	uniform vec3 CameraPos;
 	uniform int NumLight;
+	uniform mat4 lightSpaceMatrix;
+	uniform vec3 lightPos;
 };
 layout(binding = 3, std140) uniform MaterialUniforms { 
 	uniform vec3 MatDiffuse;
@@ -144,39 +144,41 @@ vec4 calculateEmission()
 	return emission * emissionStrength;
 }
 
-//float calculateShadow(vec4 fragPosLightSpace)
-//{
-//	// perform perspective divide
-//	vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
-//	// transform to [0,1] range
-//	projCoords = projCoords * 0.5 + 0.5;
-//	// get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
-//	float closestDepth = texture(shadowMap, projCoords.xy).r; 
-//	// get depth of current fragment from light's perspective
-//	float currentDepth = projCoords.z;
-//	// calculate bias (based on depth map resolution and slope)
-//	vec3 normal = normalize(Normal);
-//	vec3 lightDir = normalize(lightPos - FragPos);
-//	float bias = max(0.05 * (1.0 - dot(normal, lightDir)), 0.005);
-//	// check whether current frag pos is in shadow
-//	// float shadow = currentDepth - bias > closestDepth  ? 1.0 : 0.0;
-//	// PCF
-//	float shadow = 0.0;
-//	vec2 texelSize = 1.0 / textureSize(shadowMap, 0);
-//	for(int x = -1; x <= 1; ++x) {
-//		for(int y = -1; y <= 1; ++y) {
-//			float pcfDepth = texture(shadowMap, projCoords.xy + vec2(x, y) * texelSize).r; 
-//			shadow += currentDepth - bias > pcfDepth  ? 1.0 : 0.0;
-//		}
-//	}
-//	shadow /= 9.0;
-//   
-//	// keep the shadow at 0.0 when outside the far_plane region of the light's frustum.
-//	if(projCoords.z > 1.0)
-//	shadow = 0.0;
-//
-//	return shadow;
-//}
+float calculateShadow(vec4 fragPosLightSpace)
+{
+	// perform perspective divide
+	vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
+	// transform to [0,1] range
+	projCoords = projCoords * 0.5 + 0.5;
+	// get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
+	float closestDepth = texture(shadowMap, projCoords.xy).r; 
+	// get depth of current fragment from light's perspective
+	float currentDepth = projCoords.z;
+	// calculate bias (based on depth map resolution and slope)
+	vec3 normal = normalize(FragNormal);
+	vec3 lightDir = normalize(lightPos - FragPosition);
+	float bias = max(0.05 * (1.0 - dot(normal, lightDir)), 0.005);
+	// check whether current frag pos is in shadow
+	// float shadow = currentDepth - bias > closestDepth  ? 1.0 : 0.0;
+	// PCF
+	float shadow = 0.0;
+	vec2 texelSize = 1.0 / textureSize(shadowMap, 0);
+	for(int x = -1; x <= 1; ++x)
+	{
+		for(int y = -1; y <= 1; ++y)
+		{
+			float pcfDepth = texture(shadowMap, projCoords.xy + vec2(x, y) * texelSize).r; 
+			shadow += currentDepth - bias > pcfDepth  ? 1.0 : 0.0;
+		}
+	}
+	shadow /= 9.0;
+   
+	// keep the shadow at 0.0 when outside the far_plane region of the light's frustum.
+	if(projCoords.z > 1.0)
+		shadow = 0.0;
+
+	return shadow;
+}
 
 vec4 getLightColor(vec4 emission, Light light)
 {
@@ -190,7 +192,7 @@ vec4 getLightColor(vec4 emission, Light light)
 		norm = texture(normalTex, texCoord).rgb;
 		// transform normal vector to range [-1,1]
 		norm = normalize(norm * 2.0 - 1.0);  // this normal is in tangent space
-		//lightDir = normalize(TangentLightPos - TangentFragPos);
+		lightDir = normalize(TangentLightPos - TangentFragPos);
 	}
 
 	vec4 ambient = calculateAmbient(light);
@@ -213,8 +215,7 @@ vec4 getLightColor(vec4 emission, Light light)
 	}
 
 	// Calculate shadow
-	float shadow = 0.0;
-//	//if(shadowMapping) shadow = calculateShadow(FragPosLightSpace);
+	float shadow = calculateShadow(FragPosLightSpace);
 
 	vec4 lightColor = vec4(light.color, 1.0);
 	return (ambient + (1.0 - shadow) * (diffuse + specular) + emission) * lightColor;
@@ -290,7 +291,7 @@ void main()
 	{
 		lightColor += getLightColor(emission, light[i]);
 	}
-	lightColor = clamp(lightColor, 0.0f, 1.0f);
+	//lightColor = clamp(lightColor, 0.0f, 1.0f);
 
 	if(hasDiffuse)
 	{

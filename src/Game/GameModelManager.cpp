@@ -1,5 +1,6 @@
 ﻿#include "stdafx.h"
 #include "GameModelManager.h"
+#include "ShadowPassManager.h"
 //=============================================================================
 bool GameModelManager::Init()
 {
@@ -114,11 +115,11 @@ void GameModelManager::Draw(Camera& cam)
 	m_currentModel = 0;
 }
 //=============================================================================
-void GameModelManager::DrawInDepth(Camera& cam)
+void GameModelManager::DrawInDepth(Camera& cam, ShadowPassManager& shadowPassMgr)
 {
 	modelUBO::GlobalUniforms ubo;
-	ubo.view = cam.GetViewMatrix();
-	ubo.proj = glm::perspective(glm::radians(65.0f), 1.0f, 0.01f, 1000.0f);
+	ubo.view = glm::mat4(1.0f);
+	ubo.proj = shadowPassMgr.GetShadowPass().lightSpaceMatrix;
 	m_globalUniformsUbo->UpdateData(ubo);
 
 	gl4::Cmd::BindGraphicsPipeline(m_pipelineInDepth.value());
