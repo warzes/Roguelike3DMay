@@ -41,7 +41,6 @@ bool GameApp::OnInit()
 	m_model3.material.diffuseTexture = TextureManager::GetTexture("ExampleData/mesh/stall/stallTexture.png", false);
 	m_model3.material.normalTexture = TextureManager::GetTexture("CoreData/textures/normal01.tga");
 
-
 	m_camera.SetPosition(glm::vec3(0.0f, 0.0f, -1.0f));
 
 	if (!m_scene.Init())
@@ -77,7 +76,7 @@ void GameApp::OnUpdate(float deltaTime)
 	}
 
 	m_graphics.Update(deltaTime);
-	m_scene.Update(m_camera);
+	m_scene.Update();
 }
 //=============================================================================
 void GameApp::OnRender()

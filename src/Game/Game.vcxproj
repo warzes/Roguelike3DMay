@@ -108,6 +108,7 @@
     <ClCompile Include="NewTest005.cpp" />
     <ClCompile Include="RsmTechnique.cpp" />
     <ClCompile Include="SceneLoader.cpp" />
+    <ClCompile Include="ShadowPassManager.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
@@ -141,6 +142,7 @@
     <ClInclude Include="NewTest005.h" />
     <ClInclude Include="RsmTechnique.h" />
     <ClInclude Include="SceneLoader.h" />
+    <ClInclude Include="ShadowPassManager.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="TestBlinnPhong.h" />
     <ClInclude Include="TestBloom.h" />

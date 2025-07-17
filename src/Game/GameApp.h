@@ -31,9 +31,9 @@ private:
 	GameGraphics     m_graphics;
 	GameSceneManager m_scene;
 
-	Camera    m_camera;
+	Camera           m_camera;
 
-	GameModel m_model1;
-	GameModel m_model2;
-	GameModel m_model3;
+	GameModel        m_model1;
+	GameModel        m_model2;
+	GameModel        m_model3;
 };

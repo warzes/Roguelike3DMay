@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "GameModelManager.h"
+#include "ShadowPassManager.h"
 
 namespace sceneUBO
 {
@@ -17,18 +18,21 @@ public:
 	bool Init();
 	void Close();
 
-	void Update(Camera& cam);
+	void Update();
 
 	void SetModel(GameModel* model);
 
-	void Draw();
-	void DrawInDepth();
+	void Draw(Camera& cam);
+	void DrawInDepth(Camera& cam);
 
 private:
-	GameModelManager m_modelManager;
-
 	std::optional<gl4::TypedBuffer<sceneUBO::SceneUniforms>> m_sceneUniformUbo;
 
+	GameModelManager m_modelManager;
+
+	// TODO: менеджер света
 	std::vector<Light> m_lights;
 	std::optional<gl4::Buffer> m_lightSSBO;
+
+	ShadowPassManager m_shadowPassMgr;
 };

@@ -25,7 +25,8 @@ bool GameModelManager::Init()
 	m_linearSampler = gl4::Sampler(sampleDesc);
 
 	m_models.resize(MaxModelDraw);
-	m_currentModel = 0;	
+	m_currentModel = 0;
+	m_currentDrawShadowModel = 0;
 
 	return true;
 }
@@ -39,21 +40,23 @@ void GameModelManager::Close()
 	m_pipeline = {};
 }
 //=============================================================================
-void GameModelManager::Update(Camera& cam)
+void GameModelManager::Update()
 {
-	modelUBO::GlobalUniforms ubo;
-	ubo.view = cam.GetViewMatrix();
-	ubo.proj = glm::perspective(glm::radians(65.0f), GetWindowAspect(), 0.01f, 1000.0f);
-	m_globalUniformsUbo->UpdateData(ubo);
 }
 //=============================================================================
 void GameModelManager::SetModel(GameModel* model)
 {
 	m_models[m_currentModel++] = model;
+	m_currentDrawShadowModel++;
 }
 //=============================================================================
-void GameModelManager::Draw()
+void GameModelManager::Draw(Camera& cam)
 {
+	modelUBO::GlobalUniforms ubo;
+	ubo.view = cam.GetViewMatrix();
+	ubo.proj = glm::perspective(glm::radians(65.0f), GetWindowAspect(), 0.01f, 1000.0f);
+	m_globalUniformsUbo->UpdateData(ubo);
+
 	gl4::Cmd::BindGraphicsPipeline(m_pipeline.value());
 	gl4::Cmd::BindUniformBuffer(0, m_globalUniformsUbo.value());
 
@@ -81,7 +84,7 @@ void GameModelManager::Draw()
 			materialUbo.hasDiffuse =  mat.diffuseTexture != nullptr;
 			materialUbo.hasSpecular = mat.specularTexture != nullptr;
 			materialUbo.hasEmission = mat.emissionTexture != nullptr;
-			materialUbo.hasNormalMap = mat.normalTexture != nullptr;
+			materialUbo.hasNormalMap = mat.normalTexture != nullptr && false;
 			materialUbo.hasDepthMap = mat.depthTexture != nullptr;
 			materialUbo.emissionStrength = mat.emissionStrength;
 			materialUbo.blinn = true;
@@ -111,26 +114,30 @@ void GameModelManager::Draw()
 	m_currentModel = 0;
 }
 //=============================================================================
-void GameModelManager::DrawInDepth()
+void GameModelManager::DrawInDepth(Camera& cam)
 {
+	modelUBO::GlobalUniforms ubo;
+	ubo.view = cam.GetViewMatrix();
+	ubo.proj = glm::perspective(glm::radians(65.0f), 1.0f, 0.01f, 1000.0f);
+	m_globalUniformsUbo->UpdateData(ubo);
+
 	gl4::Cmd::BindGraphicsPipeline(m_pipelineInDepth.value());
 	gl4::Cmd::BindUniformBuffer(0, m_globalUniformsUbo.value());
 
-	modelUBO::ObjectUniforms trMat;
-	for (size_t i = 0; i < m_currentModel; i++)
+	modelUBO::ObjectUniforms trMat;	
+	for (size_t i = 0; i < m_currentDrawShadowModel; i++)
 	{
 		auto model = m_models[i];
 		assert(model);
-
 		// 
 		{
 			trMat.model = model->GetModelMat();
 			m_objectUniformUbo->UpdateData(trMat);
+			gl4::Cmd::BindUniformBuffer(1, m_objectUniformUbo.value());
 		}
-
 		model->mesh->Bind();
 	}
-	//m_currentModel = 0;
+	m_currentDrawShadowModel = 0;
 }
 //=============================================================================
 bool GameModelManager::createPipeline()
@@ -150,23 +157,22 @@ bool GameModelManager::createPipeline()
 		});
 
 	if (!m_pipeline.has_value()) return false;
-
-	vertexShader = gl4::Shader(gl4::PipelineStage::VertexShader, FileUtils::ReadShaderCode("GameData/shaders/Depth.vert"), "Depth VS");
-	if (!vertexShader.IsValid()) return false;
-	fragmentShader = gl4::Shader(gl4::PipelineStage::FragmentShader, FileUtils::ReadShaderCode("GameData/shaders/Depth.frag"), "Depth FS");
-	if (!fragmentShader.IsValid()) return false;
+	
+	auto vertexShader2 = gl4::Shader(gl4::PipelineStage::VertexShader, FileUtils::ReadShaderCode("GameData/shaders/Depth.vert"), "Depth VS");
+	if (!vertexShader2.IsValid()) return false;
+	auto fragmentShader2 = gl4::Shader(gl4::PipelineStage::FragmentShader, FileUtils::ReadShaderCode("GameData/shaders/Depth.frag"), "Depth FS");
+	if (!fragmentShader2.IsValid()) return false;
 
 	m_pipelineInDepth = gl4::GraphicsPipeline({
 		 .name = "Model In Depth Pipeline",
-		.vertexShader = &vertexShader,
-		.fragmentShader = &fragmentShader,
+		.vertexShader = &vertexShader2,
+		.fragmentShader = &fragmentShader2,
 		.inputAssemblyState = {.topology = gl4::PrimitiveTopology::TRIANGLE_LIST},
 		.vertexInputState = {MeshVertexInputBindingDescs},
-		.depthState = {.depthTestEnable = true},
+		.depthState = {.depthTestEnable = true, .depthWriteEnable = true },
 		});
 
 	if (!m_pipelineInDepth.has_value()) return false;
-
 
 	return true;
 }

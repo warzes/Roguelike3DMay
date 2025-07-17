@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "OpenGL4FramebufferCache.h"
 #include "OpenGL4Render.h"
 #include "OpenGL4Texture.h"
@@ -52,7 +52,16 @@ uint32_t gl4::detail::FramebufferCache::CreateOrGetCachedFramebuffer(const gl4::
 		glNamedFramebufferTexture(fbo, static_cast<GLenum>(GL_COLOR_ATTACHMENT0 + i), attachment.id, 0);
 		drawBuffers.push_back(static_cast<GLenum>(GL_COLOR_ATTACHMENT0 + i));
 	}
-	glNamedFramebufferDrawBuffers(fbo, static_cast<GLsizei>(drawBuffers.size()), drawBuffers.data());
+
+	if (drawBuffers.empty())
+	{
+		// Отключаем вывод в цветовые буферы
+		// TODO: нужно ли это вообще?
+		glNamedFramebufferDrawBuffer(fbo, GL_NONE);
+		//glNamedFramebufferReadBuffer(fbo, GL_NONE); // TODO:
+	}
+	else
+		glNamedFramebufferDrawBuffers(fbo, static_cast<GLsizei>(drawBuffers.size()), drawBuffers.data());
 
 	if (attachments.depthAttachment && attachments.stencilAttachment &&
 		attachments.depthAttachment == attachments.stencilAttachment)
@@ -70,6 +79,12 @@ uint32_t gl4::detail::FramebufferCache::CreateOrGetCachedFramebuffer(const gl4::
 		{
 			glNamedFramebufferTexture(fbo, GL_STENCIL_ATTACHMENT, attachments.stencilAttachment->id, 0);
 		}
+	}
+
+	if (glCheckNamedFramebufferStatus(fbo, GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+	{
+		Fatal("Framebuffer not complete!");
+		return 0;
 	}
 
 	Debug("Created Framebuffer with handle " + std::to_string(fbo));

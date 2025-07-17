@@ -5,7 +5,7 @@
 class GameApp;
 class GameSceneManager;
 
-class GameGraphics final
+class GameGraphics final // TODO: delete
 {
 public:
 	bool Init(GameApp* gameApp);
@@ -16,9 +16,8 @@ public:
 	void Resize(uint16_t width, uint16_t height);
 
 private:
-	GameApp*                    m_gameApp{ nullptr };
+	GameApp* m_gameApp{ nullptr };
+
 	std::optional<gl4::Texture> m_colorBuffer;
 	std::optional<gl4::Texture> m_depthBuffer;
-
-	std::optional<gl4::Texture> m_depthBuffer2;
 };

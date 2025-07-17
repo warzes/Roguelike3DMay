@@ -47,12 +47,12 @@ public:
 	bool Init();
 	void Close();
 
-	void Update(Camera& cam);
+	void Update();
 
 	void SetModel(GameModel* model);
 
-	void Draw();
-	void DrawInDepth();
+	void Draw(Camera& cam);
+	void DrawInDepth(Camera& cam);
 
 private:
 	bool createPipeline();
@@ -67,4 +67,5 @@ private:
 
 	std::vector<GameModel*> m_models;
 	size_t                  m_currentModel{ 0 };
+	size_t                  m_currentDrawShadowModel{ 0 };
 };
