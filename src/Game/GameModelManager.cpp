@@ -41,10 +41,6 @@ void GameModelManager::Close()
 	m_pipeline = {};
 }
 //=============================================================================
-void GameModelManager::Update()
-{
-}
-//=============================================================================
 void GameModelManager::SetModel(GameModel* model)
 {
 	m_models[m_currentModel++] = model;

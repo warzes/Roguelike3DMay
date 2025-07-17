@@ -8,10 +8,7 @@ EngineCreateInfo GameApp::GetCreateInfo() const
 //=============================================================================
 bool GameApp::OnInit()
 {
-	if (!m_graphics.Init(this))
-		return false;
-
-	m_graphics.Resize(GetWindowWidth(), GetWindowHeight());
+	OnResize(GetWindowWidth(), GetWindowHeight());
 
 	std::vector<MeshVertex> vertices = {
 		// positions                                // normals            // texcoords
@@ -55,7 +52,8 @@ void GameApp::OnClose()
 	delete m_model2.mesh;
 	delete m_model3.mesh;
 	m_scene.Close();
-	m_graphics.Close();
+	m_colorBuffer = {};
+	m_depthBuffer = {};
 }
 //=============================================================================
 void GameApp::OnUpdate(float deltaTime)
@@ -75,7 +73,6 @@ void GameApp::OnUpdate(float deltaTime)
 		Input::SetCursorVisible(true);
 	}
 
-	m_graphics.Update(deltaTime);
 	m_scene.Update();
 }
 //=============================================================================
@@ -85,7 +82,26 @@ void GameApp::OnRender()
 	m_scene.SetModel(&m_model2);
 	m_scene.SetModel(&m_model3);
 
-	m_graphics.Render(m_scene);
+	m_scene.DrawInDepth(m_camera);
+
+	auto colorAttachment = gl4::RenderColorAttachment{
+		.texture = m_colorBuffer.value(),
+		.loadOp = gl4::AttachmentLoadOp::Clear,
+		.clearValue = { 0.1f, 0.5f, 0.8f, 1.0f },
+	};
+	auto depthAttachment = gl4::RenderDepthStencilAttachment{
+	  .texture = m_depthBuffer.value(),
+	  .loadOp = gl4::AttachmentLoadOp::Clear,
+	  .clearValue = {.depth = 1.0f},
+	};
+
+	gl4::BeginRendering({ .colorAttachments = {&colorAttachment, 1}, .depthAttachment = depthAttachment });
+	{
+		m_scene.Draw(m_camera);
+	}
+	gl4::EndRendering();
+
+	gl4::BlitTextureToSwapchain(*m_colorBuffer, {}, {}, m_colorBuffer->Extent(), { GetWindowWidth(), GetWindowHeight(), 1 }, gl4::MagFilter::Nearest);
 }
 //=============================================================================
 void GameApp::OnImGuiDraw()
@@ -95,7 +111,8 @@ void GameApp::OnImGuiDraw()
 //=============================================================================
 void GameApp::OnResize(uint16_t width, uint16_t height)
 {
-	m_graphics.Resize(width, height);
+	m_colorBuffer = gl4::CreateTexture2D({ width, height }, gl4::Format::R8G8B8A8_SRGB, "ColorBuffer");
+	m_depthBuffer = gl4::CreateTexture2D({ width, height }, gl4::Format::D32_FLOAT, "DepthBuffer");
 }
 //=============================================================================
 void GameApp::OnMouseButton(int button, int action, int mods)

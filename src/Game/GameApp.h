@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "GameGraphics.h"
+#include "GameModelManager.h"
 #include "GameSceneManager.h"
 
 class GameApp final : public IEngineApp
@@ -28,10 +28,12 @@ public:
 	Camera& GetCamera() { return m_camera; }
 
 private:
-	GameGraphics     m_graphics;
 	GameSceneManager m_scene;
 
 	Camera           m_camera;
+
+	std::optional<gl4::Texture> m_colorBuffer;
+	std::optional<gl4::Texture> m_depthBuffer;
 
 	GameModel        m_model1;
 	GameModel        m_model2;

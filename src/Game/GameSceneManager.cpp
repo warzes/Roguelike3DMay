@@ -36,7 +36,7 @@ bool GameSceneManager::Init()
 	m_lights[0].position = glm::vec3(1);
 	m_lights[0].color = glm::vec3(1);
 	m_lights[0].type = DirectionalLight;
-	m_lights[0].ambient = glm::vec3(0.1f);
+	m_lights[0].ambient = glm::vec3(0.01f);
 
 	m_lights[1].position = glm::vec3(5, 0, 0);
 	m_lights[1].color = glm::vec3(1, 0, 0);
@@ -44,6 +44,7 @@ bool GameSceneManager::Init()
 	m_lights[1].constant = att.constant;
 	m_lights[1].linear = att.linear;
 	m_lights[1].quadratic = att.quadratic;
+	m_lights[1].ambient = glm::vec3(0.01f);
 
 	m_lights[2].position = glm::vec3(-5, 0, 0);
 	m_lights[2].color = glm::vec3(0, 1, 0);
@@ -51,6 +52,7 @@ bool GameSceneManager::Init()
 	m_lights[2].constant = 1.0f;
 	m_lights[2].linear = 0.35f;
 	m_lights[2].quadratic = 0.44f;
+	m_lights[2].ambient = glm::vec3(0.01f);
 
 	m_lightSSBO.emplace(std::span(m_lights), gl4::BufferStorageFlag::DynamicStorage);
 
@@ -66,7 +68,6 @@ void GameSceneManager::Close()
 //=============================================================================
 void GameSceneManager::Update()
 {
-	m_modelManager.Update();
 	m_lightSSBO->UpdateData(std::span(m_lights));
 }
 //=============================================================================
@@ -79,7 +80,7 @@ void GameSceneManager::Draw(Camera& cam)
 {
 	sceneUBO::SceneUniforms sceneUbo;
 	sceneUbo.CameraPos = cam.Position;
-	sceneUbo.NumLight = 1;
+	sceneUbo.NumLight = 3;
 	sceneUbo.lightSpaceMatrix = m_shadowPassMgr.GetShadowPass().lightSpaceMatrix;
 	sceneUbo.lightPos = m_shadowPassMgr.GetShadowPass().lightPos;
 	m_sceneUniformUbo->UpdateData(sceneUbo);

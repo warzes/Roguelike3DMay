@@ -49,8 +49,6 @@ public:
 	bool Init();
 	void Close();
 
-	void Update();
-
 	void SetModel(GameModel* model);
 
 	void Draw(Camera& cam, ShadowPassManager& shadowPassMgr);

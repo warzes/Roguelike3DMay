@@ -78,9 +78,6 @@
     <ClCompile Include="GameModel.cpp">
       <Filter>Game\Graphics\Object</Filter>
     </ClCompile>
-    <ClCompile Include="GameGraphics.cpp">
-      <Filter>Game</Filter>
-    </ClCompile>
     <ClCompile Include="ShadowPassManager.cpp">
       <Filter>Game\Graphics</Filter>
     </ClCompile>
@@ -162,9 +159,6 @@
     </ClInclude>
     <ClInclude Include="GameModel.h">
       <Filter>Game\Graphics\Object</Filter>
-    </ClInclude>
-    <ClInclude Include="GameGraphics.h">
-      <Filter>Game</Filter>
     </ClInclude>
     <ClInclude Include="ShadowPassManager.h">
       <Filter>Game\Graphics</Filter>

@@ -96,7 +96,6 @@
   <ItemGroup>
     <ClCompile Include="GameApp.cpp" />
     <ClCompile Include="GameAppOld.cpp" />
-    <ClCompile Include="GameGraphics.cpp" />
     <ClCompile Include="GameModel.cpp" />
     <ClCompile Include="GameModelManager.cpp" />
     <ClCompile Include="GameSceneManager.cpp" />
@@ -131,7 +130,6 @@
     <ClInclude Include="GameApp.h" />
     <ClInclude Include="GameAppOld.h" />
     <ClInclude Include="GameConfig.h" />
-    <ClInclude Include="GameGraphics.h" />
     <ClInclude Include="GameModel.h" />
     <ClInclude Include="GameModelManager.h" />
     <ClInclude Include="GameSceneManager.h" />
