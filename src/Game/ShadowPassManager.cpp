@@ -22,7 +22,7 @@ bool ShadowPassManager::Init()
 	//gl4::Viewport view{ .drawRect = {m_shadow.width, m_shadow.height} };
 	m_shadow.viewport = new gl4::RenderInfo( { /*.viewport = view,*/ .depthAttachment = *m_shadow.rtAttachment } );
 
-	glm::vec3 shadowLightPos = { 1.0f, 1.0f, 1.0f };
+	glm::vec3 shadowLightPos = { 2.0f, 2.0f, 1.0f };
 
 	// Shaders
 	float nearPlane = 0.1f, farPlane = 17.5f;

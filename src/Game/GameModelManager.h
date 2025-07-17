@@ -53,7 +53,7 @@ public:
 
 	void SetModel(GameModel* model);
 
-	void Draw(Camera& cam);
+	void Draw(Camera& cam, ShadowPassManager& shadowPassMgr);
 	void DrawInDepth(Camera& cam, ShadowPassManager& shadowPassMgr);
 
 private:

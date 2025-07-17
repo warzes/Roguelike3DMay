@@ -51,7 +51,7 @@ void GameModelManager::SetModel(GameModel* model)
 	m_currentDrawShadowModel++;
 }
 //=============================================================================
-void GameModelManager::Draw(Camera& cam)
+void GameModelManager::Draw(Camera& cam, ShadowPassManager& shadowPassMgr)
 {
 	modelUBO::GlobalUniforms ubo;
 	ubo.view = cam.GetViewMatrix();
@@ -109,6 +109,8 @@ void GameModelManager::Draw(Camera& cam)
 			gl4::Cmd::BindSampledImage(3, *model->material.normalTexture, sampler);
 		if (materialUbo.hasDepthMap)
 			gl4::Cmd::BindSampledImage(4, *model->material.depthTexture, sampler);
+
+		gl4::Cmd::BindSampledImage(5, *shadowPassMgr.GetShadowPass().depthTexture, sampler);
 
 		model->mesh->Bind();
 	}

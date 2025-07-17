@@ -86,7 +86,7 @@ void GameSceneManager::Draw(Camera& cam)
 
 	gl4::Cmd::BindUniformBuffer(1, m_sceneUniformUbo.value());
 	gl4::Cmd::BindStorageBuffer(0, *m_lightSSBO);
-	m_modelManager.Draw(cam);
+	m_modelManager.Draw(cam, m_shadowPassMgr);
 }
 //=============================================================================
 void GameSceneManager::DrawInDepth(Camera& cam)
