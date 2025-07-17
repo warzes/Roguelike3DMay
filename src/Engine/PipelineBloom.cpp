@@ -6,7 +6,7 @@
 uint16_t GetWindowWidth();
 uint16_t GetWindowHeight();
 //=============================================================================
-PipelineBloom::PipelineBloom(uint32_t blurIteration)
+PipelineBloom::PipelineBloom(uint32_t /*blurIteration*/)
 {
 	// first pass shaders
 	{

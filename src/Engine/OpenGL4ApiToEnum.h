@@ -34,8 +34,6 @@ namespace gl4::detail
 		}
 	}
 
-
-
 	inline GLenum EnumToGL(CompareOp op)
 	{
 		switch (op)

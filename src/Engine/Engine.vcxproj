@@ -94,7 +94,6 @@
   <ItemGroup>
     <ClCompile Include="AABB.cpp" />
     <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="CoreFunc.cpp" />
     <ClCompile Include="CoreMath.cpp" />
     <ClCompile Include="DepthPrepass.cpp" />
     <ClCompile Include="EngineApp.cpp" />

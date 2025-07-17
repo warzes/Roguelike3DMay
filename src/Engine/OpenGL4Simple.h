@@ -240,7 +240,7 @@ namespace gl4
 	template<typename T>
 	BufferId CreateBufferStorage(GLbitfield flags, const std::vector<T>& data)
 	{
-		return CreateBufferStorage(flags, sizeof(T), data.size(), data.data());
+		return CreateBufferStorage(flags, sizeof(T), (GLsizeiptr)data.size(), data.data());
 	}	
 
 	// TODO: Set(Init)Data и Set(Init)Storage???

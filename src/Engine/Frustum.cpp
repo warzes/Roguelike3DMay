@@ -61,7 +61,7 @@ bool Frustum::CheckAABB(const AABB& aabb)
 {
 	// Check bounding sphere first
 	glm::vec3 pos = aabb.GetCenter();
-	float radius = glm::length(aabb.GetSize()) * 0.5f;
+	//float radius = glm::length(aabb.GetSize()) * 0.5f;
 
 	{
 		for (size_t i = 0; i < 6; i++)

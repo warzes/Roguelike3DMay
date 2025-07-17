@@ -11,13 +11,13 @@ bool Contains(const std::vector<T>& vec, const T& obj)
 }
 
 template <typename T>
-[[nodiscard]] float Lerp(float a, float b, float f)
+[[nodiscard]] constexpr float Lerp(float a, float b, float f)
 {
 	return a + f * (b - a);
 }
 
 template <typename T>
-[[nodiscard]] inline T RandomNumber()
+[[nodiscard]] constexpr T RandomNumber()
 {
 	static std::uniform_real_distribution<T> distribution(0.0, 1.0);
 	static std::random_device rd;
@@ -27,7 +27,7 @@ template <typename T>
 
 // Returns a random real in [min,max)
 template <typename T>
-[[nodiscard]] inline T RandomNumber(T min, T max)
+[[nodiscard]] constexpr T RandomNumber(T min, T max)
 {
 	return min + (max - min) * RandomNumber<T>();
 }
@@ -48,9 +48,9 @@ template <typename T>
 std::size_t seed = 0;
 HashCombine(seed, h1, h2, h3);
 */
-inline void HashCombine([[maybe_unused]] std::size_t& seed) {}
+constexpr void HashCombine([[maybe_unused]] std::size_t& seed) {}
 template <typename T, typename... Rest>
-inline void HashCombine(std::size_t& seed, const T& v, Rest... rest)
+constexpr void HashCombine(std::size_t& seed, const T& v, Rest... rest)
 {
 	std::hash<T> hasher;
 	seed ^= hasher(v) + 0x9e3779b9 + (seed << 6) + (seed >> 2);

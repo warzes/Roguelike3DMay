@@ -25,7 +25,7 @@ void GraphicSystem::Destroy()
 void GraphicSystem::DrawSphere()
 {
 	glBindVertexArray(m_sphereVAO);
-	glDrawElements(GL_TRIANGLE_STRIP, m_sphereIndexCount, GL_UNSIGNED_INT, 0);
+	glDrawElements(GL_TRIANGLE_STRIP, (GLsizei)m_sphereIndexCount, GL_UNSIGNED_INT, 0);
 }
 //=============================================================================
 void GraphicSystem::DrawCube()

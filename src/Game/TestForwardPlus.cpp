@@ -195,7 +195,7 @@ bool TestForwardPlus::OnInit()
 
 	depthPrepass.Create(GetWindowWidth(), GetWindowHeight());
 	depthDebugProgram = gl4::CreateShaderProgram(depthDebugShaderCodeVertex, depthDebugShaderCodeFragment);
-	lightCullingProgram = gl4::CreateShaderProgram(FileUtils::ReadShaderCode("ExampleData/shaders/TestForwardPlus/lightculling.comp", {}).c_str());
+	lightCullingProgram = gl4::CreateShaderProgram(io::ReadShaderCode("ExampleData/shaders/TestForwardPlus/lightculling.comp", {}).c_str());
 
 	lightCullingInvViewProjectionLoc = gl4::GetUniformLocation(lightCullingProgram, "invViewProjection");
 	lightCullingCamPosLoc = gl4::GetUniformLocation(lightCullingProgram, "cameraPosition");
@@ -204,8 +204,8 @@ bool TestForwardPlus::OnInit()
 	lightCullingTileNumsLoc = gl4::GetUniformLocation(lightCullingProgram, "tileNums");
 
 	lightProgram = gl4::CreateShaderProgram(
-		FileUtils::ReadShaderCode("ExampleData/shaders/TestForwardPlus/forwardplus.vert", {}).c_str(), 
-		FileUtils::ReadShaderCode("ExampleData/shaders/TestForwardPlus/forwardplus.frag", {}).c_str());
+		io::ReadShaderCode("ExampleData/shaders/TestForwardPlus/forwardplus.vert", {}).c_str(), 
+		io::ReadShaderCode("ExampleData/shaders/TestForwardPlus/forwardplus.frag", {}).c_str());
 
 	lightProgramProjectionLoc = gl4::GetUniformLocation(lightProgram, "projection");
 	lightProgramViewLoc = gl4::GetUniformLocation(lightProgram, "view");

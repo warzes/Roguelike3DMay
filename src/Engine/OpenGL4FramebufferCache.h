@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "OpenGL4Texture.h"
 
@@ -48,6 +48,6 @@ namespace gl4::detail
 
 	private:
 		std::vector<RenderAttachments> m_framebufferCacheKey;
-		std::vector<uint32_t> m_framebufferCacheValue;
+		std::vector<uint32_t>          m_framebufferCacheValue;
 	};
 } // namespace gl4::detail

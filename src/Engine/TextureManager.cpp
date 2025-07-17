@@ -1,6 +1,7 @@
 ﻿#include "stdafx.h"
 #include "TextureManager.h"
 #include "Log.h"
+#include "FileUtils.h"
 //=============================================================================
 bool TextureManager::Init()
 {
@@ -25,7 +26,7 @@ gl4::Texture* TextureManager::GetTexture(const std::string& name, bool flipVerti
 	}
 	else
 	{
-		bool hasTex = std::filesystem::exists(name) && std::filesystem::is_regular_file(name);
+		bool hasTex = io::Exists(name);
 		if (hasTex == false)
 		{
 			Error("Failed to load texture " + name);
@@ -36,13 +37,14 @@ gl4::Texture* TextureManager::GetTexture(const std::string& name, bool flipVerti
 
 		int imgW, imgH, nrChannels;
 		auto pixels = stbi_loadf(name.c_str(), &imgW, &imgH, &nrChannels, 0);
-		if (!pixels)
+		if (!pixels || nrChannels < 1 || nrChannels > 4 || imgW < 0 || imgH < 0)
 		{
 			Error("Failed to load texture " + name);
 			return nullptr;
 		}
 		gl4::Format imgFormat{ gl4::Format::R8G8B8_UNORM };
-		if (nrChannels == 1) imgFormat = gl4::Format::R8_UNORM;
+		if (nrChannels == 1)      imgFormat = gl4::Format::R8_UNORM;
+		else if (nrChannels == 2) imgFormat = gl4::Format::R8G8_UNORM;
 		else if (nrChannels == 3) imgFormat = gl4::Format::R8G8B8_UNORM;
 		else if (nrChannels == 4) imgFormat = gl4::Format::R8G8B8A8_UNORM;
 
@@ -58,12 +60,13 @@ gl4::Texture* TextureManager::GetTexture(const std::string& name, bool flipVerti
 		gl4::Texture& texture = *m_textures[name];
 
 		gl4::UploadFormat texFormat{ gl4::UploadFormat::RGB };
-		if (nrChannels == 1) texFormat = gl4::UploadFormat::R;
+		if (nrChannels == 1)      texFormat = gl4::UploadFormat::R;
+		else if (nrChannels == 2) texFormat = gl4::UploadFormat::RG;
 		else if (nrChannels == 3) texFormat = gl4::UploadFormat::RGB;
 		else if (nrChannels == 4) texFormat = gl4::UploadFormat::RGBA;
 
 		texture.UpdateImage({
-		  .extent = {static_cast<uint32_t>(imgW), static_cast<uint32_t>(imgH)},
+		  .extent = createInfo.extent,
 		  .format = texFormat,
 		  .type   = gl4::UploadType::FLOAT,
 		  .pixels = pixels,

@@ -118,14 +118,14 @@ PipelineDeferredSSAO::PipelineDeferredSSAO(int kernelSize, int noiseSize)
 
 	// Noise texture
 	const int noiseSizeSq = noiseSize * noiseSize;
-	std::vector<glm::vec3> ssaoNoise(noiseSizeSq);
+	std::vector<glm::vec3> ssaoNoise((size_t)noiseSizeSq);
 	for (int i = 0; i < noiseSizeSq; ++i)
 	{
 		glm::vec3 noise(
 			RandomNumber<float>() * 2.0 - 1.0,
 			RandomNumber<float>() * 2.0 - 1.0,
 			0.0f);
-		ssaoNoise[i] = noise;
+		ssaoNoise[(size_t)i] = noise;
 	}
 
 	glCreateTextures(GL_TEXTURE_2D, 1, &m_noiseTexture);
@@ -209,7 +209,7 @@ void PipelineDeferredSSAO::StartSSAOPass(const glm::mat4& projection, int kernel
 	// Send kernel + rotation 
 	for (int i = 0; i < kernelSize; ++i)
 	{
-		gl4::SetUniform(m_shaderSSAO, "samples[" + std::to_string(i) + "]", m_ssaoKernel[i]);
+		gl4::SetUniform(m_shaderSSAO, "samples[" + std::to_string(i) + "]", m_ssaoKernel[(size_t)i]);
 	}
 	gl4::SetUniform(m_shaderSSAO, "projection", projection);
 	glBindTextureUnit(0, m_gPositionTexture);

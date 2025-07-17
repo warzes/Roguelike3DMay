@@ -28,12 +28,12 @@ private:
 
 	// First pass
 	uint32_t m_hdrFBO{ 0 };
-	std::array<uint32_t, 2> m_colorBuffers{ 0 };
+	std::array<uint32_t, 2> m_colorBuffers{ {0u} };
 
 	// Blur pass
 	bool m_horizontal{ 0 };
-	std::array<uint32_t, 2> m_pingpongFBO{ 0 };
-	std::array<uint32_t, 2> m_pingpongColorbuffers{ 0 };
+	std::array<uint32_t, 2> m_pingpongFBO{ {0u} };
+	std::array<uint32_t, 2> m_pingpongColorbuffers{ {0u} };
 
 	// Full screen quad
 	uint32_t m_quadVAO{ 0 };

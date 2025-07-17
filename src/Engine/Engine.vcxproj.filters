@@ -11,9 +11,6 @@
     <ClCompile Include="Profiler.cpp">
       <Filter>App</Filter>
     </ClCompile>
-    <ClCompile Include="CoreFunc.cpp">
-      <Filter>Core</Filter>
-    </ClCompile>
     <ClCompile Include="GraphicSystem.cpp">
       <Filter>OLD\Graphics</Filter>
     </ClCompile>
@@ -129,7 +126,7 @@
       <Filter>App</Filter>
     </ClCompile>
     <ClCompile Include="TextureManager.cpp">
-      <Filter>RHI</Filter>
+      <Filter>Render</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -298,7 +295,7 @@
       <Filter>App</Filter>
     </ClInclude>
     <ClInclude Include="TextureManager.h">
-      <Filter>RHI</Filter>
+      <Filter>Render</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

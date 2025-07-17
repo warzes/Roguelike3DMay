@@ -3,19 +3,24 @@
 #include "Log.h"
 #include "CoreFunc.h"
 //=============================================================================
-std::string FileUtils::GetFileExtension(const std::string& filePath)
+bool io::Exists(const std::string& filePath)
+{
+	return std::filesystem::exists(filePath) && std::filesystem::is_regular_file(filePath);
+}
+//=============================================================================
+std::string io::GetFileExtension(const std::string& filePath)
 {
 	std::filesystem::path path(filePath);
 	return path.extension().string();
 }
 //=============================================================================
-std::string FileUtils::GetFileName(const std::string& filePath)
+std::string io::GetFileName(const std::string& filePath)
 {
 	std::filesystem::path path(filePath);
 	return path.filename().string();
 }
 //=============================================================================
-std::string FileUtils::GetFileNameWithoutExtension(const std::string& filePath)
+std::string io::GetFileNameWithoutExtension(const std::string& filePath)
 {
 	std::filesystem::path path(filePath);
 	std::string fileName = GetFileName(filePath);
@@ -27,19 +32,19 @@ std::string FileUtils::GetFileNameWithoutExtension(const std::string& filePath)
 	return fileName;
 }
 //=============================================================================
-std::string FileUtils::GetFileDirectory(const std::string& filePath)
+std::string io::GetFileDirectory(const std::string& filePath)
 {
 	std::filesystem::path path(filePath);
 	return path.parent_path().string() + "/";
 }
 //=============================================================================
-std::string FileUtils::LoadFile(const std::filesystem::path& path)
+std::string io::LoadFile(const std::filesystem::path& path)
 {
 	std::ifstream file{ path };
 	return { std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>() };
 }
 //=============================================================================
-std::pair<std::unique_ptr<std::byte[]>, std::size_t> FileUtils::LoadBinaryFile(const std::filesystem::path& path)
+std::pair<std::unique_ptr<std::byte[]>, std::size_t> io::LoadBinaryFile(const std::filesystem::path& path)
 {
 	std::size_t fileSize = std::filesystem::file_size(path);
 	auto memory = std::make_unique<std::byte[]>(fileSize);
@@ -48,7 +53,7 @@ std::pair<std::unique_ptr<std::byte[]>, std::size_t> FileUtils::LoadBinaryFile(c
 	return { std::move(memory), fileSize };
 }
 //=============================================================================
-std::string FileUtils::ReadTextFile_Old(const std::string& filename)
+std::string io::ReadTextFile_Old(const std::string& filename)
 {
 	struct FileRaw
 	{
@@ -98,8 +103,8 @@ std::string FileUtils::ReadTextFile_Old(const std::string& filename)
 //=============================================================================
 std::string headerGuardFromPath(const std::string& path)
 {
-	std::string out = FileUtils::GetFileNameWithoutExtension(path);
-	std::transform(out.begin(), out.end(), out.begin(), ::toupper);
+	std::string out = io::GetFileNameWithoutExtension(path);
+	std::transform(out.begin(), out.end(), out.begin(), [](unsigned char c) { return static_cast<char>(std::toupper(c)); });
 	return out + "_H";
 }
 //=============================================================================
@@ -125,7 +130,7 @@ bool preprocessShader(const std::string& path, const std::string& src, std::stri
 
 			std::string includeSource;
 
-			std::string source = FileUtils::ReadTextFile_Old(pathToShader + includePath);
+			std::string source = io::ReadTextFile_Old(pathToShader + includePath);
 			if (source.empty()) return false;
 
 			if (!preprocessShader(pathToShader + includePath, source, includeSource))
@@ -157,7 +162,7 @@ bool preprocessShader(const std::string& path, const std::string& src, std::stri
 	return true;
 }
 //=============================================================================
-std::string FileUtils::ReadShaderCode(const std::string& filename, const std::vector<std::string>& defines)
+std::string io::ReadShaderCode(const std::string& filename, const std::vector<std::string>& defines)
 {
 	std::string source = ReadTextFile_Old(filename);
 	if (source.empty()) return "";

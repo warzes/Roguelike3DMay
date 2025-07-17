@@ -1,8 +1,10 @@
-#pragma once
+﻿#pragma once
+
+#include "OpenGL4Simple.h"
 
 struct TextureFile final
 {
-	GLuint id;
+	gl4::Texture2DId id;
 	std::string name;
 };
 

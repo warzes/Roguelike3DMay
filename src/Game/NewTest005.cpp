@@ -102,8 +102,8 @@ namespace
 
 	gl4::GraphicsPipeline CreateScenePipeline()
 	{
-		auto vs = gl4::Shader(gl4::PipelineStage::VertexShader, FileUtils::LoadFile("ExampleData/shaders/NewTest005/SceneDeferredPbr.vert.glsl"));
-		auto fs = gl4::Shader(gl4::PipelineStage::FragmentShader, FileUtils::LoadFile("ExampleData/shaders/NewTest005/SceneDeferredPbr.frag.glsl"));
+		auto vs = gl4::Shader(gl4::PipelineStage::VertexShader, io::LoadFile("ExampleData/shaders/NewTest005/SceneDeferredPbr.vert.glsl"));
+		auto fs = gl4::Shader(gl4::PipelineStage::FragmentShader, io::LoadFile("ExampleData/shaders/NewTest005/SceneDeferredPbr.frag.glsl"));
 
 		return gl4::GraphicsPipeline({
 		  .vertexShader = &vs,
@@ -115,8 +115,8 @@ namespace
 
 	gl4::GraphicsPipeline CreateShadowPipeline()
 	{
-		auto vs = gl4::Shader(gl4::PipelineStage::VertexShader, FileUtils::LoadFile("ExampleData/shaders/NewTest005/SceneDeferredPbr.vert.glsl"));
-		auto fs = gl4::Shader(gl4::PipelineStage::FragmentShader, FileUtils::LoadFile("ExampleData/shaders/NewTest005/RSMScenePbr.frag.glsl"));
+		auto vs = gl4::Shader(gl4::PipelineStage::VertexShader, io::LoadFile("ExampleData/shaders/NewTest005/SceneDeferredPbr.vert.glsl"));
+		auto fs = gl4::Shader(gl4::PipelineStage::FragmentShader, io::LoadFile("ExampleData/shaders/NewTest005/RSMScenePbr.frag.glsl"));
 
 		return gl4::GraphicsPipeline({
 		  .vertexShader = &vs,
@@ -128,8 +128,8 @@ namespace
 
 	gl4::GraphicsPipeline CreateShadingPipeline()
 	{
-		auto vs = gl4::Shader(gl4::PipelineStage::VertexShader, FileUtils::LoadFile("ExampleData/shaders/NewTest005/FullScreenTri.vert.glsl"));
-		auto fs = gl4::Shader(gl4::PipelineStage::FragmentShader, FileUtils::LoadFile("ExampleData/shaders/NewTest005/ShadeDeferredPbr.frag.glsl"));
+		auto vs = gl4::Shader(gl4::PipelineStage::VertexShader, io::LoadFile("ExampleData/shaders/NewTest005/FullScreenTri.vert.glsl"));
+		auto fs = gl4::Shader(gl4::PipelineStage::FragmentShader, io::LoadFile("ExampleData/shaders/NewTest005/ShadeDeferredPbr.frag.glsl"));
 
 		return gl4::GraphicsPipeline({
 		  .vertexShader = &vs,
@@ -140,8 +140,8 @@ namespace
 
 	gl4::GraphicsPipeline CreatePostprocessingPipeline()
 	{
-		auto vs = gl4::Shader(gl4::PipelineStage::VertexShader, FileUtils::LoadFile("ExampleData/shaders/NewTest005/FullScreenTri.vert.glsl"));
-		auto fs = gl4::Shader(gl4::PipelineStage::FragmentShader, FileUtils::LoadFile("ExampleData/shaders/NewTest005/TonemapAndDither.frag.glsl"));
+		auto vs = gl4::Shader(gl4::PipelineStage::VertexShader, io::LoadFile("ExampleData/shaders/NewTest005/FullScreenTri.vert.glsl"));
+		auto fs = gl4::Shader(gl4::PipelineStage::FragmentShader, io::LoadFile("ExampleData/shaders/NewTest005/TonemapAndDither.frag.glsl"));
 		return gl4::GraphicsPipeline({
 		  .vertexShader = &vs,
 		  .fragmentShader = &fs,
@@ -151,8 +151,8 @@ namespace
 
 	gl4::GraphicsPipeline CreateDebugTexturePipeline()
 	{
-		auto vs = gl4::Shader(gl4::PipelineStage::VertexShader, FileUtils::LoadFile("ExampleData/shaders/NewTest005/FullScreenTri.vert.glsl"));
-		auto fs = gl4::Shader(gl4::PipelineStage::FragmentShader, FileUtils::LoadFile("ExampleData/shaders/NewTest005/Texture.frag.glsl"));
+		auto vs = gl4::Shader(gl4::PipelineStage::VertexShader, io::LoadFile("ExampleData/shaders/NewTest005/FullScreenTri.vert.glsl"));
+		auto fs = gl4::Shader(gl4::PipelineStage::FragmentShader, io::LoadFile("ExampleData/shaders/NewTest005/Texture.frag.glsl"));
 
 		return gl4::GraphicsPipeline({
 		  .vertexShader = &vs,

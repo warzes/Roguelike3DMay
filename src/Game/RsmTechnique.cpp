@@ -28,7 +28,7 @@ static float rng(glm::uint& state)
 static std::string LoadFileWithInclude(std::string_view path)
 {
 	char error[256] = {};
-	char* included = stb_include_string(FileUtils::LoadFile(path).data(), nullptr, (char*)"ExampleData/shaders/rsm", (char*)"", error);
+	char* included = stb_include_string(io::LoadFile(path).data(), nullptr, (char*)"ExampleData/shaders/rsm", (char*)"", error);
 	std::string includedStr = included;
 	free(included);
 	return includedStr;
@@ -36,14 +36,14 @@ static std::string LoadFileWithInclude(std::string_view path)
 
 static gl4::ComputePipeline CreateRsmIndirectPipeline()
 {
-	auto cs = gl4::Shader(gl4::PipelineStage::ComputeShader, FileUtils::LoadFile("ExampleData/shaders/rsm/Indirect.comp.glsl"));
+	auto cs = gl4::Shader(gl4::PipelineStage::ComputeShader, io::LoadFile("ExampleData/shaders/rsm/Indirect.comp.glsl"));
 	return gl4::ComputePipeline({ .shader = &cs });
 }
 
 static gl4::ComputePipeline CreateRsmIndirectFilteredPipeline()
 {
 	auto cs = gl4::Shader(gl4::PipelineStage::ComputeShader,
-		FileUtils::LoadFile("ExampleData/shaders/rsm/IndirectDitheredFiltered.comp.glsl"));
+		io::LoadFile("ExampleData/shaders/rsm/IndirectDitheredFiltered.comp.glsl"));
 	return gl4::ComputePipeline({ .shader = &cs });
 }
 

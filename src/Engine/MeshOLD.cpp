@@ -44,7 +44,7 @@ void MeshOLD::Draw(GLuint shaderProgram, bool skipTexture) const
 				continue;
 
 			std::string name = TextureMapper::GetTextureString(tType) + "1";
-			glUniform1i(glGetUniformLocation(shaderProgram, name.c_str()), i);
+			glUniform1i(glGetUniformLocation(shaderProgram, name.c_str()), (int)i);
 			const auto& texture = it->second;
 			glBindTextureUnit(i, texture.id);
 		}
@@ -52,7 +52,7 @@ void MeshOLD::Draw(GLuint shaderProgram, bool skipTexture) const
 
 	// Draw mesh
 	glBindVertexArray(m_vao);
-	glDrawElements(GL_TRIANGLES, static_cast<unsigned int>(m_indices.size()), GL_UNSIGNED_INT, 0);
+	glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(m_indices.size()), GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
 }
 //=============================================================================

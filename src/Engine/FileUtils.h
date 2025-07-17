@@ -1,7 +1,9 @@
 ﻿#pragma once
 
-namespace FileUtils
+namespace io
 {
+	bool Exists(const std::string& filePath);
+
 	std::string GetFileExtension(const std::string& filePath);
 	std::string GetFileName(const std::string& filePath);
 	std::string GetFileNameWithoutExtension(const std::string& filePath);

@@ -182,7 +182,7 @@ namespace Utility
 								assert(filePath->fileByteOffset == 0); // We don't support file offsets
 								assert(filePath->uri.isLocalPath());   // We're only capable of loading local files
 
-								auto fileData = FileUtils::LoadBinaryFile(filePath->uri.path());
+								auto fileData = io::LoadBinaryFile(filePath->uri.path());
 
 								return MakeRawImageData(fileData.first.get(), fileData.second, filePath->mimeType, image.name);
 							}

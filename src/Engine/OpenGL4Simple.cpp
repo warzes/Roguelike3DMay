@@ -207,7 +207,7 @@ inline void validateShader(GLuint id, GLenum type, const GLchar* shaderText)
 	{
 		GLint infoLength{ 512 };
 		glGetShaderiv(id, GL_INFO_LOG_LENGTH, &infoLength);
-		auto infoLog = std::string(infoLength + 1, '\0');
+		auto infoLog = std::string((size_t)infoLength + 1, '\0');
 		glGetShaderInfoLog(id, infoLength, nullptr, infoLog.data());
 
 		std::string logError = "OPENGL " + shaderTypeToString(type) + ": Shader compilation failed : " + infoLog;
@@ -276,10 +276,10 @@ std::string gl4::GetShaderSourceCode(GLuint id)
 
 	GLint length;
 	glGetShaderiv(id, GL_SHADER_SOURCE_LENGTH, &length);
-	std::vector<char> source(length);
+	std::vector<char> source((size_t)length);
 
 	glGetShaderSource(id, length, nullptr, source.data());
-	return std::string(source.data(), length);
+	return std::string(source.data(), (size_t)length);
 }
 //=============================================================================
 #pragma endregion
@@ -294,7 +294,7 @@ inline void checkProgramStatus(GLuint program)
 	{
 		GLint length{ 512 };
 		glGetProgramiv(program, GL_INFO_LOG_LENGTH, &length);
-		auto infoLog = std::string(length + 1, '\0');
+		auto infoLog = std::string((size_t)length + 1, '\0');
 		glGetProgramInfoLog(program, length, nullptr, infoLog.data());
 		Error("OPENGL: Shader Program(" + std::to_string(program) + ") linking failed: " + infoLog);
 	}
@@ -801,13 +801,13 @@ gl4::BufferStorageId gl4::CreateStorageBuffer(const void* data, size_t size, Buf
 	id.storageFlags = storageFlags;
 
 	GLbitfield glflags = detail::BufferStorageFlagsToGL(storageFlags);
-	glNamedBufferStorage(id, id.size, data, glflags);
+	glNamedBufferStorage(id, (GLsizeiptr)id.size, data, glflags);
 
 	if (storageFlags & BufferStorageFlag::MapMemory)
 	{
 		// GL_MAP_UNSYNCHRONIZED_BIT should be used if the user can map and unmap buffers at their own will
 		constexpr GLenum access = GL_MAP_READ_BIT | GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT;
-		id.mappedMemory = glMapNamedBufferRange(id, 0, size, access);
+		id.mappedMemory = glMapNamedBufferRange(id, 0, (GLsizeiptr)size, access);
 	}
 
 	if (!name.empty())
@@ -837,8 +837,8 @@ void gl4::FillData(BufferStorageId id, const BufferFillInfo& clear)
 	assert(actualSize % 4 == 0 && "Size must be a multiple of 4 bytes");
 	glClearNamedBufferSubData(id,
 		GL_R32UI,
-		clear.offset,
-		actualSize,
+		(GLsizeiptr)clear.offset,
+		(GLsizeiptr)actualSize,
 		GL_RED_INTEGER,
 		GL_UNSIGNED_INT,
 		&clear.data);
@@ -901,7 +901,7 @@ gl4::VertexArrayId gl4::CreateVertexArray(gl4::BufferId vbo, size_t vertexSize, 
 gl4::VertexArrayId gl4::CreateVertexArray(gl4::BufferId vbo, gl4::BufferId ibo, size_t vertexSize, const std::vector<VertexAttributeRaw>& attributes)
 {
 	gl4::VertexArrayId vao = CreateVertexArray(attributes);
-	SetVertexBuffer(vao, vbo, 0, 0, vertexSize);
+	SetVertexBuffer(vao, vbo, 0, 0, (GLsizei)vertexSize);
 	SetIndexBuffer(vao, ibo);
 	return vao;
 }
@@ -1090,7 +1090,7 @@ inline uint8_t* genDefaultCheckerboardImage(int* width, int* height, int* nrChan
 	{
 		const int row = i / w;
 		const int col = i % w;
-		imgData[i * 3 + 0] = imgData[i * 3 + 1] = imgData[i * 3 + 2] = 0xFF * ((row + col) % 2);
+		imgData[i * 3 + 0] = imgData[i * 3 + 1] = imgData[i * 3 + 2] = uint8_t(0xFF * ((row + col) % 2));
 	}
 
 	if (width) *width = w;
@@ -1282,12 +1282,12 @@ gl4::SamplerId gl4::CreateSampler(const SamplerState& createInfo)
 	glCreateSamplers(1, &id.id);
 
 	glSamplerParameteri(id, GL_TEXTURE_COMPARE_MODE, createInfo.compareEnable ? GL_COMPARE_REF_TO_TEXTURE : GL_NONE);
-	glSamplerParameteri(id, GL_TEXTURE_COMPARE_FUNC, detail::EnumToGL(createInfo.compareOp));
+	glSamplerParameteri(id, GL_TEXTURE_COMPARE_FUNC, (GLint)detail::EnumToGL(createInfo.compareOp));
 
-	GLint magFilter = detail::EnumToGL(createInfo.magFilter);
+	GLint magFilter = (GLint)detail::EnumToGL(createInfo.magFilter);
 	glSamplerParameteri(id, GL_TEXTURE_MAG_FILTER, magFilter);
 
-	GLint minFilter = detail::EnumToGL(createInfo.minFilter);
+	GLint minFilter = (GLint)detail::EnumToGL(createInfo.minFilter);
 	glSamplerParameteri(id, GL_TEXTURE_MIN_FILTER, minFilter);
 
 	glSamplerParameteri(id, GL_TEXTURE_WRAP_S, detail::EnumToGL(createInfo.addressModeU));
