@@ -8,68 +8,70 @@ Mesh* LoadDataMesh(const std::vector<MeshVertex>& vertex, const std::vector<uint
 //=============================================================================
 Mesh* LoadAssimpMesh(const std::string& filename)
 {
-	const aiScene* scene = aiImportFile(filename.c_str(), ASSIMP_LOAD_FLAGS);
+	Assimp::Importer importer;
+
+	const aiScene* scene = importer.ReadFile(filename.c_str(), ASSIMP_LOAD_FLAGS);
 	if (!scene || !scene->HasMeshes())
 	{
-		Fatal("Not load mesh: " + filename);
+		Fatal("Not load mesh: " + filename + "\n\tError: " + importer.GetErrorString());
 		return nullptr;
 	}
 
 	const aiMesh* mesh = scene->mMeshes[0];
-	std::vector<MeshVertex> mv(mesh->mNumVertices);
 
+	std::vector<MeshVertex> vertices(mesh->mNumVertices);
 	for (size_t i = 0; i < mesh->mNumVertices; i++)
 	{
-		MeshVertex& nv = mv[i];
+		MeshVertex& v = vertices[i];
 
-		nv.position.x = mesh->mVertices[i].x;
-		nv.position.y = mesh->mVertices[i].y;
-		nv.position.z = mesh->mVertices[i].z;
+		v.position.x = mesh->mVertices[i].x;
+		v.position.y = mesh->mVertices[i].y;
+		v.position.z = mesh->mVertices[i].z;
 
 		if (mesh->HasVertexColors(0))
 		{
-			nv.color.x = mesh->mColors[0][i].r;
-			nv.color.y = mesh->mColors[0][i].g;
-			nv.color.z = mesh->mColors[0][i].b;
+			v.color.x = mesh->mColors[0][i].r;
+			v.color.y = mesh->mColors[0][i].g;
+			v.color.z = mesh->mColors[0][i].b;
 		}
 		else
 		{
-			nv.color = glm::vec3(1.0f);
+			v.color = glm::vec3(1.0f);
 		}
 
 		//if (mesh->HasNormals())
 		{
-			nv.normal.x = mesh->mNormals[i].x;
-			nv.normal.y = mesh->mNormals[i].y;
-			nv.normal.z = mesh->mNormals[i].z;
+			v.normal.x = mesh->mNormals[i].x;
+			v.normal.y = mesh->mNormals[i].y;
+			v.normal.z = mesh->mNormals[i].z;
 		}
 
 		//if (mesh->HasTextureCoords(0))
 		{
-			nv.uv.x = mesh->mTextureCoords[0][i].x;
-			nv.uv.y = mesh->mTextureCoords[0][i].y;
-			const auto tc = mesh->mTextureCoords[0][i];
+			v.uv.x = mesh->mTextureCoords[0][i].x;
+			v.uv.y = mesh->mTextureCoords[0][i].y;
 		}
 
 		//if (mesh->HasTangentsAndBitangents())
 		{
-			nv.tangent.x = mesh->mTangents[i].x;
-			nv.tangent.y = mesh->mTangents[i].y;
-			nv.tangent.z = mesh->mTangents[i].z;
-		}
-	}
-	//miv.resize(mesh->mNumFaces * 3);
-	std::vector<uint32_t> miv;
-	for (size_t i = 0; i < mesh->mNumFaces; i++)
-	{
-		for (size_t j = 0; j < 3; j++)
-		{
-			miv.emplace_back(mesh->mFaces[i].mIndices[j]);
+			v.tangent.x = mesh->mTangents[i].x;
+			v.tangent.y = mesh->mTangents[i].y;
+			v.tangent.z = mesh->mTangents[i].z;
 		}
 	}
 
-	aiReleaseImport(scene);
-	return LoadDataMesh(mv, miv);
+	// Fill face indices
+	std::vector<uint32_t> indices;
+	indices.reserve(mesh->mNumFaces * 3);
+	for (size_t i = 0; i < mesh->mNumFaces; i++)
+	{
+		// Assume the model has only triangles.
+		indices.emplace_back(mesh->mFaces[i].mIndices[0]);
+		indices.emplace_back(mesh->mFaces[i].mIndices[1]);
+		indices.emplace_back(mesh->mFaces[i].mIndices[2]);
+	}
+
+	return LoadDataMesh(vertices, indices);
 }
 //=============================================================================
 glm::mat4 GameModel::GetModelMat() const

@@ -44,7 +44,6 @@ bool World::Init()
 	m_model5.material.normalTexture = TextureManager::GetTexture("CoreData/textures/normal01.tga");
 
 
-
 	return true;
 }
 //=============================================================================
