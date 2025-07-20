@@ -11,6 +11,9 @@ layout(location = 1) out vec3 FragColor;
 layout(location = 2) out vec3 FragNormal;
 layout(location = 3) out vec2 FragTexCoords;
 layout(location = 4) out vec3 vViewDir;
+
+layout(location = 5) out vec3 vCameraPosition;
+
 layout(binding = 0, std140) uniform GlobalUniforms { 
 	uniform mat4 view;
 	uniform mat4 projection;
@@ -27,8 +30,10 @@ void main()
 	FragColor     = aColor;
 	FragNormal    = mat3(transpose(inverse(model))) * aNormal;
 	FragTexCoords = aTexCoords;
-
 	vViewDir      = normalize(eyePosition - FragPosition);
 
-	gl_Position = projection * view * vec4(FragPosition, 1.0);
+	vec4 cameraPosition = view * model * vec4(aPosition, 1.0);
+	vCameraPosition = cameraPosition.xyz;
+
+	gl_Position = projection * cameraPosition;
 }

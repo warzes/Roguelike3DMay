@@ -1,7 +1,9 @@
 #pragma once
 
 #include "UniformObjects.h"
+#include "ShadowPass.h"
 #include "MainRenderPass.h"
+
 
 class World;
 class Camera;
@@ -16,14 +18,18 @@ public:
 	bool Init();
 	void Close();
 
-	void Draw(Camera& cam, const glm::mat4& proj);
+	void BeginFrame();
+	void StartShadowPass(Camera& cam, const glm::mat4& proj);
+	void StartMainRenderPass(Camera& cam, const glm::mat4& proj);
+	void EndFrame();
 
 private:
 	void setDrawModel(GameModel* model);
 
-	World& m_world;
+	World&                  m_world;
 	std::vector<GameModel*> m_models{ MaxWorldModelDraw };
 	size_t                  m_currentModel{ 0 };
 
-	MainRenderPass m_mainRenderPass;
+	ShadowPass              m_shadowPass;
+	MainRenderPass          m_mainRenderPass;
 };

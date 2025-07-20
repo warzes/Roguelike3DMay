@@ -93,6 +93,9 @@
     <ClCompile Include="MainRenderPass.cpp">
       <Filter>Game\Graphics\RenderPass</Filter>
     </ClCompile>
+    <ClCompile Include="ShadowPass.cpp">
+      <Filter>Game\Graphics\RenderPass</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -188,6 +191,9 @@
       <Filter>Game\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="MainRenderPass.h">
+      <Filter>Game\Graphics\RenderPass</Filter>
+    </ClInclude>
+    <ClInclude Include="ShadowPass.h">
       <Filter>Game\Graphics\RenderPass</Filter>
     </ClInclude>
   </ItemGroup>
@@ -321,6 +327,12 @@
       <Filter>Game\GameShaders</Filter>
     </None>
     <None Include="..\..\bin\GameData\shaders\MainShader.vert">
+      <Filter>Game\GameShaders</Filter>
+    </None>
+    <None Include="..\..\bin\GameData\shaders\ShadowPass.vert">
+      <Filter>Game\GameShaders</Filter>
+    </None>
+    <None Include="..\..\bin\GameData\shaders\ShadowPass.frag">
       <Filter>Game\GameShaders</Filter>
     </None>
   </ItemGroup>

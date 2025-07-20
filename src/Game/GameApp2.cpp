@@ -38,8 +38,8 @@ void GameApp2::OnClose()
 	m_renderWorld.Close();
 	m_world.Close();
 
-	m_colorBuffer = {};
-	m_depthBuffer = {};
+	m_finalColorBuffer = {};
+	m_finalDepthBuffer = {};
 }
 //=============================================================================
 void GameApp2::OnUpdate(float deltaTime)
@@ -63,29 +63,44 @@ void GameApp2::OnUpdate(float deltaTime)
 void GameApp2::OnRender()
 {
 	//-------------------------------------------------------------------------
+	// INIT DATA
+	//-------------------------------------------------------------------------
+	m_renderWorld.BeginFrame();
+
+	//-------------------------------------------------------------------------
+	// SHADOW PASS
+	//-------------------------------------------------------------------------
+	m_renderWorld.StartShadowPass(m_camera, m_projection);
+
+	//-------------------------------------------------------------------------
 	// MAIN PASS
 	//-------------------------------------------------------------------------
-	auto colorAttachment = gl4::RenderColorAttachment{
-		.texture = m_colorBuffer.value(),
+	auto finalColorAttachment = gl4::RenderColorAttachment{
+		.texture = m_finalColorBuffer.value(),
 		.loadOp = gl4::AttachmentLoadOp::Clear,
 		.clearValue = { 0.1f, 0.5f, 0.8f, 1.0f },
 	};
-	auto depthAttachment = gl4::RenderDepthStencilAttachment{
-	  .texture = m_depthBuffer.value(),
+	auto finalDepthAttachment = gl4::RenderDepthStencilAttachment{
+	  .texture = m_finalDepthBuffer.value(),
 	  .loadOp = gl4::AttachmentLoadOp::Clear,
 	  .clearValue = {.depth = 1.0f},
 	};
 
-	gl4::BeginRendering({ .colorAttachments = {&colorAttachment, 1}, .depthAttachment = depthAttachment });
+	gl4::BeginRendering({ .colorAttachments = {&finalColorAttachment, 1}, .depthAttachment = finalDepthAttachment });
 	{
-		m_renderWorld.Draw(m_camera, m_projection);
+		m_renderWorld.StartMainRenderPass(m_camera, m_projection);
 	}
 	gl4::EndRendering();
 
 	//-------------------------------------------------------------------------
+	// END DRAW WORLD
+	//-------------------------------------------------------------------------
+	m_renderWorld.EndFrame();
+
+	//-------------------------------------------------------------------------
 	// FINAL PASS
 	//-------------------------------------------------------------------------
-	gl4::BlitTextureToSwapchain(*m_colorBuffer, {}, {}, m_colorBuffer->Extent(), { GetWindowWidth(), GetWindowHeight(), 1 }, gl4::MagFilter::Nearest);
+	gl4::BlitTextureToSwapchain(*m_finalColorBuffer, {}, {}, m_finalColorBuffer->Extent(), { GetWindowWidth(), GetWindowHeight(), 1 }, gl4::MagFilter::Nearest);
 }
 //=============================================================================
 void GameApp2::OnImGuiDraw()
@@ -95,8 +110,8 @@ void GameApp2::OnImGuiDraw()
 //=============================================================================
 void GameApp2::OnResize(uint16_t width, uint16_t height)
 {
-	m_colorBuffer = gl4::CreateTexture2D({ width, height }, gl4::Format::R8G8B8A8_SRGB, "ColorBuffer");
-	m_depthBuffer = gl4::CreateTexture2D({ width, height }, gl4::Format::D32_FLOAT, "DepthBuffer");
+	m_finalColorBuffer = gl4::CreateTexture2D({ width, height }, gl4::Format::R8G8B8A8_SRGB, "FinalColorBuffer");
+	m_finalDepthBuffer = gl4::CreateTexture2D({ width, height }, gl4::Format::D32_FLOAT, "FinalDepthBuffer");
 
 	m_projection = glm::perspective(glm::radians(65.0f), GetWindowAspect(), 0.01f, 1000.0f);
 }

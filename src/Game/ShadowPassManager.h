@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-struct ShadowPass final
+struct ShadowPassRT final
 {
 	gl4::Texture*                      depthTexture{ nullptr };
 	gl4::RenderInfo*                   viewport{ nullptr };
@@ -18,8 +18,8 @@ public:
 	bool Init();
 	void Close();
 
-	ShadowPass& GetShadowPass() { return m_shadow; }
+	ShadowPassRT& GetShadowPass() { return m_shadow; }
 
 private:
-	ShadowPass m_shadow;
+	ShadowPassRT m_shadow;
 };

@@ -8,11 +8,15 @@ layout(location = 2) in vec3 FragNormal;
 layout(location = 3) in vec2 FragTexCoords;
 layout(location = 4) in vec3 vViewDir;
 
+layout(location = 5) in vec3 vCameraPosition;
+
 layout(binding = 0) uniform sampler2D diffuseTex;
 layout(binding = 1) uniform sampler2D specularTex;
 layout(binding = 2) uniform sampler2D emissionTex;
 layout(binding = 3) uniform sampler2D normalTex;
 layout(binding = 4) uniform sampler2D depthTex;
+
+layout(binding = 5) uniform sampler2D shadowMapTex;
 
 layout(location = 0) out vec4 OutFragColor;
 
@@ -33,7 +37,7 @@ vec3 lightDiffuseColor = vec3(1, 1, 1);
 float lightDiffusePower = 1.0f;
 vec3 lightSpecularColor = vec3(1, 1, 1);
 float lightSpecularPower = 1.0f;
-vec3 lightPosition = vec3(0.0, 1.0, 0.0);
+vec3 lightPosition = vec3(2.0f, 2.0f, 1.0f);
 
 vec3 GetBlinnPhong(vec4 diffuse, vec3 lightDir, float lightDistance2)
 {
@@ -52,7 +56,7 @@ float roughness = 0.1;
 float k = 0.2;
 vec3 lightColor = vec3(1, 1, 0.8);
 
-vec3 CookTorrance(vec3 materialDiffuseColor,
+vec3 CookTorrance(vec4 materialDiffuseColor,
 	vec3 materialSpecularColor,
 	vec3 normal,
 	vec3 lightDir,
@@ -87,7 +91,7 @@ vec3 CookTorrance(vec3 materialDiffuseColor,
 
 		Rs = (F * D * G) / (PI * NdotL * NdotV);
 	}
-	return materialDiffuseColor * lightColor * NdotL + lightColor * materialSpecularColor * Rs;
+	return materialDiffuseColor.rgb * lightColor * NdotL + lightColor * materialSpecularColor * Rs;
 }
 
 void main()
@@ -112,7 +116,7 @@ void main()
 	lightDistance2 *= lightDistance2;
 
 	//OutFragColor = vec4(GetBlinnPhong(diffuse, lightDir, lightDistance2), 1.0);
-	OutFragColor = vec4(CookTorrance(diffuse.rgb,
+	OutFragColor = vec4(CookTorrance(diffuse,
 		specularColor2,
 		FragNormal,
 		lightDir,

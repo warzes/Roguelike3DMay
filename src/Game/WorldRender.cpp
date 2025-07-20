@@ -9,6 +9,9 @@ WorldRender::WorldRender(World& world)
 //=============================================================================
 bool WorldRender::Init()
 {
+	if (!m_shadowPass.Init())
+		return false;
+
 	if (!m_mainRenderPass.Init())
 		return false;
 
@@ -17,31 +20,40 @@ bool WorldRender::Init()
 //=============================================================================
 void WorldRender::Close()
 {
+	m_shadowPass.Close();
 	m_mainRenderPass.Close();
 }
 //=============================================================================
-void WorldRender::Draw(Camera& cam, const glm::mat4& proj)
+void WorldRender::BeginFrame()
 {
-	//-------------------------------------------------------------------------
-	// INIT DATA
-	//-------------------------------------------------------------------------
 	setDrawModel(&m_world.m_model1);
 	setDrawModel(&m_world.m_model2);
 	setDrawModel(&m_world.m_model3);
 	setDrawModel(&m_world.m_model4);
-
-	//-------------------------------------------------------------------------
-	// MAIN RENDER PASS
-	//-------------------------------------------------------------------------
+}
+//=============================================================================
+void WorldRender::StartShadowPass(Camera& cam, const glm::mat4& proj)
+{
+	m_shadowPass.Begin();
+	for (size_t i = 0; i < m_currentModel; i++)
+	{
+		m_shadowPass.DrawModel(*m_models[i]);
+	}
+	m_shadowPass.End();
+}
+//=============================================================================
+void WorldRender::StartMainRenderPass(Camera& cam, const glm::mat4& proj)
+{
 	m_mainRenderPass.Begin(cam, proj);
+	m_shadowPass.BindShadowMap(5);
 	for (size_t i = 0; i < m_currentModel; i++)
 	{
 		m_mainRenderPass.DrawModel(*m_models[i]);
 	}
-
-	//-------------------------------------------------------------------------
-	// END
-	//-------------------------------------------------------------------------
+}
+//=============================================================================
+void WorldRender::EndFrame()
+{
 	m_currentModel = 0;
 }
 //=============================================================================

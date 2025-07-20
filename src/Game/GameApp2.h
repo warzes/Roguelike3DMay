@@ -33,6 +33,8 @@ private:
 	Camera      m_camera;
 	glm::mat4   m_projection;
 
-	std::optional<gl4::Texture> m_colorBuffer;
-	std::optional<gl4::Texture> m_depthBuffer;
+	std::optional<gl4::Texture> m_finalColorBuffer;
+	std::optional<gl4::Texture> m_finalDepthBuffer;
+
+
 };
