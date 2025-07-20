@@ -14,6 +14,8 @@ struct alignas(16) ObjectUniforms final
 
 struct alignas(16) MaterialUniforms final
 {
+	glm::vec4 diffuse;
+
 	int hasDiffuseTexture;
 	int hasSpecularTexture;
 	int hasEmissionTexture;

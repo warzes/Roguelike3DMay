@@ -80,7 +80,7 @@
 constexpr float PointLight = 0.0f;
 constexpr float DirectionalLight = 2.0f;
 
-struct alignas(16) Light final
+struct alignas(16) LightOld final
 {
 	glm::aligned_vec3 position = glm::vec3(0.0f);
 	glm::aligned_vec3 color = glm::vec3(1.0f);
@@ -97,4 +97,43 @@ struct alignas(16) Light final
 	float constant{ CONSTANT };
 	float linear{ LINEAR };
 	float quadratic{ QUADRATIC };
+};
+
+enum LightType
+{
+	DIRECTIONAL = 1,
+	POINT
+
+};
+
+struct alignas(16) Light final
+{
+	glm::vec3 diffuseColor;
+	float diffusePower;
+	glm::vec3 specularColor;
+	float specularPower;
+	glm::vec3 position;
+	LightType type;
+	float size;
+
+	Light() :
+		diffuseColor(0, 0, 0),
+		diffusePower(0),
+		specularColor(0, 0, 0),
+		specularPower(0),
+		position(0, 0, 0),
+		type((LightType)0),
+		size(0)
+	{
+	}
+
+	Light(LightType type, const glm::vec3& position, float diffusePower) : diffuseColor(glm::vec3(1, 1, 1)),
+		diffusePower(diffusePower),
+		specularColor(glm::vec3(1, 1, 1)),
+		specularPower(1),
+		position(position),
+		type(type),
+		size(1)
+	{
+	}
 };

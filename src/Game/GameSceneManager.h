@@ -33,7 +33,7 @@ private:
 	GameModelManager m_modelManager;
 
 	// TODO: менеджер света
-	std::vector<Light> m_lights;
+	std::vector<LightOld> m_lights;
 	std::optional<gl4::Buffer> m_lightSSBO;
 
 	ShadowPassManager m_shadowPassMgr;

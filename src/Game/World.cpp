@@ -38,6 +38,16 @@ bool World::Init()
 	m_model4.material.diffuseTexture = TextureManager::GetTexture("ExampleData/textures/wood.jpg");
 	m_model4.material.normalTexture = TextureManager::GetTexture("CoreData/textures/normal01.tga");
 
+	Light l;
+	l.diffuseColor = glm::vec3(1, 1, 1);
+	l.diffusePower = 1.0f;
+	l.specularColor = glm::vec3(1, 1, 1);
+	l.specularPower = 1.0f;
+	l.position = glm::vec3(2.0f, 2.0f, 1.0f);
+	l.type = DIRECTIONAL;
+
+	m_lights.push_back(l);
+
 	return true;
 }
 //=============================================================================

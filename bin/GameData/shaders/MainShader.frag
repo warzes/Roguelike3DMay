@@ -2,6 +2,28 @@
 
 #define PI 3.14159265
 
+#define DIRECTIONAL_LIGHT 1
+#define POINT_LIGHT 2
+
+#define NEAR 0.1
+
+// NOTE: display modes
+#define HARD_SHADOWS 0
+#define SOFT_SHADOWS 1
+#define BLOCKER_SEARCH 2
+#define PENUMBRA_ESTIMATE 3
+
+struct Light
+{
+	vec3  diffuseColor;
+	float diffusePower;
+	vec3  specularColor;
+	float specularPower;
+	vec3  position;
+	int   type;
+	float size;
+};
+
 layout(location = 0) in vec3 FragPosition;
 layout(location = 1) in vec3 FragColor;
 layout(location = 2) in vec3 FragNormal;
@@ -21,6 +43,8 @@ layout(binding = 5) uniform sampler2D shadowMapTex;
 layout(location = 0) out vec4 OutFragColor;
 
 layout(binding = 2, std140) uniform MaterialUniforms { 
+	uniform vec4 diffuse;
+
 	uniform bool hasDiffuseTexture;
 	uniform bool hasSpecularTexture;
 	uniform bool hasEmissionTexture;
@@ -30,23 +54,29 @@ layout(binding = 2, std140) uniform MaterialUniforms {
 	uniform bool noLighing;
 };
 
+layout(binding = 0, std430) readonly buffer LightSSBO
+{
+	Light lights[];
+};
+
 // BlinnPhong data
+//vec3 lightDiffuseColor = vec3(1, 1, 1);
+//float lightDiffusePower = 1.0f;
+//vec3 lightSpecularColor = vec3(1, 1, 1);
+//float lightSpecularPower = 1.0f;
+//vec3 lightPosition = vec3(2.0f, 2.0f, 1.0f);
+
 vec3 specularColor = vec3(1, 1, 1);
 float specularity = 30;
-vec3 lightDiffuseColor = vec3(1, 1, 1);
-float lightDiffusePower = 1.0f;
-vec3 lightSpecularColor = vec3(1, 1, 1);
-float lightSpecularPower = 1.0f;
-vec3 lightPosition = vec3(2.0f, 2.0f, 1.0f);
 
-vec3 GetBlinnPhong(vec4 diffuse, vec3 lightDir, float lightDistance2)
+vec3 GetBlinnPhong(Light light, vec4 diffuse, vec3 lightDir, float lightDistance2)
 {
 	float NdotH = max(0, dot(FragNormal, normalize(lightDir + vViewDir)));
 
 	return NdotH * diffuse.rgb *
-					lightDiffuseColor * lightDiffusePower / lightDistance2 +
+					light.diffuseColor * light.diffusePower / lightDistance2 +
 				pow(NdotH, specularity) * specularColor *
-					lightSpecularColor * lightSpecularPower / lightDistance2;
+					light.specularColor * light.specularPower / lightDistance2;
 }
 
 // CookTorrance data
@@ -96,30 +126,32 @@ vec3 CookTorrance(vec4 materialDiffuseColor,
 
 void main()
 {
-	vec4 diffuse = vec4(0.8, 0.3, 1.0, 1.0);
+	vec4 diffuseColor = diffuse;
 	if (hasDiffuseTexture)
 	{
-		diffuse = texture(diffuseTex, FragTexCoords);
-		if (diffuse.a < 0.2)
+		diffuseColor = texture(diffuseTex, FragTexCoords);
+		if (diffuseColor.a < 0.2)
 			discard;
 	}
 
 	if (noLighing)
 	{
-		OutFragColor = diffuse;
+		OutFragColor = diffuseColor;
 		return;
 	}
 
-	vec3 lightDir = lightPosition - FragPosition;
+	Light light = lights[0];
+
+	vec3 lightDir = light.position - FragPosition;
 	float lightDistance2 = length(lightDir);
 	lightDir /= lightDistance2;
 	lightDistance2 *= lightDistance2;
 
-	//OutFragColor = vec4(GetBlinnPhong(diffuse, lightDir, lightDistance2), 1.0);
-	OutFragColor = vec4(CookTorrance(diffuse,
-		specularColor2,
-		FragNormal,
-		lightDir,
-		vViewDir,
-		lightColor), 1.0);
+	OutFragColor = vec4(GetBlinnPhong(light, diffuseColor, lightDir, lightDistance2), 1.0);
+//	OutFragColor = vec4(CookTorrance(diffuseColor,
+//		specularColor2,
+//		FragNormal,
+//		lightDir,
+//		vViewDir,
+//		lightColor), 1.0);
 }

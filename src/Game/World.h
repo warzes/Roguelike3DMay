@@ -14,4 +14,6 @@ private:
 	GameModel m_model2;
 	GameModel m_model3;
 	GameModel m_model4;
+
+	std::vector<Light> m_lights;
 };

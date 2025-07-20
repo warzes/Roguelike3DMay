@@ -2,7 +2,7 @@
 #include "MainRenderPass.h"
 #include "GameModel.h"
 //=============================================================================
-bool MainRenderPass::Init()
+bool MainRenderPass::Init(const std::vector<Light>& lights)
 {
 	if (!createPipeline())
 		return false;
@@ -25,11 +25,14 @@ bool MainRenderPass::Init()
 	sampleDesc.addressModeV = gl4::AddressMode::Repeat;
 	m_linearSampler = gl4::Sampler(sampleDesc);
 
+	m_lightSSBO.emplace(std::span(lights), gl4::BufferStorageFlag::DynamicStorage);
+
 	return true;
 }
 //=============================================================================
 void MainRenderPass::Close()
 {
+	m_lightSSBO = {};
 	m_globalUbo = {};
 	m_objectUbo = {};
 	m_materialUbo = {};
@@ -38,8 +41,10 @@ void MainRenderPass::Close()
 	m_pipeline = {};
 }
 //=============================================================================
-void MainRenderPass::Begin(Camera& cam, const glm::mat4& proj)
+void MainRenderPass::Begin(const std::vector<Light>& lights, Camera& cam, const glm::mat4& proj)
 {
+	m_lightSSBO->UpdateData(std::span(lights));
+
 	m_globalUboData.view = cam.GetViewMatrix();
 	m_globalUboData.proj = proj;
 	m_globalUboData.eyePosition = cam.Position;
@@ -47,6 +52,7 @@ void MainRenderPass::Begin(Camera& cam, const glm::mat4& proj)
 
 	gl4::Cmd::BindGraphicsPipeline(m_pipeline.value());
 	gl4::Cmd::BindUniformBuffer(0, m_globalUbo.value());
+	gl4::Cmd::BindStorageBuffer(0, *m_lightSSBO);
 }
 //=============================================================================
 void MainRenderPass::DrawModel(GameModel& model)
@@ -59,6 +65,7 @@ void MainRenderPass::DrawModel(GameModel& model)
 	m_objectUbo->UpdateData(m_objectUboData);
 	gl4::Cmd::BindUniformBuffer(1, m_objectUbo.value());
 
+	m_materialUboData.diffuse             = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 	m_materialUboData.hasDiffuseTexture   = model.material.diffuseTexture  != nullptr;
 	m_materialUboData.hasSpecularTexture  = model.material.specularTexture != nullptr;
 	m_materialUboData.hasEmissionTexture  = model.material.emissionTexture != nullptr;

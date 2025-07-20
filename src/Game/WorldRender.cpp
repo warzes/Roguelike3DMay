@@ -12,7 +12,7 @@ bool WorldRender::Init()
 	if (!m_shadowPass.Init())
 		return false;
 
-	if (!m_mainRenderPass.Init())
+	if (!m_mainRenderPass.Init(m_world.m_lights))
 		return false;
 
 	return true;
@@ -20,6 +20,7 @@ bool WorldRender::Init()
 //=============================================================================
 void WorldRender::Close()
 {
+
 	m_shadowPass.Close();
 	m_mainRenderPass.Close();
 }
@@ -44,7 +45,7 @@ void WorldRender::StartShadowPass(Camera& cam, const glm::mat4& proj)
 //=============================================================================
 void WorldRender::StartMainRenderPass(Camera& cam, const glm::mat4& proj)
 {
-	m_mainRenderPass.Begin(cam, proj);
+	m_mainRenderPass.Begin(m_world.m_lights, cam, proj);
 	m_shadowPass.BindShadowMap(5);
 	for (size_t i = 0; i < m_currentModel; i++)
 	{

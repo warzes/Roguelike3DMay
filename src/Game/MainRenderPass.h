@@ -7,10 +7,10 @@ class GameModel;
 class MainRenderPass final
 {
 public:
-	bool Init();
+	bool Init(const std::vector<Light>& lights);
 	void Close();
 
-	void Begin(Camera& cam, const glm::mat4& proj);
+	void Begin(const std::vector<Light>& lights, Camera& cam, const glm::mat4& proj);
 	void DrawModel(GameModel& model);
 
 private:
@@ -26,4 +26,6 @@ private:
 
 	std::optional<gl4::Sampler>                       m_nearestSampler;
 	std::optional<gl4::Sampler>                       m_linearSampler;
+
+	std::optional<gl4::Buffer>                        m_lightSSBO;
 };
