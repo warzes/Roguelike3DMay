@@ -38,10 +38,11 @@ void MainRenderPass::Close()
 	m_pipeline = {};
 }
 //=============================================================================
-void MainRenderPass::Begin(Camera& cam)
+void MainRenderPass::Begin(Camera& cam, const glm::mat4& proj)
 {
 	m_globalUboData.view = cam.GetViewMatrix();
-	m_globalUboData.proj = glm::perspective(glm::radians(65.0f), GetWindowAspect(), 0.01f, 1000.0f);
+	m_globalUboData.proj = proj;
+	m_globalUboData.eyePosition = cam.Position;
 	m_globalUbo->UpdateData(m_globalUboData);
 
 	gl4::Cmd::BindGraphicsPipeline(m_pipeline.value());
@@ -63,6 +64,8 @@ void MainRenderPass::DrawModel(GameModel& model)
 	m_materialUboData.hasEmissionTexture  = model.material.emissionTexture != nullptr;
 	m_materialUboData.hasNormalMapTexture = model.material.normalTexture   != nullptr;
 	m_materialUboData.hasDepthMapTexture  = model.material.depthTexture    != nullptr;
+	m_materialUboData.noLighing           = false;
+
 	m_materialUbo->UpdateData(m_materialUboData);
 	gl4::Cmd::BindUniformBuffer(2, m_materialUbo.value());
 

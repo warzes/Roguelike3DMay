@@ -31,6 +31,7 @@ private:
 	World       m_world;
 	WorldRender m_renderWorld;
 	Camera      m_camera;
+	glm::mat4   m_projection;
 
 	std::optional<gl4::Texture> m_colorBuffer;
 	std::optional<gl4::Texture> m_depthBuffer;

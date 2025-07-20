@@ -19,9 +19,10 @@ bool World::Init()
 	m_model1.material.diffuseTexture = TextureManager::GetTexture("CoreData/textures/colorful.png");
 	m_model1.material.normalTexture = TextureManager::GetTexture("CoreData/textures/normal01.tga");
 
-	m_model2.mesh = LoadAssimpMesh("CoreData/mesh/Cube/Cube.gltf");
-	m_model2.textureFilter = gl4::MagFilter::Nearest;
-	m_model2.material.diffuseTexture = TextureManager::GetTexture("CoreData/textures/colorful.png");
+	m_model2.mesh = LoadAssimpMesh("ExampleData/mesh/bunny.obj");
+	m_model2.scale = glm::vec3(3.0f);
+	//m_model2.position = glm::vec3(0.0f, 0.0f, -4.0f);
+	m_model2.textureFilter = gl4::MagFilter::Linear;
 	m_model2.material.normalTexture = TextureManager::GetTexture("CoreData/textures/normal01.tga");
 
 	m_model3.mesh = LoadAssimpMesh("ExampleData/mesh/stall/stall.obj");
@@ -37,13 +38,6 @@ bool World::Init()
 	m_model4.material.diffuseTexture = TextureManager::GetTexture("ExampleData/textures/wood.jpg");
 	m_model4.material.normalTexture = TextureManager::GetTexture("CoreData/textures/normal01.tga");
 
-	m_model5.mesh = LoadAssimpMesh("ExampleData/mesh/bunny.obj");
-	m_model5.scale = glm::vec3(3.0f);
-	m_model5.position = glm::vec3(0.0f, 0.0f, -4.0f);
-	m_model5.textureFilter = gl4::MagFilter::Linear;
-	m_model5.material.normalTexture = TextureManager::GetTexture("CoreData/textures/normal01.tga");
-
-
 	return true;
 }
 //=============================================================================
@@ -53,6 +47,5 @@ void World::Close()
 	delete m_model2.mesh;
 	delete m_model3.mesh;
 	delete m_model4.mesh;
-	delete m_model5.mesh;
 }
 //=============================================================================

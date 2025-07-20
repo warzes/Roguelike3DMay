@@ -10,7 +10,7 @@ public:
 	bool Init();
 	void Close();
 
-	void Begin(Camera& cam);
+	void Begin(Camera& cam, const glm::mat4& proj);
 	void DrawModel(GameModel& model);
 
 private:

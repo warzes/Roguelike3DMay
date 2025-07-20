@@ -16,7 +16,7 @@ public:
 	bool Init();
 	void Close();
 
-	void Draw(Camera& cam);
+	void Draw(Camera& cam, const glm::mat4& proj);
 
 private:
 	void setDrawModel(GameModel* model);

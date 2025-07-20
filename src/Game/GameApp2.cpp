@@ -78,7 +78,7 @@ void GameApp2::OnRender()
 
 	gl4::BeginRendering({ .colorAttachments = {&colorAttachment, 1}, .depthAttachment = depthAttachment });
 	{
-		m_renderWorld.Draw(m_camera);
+		m_renderWorld.Draw(m_camera, m_projection);
 	}
 	gl4::EndRendering();
 
@@ -97,6 +97,8 @@ void GameApp2::OnResize(uint16_t width, uint16_t height)
 {
 	m_colorBuffer = gl4::CreateTexture2D({ width, height }, gl4::Format::R8G8B8A8_SRGB, "ColorBuffer");
 	m_depthBuffer = gl4::CreateTexture2D({ width, height }, gl4::Format::D32_FLOAT, "DepthBuffer");
+
+	m_projection = glm::perspective(glm::radians(65.0f), GetWindowAspect(), 0.01f, 1000.0f);
 }
 //=============================================================================
 void GameApp2::OnMouseButton(int button, int action, int mods)

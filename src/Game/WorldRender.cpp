@@ -20,7 +20,7 @@ void WorldRender::Close()
 	m_mainRenderPass.Close();
 }
 //=============================================================================
-void WorldRender::Draw(Camera& cam)
+void WorldRender::Draw(Camera& cam, const glm::mat4& proj)
 {
 	//-------------------------------------------------------------------------
 	// INIT DATA
@@ -29,12 +29,11 @@ void WorldRender::Draw(Camera& cam)
 	setDrawModel(&m_world.m_model2);
 	setDrawModel(&m_world.m_model3);
 	setDrawModel(&m_world.m_model4);
-	setDrawModel(&m_world.m_model5);
 
 	//-------------------------------------------------------------------------
 	// MAIN RENDER PASS
 	//-------------------------------------------------------------------------
-	m_mainRenderPass.Begin(cam);
+	m_mainRenderPass.Begin(cam, proj);
 	for (size_t i = 0; i < m_currentModel; i++)
 	{
 		m_mainRenderPass.DrawModel(*m_models[i]);
