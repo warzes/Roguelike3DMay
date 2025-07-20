@@ -1,7 +1,5 @@
 ﻿#pragma once
 
-// TODO: PBR Material
-
 namespace gl4
 {
 	class Texture;

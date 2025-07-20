@@ -95,11 +95,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="GameApp.cpp" />
+    <ClCompile Include="GameApp2.cpp" />
     <ClCompile Include="GameAppOld.cpp" />
     <ClCompile Include="GameModel.cpp" />
     <ClCompile Include="GameModelManager.cpp" />
     <ClCompile Include="GameSceneManager.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MainRenderPass.cpp" />
     <ClCompile Include="NewTest001.cpp" />
     <ClCompile Include="NewTest002.cpp" />
     <ClCompile Include="NewTest003.cpp" />
@@ -146,14 +148,18 @@
       <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">TurnOffAllWarnings</WarningLevel>
     </ClCompile>
     <ClCompile Include="TestTerrain.cpp" />
+    <ClCompile Include="World.cpp" />
+    <ClCompile Include="WorldRender.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameApp.h" />
+    <ClInclude Include="GameApp2.h" />
     <ClInclude Include="GameAppOld.h" />
     <ClInclude Include="GameConfig.h" />
     <ClInclude Include="GameModel.h" />
     <ClInclude Include="GameModelManager.h" />
     <ClInclude Include="GameSceneManager.h" />
+    <ClInclude Include="MainRenderPass.h" />
     <ClInclude Include="NewTest001.h" />
     <ClInclude Include="NewTest002.h" />
     <ClInclude Include="NewTest003.h" />
@@ -176,6 +182,9 @@
     <ClInclude Include="TestSimple.h" />
     <ClInclude Include="TestSkyboxWithCube.h" />
     <ClInclude Include="TestTerrain.h" />
+    <ClInclude Include="UniformObjects.h" />
+    <ClInclude Include="World.h" />
+    <ClInclude Include="WorldRender.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\bin\ExampleData\shaders\TestComplex\gbuf.fs" />
@@ -199,6 +208,8 @@
     <None Include="..\..\bin\GameData\shaders\Depth.vert" />
     <None Include="..\..\bin\GameData\shaders\GameMesh.frag" />
     <None Include="..\..\bin\GameData\shaders\GameMesh.vert" />
+    <None Include="..\..\bin\GameData\shaders\MainShader.frag" />
+    <None Include="..\..\bin\GameData\shaders\MainShader.vert" />
     <None Include="..\..\bin\GameData\shaders\Minimal.frag" />
     <None Include="..\..\bin\GameData\shaders\Minimal.vert" />
   </ItemGroup>

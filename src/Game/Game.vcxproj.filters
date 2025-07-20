@@ -57,9 +57,6 @@
     <ClCompile Include="GameAppOld.cpp">
       <Filter>_test\_OLD</Filter>
     </ClCompile>
-    <ClCompile Include="GameApp.cpp">
-      <Filter>Game</Filter>
-    </ClCompile>
     <ClCompile Include="RsmTechnique.cpp">
       <Filter>_test\NewTest1</Filter>
     </ClCompile>
@@ -69,17 +66,32 @@
     <ClCompile Include="SceneLoader.cpp">
       <Filter>_test\NewTest1</Filter>
     </ClCompile>
+    <ClCompile Include="GameModel.cpp">
+      <Filter>Game\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="GameApp2.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
     <ClCompile Include="GameModelManager.cpp">
-      <Filter>Game\Graphics</Filter>
+      <Filter>_test\GameOld\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="GameSceneManager.cpp">
-      <Filter>Game\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="GameModel.cpp">
-      <Filter>Game\Graphics\Object</Filter>
+      <Filter>_test\GameOld\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="ShadowPassManager.cpp">
-      <Filter>Game\Graphics</Filter>
+      <Filter>_test\GameOld\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="GameApp.cpp">
+      <Filter>_test\GameOld</Filter>
+    </ClCompile>
+    <ClCompile Include="World.cpp">
+      <Filter>Game\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="WorldRender.cpp">
+      <Filter>Game\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="MainRenderPass.cpp">
+      <Filter>Game\Graphics\RenderPass</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -139,9 +151,6 @@
     <ClInclude Include="GameAppOld.h">
       <Filter>_test\_OLD</Filter>
     </ClInclude>
-    <ClInclude Include="GameApp.h">
-      <Filter>Game</Filter>
-    </ClInclude>
     <ClInclude Include="RsmTechnique.h">
       <Filter>_test\NewTest1</Filter>
     </ClInclude>
@@ -151,17 +160,35 @@
     <ClInclude Include="SceneLoader.h">
       <Filter>_test\NewTest1</Filter>
     </ClInclude>
+    <ClInclude Include="GameModel.h">
+      <Filter>Game\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="GameApp2.h">
+      <Filter>Game</Filter>
+    </ClInclude>
     <ClInclude Include="GameModelManager.h">
-      <Filter>Game\Graphics</Filter>
+      <Filter>_test\GameOld\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="GameSceneManager.h">
-      <Filter>Game\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="GameModel.h">
-      <Filter>Game\Graphics\Object</Filter>
+      <Filter>_test\GameOld\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="ShadowPassManager.h">
+      <Filter>_test\GameOld\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="GameApp.h">
+      <Filter>_test\GameOld</Filter>
+    </ClInclude>
+    <ClInclude Include="World.h">
+      <Filter>Game\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="WorldRender.h">
+      <Filter>Game\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="UniformObjects.h">
       <Filter>Game\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="MainRenderPass.h">
+      <Filter>Game\Graphics\RenderPass</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -198,14 +225,26 @@
     <Filter Include="Game">
       <UniqueIdentifier>{88bd236d-eb32-4804-86a2-89192bf60a32}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Game\Graphics">
-      <UniqueIdentifier>{48491af8-3c6b-4438-960b-746ea8c87aab}</UniqueIdentifier>
+    <Filter Include="Game\GameShaders">
+      <UniqueIdentifier>{9a252bd5-13e3-496b-87cc-5b9676323cdb}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Game\Graphics\Object">
+    <Filter Include="Game\Object">
       <UniqueIdentifier>{1511ded4-d082-4108-ae58-a7cde5d9d55b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Game\shaders">
+    <Filter Include="_test\GameOld">
+      <UniqueIdentifier>{91366f22-1af0-4dd0-9f93-c113ec25fce4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="_test\GameOld\shaders">
       <UniqueIdentifier>{ca0b287f-549a-4db2-9333-939bc019d0ce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="_test\GameOld\Graphics">
+      <UniqueIdentifier>{96ae0db1-4ba0-487c-85e2-d013f2968b79}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Graphics">
+      <UniqueIdentifier>{c848544c-9ab2-4068-b0f6-3c9426569818}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Graphics\RenderPass">
+      <UniqueIdentifier>{25a97c75-de60-495a-87c2-4c3209190661}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -261,22 +300,28 @@
       <Filter>_test\_OLD\Test3\shaders\TestComplex</Filter>
     </None>
     <None Include="..\..\bin\GameData\shaders\Minimal.frag">
-      <Filter>Game\shaders</Filter>
+      <Filter>_test\GameOld\shaders</Filter>
     </None>
     <None Include="..\..\bin\GameData\shaders\Minimal.vert">
-      <Filter>Game\shaders</Filter>
+      <Filter>_test\GameOld\shaders</Filter>
     </None>
     <None Include="..\..\bin\GameData\shaders\GameMesh.vert">
-      <Filter>Game\shaders</Filter>
+      <Filter>_test\GameOld\shaders</Filter>
     </None>
     <None Include="..\..\bin\GameData\shaders\GameMesh.frag">
-      <Filter>Game\shaders</Filter>
+      <Filter>_test\GameOld\shaders</Filter>
     </None>
     <None Include="..\..\bin\GameData\shaders\Depth.vert">
-      <Filter>Game\shaders</Filter>
+      <Filter>_test\GameOld\shaders</Filter>
     </None>
     <None Include="..\..\bin\GameData\shaders\Depth.frag">
-      <Filter>Game\shaders</Filter>
+      <Filter>_test\GameOld\shaders</Filter>
+    </None>
+    <None Include="..\..\bin\GameData\shaders\MainShader.frag">
+      <Filter>Game\GameShaders</Filter>
+    </None>
+    <None Include="..\..\bin\GameData\shaders\MainShader.vert">
+      <Filter>Game\GameShaders</Filter>
     </None>
   </ItemGroup>
 </Project>
