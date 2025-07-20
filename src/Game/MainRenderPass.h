@@ -10,14 +10,17 @@ public:
 	bool Init();
 	void Close();
 
-	void SetState(Camera& cam, GameModel& model);
+	void BeginFrame(Camera& cam);
+	void DrawModel(GameModel& model);
 
 private:
 	bool createPipeline();
 
 	std::optional<gl4::GraphicsPipeline>            m_pipeline;
 	std::optional<gl4::TypedBuffer<GlobalUniforms>> m_globalUbo;
+	GlobalUniforms                                  m_globalUboData;
 	std::optional<gl4::TypedBuffer<ObjectUniforms>> m_objectUbo;
+	ObjectUniforms                                  m_objectUboData;
 	std::optional<gl4::Sampler>                     m_nearestSampler;
 	std::optional<gl4::Sampler>                     m_linearSampler;
 };

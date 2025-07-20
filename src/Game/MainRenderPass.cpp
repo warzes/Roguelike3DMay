@@ -36,23 +36,29 @@ void MainRenderPass::Close()
 	m_pipeline = {};
 }
 //=============================================================================
-void MainRenderPass::SetState(Camera& cam, GameModel& model)
+void MainRenderPass::BeginFrame(Camera& cam)
 {
-	const gl4::Sampler& sampler = (model.textureFilter == gl4::MagFilter::Linear) ? m_linearSampler.value() : m_nearestSampler.value();
-
-	GlobalUniforms globalUbo;
-	globalUbo.view = cam.GetViewMatrix();
-	globalUbo.proj = glm::perspective(glm::radians(65.0f), GetWindowAspect(), 0.01f, 1000.0f);
-	m_globalUbo->UpdateData(globalUbo);
-
-	ObjectUniforms objectUbo;
-	objectUbo.model = model.GetModelMat();
-	m_objectUbo->UpdateData(objectUbo);
+	m_globalUboData.view = cam.GetViewMatrix();
+	m_globalUboData.proj = glm::perspective(glm::radians(65.0f), GetWindowAspect(), 0.01f, 1000.0f);
+	m_globalUbo->UpdateData(m_globalUboData);
 
 	gl4::Cmd::BindGraphicsPipeline(m_pipeline.value());
 	gl4::Cmd::BindUniformBuffer(0, m_globalUbo.value());
+}
+//=============================================================================
+void MainRenderPass::DrawModel(GameModel& model)
+{
+	const gl4::Sampler& sampler = (model.textureFilter == gl4::MagFilter::Linear) 
+		? m_linearSampler.value() 
+		: m_nearestSampler.value();
+		
+	m_objectUboData.model = model.GetModelMat();
+	m_objectUbo->UpdateData(m_objectUboData);
+
 	gl4::Cmd::BindUniformBuffer(1, m_objectUbo.value());
 	gl4::Cmd::BindSampledImage(0, *model.material.diffuseTexture, sampler);
+
+	model.mesh->Bind();
 }
 //=============================================================================
 bool MainRenderPass::createPipeline()

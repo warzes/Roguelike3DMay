@@ -22,8 +22,10 @@ void WorldRender::Close()
 //=============================================================================
 void WorldRender::Draw(Camera& cam)
 {
-	auto model = m_world.m_model1;
-	m_mainRenderPass.SetState(cam, model);
-	model.mesh->Bind();
+	m_mainRenderPass.BeginFrame(cam);
+
+	m_mainRenderPass.DrawModel(m_world.m_model1);
+	m_mainRenderPass.DrawModel(m_world.m_model2);
+	m_mainRenderPass.DrawModel(m_world.m_model3);
 }
 //=============================================================================
