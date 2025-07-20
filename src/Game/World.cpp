@@ -31,6 +31,20 @@ bool World::Init()
 	m_model3.material.diffuseTexture = TextureManager::GetTexture("ExampleData/mesh/stall/stallTexture.png", false);
 	m_model3.material.normalTexture = TextureManager::GetTexture("CoreData/textures/normal01.tga");
 
+	m_model4.mesh = LoadAssimpMesh("ExampleData/mesh/cube.obj");
+	m_model4.position = glm::vec3(-2.0f, 0.0f, 2.0f);
+	m_model4.textureFilter = gl4::MagFilter::Linear;
+	m_model4.material.diffuseTexture = TextureManager::GetTexture("ExampleData/textures/wood.jpg");
+	m_model4.material.normalTexture = TextureManager::GetTexture("CoreData/textures/normal01.tga");
+
+	m_model5.mesh = LoadAssimpMesh("ExampleData/mesh/bunny.obj");
+	m_model5.scale = glm::vec3(3.0f);
+	m_model5.position = glm::vec3(0.0f, 0.0f, -4.0f);
+	m_model5.textureFilter = gl4::MagFilter::Linear;
+	m_model5.material.normalTexture = TextureManager::GetTexture("CoreData/textures/normal01.tga");
+
+
+
 	return true;
 }
 //=============================================================================
@@ -39,5 +53,7 @@ void World::Close()
 	delete m_model1.mesh;
 	delete m_model2.mesh;
 	delete m_model3.mesh;
+	delete m_model4.mesh;
+	delete m_model5.mesh;
 }
 //=============================================================================

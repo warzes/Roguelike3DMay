@@ -10,3 +10,12 @@ struct alignas(16) ObjectUniforms final
 {
 	glm::mat4 model;
 };
+
+struct alignas(16) MaterialUniforms final
+{
+	int hasDiffuseTexture;
+	int hasSpecularTexture;
+	int hasEmissionTexture;
+	int hasNormalMapTexture;
+	int hasDepthMapTexture;
+};

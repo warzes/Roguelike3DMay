@@ -13,11 +13,26 @@ layout(binding = 4) uniform sampler2D depthTex;
 
 layout(location = 0) out vec4 OutFragColor;
 
+layout(binding = 2, std140) uniform MaterialUniforms { 
+	uniform bool hasDiffuseTexture;
+	uniform bool hasSpecularTexture;
+	uniform bool hasEmissionTexture;
+	uniform bool hasNormalMapTexture;
+	uniform bool hasDepthMapTexture;
+};
+
 void main()
 {
-	vec4 textureDiffuse = texture(diffuseTex, FragTexCoords);
-	if (textureDiffuse.a < 0.2)
-		discard;
+	if (hasDiffuseTexture)
+	{
+		vec4 textureDiffuse = texture(diffuseTex, FragTexCoords);
+		if (textureDiffuse.a < 0.2)
+			discard;
 
-	OutFragColor = textureDiffuse;
+		OutFragColor = textureDiffuse;
+	}
+	else
+	{
+		OutFragColor = vec4(1.0, 1.0, 1.0, 1.0);
+	}
 }

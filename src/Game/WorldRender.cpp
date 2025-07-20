@@ -22,10 +22,32 @@ void WorldRender::Close()
 //=============================================================================
 void WorldRender::Draw(Camera& cam)
 {
-	m_mainRenderPass.BeginFrame(cam);
+	//-------------------------------------------------------------------------
+	// INIT DATA
+	//-------------------------------------------------------------------------
+	setDrawModel(&m_world.m_model1);
+	setDrawModel(&m_world.m_model2);
+	setDrawModel(&m_world.m_model3);
+	setDrawModel(&m_world.m_model4);
+	setDrawModel(&m_world.m_model5);
 
-	m_mainRenderPass.DrawModel(m_world.m_model1);
-	m_mainRenderPass.DrawModel(m_world.m_model2);
-	m_mainRenderPass.DrawModel(m_world.m_model3);
+	//-------------------------------------------------------------------------
+	// MAIN RENDER PASS
+	//-------------------------------------------------------------------------
+	m_mainRenderPass.Begin(cam);
+	for (size_t i = 0; i < m_currentModel; i++)
+	{
+		m_mainRenderPass.DrawModel(*m_models[i]);
+	}
+
+	//-------------------------------------------------------------------------
+	// END
+	//-------------------------------------------------------------------------
+	m_currentModel = 0;
+}
+//=============================================================================
+void WorldRender::setDrawModel(GameModel* model)
+{
+	m_models[m_currentModel++] = model;
 }
 //=============================================================================

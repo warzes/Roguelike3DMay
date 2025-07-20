@@ -6,6 +6,8 @@
 class World;
 class Camera;
 
+constexpr size_t MaxWorldModelDraw = 1'000'000;
+
 class WorldRender final
 {
 public:
@@ -17,7 +19,11 @@ public:
 	void Draw(Camera& cam);
 
 private:
+	void setDrawModel(GameModel* model);
+
 	World& m_world;
+	std::vector<GameModel*> m_models{ MaxWorldModelDraw };
+	size_t                  m_currentModel{ 0 };
 
 	MainRenderPass m_mainRenderPass;
 };
