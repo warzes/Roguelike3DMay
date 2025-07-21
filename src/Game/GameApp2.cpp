@@ -1,12 +1,12 @@
-#include "stdafx.h"
+п»ї#include "stdafx.h"
 #include "GameApp2.h"
-//из glRenderer посмотреть рендрпасы. это создатель фрога
+//РёР· glRenderer РїРѕСЃРјРѕС‚СЂРµС‚СЊ СЂРµРЅРґСЂРїР°СЃС‹. СЌС‚Рѕ СЃРѕР·РґР°С‚РµР»СЊ С„СЂРѕРіР°
 //
 //vwa-code - Percentage Closer Filtering(PCF) and Percentage - Closer Soft Shadows(PCSS)
-//	или PCSS
+//	РёР»Рё PCSS
 //
-//GITechDemo - много вкусных названий
-//в демо кук торрентс считай материалы - по фонгу например. если опять будет сложность с большим объемом работы - можно к этому обратится. там есть деление на цвет и текстуру - тоже использовать эту идеию.
+//GITechDemo - РјРЅРѕРіРѕ РІРєСѓСЃРЅС‹С… РЅР°Р·РІР°РЅРёР№
+//РІ РґРµРјРѕ РєСѓРє С‚РѕСЂСЂРµРЅС‚СЃ СЃС‡РёС‚Р°Р№ РјР°С‚РµСЂРёР°Р»С‹ - РїРѕ С„РѕРЅРіСѓ РЅР°РїСЂРёРјРµСЂ. РµСЃР»Рё РѕРїСЏС‚СЊ Р±СѓРґРµС‚ СЃР»РѕР¶РЅРѕСЃС‚СЊ СЃ Р±РѕР»СЊС€РёРј РѕР±СЉРµРјРѕРј СЂР°Р±РѕС‚С‹ - РјРѕР¶РЅРѕ Рє СЌС‚РѕРјСѓ РѕР±СЂР°С‚РёС‚СЃСЏ. С‚Р°Рј РµСЃС‚СЊ РґРµР»РµРЅРёРµ РЅР° С†РІРµС‚ Рё С‚РµРєСЃС‚СѓСЂСѓ - С‚РѕР¶Рµ РёСЃРїРѕР»СЊР·РѕРІР°С‚СЊ СЌС‚Сѓ РёРґРµРёСЋ.
 
 //=============================================================================
 GameApp2::GameApp2()
@@ -70,7 +70,7 @@ void GameApp2::OnRender()
 	//-------------------------------------------------------------------------
 	// SHADOW PASS
 	//-------------------------------------------------------------------------
-	m_renderWorld.StartShadowPass(m_camera, m_projection);
+	m_renderWorld.StartShadowPass();
 
 	//-------------------------------------------------------------------------
 	// MAIN PASS
@@ -111,7 +111,7 @@ void GameApp2::OnImGuiDraw()
 void GameApp2::OnResize(uint16_t width, uint16_t height)
 {
 	m_finalColorBuffer = gl4::CreateTexture2D({ width, height }, gl4::Format::R8G8B8A8_SRGB, "FinalColorBuffer");
-	m_finalDepthBuffer = gl4::CreateTexture2D({ width, height }, gl4::Format::D32_FLOAT, "FinalDepthBuffer");
+	m_finalDepthBuffer = gl4::CreateTexture2D({ width, height }, gl4::Format::D32_FLOAT,     "FinalDepthBuffer");
 
 	m_projection = glm::perspective(glm::radians(65.0f), GetWindowAspect(), 0.01f, 1000.0f);
 }

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "World.h"
 #include "WorldRender.h"
@@ -28,13 +28,11 @@ public:
 	Camera& GetCamera() { return m_camera; }
 
 private:
-	World       m_world;
-	WorldRender m_renderWorld;
-	Camera      m_camera;
-	glm::mat4   m_projection;
+	World                       m_world;
+	WorldRender                 m_renderWorld;
+	Camera                      m_camera;
+	glm::mat4                   m_projection;
 
 	std::optional<gl4::Texture> m_finalColorBuffer;
 	std::optional<gl4::Texture> m_finalDepthBuffer;
-
-
 };

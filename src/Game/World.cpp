@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "World.h"
 //=============================================================================
 bool World::Init()
@@ -45,14 +45,32 @@ bool World::Init()
 	l.specularPower = 1.0f;
 	l.position = glm::vec3(2.0f, 2.0f, 1.0f);
 	l.type = DIRECTIONAL;
-
 	m_lights.push_back(l);
+
+	l.diffuseColor = glm::vec3(1, 1, 1);
+	l.diffusePower = 1.0f;
+	l.specularColor = glm::vec3(1, 1, 1);
+	l.specularPower = 1.0f;
+	l.position = glm::vec3(-2.0f, 2.0f, -3.0f);
+	l.type = DIRECTIONAL;
+	m_lights.push_back(l);
+
+	m_shadows.resize(1);
+
+	m_shadows[0].hasCubeMap = false;
+	m_shadows[0].shadowLightPos = { 2.0f, 2.0f, 1.0f };// l.position;
+	m_shadows[0].Create();
 
 	return true;
 }
 //=============================================================================
 void World::Close()
 {
+	for (size_t i = 0; i < m_shadows.size(); i++)
+	{
+		m_shadows[i].Destroy();
+	}m_shadows.clear();
+
 	delete m_model1.mesh;
 	delete m_model2.mesh;
 	delete m_model3.mesh;

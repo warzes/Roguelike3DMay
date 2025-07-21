@@ -128,6 +128,9 @@
     <ClCompile Include="TextureManager.cpp">
       <Filter>Render</Filter>
     </ClCompile>
+    <ClCompile Include="Shadow.cpp">
+      <Filter>Render</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -295,6 +298,9 @@
       <Filter>App</Filter>
     </ClInclude>
     <ClInclude Include="TextureManager.h">
+      <Filter>Render</Filter>
+    </ClInclude>
+    <ClInclude Include="Shadow.h">
       <Filter>Render</Filter>
     </ClInclude>
   </ItemGroup>

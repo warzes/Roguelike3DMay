@@ -32,21 +32,21 @@
 #include "TextureManager.h"
 
 // Render
+#include "Camera.h"
+#include "Material.h"
+#include "Mesh.h"
+#include "Model.h"
+#include "Light.h"
+#include "Shadow.h"
+#include "ModelOLD.h"
+#include "LightOLD.h"
+
 #include "DepthPrepass.h"
 #include "PipelineBloom.h"
 #include "PipelineShadowMapping.h"
 #include "PipelineDeferredSSAO.h"
 
 // Graphics
-#include "Camera.h"
-#include "Material.h"
-#include "Mesh.h"
-#include "Model.h"
-#include "Light.h"
-
-#include "ModelOLD.h"
-#include "LightOLD.h"
-
 #include "GraphicSystem.h"
 
 // Scene

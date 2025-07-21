@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "UniformObjects.h"
 #include "ShadowPass.h"
@@ -19,7 +19,7 @@ public:
 	void Close();
 
 	void BeginFrame();
-	void StartShadowPass(Camera& cam, const glm::mat4& proj);
+	void StartShadowPass();
 	void StartMainRenderPass(Camera& cam, const glm::mat4& proj);
 	void EndFrame();
 

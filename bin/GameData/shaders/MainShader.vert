@@ -1,4 +1,4 @@
-#version 460 core
+﻿#version 460 core
 
 layout (location = 0) in vec3 aPosition;
 layout (location = 1) in vec3 aColor;
@@ -11,7 +11,6 @@ layout(location = 1) out vec3 FragColor;
 layout(location = 2) out vec3 FragNormal;
 layout(location = 3) out vec2 FragTexCoords;
 layout(location = 4) out vec3 vViewDir;
-
 layout(location = 5) out vec3 vCameraPosition;
 
 layout(binding = 0, std140) uniform GlobalUniforms { 
@@ -22,6 +21,7 @@ layout(binding = 0, std140) uniform GlobalUniforms {
 
 layout(binding = 1, std140) uniform ObjectUniforms { 
 	uniform mat4 model;
+	int          numLight;
 };
 
 void main()

@@ -1,4 +1,4 @@
-#version 460 core
+﻿#version 460 core
 
 #define PI 3.14159265
 
@@ -29,7 +29,6 @@ layout(location = 1) in vec3 FragColor;
 layout(location = 2) in vec3 FragNormal;
 layout(location = 3) in vec2 FragTexCoords;
 layout(location = 4) in vec3 vViewDir;
-
 layout(location = 5) in vec3 vCameraPosition;
 
 layout(binding = 0) uniform sampler2D diffuseTex;
@@ -41,6 +40,11 @@ layout(binding = 4) uniform sampler2D depthTex;
 layout(binding = 5) uniform sampler2D shadowMapTex;
 
 layout(location = 0) out vec4 OutFragColor;
+
+layout(binding = 1, std140) uniform ObjectUniforms { 
+	uniform mat4 model;
+	int          numLight;
+};
 
 layout(binding = 2, std140) uniform MaterialUniforms { 
 	uniform vec4 diffuse;
@@ -140,18 +144,24 @@ void main()
 		return;
 	}
 
-	Light light = lights[0];
+	vec3 lightColor = vec3(0.0,0.0,0.0);
+	for (int i = 0; i < numLight; i++)
+	{
+		Light light = lights[i];
 
-	vec3 lightDir = light.position - FragPosition;
-	float lightDistance2 = length(lightDir);
-	lightDir /= lightDistance2;
-	lightDistance2 *= lightDistance2;
+		vec3 lightDir = light.position - FragPosition;
+		float lightDistance2 = length(lightDir);
+		lightDir /= lightDistance2;
+		lightDistance2 *= lightDistance2;
 
-	OutFragColor = vec4(GetBlinnPhong(light, diffuseColor, lightDir, lightDistance2), 1.0);
-//	OutFragColor = vec4(CookTorrance(diffuseColor,
+		lightColor += GetBlinnPhong(light, diffuseColor, lightDir, lightDistance2);
+//	CookTorrance(diffuseColor,
 //		specularColor2,
 //		FragNormal,
 //		lightDir,
 //		vViewDir,
 //		lightColor), 1.0);
+	}
+
+	OutFragColor = vec4(lightColor, 1.0);
 }

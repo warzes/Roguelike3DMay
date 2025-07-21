@@ -137,3 +137,4 @@ struct alignas(16) Light final
 	{
 	}
 };
+

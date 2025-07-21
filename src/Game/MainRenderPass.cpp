@@ -1,11 +1,14 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "MainRenderPass.h"
 #include "GameModel.h"
+#include "World.h"
 //=============================================================================
-bool MainRenderPass::Init(const std::vector<Light>& lights)
+bool MainRenderPass::Init(World* world)
 {
 	if (!createPipeline())
 		return false;
+
+	m_world = world;
 
 	m_globalUbo   = gl4::TypedBuffer<GlobalUniforms>(gl4::BufferStorageFlag::DynamicStorage);
 	m_objectUbo   = gl4::TypedBuffer<ObjectUniforms>(gl4::BufferStorageFlag::DynamicStorage);
@@ -25,7 +28,7 @@ bool MainRenderPass::Init(const std::vector<Light>& lights)
 	sampleDesc.addressModeV = gl4::AddressMode::Repeat;
 	m_linearSampler = gl4::Sampler(sampleDesc);
 
-	m_lightSSBO.emplace(std::span(lights), gl4::BufferStorageFlag::DynamicStorage);
+	m_lightSSBO.emplace(std::span(m_world->GetLights()), gl4::BufferStorageFlag::DynamicStorage);
 
 	return true;
 }
@@ -41,9 +44,9 @@ void MainRenderPass::Close()
 	m_pipeline = {};
 }
 //=============================================================================
-void MainRenderPass::Begin(const std::vector<Light>& lights, Camera& cam, const glm::mat4& proj)
+void MainRenderPass::Begin(Camera& cam, const glm::mat4& proj)
 {
-	m_lightSSBO->UpdateData(std::span(lights));
+	m_lightSSBO->UpdateData(std::span(m_world->GetLights()));
 
 	m_globalUboData.view = cam.GetViewMatrix();
 	m_globalUboData.proj = proj;
@@ -62,6 +65,7 @@ void MainRenderPass::DrawModel(GameModel& model)
 		: m_nearestSampler.value();
 		
 	m_objectUboData.model = model.GetModelMat();
+	m_objectUboData.numLight = m_world->GetLights().size();
 	m_objectUbo->UpdateData(m_objectUboData);
 	gl4::Cmd::BindUniformBuffer(1, m_objectUbo.value());
 

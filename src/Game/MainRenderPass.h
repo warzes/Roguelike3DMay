@@ -1,20 +1,23 @@
-#pragma once
+﻿#pragma once
 
 #include "UniformObjects.h"
 
 class GameModel;
+class World;
 
 class MainRenderPass final
 {
 public:
-	bool Init(const std::vector<Light>& lights);
+	bool Init(World *world);
 	void Close();
 
-	void Begin(const std::vector<Light>& lights, Camera& cam, const glm::mat4& proj);
+	void Begin(Camera& cam, const glm::mat4& proj);
 	void DrawModel(GameModel& model);
 
 private:
 	bool createPipeline();
+
+	World* m_world{ nullptr };
 
 	std::optional<gl4::GraphicsPipeline>              m_pipeline;
 	std::optional<gl4::TypedBuffer<GlobalUniforms>>   m_globalUbo;

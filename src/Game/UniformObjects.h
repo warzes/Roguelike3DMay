@@ -1,4 +1,10 @@
-#pragma once
+﻿#pragma once
+
+struct alignas(16) ShadowUniforms final
+{
+	glm::mat4 vp;
+	glm::mat4 model;
+};
 
 struct alignas(16) GlobalUniforms final
 {
@@ -10,6 +16,7 @@ struct alignas(16) GlobalUniforms final
 struct alignas(16) ObjectUniforms final
 {
 	glm::mat4 model;
+	int       numLight;
 };
 
 struct alignas(16) MaterialUniforms final
