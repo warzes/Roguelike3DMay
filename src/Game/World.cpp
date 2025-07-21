@@ -16,7 +16,7 @@ bool World::Init()
 
 	m_model1.mesh = LoadDataMesh(vertices, iv);
 	m_model1.textureFilter = gl4::MagFilter::Nearest;
-	m_model1.material.diffuseTexture = TextureManager::GetTexture("CoreData/textures/colorful.png");
+	m_model1.material.diffuseTexture = TextureManager::GetTexture("CoreData/textures/White1x1.png");
 	m_model1.material.normalTexture = TextureManager::GetTexture("CoreData/textures/normal01.tga");
 
 	m_model2.mesh = LoadAssimpMesh("ExampleData/mesh/bunny.obj");
@@ -39,19 +39,43 @@ bool World::Init()
 	m_model4.material.normalTexture = TextureManager::GetTexture("CoreData/textures/normal01.tga");
 
 	Light l;
-	l.diffuseColor = glm::vec3(1, 1, 1);
+	l.diffuseColor = glm::vec3(1, 0, 0);
 	l.diffusePower = 1.0f;
-	l.specularColor = glm::vec3(1, 1, 1);
+	l.specularColor = glm::vec3(1, 0, 0);
 	l.specularPower = 1.0f;
-	l.position = glm::vec3(2.0f, 2.0f, 1.0f);
+	l.position = glm::vec3(4.0f, 3.0f, 4.0f);
 	l.type = DIRECTIONAL;
 	m_lights.push_back(l);
 
-	l.diffuseColor = glm::vec3(1, 1, 1);
+	l.diffuseColor = glm::vec3(0, 1, 0);
 	l.diffusePower = 1.0f;
-	l.specularColor = glm::vec3(1, 1, 1);
+	l.specularColor = glm::vec3(0, 1, 0);
 	l.specularPower = 1.0f;
-	l.position = glm::vec3(-2.0f, 2.0f, -3.0f);
+	l.position = glm::vec3(-4.0f, 3.0f, 4.0f);
+	l.type = DIRECTIONAL;
+	m_lights.push_back(l);
+
+	l.diffuseColor = glm::vec3(0, 0, 1);
+	l.diffusePower = 1.0f;
+	l.specularColor = glm::vec3(0, 0, 1);
+	l.specularPower = 1.0f;
+	l.position = glm::vec3(4.0f, 3.0f, -4.0f);
+	l.type = DIRECTIONAL;
+	m_lights.push_back(l);
+
+	l.diffuseColor = glm::vec3(1, 1, 0);
+	l.diffusePower = 1.0f;
+	l.specularColor = glm::vec3(1, 1, 0);
+	l.specularPower = 1.0f;
+	l.position = glm::vec3(-4.0f, 3.0f, -4.0f);
+	l.type = DIRECTIONAL;
+	m_lights.push_back(l);
+
+	l.diffuseColor = glm::vec3(0, 1, 1);
+	l.diffusePower = 1.0f;
+	l.specularColor = glm::vec3(0, 1, 1);
+	l.specularPower = 1.0f;
+	l.position = glm::vec3(0.0f, 3.0f, 0.0f);
 	l.type = DIRECTIONAL;
 	m_lights.push_back(l);
 

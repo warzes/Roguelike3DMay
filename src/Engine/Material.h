@@ -23,6 +23,8 @@ struct PhongMaterial final
 	glm::vec3 diffuse{ MATERIAL_DIFFUSE };
 	glm::vec3 specular{ MATERIAL_SPECULAR };
 	float     shininess{ MATERIAL_SHININESS };
+
+	bool noLighing{ false };
 };
 
 class Material final

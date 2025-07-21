@@ -24,6 +24,9 @@ private:
 	GlobalUniforms                                    m_globalUboData;
 	std::optional<gl4::TypedBuffer<ObjectUniforms>>   m_objectUbo;
 	ObjectUniforms                                    m_objectUboData;
+	std::optional<gl4::TypedBuffer<MainFragmentUniforms>> m_mainFragUbo;
+	MainFragmentUniforms                                  m_mainFragUboData;
+
 	std::optional<gl4::TypedBuffer<MaterialUniforms>> m_materialUbo;
 	MaterialUniforms                                  m_materialUboData;
 

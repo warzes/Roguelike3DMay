@@ -16,7 +16,11 @@ struct alignas(16) GlobalUniforms final
 struct alignas(16) ObjectUniforms final
 {
 	glm::mat4 model;
-	int       numLight;
+};
+
+struct alignas(16) MainFragmentUniforms final
+{
+	int  numLight;
 };
 
 struct alignas(16) MaterialUniforms final

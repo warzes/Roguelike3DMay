@@ -14,14 +14,13 @@ layout(location = 4) out vec3 vWorldPosition;
 layout(location = 5) out vec3 vCameraPosition;
 
 layout(binding = 0, std140) uniform GlobalUniforms { 
-	uniform mat4 view;
-	uniform mat4 projection;
-	uniform vec3 eyePosition;
+	mat4 view;
+	mat4 projection;
+	vec3 eyePosition;
 };
 
 layout(binding = 1, std140) uniform ObjectUniforms { 
-	uniform mat4 model;
-	uniform int  numLight;
+	mat4 model;
 };
 
 void main()

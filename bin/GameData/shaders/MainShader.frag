@@ -1,5 +1,7 @@
 ﻿#version 460 core
 
+#define MAX_NUM_LIGHT_SOURCES 8
+
 #define PI 3.14159265
 
 #define DIRECTIONAL_LIGHT 1
@@ -13,7 +15,7 @@
 #define BLOCKER_SEARCH 2
 #define PENUMBRA_ESTIMATE 3
 
-struct Light
+struct LightSource
 {
 	vec3  diffuseColor;
 	float diffusePower;
@@ -37,30 +39,58 @@ layout(binding = 2) uniform sampler2D emissionTex;
 layout(binding = 3) uniform sampler2D normalTex;
 layout(binding = 4) uniform sampler2D depthTex;
 
-layout(binding = 5) uniform sampler2D shadowMapTex;
+layout(binding = 5) uniform sampler2D shadowMap0;
+layout(binding = 6) uniform sampler2D shadowMap1;
+layout(binding = 7) uniform sampler2D shadowMap2;
+layout(binding = 8) uniform sampler2D shadowMap3;
+layout(binding = 9) uniform sampler2D shadowMap4;
+layout(binding = 10) uniform sampler2D shadowMap5;
+layout(binding = 11) uniform sampler2D shadowMap6;
+layout(binding = 12) uniform sampler2D shadowMap7;
+
+layout(binding = 13) uniform samplerCube shadowCubeMap0;
+layout(binding = 14) uniform samplerCube shadowCubeMap1;
+layout(binding = 15) uniform samplerCube shadowCubeMap2;
+layout(binding = 16) uniform samplerCube shadowCubeMap3;
+layout(binding = 17) uniform samplerCube shadowCubeMap4;
+layout(binding = 18) uniform samplerCube shadowCubeMap5;
+layout(binding = 19) uniform samplerCube shadowCubeMap6;
+layout(binding = 20) uniform samplerCube shadowCubeMap7;
 
 layout(location = 0) out vec4 OutFragColor;
 
-layout(binding = 1, std140) uniform ObjectUniforms { 
-	uniform mat4 model;
-	uniform int  numLight;
+layout(binding = 2, std140) uniform MaterialUniforms { 
+	vec4 diffuse;
+
+	bool hasDiffuseTexture;
+	bool hasSpecularTexture;
+	bool hasEmissionTexture;
+	bool hasNormalMapTexture;
+	bool hasDepthMapTexture;
+
+	bool noLighing;
 };
 
-layout(binding = 2, std140) uniform MaterialUniforms { 
-	uniform vec4 diffuse;
+layout(binding = 3, std140) uniform MainUniforms { 
+	int  numLight;
+};
 
-	uniform bool hasDiffuseTexture;
-	uniform bool hasSpecularTexture;
-	uniform bool hasEmissionTexture;
-	uniform bool hasNormalMapTexture;
-	uniform bool hasDepthMapTexture;
-
-	uniform bool noLighing;
+layout(binding = 4, std140) uniform ShadowUniforms { 
+	mat4 shadowMapViewProjection0;
+	mat4 shadowMapViewProjection1;
+	mat4 shadowMapViewProjection2;
+	mat4 shadowMapViewProjection3;
+	mat4 shadowMapViewProjection4;
+	mat4 shadowMapViewProjection5;
+	mat4 shadowMapViewProjection6;
+	mat4 shadowMapViewProjection7;
+	float directionalLightShadowMapBias;
+	float pointLightShadowMapBias;
 };
 
 layout(binding = 0, std430) readonly buffer LightSSBO
 {
-	Light lights[];
+	LightSource lightSources[];
 };
 
 // BlinnPhong data
@@ -73,7 +103,7 @@ layout(binding = 0, std430) readonly buffer LightSSBO
 vec3 specularColor = vec3(1, 1, 1);
 float specularity = 30;
 
-vec3 GetBlinnPhong(Light light, vec4 diffuse, vec3 lightDir, float lightDistance2)
+vec3 GetBlinnPhong(LightSource light, vec4 diffuse, vec3 lightDir, float lightDistance2)
 {
 	float NdotH = max(0, dot(vNormal, normalize(lightDir + vViewDir)));
 
@@ -147,7 +177,7 @@ void main()
 	vec3 lightColor = vec3(0.0,0.0,0.0);
 	for (int i = 0; i < numLight; i++)
 	{
-		Light light = lights[i];
+		LightSource light = lightSources[i];
 
 		vec3 lightDir = light.position - vWorldPosition;
 		float lightDistance2 = length(lightDir);

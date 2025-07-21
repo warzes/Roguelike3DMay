@@ -13,6 +13,7 @@ bool MainRenderPass::Init(World* world)
 	m_globalUbo   = gl4::TypedBuffer<GlobalUniforms>(gl4::BufferStorageFlag::DynamicStorage);
 	m_objectUbo   = gl4::TypedBuffer<ObjectUniforms>(gl4::BufferStorageFlag::DynamicStorage);
 	m_materialUbo = gl4::TypedBuffer<MaterialUniforms>(gl4::BufferStorageFlag::DynamicStorage);
+	m_mainFragUbo = gl4::TypedBuffer<MainFragmentUniforms>(gl4::BufferStorageFlag::DynamicStorage);
 
 	gl4::SamplerState sampleDesc;
 	sampleDesc.minFilter    = gl4::MinFilter::Nearest;
@@ -38,6 +39,7 @@ void MainRenderPass::Close()
 	m_lightSSBO = {};
 	m_globalUbo = {};
 	m_objectUbo = {};
+	m_mainFragUbo = {};
 	m_materialUbo = {};
 	m_nearestSampler = {};
 	m_linearSampler = {};
@@ -65,7 +67,6 @@ void MainRenderPass::DrawModel(GameModel& model)
 		: m_nearestSampler.value();
 		
 	m_objectUboData.model = model.GetModelMat();
-	m_objectUboData.numLight = m_world->GetLights().size();
 	m_objectUbo->UpdateData(m_objectUboData);
 	gl4::Cmd::BindUniformBuffer(1, m_objectUbo.value());
 
@@ -75,10 +76,13 @@ void MainRenderPass::DrawModel(GameModel& model)
 	m_materialUboData.hasEmissionTexture  = model.material.emissionTexture != nullptr;
 	m_materialUboData.hasNormalMapTexture = model.material.normalTexture   != nullptr;
 	m_materialUboData.hasDepthMapTexture  = model.material.depthTexture    != nullptr;
-	m_materialUboData.noLighing           = false;
-
+	m_materialUboData.noLighing           = model.material.noLighing;
 	m_materialUbo->UpdateData(m_materialUboData);
 	gl4::Cmd::BindUniformBuffer(2, m_materialUbo.value());
+
+	m_mainFragUboData.numLight = m_world->GetLights().size();
+	m_mainFragUbo->UpdateData(m_mainFragUboData);
+	gl4::Cmd::BindUniformBuffer(3, m_mainFragUbo.value());
 
 	if (model.material.diffuseTexture)
 		gl4::Cmd::BindSampledImage(0, *model.material.diffuseTexture, sampler);
