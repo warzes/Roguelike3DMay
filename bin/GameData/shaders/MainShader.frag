@@ -24,11 +24,11 @@ struct Light
 	float size;
 };
 
-layout(location = 0) in vec3 FragPosition;
-layout(location = 1) in vec3 FragColor;
-layout(location = 2) in vec3 FragNormal;
-layout(location = 3) in vec2 FragTexCoords;
-layout(location = 4) in vec3 vViewDir;
+layout(location = 0) in vec2 vTexCoords;
+layout(location = 1) in vec3 vColor;
+layout(location = 2) in vec3 vNormal;
+layout(location = 3) in vec3 vViewDir;
+layout(location = 4) in vec3 vWorldPosition;
 layout(location = 5) in vec3 vCameraPosition;
 
 layout(binding = 0) uniform sampler2D diffuseTex;
@@ -43,7 +43,7 @@ layout(location = 0) out vec4 OutFragColor;
 
 layout(binding = 1, std140) uniform ObjectUniforms { 
 	uniform mat4 model;
-	int          numLight;
+	uniform int  numLight;
 };
 
 layout(binding = 2, std140) uniform MaterialUniforms { 
@@ -75,7 +75,7 @@ float specularity = 30;
 
 vec3 GetBlinnPhong(Light light, vec4 diffuse, vec3 lightDir, float lightDistance2)
 {
-	float NdotH = max(0, dot(FragNormal, normalize(lightDir + vViewDir)));
+	float NdotH = max(0, dot(vNormal, normalize(lightDir + vViewDir)));
 
 	return NdotH * diffuse.rgb *
 					light.diffuseColor * light.diffusePower / lightDistance2 +
@@ -133,7 +133,7 @@ void main()
 	vec4 diffuseColor = diffuse;
 	if (hasDiffuseTexture)
 	{
-		diffuseColor = texture(diffuseTex, FragTexCoords);
+		diffuseColor = texture(diffuseTex, vTexCoords);
 		if (diffuseColor.a < 0.2)
 			discard;
 	}
@@ -149,7 +149,7 @@ void main()
 	{
 		Light light = lights[i];
 
-		vec3 lightDir = light.position - FragPosition;
+		vec3 lightDir = light.position - vWorldPosition;
 		float lightDistance2 = length(lightDir);
 		lightDir /= lightDistance2;
 		lightDistance2 *= lightDistance2;

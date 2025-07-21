@@ -231,9 +231,6 @@
     <Filter Include="Game">
       <UniqueIdentifier>{88bd236d-eb32-4804-86a2-89192bf60a32}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Game\GameShaders">
-      <UniqueIdentifier>{9a252bd5-13e3-496b-87cc-5b9676323cdb}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Game\Object">
       <UniqueIdentifier>{1511ded4-d082-4108-ae58-a7cde5d9d55b}</UniqueIdentifier>
     </Filter>
@@ -251,6 +248,9 @@
     </Filter>
     <Filter Include="Game\Graphics\RenderPass">
       <UniqueIdentifier>{25a97c75-de60-495a-87c2-4c3209190661}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Shaders">
+      <UniqueIdentifier>{9a252bd5-13e3-496b-87cc-5b9676323cdb}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -324,16 +324,16 @@
       <Filter>_test\GameOld\shaders</Filter>
     </None>
     <None Include="..\..\bin\GameData\shaders\MainShader.frag">
-      <Filter>Game\GameShaders</Filter>
+      <Filter>Game\Shaders</Filter>
     </None>
     <None Include="..\..\bin\GameData\shaders\MainShader.vert">
-      <Filter>Game\GameShaders</Filter>
+      <Filter>Game\Shaders</Filter>
     </None>
     <None Include="..\..\bin\GameData\shaders\ShadowPass.vert">
-      <Filter>Game\GameShaders</Filter>
+      <Filter>Game\Shaders</Filter>
     </None>
     <None Include="..\..\bin\GameData\shaders\ShadowPass.frag">
-      <Filter>Game\GameShaders</Filter>
+      <Filter>Game\Shaders</Filter>
     </None>
   </ItemGroup>
 </Project>

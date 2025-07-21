@@ -69,7 +69,8 @@ void World::Close()
 	for (size_t i = 0; i < m_shadows.size(); i++)
 	{
 		m_shadows[i].Destroy();
-	}m_shadows.clear();
+	}
+	m_shadows.clear();
 
 	delete m_model1.mesh;
 	delete m_model2.mesh;

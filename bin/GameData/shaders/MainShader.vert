@@ -6,11 +6,11 @@ layout (location = 2) in vec3 aNormal;
 layout (location = 3) in vec2 aTexCoords;
 layout (location = 4) in vec3 aTangent;
 
-layout(location = 0) out vec3 FragPosition;
-layout(location = 1) out vec3 FragColor;
-layout(location = 2) out vec3 FragNormal;
-layout(location = 3) out vec2 FragTexCoords;
-layout(location = 4) out vec3 vViewDir;
+layout(location = 0) out vec2 vTexCoords;
+layout(location = 1) out vec3 vColor;
+layout(location = 2) out vec3 vNormal;
+layout(location = 3) out vec3 vViewDir;
+layout(location = 4) out vec3 vWorldPosition;
 layout(location = 5) out vec3 vCameraPosition;
 
 layout(binding = 0, std140) uniform GlobalUniforms { 
@@ -21,19 +21,23 @@ layout(binding = 0, std140) uniform GlobalUniforms {
 
 layout(binding = 1, std140) uniform ObjectUniforms { 
 	uniform mat4 model;
-	int          numLight;
+	uniform int  numLight;
 };
 
 void main()
 {
-	FragPosition  = vec3(model * vec4(aPosition, 1.0));
-	FragColor     = aColor;
-	FragNormal    = mat3(transpose(inverse(model))) * aNormal;
-	FragTexCoords = aTexCoords;
-	vViewDir      = normalize(eyePosition - FragPosition);
+	vTexCoords = aTexCoords;
+	vColor     = aColor;
+	//vNormal  = mat3(transpose(inverse(model))) * aNormal;
+	vNormal    = (model * vec4(aNormal, 0)).xyz;
 
-	vec4 cameraPosition = view * model * vec4(aPosition, 1.0);
+	vec4 worldPosition = model * vec4(aPosition, 1.0f);
+	vWorldPosition = worldPosition.xyz;
+
+	vec4 cameraPosition = view * worldPosition;
 	vCameraPosition = cameraPosition.xyz;
+
+	vViewDir = normalize(eyePosition - vWorldPosition);
 
 	gl_Position = projection * cameraPosition;
 }
