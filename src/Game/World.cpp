@@ -40,41 +40,41 @@ bool World::Init()
 
 	Light l;
 	l.diffuseColor = glm::vec3(1, 0, 0);
-	l.diffusePower = 1.0f;
+	l.diffusePower = 8.0f;
 	l.specularColor = glm::vec3(1, 0, 0);
-	l.specularPower = 1.0f;
+	l.specularPower = 8.0f;
 	l.position = glm::vec3(4.0f, 3.0f, 4.0f);
 	l.type = DIRECTIONAL;
 	m_lights.push_back(l);
 
 	l.diffuseColor = glm::vec3(0, 1, 0);
-	l.diffusePower = 1.0f;
+	l.diffusePower = 8.0f;
 	l.specularColor = glm::vec3(0, 1, 0);
-	l.specularPower = 1.0f;
+	l.specularPower = 8.0f;
 	l.position = glm::vec3(-4.0f, 3.0f, 4.0f);
 	l.type = DIRECTIONAL;
 	m_lights.push_back(l);
 
 	l.diffuseColor = glm::vec3(0, 0, 1);
-	l.diffusePower = 1.0f;
+	l.diffusePower = 8.0f;
 	l.specularColor = glm::vec3(0, 0, 1);
-	l.specularPower = 1.0f;
+	l.specularPower = 8.0f;
 	l.position = glm::vec3(4.0f, 3.0f, -4.0f);
 	l.type = DIRECTIONAL;
 	m_lights.push_back(l);
 
 	l.diffuseColor = glm::vec3(1, 1, 0);
-	l.diffusePower = 1.0f;
+	l.diffusePower = 8.0f;
 	l.specularColor = glm::vec3(1, 1, 0);
-	l.specularPower = 1.0f;
+	l.specularPower = 8.0f;
 	l.position = glm::vec3(-4.0f, 3.0f, -4.0f);
 	l.type = DIRECTIONAL;
 	m_lights.push_back(l);
 
 	l.diffuseColor = glm::vec3(0, 1, 1);
-	l.diffusePower = 1.0f;
+	l.diffusePower = 8.0f;
 	l.specularColor = glm::vec3(0, 1, 1);
-	l.specularPower = 1.0f;
+	l.specularPower = 8.0f;
 	l.position = glm::vec3(0.0f, 3.0f, 0.0f);
 	l.type = DIRECTIONAL;
 	m_lights.push_back(l);

@@ -335,5 +335,8 @@
     <None Include="..\..\bin\GameData\shaders\ShadowPass.frag">
       <Filter>Game\Shaders</Filter>
     </None>
+    <None Include="..\..\bin\GameData\shaders\OldMainShader.frag">
+      <Filter>Game\Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

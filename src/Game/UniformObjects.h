@@ -20,6 +20,20 @@ struct alignas(16) ObjectUniforms final
 
 struct alignas(16) MainFragmentUniforms final
 {
+	glm::mat4 invView;
+	glm::mat4 lightProjection;
+
+	glm::mat4 shadowMapViewProjection0;
+	glm::mat4 shadowMapViewProjection1;
+	glm::mat4 shadowMapViewProjection2;
+	glm::mat4 shadowMapViewProjection3;
+	glm::mat4 shadowMapViewProjection4;
+	glm::mat4 shadowMapViewProjection5;
+	glm::mat4 shadowMapViewProjection6;
+	glm::mat4 shadowMapViewProjection7;
+	float directionalLightShadowMapBias;
+	float pointLightShadowMapBias;
+
 	int  numLight;
 };
 

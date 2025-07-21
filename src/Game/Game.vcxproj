@@ -214,6 +214,7 @@
     <None Include="..\..\bin\GameData\shaders\MainShader.vert" />
     <None Include="..\..\bin\GameData\shaders\Minimal.frag" />
     <None Include="..\..\bin\GameData\shaders\Minimal.vert" />
+    <None Include="..\..\bin\GameData\shaders\OldMainShader.frag" />
     <None Include="..\..\bin\GameData\shaders\ShadowPass.frag" />
     <None Include="..\..\bin\GameData\shaders\ShadowPass.vert" />
   </ItemGroup>

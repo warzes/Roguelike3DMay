@@ -80,6 +80,7 @@ void MainRenderPass::DrawModel(GameModel& model)
 	m_materialUbo->UpdateData(m_materialUboData);
 	gl4::Cmd::BindUniformBuffer(2, m_materialUbo.value());
 
+	m_mainFragUboData.invView = glm::inverse(m_globalUboData.view);
 	m_mainFragUboData.numLight = m_world->GetLights().size();
 	m_mainFragUbo->UpdateData(m_mainFragUboData);
 	gl4::Cmd::BindUniformBuffer(3, m_mainFragUbo.value());
