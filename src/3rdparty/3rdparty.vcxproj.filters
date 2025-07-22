@@ -40,6 +40,9 @@
     <ClCompile Include="tinyobjloader\tinyobjloader.cpp">
       <Filter>tinyobjloader</Filter>
     </ClCompile>
+    <ClCompile Include="PoissonGenerator\Poisson.cpp">
+      <Filter>PoissonGenerator</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="glad">
@@ -86,6 +89,9 @@
     </Filter>
     <Filter Include="tinyobjloader">
       <UniqueIdentifier>{96338b43-6843-458c-b79e-11f5a78bfa51}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PoissonGenerator">
+      <UniqueIdentifier>{f0a3705b-2f4f-4718-bcea-d5ac83033cef}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1031,6 +1037,9 @@
     </ClInclude>
     <ClInclude Include="tinyobjloader\tiny_obj_loader.h">
       <Filter>tinyobjloader</Filter>
+    </ClInclude>
+    <ClInclude Include="PoissonGenerator\PoissonGenerator.h">
+      <Filter>PoissonGenerator</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -3,6 +3,50 @@
 #include "GameModel.h"
 #include "World.h"
 //=============================================================================
+inline std::optional<gl4::Texture> createPoissonDiscDistribution(size_t numSamples)
+{
+	auto defaultPRNG = PoissonGenerator::DefaultPRNG();
+	auto points = PoissonGenerator::GeneratePoissonPoints(numSamples * 2, defaultPRNG);
+	size_t attempts = 0;
+	while (points.size() < numSamples && ++attempts < 100)
+	{
+		auto defaultPRNG2 = PoissonGenerator::DefaultPRNG();
+		points = PoissonGenerator::GeneratePoissonPoints(numSamples * 2, defaultPRNG2);
+	}
+
+	if (attempts == 100)
+	{
+		std::cout << "couldn't generate Poisson-disc distribution with " << numSamples << " samples" << std::endl;
+		numSamples = points.size();
+	}
+	std::vector<float> data(numSamples * 2);
+	for (auto i = 0, j = 0; i < numSamples; i++, j += 2)
+	{
+		auto& point = points[i];
+		data[j] = point.x;
+		data[j + 1] = point.y;
+	}
+
+	const gl4::TextureCreateInfo createInfo{
+		  .imageType = gl4::ImageType::Tex1D,
+		  .format = gl4::Format::R32G32_FLOAT,
+		  .extent = {static_cast<uint32_t>(numSamples), 1, 1},
+		  .mipLevels = 1,
+		  .arrayLayers = 1,
+		  .sampleCount = gl4::SampleCount::Samples1,
+	};
+	std::optional<gl4::Texture> texture = gl4::Texture(createInfo);
+
+	texture.value().UpdateImage({
+	  .extent = createInfo.extent,
+	  .format = gl4::UploadFormat::RG,
+	  .type = gl4::UploadType::FLOAT,
+	  .pixels = &data[0],
+		});
+
+	return texture;
+}
+//=============================================================================
 bool MainRenderPass::Init(World* world)
 {
 	if (!createPipeline())
@@ -31,11 +75,23 @@ bool MainRenderPass::Init(World* world)
 
 	m_lightSSBO.emplace(std::span(m_world->GetLights()), gl4::BufferStorageFlag::DynamicStorage);
 
+	m_distributions0 = createPoissonDiscDistribution(m_numBlockerSearchSamples);
+	m_distributions1 = createPoissonDiscDistribution(m_numPCFSamples);
+
+	sampleDesc.minFilter = gl4::MinFilter::Nearest;
+	sampleDesc.magFilter = gl4::MagFilter::Nearest;
+	sampleDesc.addressModeU = gl4::AddressMode::ClampToEdge;
+	sampleDesc.addressModeV = gl4::AddressMode::ClampToEdge;
+	m_distributionsSampler = gl4::Sampler(sampleDesc);
+
 	return true;
 }
 //=============================================================================
 void MainRenderPass::Close()
 {
+	m_distributions0 = {};
+	m_distributions1 = {};
+	m_distributionsSampler = {};
 	m_lightSSBO = {};
 	m_globalUbo = {};
 	m_objectUbo = {};
@@ -81,7 +137,7 @@ void MainRenderPass::DrawModel(GameModel& model)
 	gl4::Cmd::BindUniformBuffer(2, m_materialUbo.value());
 
 	m_mainFragUboData.invView = glm::inverse(m_globalUboData.view);
-	m_mainFragUboData.numLight = m_world->GetLights().size();
+	m_mainFragUboData.MaxNumLightSources = m_world->GetLights().size();
 	m_mainFragUbo->UpdateData(m_mainFragUboData);
 	gl4::Cmd::BindUniformBuffer(3, m_mainFragUbo.value());
 

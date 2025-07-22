@@ -83,6 +83,8 @@
 
 #include <tinyobjloader/tiny_obj_loader.h>
 
+#include <PoissonGenerator/PoissonGenerator.h>
+
 #if defined(_MSC_VER)
 #	pragma warning(pop)
 #endif

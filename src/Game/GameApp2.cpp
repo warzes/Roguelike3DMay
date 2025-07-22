@@ -16,7 +16,10 @@ GameApp2::GameApp2()
 //=============================================================================
 EngineCreateInfo GameApp2::GetCreateInfo() const
 {
-	return {};
+	EngineCreateInfo createInfo{};
+	createInfo.render.vsync = true;
+
+	return createInfo;
 }
 //=============================================================================
 bool GameApp2::OnInit()

@@ -1,6 +1,6 @@
 ﻿#version 460 core
 
-#define MAX_NUM_LIGHT_SOURCES 8
+#define MAX_NUM_LIGHT_SOURCES 5
 
 #define PI 3.14159265
 
@@ -40,23 +40,20 @@ layout(binding = 2) uniform sampler2D emissionTex;
 layout(binding = 3) uniform sampler2D normalTex;
 layout(binding = 4) uniform sampler2D depthTex;
 
-layout(binding = 5) uniform sampler2D shadowMap0;
-layout(binding = 6) uniform sampler2D shadowMap1;
-layout(binding = 7) uniform sampler2D shadowMap2;
-layout(binding = 8) uniform sampler2D shadowMap3;
-layout(binding = 9) uniform sampler2D shadowMap4;
-layout(binding = 10) uniform sampler2D shadowMap5;
-layout(binding = 11) uniform sampler2D shadowMap6;
-layout(binding = 12) uniform sampler2D shadowMap7;
+layout(binding = 5) uniform sampler1D distribution0;
+layout(binding = 6) uniform sampler1D distribution1;
 
-layout(binding = 13) uniform samplerCube shadowCubeMap0;
-layout(binding = 14) uniform samplerCube shadowCubeMap1;
-layout(binding = 15) uniform samplerCube shadowCubeMap2;
-layout(binding = 16) uniform samplerCube shadowCubeMap3;
-layout(binding = 17) uniform samplerCube shadowCubeMap4;
-layout(binding = 18) uniform samplerCube shadowCubeMap5;
-layout(binding = 19) uniform samplerCube shadowCubeMap6;
-layout(binding = 20) uniform samplerCube shadowCubeMap7;
+layout(binding = 7) uniform sampler2D shadowMap0;
+layout(binding = 8) uniform sampler2D shadowMap1;
+layout(binding = 9) uniform sampler2D shadowMap2;
+layout(binding = 10) uniform sampler2D shadowMap3;
+layout(binding = 11) uniform sampler2D shadowMap4;
+
+layout(binding = 12) uniform samplerCube shadowCubeMap0;
+layout(binding = 13) uniform samplerCube shadowCubeMap1;
+layout(binding = 14) uniform samplerCube shadowCubeMap2;
+layout(binding = 15) uniform samplerCube shadowCubeMap3;
+layout(binding = 16) uniform samplerCube shadowCubeMap4;
 
 layout(location = 0) out vec4 OutFragColor;
 
@@ -93,7 +90,7 @@ layout(binding = 3, std140) uniform MainUniforms {
 	float directionalLightShadowMapBias;
 	float pointLightShadowMapBias;
 
-	int  numLight;
+	int  MaxNumLightSources;
 };
 
 //layout(binding = 4, std140) uniform ShadowUniforms { 
@@ -118,29 +115,28 @@ uniform int numPCFSamples = 1;
 uniform int displayMode = 0;
 uniform int selectedLightSource = -1;
 
+// глобальные переменные
+vec4 DiffuseColor;
+
 layout(binding = 0, std430) readonly buffer LightSSBO
 {
 	LightSource lightSources[];
 };
 
-vec2 RandomDirection(sampler1D distribution, float u)
-{
-   return texture(distribution, u).xy * 2 - vec2(1);
-}
-
-vec3 BlinnPhong(vec3 materialDiffuseColor, 
-	vec3 materialSpecularColor, 
-	float materialSpecularity, 
-	vec3 lightDiffuseColor, 
-	float lightDiffusePower, 
-	vec3 lightSpecularColor, 
+vec3 BlinnPhong(
+	vec3 materialDiffuseColor,
+	vec3 materialSpecularColor,
+	float materialSpecularity,
+	vec3 lightDiffuseColor,
+	float lightDiffusePower,
+	vec3 lightSpecularColor,
 	float lightSpecularPower,
 	float NdotL,
 	float distanceAttenuation)
 {
 	return materialDiffuseColor * lightDiffuseColor * lightDiffusePower * NdotL / distanceAttenuation +
-			pow(NdotL, materialSpecularity) * materialSpecularColor *
-			lightSpecularColor * lightSpecularPower / distanceAttenuation;
+		pow(NdotL, materialSpecularity) * materialSpecularColor *
+		lightSpecularColor * lightSpecularPower / distanceAttenuation;
 }
 
 vec3 LightContribution(vec3 diffuseColor, int i)
@@ -148,50 +144,39 @@ vec3 LightContribution(vec3 diffuseColor, int i)
 	switch (lightSources[i].type)
 	{
 	case DIRECTIONAL_LIGHT:
-	{
-		vec3 lightDir = lightSources[i].position - vWorldPosition;
-		float lightDistance2 = length(lightDir);
-		lightDir /= lightDistance2;
-		lightDistance2 *= lightDistance2;
-
-		//float NdotL = max(0, dot(vNormal, normalize(vViewDir - lightSources[i].position))); // почему это?
-		float NdotH = max(0, dot(vNormal, normalize(lightDir + vViewDir)));
-
-		return BlinnPhong(diffuseColor,
+//		// почему это? а может и должно быть для DIRECTIONAL_LIGHT
+//		float NdotH = max(0, dot(vNormal, normalize(lightDir + vViewDir)));
+//		return BlinnPhong(diffuseColor, specularColor, specularity, lightSources[i].diffuseColor, lightSources[i].diffusePower, lightSources[i].specularColor, lightSources[i].specularPower, NdotH, lightDistance2);
+		return BlinnPhong(
+				diffuseColor,
 				specularColor,
 				specularity,
 				lightSources[i].diffuseColor,
 				lightSources[i].diffusePower,
 				lightSources[i].specularColor,
 				lightSources[i].specularPower,
-				NdotH,//NdotL,
-				lightDistance2);//1); // почему это?
-	}
+				max(0, dot(vNormal, normalize(vViewDir - lightSources[i].position))),
+				1);
+
 	case POINT_LIGHT:
-return vec3(1,0,0);
 		vec3 lightDir = lightSources[i].position - vWorldPosition;
-		float lightDist = length(lightDir);
-		lightDir /= lightDist;
-		return BlinnPhong(diffuseColor,
-					specularColor,
-					specularity,
-					lightSources[i].diffuseColor,
-					lightSources[i].diffusePower,
-					lightSources[i].specularColor,
-					lightSources[i].specularPower,
-					max(0, dot(vNormal, normalize(lightDir + vViewDir))),
-					lightDist * lightDist);
+		float lightDistance2 = length(lightDir);
+		lightDir /= lightDistance2;
+		lightDistance2 *= lightDistance2;
+
+		return BlinnPhong(
+				diffuseColor,
+				specularColor,
+				specularity,
+				lightSources[i].diffuseColor,
+				lightSources[i].diffusePower,
+				lightSources[i].specularColor,
+				lightSources[i].specularPower,
+				max(0, dot(vNormal, normalize(lightDir + vViewDir))),
+				lightDistance2);
 	default:
 		return vec3(1,0,0);
 	}
-}
-
-vec3 ShadowCoords(mat4 shadowMapViewProjection)
-{
-	vec4 projectedCoords = shadowMapViewProjection * vec4(vWorldPosition, 1);
-	vec3 shadowCoords = projectedCoords.xyz / projectedCoords.w;
-	shadowCoords = shadowCoords * 0.5 + 0.5;
-	return shadowCoords;
 }
 
 bool IsLightEnabled(int i)
@@ -199,77 +184,88 @@ bool IsLightEnabled(int i)
 	return lightSources[i].type != 0;
 }
 
-// this search area estimation comes from the following article: 
-// http://developer.download.nvidia.com/whitepapers/2008/PCSS_DirectionalLight_Integration.pdf
-float SearchWidth(float uvLightSize, float receiverDistance)
-{
-	return uvLightSize * (receiverDistance - NEAR) / eyePosition.z;
-}
-
-float Depth(vec3 pos)
-{
-	vec3 absPos = abs(pos);
-	float z = -max(absPos.x, max(absPos.y, absPos.z));
-	vec4 clip = lightProjection * vec4(0.0, 0.0, z, 1.0);
-	return (clip.z / clip.w) * 0.5 + 0.5;
-}
-
 float HardShadow(int i)
 {
 	return 1.0f;
 }
 
-void DisplayHardShadows(vec4 diffuseColor)
+void DisplayHardShadows()
 {
 	int enabledLights = 0;
-	for (int i = 0; i < numLight; i++)
+	for (int i = 0; i < MaxNumLightSources; i++)
 	{
 		if (IsLightEnabled(i))
+		{
 			enabledLights++;
+
+			OutFragColor.rgb += LightContribution(DiffuseColor.rgb, i) * HardShadow(i);
+		}
 	}
 
-	OutFragColor = vec4(ambientColor, diffuseColor.a);
 	if (enabledLights > 0)
 	{
-		for (int i = 0; i < numLight; i++)
-		{
-			OutFragColor.rgb += LightContribution(diffuseColor.rgb, i) * HardShadow(i);
-		}
-
 		OutFragColor.rgb /= enabledLights;
 	}
 }
 
+void DisplaySoftShadows()
+{
+	OutFragColor = vec4(ambientColor, DiffuseColor.a);
+
+OutFragColor.rgb = DiffuseColor.rgb;
+}
+
+void DisplayBlockerSearch()
+{
+	OutFragColor = vec4(ambientColor, DiffuseColor.a);
+
+OutFragColor.rgb = DiffuseColor.rgb;
+}
+
+void DisplayPenumbraEstimate()
+{
+	OutFragColor = vec4(ambientColor, DiffuseColor.a);
+
+OutFragColor.rgb = DiffuseColor.rgb;
+}
+
 void main()
 {
-	vec4 diffuseColor = diffuse;
+	// определение diffuse, либо с текстуры, либо с материала
+	DiffuseColor = diffuse;
 	if (hasDiffuseTexture)
 	{
-		diffuseColor = texture(diffuseTex, vTexCoords);
-		if (diffuseColor.a < 0.2)
-			discard;
+		DiffuseColor = texture(diffuseTex, vTexCoords);
 	}
 
+	// прозрачность скипаем
+	if (DiffuseColor.a < 0.2)
+		discard;
+
+	// на объете не использовать освещение и тени (то есть чистый diffuseColor)
 	if (noLighing)
 	{
-		OutFragColor = diffuseColor;
+		OutFragColor = DiffuseColor;
 		return;
 	}
 
+	OutFragColor = vec4(ambientColor, DiffuseColor.a);
+
+// TODO: отделить тень от света
 	switch (displayMode)
 	{
 	case HARD_SHADOWS:
-		DisplayHardShadows(diffuseColor);
+		DisplayHardShadows();
 		break;
-//	case SOFT_SHADOWS:
-//		DisplaySoftShadows();
-//		break;
-//	case BLOCKER_SEARCH:
-//		DisplayBlockerSearch();
-//		break;
-//	case PENUMBRA_ESTIMATE:
-//		DisplayPenumbraEstimate();
-//		break;
+	case SOFT_SHADOWS:
+		DisplaySoftShadows();
+		break;
+	case BLOCKER_SEARCH:
+		DisplayBlockerSearch();
+		break;
+	case PENUMBRA_ESTIMATE:
+		DisplayPenumbraEstimate();
+		break;
 	default:
 		OutFragColor = vec4(1,0,0,1);
 	}

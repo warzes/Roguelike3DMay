@@ -34,7 +34,7 @@ struct alignas(16) MainFragmentUniforms final
 	float directionalLightShadowMapBias;
 	float pointLightShadowMapBias;
 
-	int  numLight;
+	int  MaxNumLightSources;
 };
 
 struct alignas(16) MaterialUniforms final
