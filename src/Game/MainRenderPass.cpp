@@ -2,6 +2,8 @@
 #include "MainRenderPass.h"
 #include "GameModel.h"
 #include "World.h"
+#define DEFAULT_DIRECTIONAL_LIGHT_SHADOW_MAP_BIAS 0.005f
+#define DEFAULT_POINT_LIGHT_SHADOW_MAP_BIAS 0.0075f
 //=============================================================================
 inline std::optional<gl4::Texture> createPoissonDiscDistribution(size_t numSamples)
 {
@@ -137,6 +139,14 @@ void MainRenderPass::DrawModel(GameModel& model)
 	gl4::Cmd::BindUniformBuffer(2, m_materialUbo.value());
 
 	m_mainFragUboData.invView = glm::inverse(m_globalUboData.view);
+	m_mainFragUboData.lightProjection = glm::perspective(glm::radians(90.0f), 1.0f, 1.0f, 10.0f);
+	m_mainFragUboData.directionalLightShadowMapBias = DEFAULT_DIRECTIONAL_LIGHT_SHADOW_MAP_BIAS;
+	m_mainFragUboData.pointLightShadowMapBias = DEFAULT_POINT_LIGHT_SHADOW_MAP_BIAS;
+
+	m_mainFragUboData.shadowMapViewProjection0 = m_world->GetShadowMap()[0].lightProjection * m_world->GetShadowMap()[0].lightView;
+
+
+
 	m_mainFragUboData.MaxNumLightSources = m_world->GetLights().size();
 	m_mainFragUbo->UpdateData(m_mainFragUboData);
 	gl4::Cmd::BindUniformBuffer(3, m_mainFragUbo.value());
@@ -151,6 +161,11 @@ void MainRenderPass::DrawModel(GameModel& model)
 		gl4::Cmd::BindSampledImage(3, *model.material.normalTexture, sampler);
 	if (model.material.depthTexture)
 		gl4::Cmd::BindSampledImage(4, *model.material.depthTexture, sampler);
+
+	gl4::Cmd::BindSampledImage(5, *m_distributions0, *m_distributionsSampler);
+	gl4::Cmd::BindSampledImage(6, *m_distributions1, *m_distributionsSampler);
+
+	m_world->GetShadowMap()[0].Bind(7, sampler); // TODO: сеплер для тени
 
 	model.mesh->Bind();
 }

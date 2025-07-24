@@ -1,6 +1,6 @@
 ﻿#version 460 core
 
-#define MAX_NUM_LIGHT_SOURCES 5
+#define MAX_NUM_LIGHT_SOURCES 8
 
 #define PI 3.14159265
 
@@ -48,12 +48,18 @@ layout(binding = 8) uniform sampler2D shadowMap1;
 layout(binding = 9) uniform sampler2D shadowMap2;
 layout(binding = 10) uniform sampler2D shadowMap3;
 layout(binding = 11) uniform sampler2D shadowMap4;
+layout(binding = 12) uniform sampler2D shadowMap5;
+layout(binding = 13) uniform sampler2D shadowMap6;
+layout(binding = 14) uniform sampler2D shadowMap7;
 
-layout(binding = 12) uniform samplerCube shadowCubeMap0;
-layout(binding = 13) uniform samplerCube shadowCubeMap1;
-layout(binding = 14) uniform samplerCube shadowCubeMap2;
-layout(binding = 15) uniform samplerCube shadowCubeMap3;
-layout(binding = 16) uniform samplerCube shadowCubeMap4;
+layout(binding = 15) uniform samplerCube shadowCubeMap0;
+layout(binding = 16) uniform samplerCube shadowCubeMap1;
+layout(binding = 17) uniform samplerCube shadowCubeMap2;
+layout(binding = 18) uniform samplerCube shadowCubeMap3;
+layout(binding = 19) uniform samplerCube shadowCubeMap4;
+layout(binding = 20) uniform samplerCube shadowCubeMap5;
+layout(binding = 21) uniform samplerCube shadowCubeMap6;
+layout(binding = 22) uniform samplerCube shadowCubeMap7;
 
 layout(location = 0) out vec4 OutFragColor;
 
@@ -184,9 +190,156 @@ bool IsLightEnabled(int i)
 	return lightSources[i].type != 0;
 }
 
+float Depth(vec3 pos)
+{
+    vec3 absPos = abs(pos);
+	float z = -max(absPos.x, max(absPos.y, absPos.z));
+	vec4 clip = lightProjection * vec4(0.0, 0.0, z, 1.0);
+	return (clip.z / clip.w) * 0.5 + 0.5;
+}
+
+vec3 ShadowCoords(mat4 shadowMapViewProjection)
+{
+	vec4 projectedCoords = shadowMapViewProjection * vec4(vWorldPosition, 1);
+	vec3 shadowCoords = projectedCoords.xyz / projectedCoords.w;
+	shadowCoords = shadowCoords * 0.5 + 0.5;
+	return shadowCoords;
+}
+
+float ShadowMapping_DirectionalLight(vec3 shadowCoords, sampler2D shadowMap, float uvLightSize)
+{
+	float z = texture(shadowMap, shadowCoords.xy).x;
+	return (z < (shadowCoords.z - directionalLightShadowMapBias)) ? 0 : 1;
+}
+
+float ShadowMapping_PointLight(vec3 lightPosition, samplerCube shadowCubeMap, float uvLightSize)
+{
+	mat4 lightView = mat4(1,0,0,0, 
+		0,1,0,0, 
+		0,0,1,0, 
+		-lightPosition.x,-lightPosition.y,-lightPosition.z, 1);
+	vec3 positionLightSpace = (lightView * invView * vec4(vCameraPosition, 1)).xyz;
+	float receiverDistance = Depth(positionLightSpace);
+	float z = texture(shadowCubeMap, positionLightSpace).r;
+	return (z < (receiverDistance - pointLightShadowMapBias)) ? 0 : 1;
+}
+
 float HardShadow(int i)
 {
-	return 1.0f;
+	if (i == 0)
+	{
+		if (IsLightEnabled(0))
+		{
+			switch (lightSources[0].type)
+			{
+			case DIRECTIONAL_LIGHT:
+				return ShadowMapping_DirectionalLight(ShadowCoords(shadowMapViewProjection0), shadowMap0, lightSources[0].size / frustumSize);
+			case POINT_LIGHT:
+				return ShadowMapping_PointLight(lightSources[0].position, shadowCubeMap0, lightSources[0].size / frustumSize);
+			}
+		}
+		return 0;
+	}
+	else if (i == 1)
+	{
+		if (IsLightEnabled(1))
+		{
+			switch (lightSources[1].type)
+			{
+			case DIRECTIONAL_LIGHT:
+				return ShadowMapping_DirectionalLight(ShadowCoords(shadowMapViewProjection1), shadowMap1, lightSources[1].size / frustumSize);
+			case POINT_LIGHT:
+				return ShadowMapping_PointLight(lightSources[1].position, shadowCubeMap1, lightSources[1].size / frustumSize);
+			}
+		}
+		return 0;
+	}
+	else if (i == 2)
+	{
+		if (IsLightEnabled(2))
+		{
+			switch (lightSources[2].type)
+			{
+			case DIRECTIONAL_LIGHT:
+				return ShadowMapping_DirectionalLight(ShadowCoords(shadowMapViewProjection2), shadowMap2, lightSources[2].size / frustumSize);
+			case POINT_LIGHT:
+				return ShadowMapping_PointLight(lightSources[2].position, shadowCubeMap2, lightSources[2].size / frustumSize);
+			}
+		}
+		return 0;
+	}
+	else if (i == 3)
+	{
+		if (IsLightEnabled(3))
+		{
+			switch (lightSources[3].type)
+			{
+			case DIRECTIONAL_LIGHT:
+				return ShadowMapping_DirectionalLight(ShadowCoords(shadowMapViewProjection3), shadowMap3, lightSources[3].size / frustumSize);
+			case POINT_LIGHT:
+				return ShadowMapping_PointLight(lightSources[3].position, shadowCubeMap3, lightSources[3].size / frustumSize);
+			}
+		}
+		return 0;
+	}
+	else if (i == 4)
+	{
+		if (IsLightEnabled(4))
+		{
+			switch (lightSources[4].type)
+			{
+			case DIRECTIONAL_LIGHT:
+				return ShadowMapping_DirectionalLight(ShadowCoords(shadowMapViewProjection4), shadowMap4, lightSources[4].size / frustumSize);
+			case POINT_LIGHT:
+				return ShadowMapping_PointLight(lightSources[4].position, shadowCubeMap4, lightSources[4].size / frustumSize);
+			}
+		}
+		return 0;
+	}
+	else if (i == 5)
+	{
+		if (IsLightEnabled(5))
+		{
+			switch (lightSources[5].type)
+			{
+			case DIRECTIONAL_LIGHT:
+				return ShadowMapping_DirectionalLight(ShadowCoords(shadowMapViewProjection5), shadowMap5, lightSources[5].size / frustumSize);
+			case POINT_LIGHT:
+				return ShadowMapping_PointLight(lightSources[5].position, shadowCubeMap5, lightSources[5].size / frustumSize);
+			}
+		}
+		return 0;
+	}
+	else if (i == 6)
+	{
+		if (IsLightEnabled(6))
+		{
+			switch (lightSources[6].type)
+			{
+			case DIRECTIONAL_LIGHT:
+				return ShadowMapping_DirectionalLight(ShadowCoords(shadowMapViewProjection6), shadowMap6, lightSources[6].size / frustumSize);
+			case POINT_LIGHT:
+				return ShadowMapping_PointLight(lightSources[6].position, shadowCubeMap6, lightSources[6].size / frustumSize);
+			}
+		}
+		return 0;
+	}
+	else if (i == 7)
+	{
+		if (IsLightEnabled(7))
+		{
+			switch (lightSources[7].type)
+			{
+			case DIRECTIONAL_LIGHT:
+				return ShadowMapping_DirectionalLight(ShadowCoords(shadowMapViewProjection7), shadowMap7, lightSources[7].size / frustumSize);
+			case POINT_LIGHT:
+				return ShadowMapping_PointLight(lightSources[7].position, shadowCubeMap7, lightSources[7].size / frustumSize);
+			}
+		}
+		return 0;
+	}
+	else
+		return 0;
 }
 
 void DisplayHardShadows()
