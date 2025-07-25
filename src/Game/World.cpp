@@ -1,20 +1,65 @@
 ﻿#include "stdafx.h"
 #include "World.h"
 //=============================================================================
+void createXZPlane(float width, float depth, int xDivisions, int zDivisions, float uvRepeat, std::vector<MeshVertex>& vertices, std::vector<uint32_t>& indices)
+{
+	float halfWidth = width * 0.5f,
+		halfDepth = depth * 0.5f;
+	float xStep = width / (float)xDivisions,
+		zStep = depth / (float)zDivisions;
+	float z = -halfDepth;
+	for (int zI = 0; zI <= zDivisions; zI++, z += zStep)
+	{
+		float x = -halfWidth;
+		for (int xI = 0; xI <= xDivisions; xI++, x += xStep)
+		{
+			MeshVertex v;
+			v.position = { x, 0, z };
+			v.normal = { 0, 1, 0 };
+			v.uv = { x / width * uvRepeat, z / depth * uvRepeat };
+			v.color = glm::vec3(1.0f);
+			vertices.emplace_back(v);
+		}
+	}
+	int zW = (xDivisions + 1);
+	for (int zI = 0; zI < zDivisions; zI++)
+	{
+		int zI0 = zI * zW,
+			zI1 = zI0 + zW;
+		for (int xI = 0; xI < xDivisions; xI++)
+		{
+			int xzI0 = zI0 + xI,
+				xzI1 = zI1 + xI;
+			indices.emplace_back(xzI0 + 1);
+			indices.emplace_back(xzI0);
+			indices.emplace_back(xzI1);
+			indices.emplace_back(xzI0 + 1);
+			indices.emplace_back(xzI1);
+			indices.emplace_back(xzI1 + 1);
+		}
+	}
+}
+//=============================================================================
 bool World::Init()
 {
+#if 0
 	std::vector<MeshVertex> vertices = {
 		// positions                                // normals            // texcoords
-		{{-50.0f, -0.5f,  50.0f}, glm::vec3(1.0f), {0.0f, 1.0f, 0.0f},  { 0.0f,  0.0f}},
-		{{-50.0f, -0.5f, -50.0f}, glm::vec3(1.0f), {0.0f, 1.0f, 0.0f},  { 0.0f, 50.0f}},
-		{{ 50.0f, -0.5f,  50.0f}, glm::vec3(1.0f), {0.0f, 1.0f, 0.0f},  {50.0f,  0.0f}},
-		{{ 50.0f, -0.5f,  50.0f}, glm::vec3(1.0f), {0.0f, 1.0f, 0.0f},  {50.0f,  0.0f}},
-		{{-50.0f, -0.5f, -50.0f}, glm::vec3(1.0f), {0.0f, 1.0f, 0.0f},  { 0.0f, 50.0f}},
-		{{ 50.0f, -0.5f, -50.0f}, glm::vec3(1.0f), {0.0f, 1.0f, 0.0f},  {50.0f, 50.0f}}
+		{{-50.0f, -0.25f,  50.0f}, glm::vec3(1.0f), {0.0f, 1.0f, 0.0f},  { 0.0f,  0.0f}},
+		{{-50.0f, -0.25f, -50.0f}, glm::vec3(1.0f), {0.0f, 1.0f, 0.0f},  { 0.0f, 50.0f}},
+		{{ 50.0f, -0.25f,  50.0f}, glm::vec3(1.0f), {0.0f, 1.0f, 0.0f},  {50.0f,  0.0f}},
+		{{ 50.0f, -0.25f,  50.0f}, glm::vec3(1.0f), {0.0f, 1.0f, 0.0f},  {50.0f,  0.0f}},
+		{{-50.0f, -0.25f, -50.0f}, glm::vec3(1.0f), {0.0f, 1.0f, 0.0f},  { 0.0f, 50.0f}},
+		{{ 50.0f, -0.25f, -50.0f}, glm::vec3(1.0f), {0.0f, 1.0f, 0.0f},  {50.0f, 50.0f}}
 	};
-	std::vector<uint32_t> iv = { 0, 1, 2, 3, 4, 5 };
+	std::vector<uint32_t> indices = { 0, 1, 2, 3, 4, 5 };
+#else
+	std::vector<MeshVertex> vertices;
+	std::vector<uint32_t> indices;
+	createXZPlane(20, 20, 1, 1, 4, vertices, indices);
+#endif
 
-	m_model1.mesh = LoadDataMesh(vertices, iv);
+	m_model1.mesh = LoadDataMesh(vertices, indices);
 	m_model1.textureFilter = gl4::MagFilter::Nearest;
 	m_model1.material.diffuseTexture = TextureManager::GetTexture("CoreData/textures/White1x1.png");
 	m_model1.material.normalTexture = TextureManager::GetTexture("CoreData/textures/normal01.tga");

@@ -145,7 +145,10 @@ void MainRenderPass::DrawModel(GameModel& model)
 
 	m_mainFragUboData.shadowMapViewProjection0 = m_world->GetShadowMap()[0].lightProjection * m_world->GetShadowMap()[0].lightView;
 
-
+	// TODO:
+#define NEAR 0.1f
+#define FOV 60.0f
+	m_mainFragUboData.frustumSize = 2 * NEAR * std::tanf(FOV * 0.5f) * GetWindowAspect(); // TODO: это должно делаться в ресайзе окна
 
 	m_mainFragUboData.MaxNumLightSources = m_world->GetLights().size();
 	m_mainFragUbo->UpdateData(m_mainFragUboData);
