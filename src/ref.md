@@ -1,4 +1,20 @@
-﻿
+﻿https://www.youtube.com/watch?v=MH0WAjzAmJk
+	контролер персонажа на physx через rigidbody
+
+https://www.youtube.com/watch?v=GOfttJQ-FGw
+	трава, с ветром, деревья
+
+https://www.youtube.com/watch?v=g4or1fDadqk&t=303s
+	развитие ssao
+
+
+https://www.youtube.com/watch?v=J1OdPrO7GD0
+	введение в генерацию терейна
+
+
+
+
+
 https://github.com/iauns/cpm-glm-aabb/blob/master/glm-aabb/AABB.hpp
 https://github.com/stuarthayhurst/ammonite-engine
 https://github.com/diharaw/cascaded-shadow-maps

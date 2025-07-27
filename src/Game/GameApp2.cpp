@@ -1,13 +1,11 @@
 ﻿#include "stdafx.h"
 #include "GameApp2.h"
-//из glRenderer посмотреть рендрпасы. это создатель фрога
-//
-//vwa-code - Percentage Closer Filtering(PCF) and Percentage - Closer Soft Shadows(PCSS)
-//	или PCSS
-//
-//GITechDemo - много вкусных названий
-//в демо кук торрентс считай материалы - по фонгу например. если опять будет сложность с большим объемом работы - можно к этому обратится. там есть деление на цвет и текстуру - тоже использовать эту идеию.
 
+/*
+демо не доделано. на основе 
+https://github.com/pboechat/pcss
+
+*/
 //=============================================================================
 GameApp2::GameApp2()
 	: m_renderWorld(m_world)

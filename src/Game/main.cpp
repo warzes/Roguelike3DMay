@@ -23,6 +23,7 @@
 
 #include "GameApp.h"
 #include "GameApp2.h"
+#include "GameApp3.h"
 //=============================================================================
 #if defined(_MSC_VER)
 #	pragma comment( lib, "3rdparty.lib" )
@@ -59,7 +60,8 @@ int main(
 	//TempApp game;
 
 	//GameApp game;
-	GameApp2 game;
+	//GameApp2 game;
+	GameApp3 game;
 	game.Run();
 }
 //=============================================================================

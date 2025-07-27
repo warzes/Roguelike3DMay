@@ -1,0 +1,53 @@
+﻿#pragma once
+
+#include "GameModel.h"
+#include "UniformObjects.h"
+
+class GameApp3 final : public IEngineApp
+{
+public:
+	GameApp3();
+	GameApp3(const GameApp3&) = delete;
+	GameApp3(GameApp3&&) = delete;
+	void operator=(const GameApp3&) = delete;
+	void operator=(GameApp3&&) = delete;
+
+	EngineCreateInfo GetCreateInfo() const final;
+
+	bool OnInit() final;
+	void OnClose() final;
+	void OnUpdate(float deltaTime) final;
+	void OnRender() final;
+	void OnImGuiDraw() final;
+	void OnResize(uint16_t width, uint16_t height) final;
+	void OnMouseButton(int button, int action, int mods) final;
+	void OnMousePos(double x, double y) final;
+	void OnScroll(double dx, double dy) final;
+	void OnKey(int key, int scanCode, int action, int mods) final;
+
+	Camera& GetCamera() { return m_camera; }
+
+private:
+	bool createPipeline();
+	void drawModel(GameModel& model);
+
+	std::optional<gl4::Texture> m_finalColorBuffer;
+	std::optional<gl4::Texture> m_finalDepthBuffer;
+
+	Camera                      m_camera;
+	glm::mat4                   m_projection;
+
+	GameModel m_model1;
+	GameModel m_model2;
+
+	std::optional<gl4::GraphicsPipeline>              m_pipeline;
+	std::optional<gl4::TypedBuffer<GlobalUniforms>>   m_globalUbo;
+	GlobalUniforms                                    m_globalUboData;
+	std::optional<gl4::TypedBuffer<ObjectUniforms>>   m_objectUbo;
+	ObjectUniforms                                    m_objectUboData;
+	std::optional<gl4::TypedBuffer<MaterialUniforms>> m_materialUbo;
+	MaterialUniforms                                  m_materialUboData;
+
+	std::optional<gl4::Sampler>                       m_nearestSampler;
+	std::optional<gl4::Sampler>                       m_linearSampler;
+};
