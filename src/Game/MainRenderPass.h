@@ -2,7 +2,7 @@
 
 #include "UniformObjects.h"
 
-class GameModel;
+class GameModelOld;
 class World;
 
 #define DEFAULT_NUM_SAMPLES 16
@@ -16,7 +16,7 @@ public:
 	void Close();
 
 	void Begin(Camera& cam, const glm::mat4& proj);
-	void DrawModel(GameModel& model);
+	void DrawModel(GameModelOld& model);
 
 private:
 	bool createPipeline();

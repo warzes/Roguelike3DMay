@@ -43,7 +43,7 @@ void ShadowPass::Begin(const ShadowMap& shadow)
 	m_uboData.vp = shadow.lightProjection * shadow.lightView;
 }
 //=============================================================================
-void ShadowPass::DrawModel(GameModel& model)
+void ShadowPass::DrawModel(GameModelOld& model)
 {
 	m_uboData.model = model.GetModelMat();
 	m_ubo->UpdateData(m_uboData);

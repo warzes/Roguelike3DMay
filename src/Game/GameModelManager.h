@@ -49,7 +49,7 @@ public:
 	bool Init();
 	void Close();
 
-	void SetModel(GameModel* model);
+	void SetModel(GameModelOld* model);
 
 	void Draw(Camera& cam, ShadowPassManager& shadowPassMgr);
 	void DrawInDepth(Camera& cam, ShadowPassManager& shadowPassMgr);
@@ -65,7 +65,7 @@ private:
 	std::optional<gl4::Sampler>                               m_nearestSampler;
 	std::optional<gl4::Sampler>                               m_linearSampler;
 
-	std::vector<GameModel*> m_models;
+	std::vector<GameModelOld*> m_models;
 	size_t                  m_currentModel{ 0 };
 	size_t                  m_currentDrawShadowModel{ 0 };
 };

@@ -2,7 +2,7 @@
 
 #include "UniformObjects.h"
 
-class GameModel;
+class GameModelOld;
 class World;
 
 class ShadowPass final
@@ -12,7 +12,7 @@ public:
 	void Close();
 
 	void Begin(const ShadowMap& shadow);
-	void DrawModel(GameModel& model);
+	void DrawModel(GameModelOld& model);
 	void End();
 
 	std::optional<gl4::Sampler> GetLinearSampler() { return m_linearSampler; }

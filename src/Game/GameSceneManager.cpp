@@ -71,7 +71,7 @@ void GameSceneManager::Update()
 	m_lightSSBO->UpdateData(std::span(m_lights));
 }
 //=============================================================================
-void GameSceneManager::SetModel(GameModel* model)
+void GameSceneManager::SetModel(GameModelOld* model)
 {
 	m_modelManager.SetModel(model);
 }

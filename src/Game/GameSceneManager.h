@@ -22,7 +22,7 @@ public:
 
 	void Update();
 
-	void SetModel(GameModel* model);
+	void SetModel(GameModelOld* model);
 
 	void Draw(Camera& cam);
 	void DrawInDepth(Camera& cam);

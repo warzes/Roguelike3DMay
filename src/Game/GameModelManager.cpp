@@ -41,7 +41,7 @@ void GameModelManager::Close()
 	m_pipeline = {};
 }
 //=============================================================================
-void GameModelManager::SetModel(GameModel* model)
+void GameModelManager::SetModel(GameModelOld* model)
 {
 	m_models[m_currentModel++] = model;
 	m_currentDrawShadowModel++;

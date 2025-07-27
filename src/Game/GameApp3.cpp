@@ -1,5 +1,18 @@
 ﻿#include "stdafx.h"
 #include "GameApp3.h"
+
+//
+//переделать загрузку меша на основе кода SceneLoader.h через fastgltf: нужна поддержка мультимеша, материалов, свойств модели.
+//также возможно нужно чтобы оно брало fastgltf для gltf, тиниобж для обж, и асимп для остального
+//
+//обновить сторонние либы
+//
+//возможно отключить левостороннюю систему координат
+//
+//StratusGFX
+//
+//https://github.com/QwePek/LightingOpenGL
+
 //=============================================================================
 GameApp3::GameApp3()
 {
@@ -37,6 +50,10 @@ bool GameApp3::OnInit()
 
 	m_model2.mesh = LoadAssimpMesh("ExampleData/mesh/bunny.obj");
 	m_model2.scale = glm::vec3(3.0f);
+
+	m_model3 = LoadAssimpModel("ExampleData/mesh/school/school.obj");
+//	m_model3 = LoadAssimpModel("ExampleData/mesh/metro/metro.obj");
+
 
 	if (!createPipeline())
 		return false;
@@ -122,6 +139,8 @@ void GameApp3::OnRender()
 
 			drawModel(m_model1);
 			drawModel(m_model2);
+			drawModel(m_model3);
+
 		}
 		gl4::EndRendering();
 	}
@@ -161,7 +180,7 @@ void GameApp3::OnKey(int key, int scanCode, int action, int mods)
 {
 }
 //=============================================================================
-void GameApp3::drawModel(GameModel& model)
+void GameApp3::drawModel(GameModelOld& model)
 {
 	const gl4::Sampler& sampler = (model.textureFilter == gl4::MagFilter::Linear)
 		? m_linearSampler.value()
@@ -195,6 +214,46 @@ void GameApp3::drawModel(GameModel& model)
 	model.mesh->Bind();
 }
 //=============================================================================
+void GameApp3::drawModel(std::optional<GameModel> model)
+{
+	const gl4::Sampler& sampler = (model.value().textureFilter == gl4::MagFilter::Linear)
+		? m_linearSampler.value()
+		: m_nearestSampler.value();
+
+	m_objectUboData.model = model.value().GetModelMat();
+	m_objectUbo->UpdateData(m_objectUboData);
+	gl4::Cmd::BindUniformBuffer(1, m_objectUbo.value());
+
+	for (size_t i = 0; i < model.value().meshes.size(); i++)
+	{
+		auto& meshes = model.value().meshes[i];
+
+
+		m_materialUboData.diffuse = glm::vec4(1.0f, 0.0f, 1.0f, 1.0f);
+		m_materialUboData.hasDiffuseTexture = meshes->GetMaterial()->diffuseTexture != nullptr;
+		m_materialUboData.hasSpecularTexture = meshes->GetMaterial()->specularTexture != nullptr;
+		m_materialUboData.hasEmissionTexture = meshes->GetMaterial()->emissionTexture != nullptr;
+		m_materialUboData.hasNormalMapTexture = meshes->GetMaterial()->normalTexture != nullptr;
+		m_materialUboData.hasDepthMapTexture = meshes->GetMaterial()->depthTexture != nullptr;
+		m_materialUboData.noLighing = meshes->GetMaterial()->noLighing;
+		m_materialUbo->UpdateData(m_materialUboData);
+		gl4::Cmd::BindUniformBuffer(2, m_materialUbo.value());
+
+		if (meshes->GetMaterial()->diffuseTexture)
+			gl4::Cmd::BindSampledImage(0, *meshes->GetMaterial()->diffuseTexture, sampler);
+		if (meshes->GetMaterial()->specularTexture)
+			gl4::Cmd::BindSampledImage(1, *meshes->GetMaterial()->specularTexture, sampler);
+		if (meshes->GetMaterial()->emissionTexture)
+			gl4::Cmd::BindSampledImage(2, *meshes->GetMaterial()->emissionTexture, sampler);
+		if (meshes->GetMaterial()->normalTexture)
+			gl4::Cmd::BindSampledImage(3, *meshes->GetMaterial()->normalTexture, sampler);
+		if (meshes->GetMaterial()->depthTexture)
+			gl4::Cmd::BindSampledImage(4, *meshes->GetMaterial()->depthTexture, sampler);
+
+		meshes->Bind();
+	}
+}
+//=============================================================================
 bool GameApp3::createPipeline()
 {
 	auto vertexShader = gl4::Shader(gl4::PipelineStage::VertexShader, io::ReadShaderCode("GameData/shaders/MainShader3.vert"), "MainShader VS");
@@ -208,6 +267,7 @@ bool GameApp3::createPipeline()
 		.fragmentShader = &fragmentShader,
 		.inputAssemblyState = {.topology = gl4::PrimitiveTopology::TRIANGLE_LIST},
 		.vertexInputState = {MeshVertexInputBindingDescs},
+		.rasterizationState = {/*.frontFace = gl4::FrontFace::Clockwise*/ .cullMode = gl4::CullMode::None },
 		.depthState = {.depthTestEnable = true, .depthWriteEnable = true},
 		});
 	if (!m_pipeline.has_value()) return false;

@@ -45,9 +45,6 @@
     <ClCompile Include="GameAppOld.cpp">
       <Filter>_test\_OLD</Filter>
     </ClCompile>
-    <ClCompile Include="GameModel.cpp">
-      <Filter>_test\PCSS\Game\Object</Filter>
-    </ClCompile>
     <ClCompile Include="GameApp2.cpp">
       <Filter>_test\PCSS\Game</Filter>
     </ClCompile>
@@ -99,6 +96,9 @@
     <ClCompile Include="GameApp3.cpp">
       <Filter>NewGame</Filter>
     </ClCompile>
+    <ClCompile Include="GameModel.cpp">
+      <Filter>NewGame\graphics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -144,9 +144,6 @@
     </ClInclude>
     <ClInclude Include="GameAppOld.h">
       <Filter>_test\_OLD</Filter>
-    </ClInclude>
-    <ClInclude Include="GameModel.h">
-      <Filter>_test\PCSS\Game\Object</Filter>
     </ClInclude>
     <ClInclude Include="GameApp2.h">
       <Filter>_test\PCSS\Game</Filter>
@@ -201,6 +198,9 @@
     </ClInclude>
     <ClInclude Include="GameApp3.h">
       <Filter>NewGame</Filter>
+    </ClInclude>
+    <ClInclude Include="GameModel.h">
+      <Filter>NewGame\graphics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -266,6 +266,9 @@
     </Filter>
     <Filter Include="NewGame\shaders">
       <UniqueIdentifier>{45955d96-7c7b-4d8b-862e-78a3215ce1bd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NewGame\graphics">
+      <UniqueIdentifier>{019ce0b2-9388-44c4-82f3-dca0975d837e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

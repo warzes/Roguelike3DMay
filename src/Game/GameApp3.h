@@ -29,7 +29,8 @@ public:
 
 private:
 	bool createPipeline();
-	void drawModel(GameModel& model);
+	void drawModel(GameModelOld& model);
+	void drawModel(std::optional<GameModel> model);
 
 	std::optional<gl4::Texture> m_finalColorBuffer;
 	std::optional<gl4::Texture> m_finalDepthBuffer;
@@ -37,8 +38,10 @@ private:
 	Camera                      m_camera;
 	glm::mat4                   m_projection;
 
-	GameModel m_model1;
-	GameModel m_model2;
+	GameModelOld m_model1;
+	GameModelOld m_model2;
+
+	std::optional<GameModel> m_model3;
 
 	std::optional<gl4::GraphicsPipeline>              m_pipeline;
 	std::optional<gl4::TypedBuffer<GlobalUniforms>>   m_globalUbo;

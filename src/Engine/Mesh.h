@@ -75,7 +75,7 @@ public:
 	Mesh() = default;
 	Mesh(std::span<const MeshVertex> vertices,
 		std::span<const uint32_t> indices,
-		std::optional<Material> material);
+		PhongMaterial* material);
 	~Mesh();
 
 	uint32_t GetVertexCount() const { return m_vertexCount; }
@@ -83,11 +83,13 @@ public:
 
 	void Bind();
 
-private:
-	uint32_t m_vertexCount{ 0 };
-	uint32_t m_indicesCount{ 0 };
+	PhongMaterial* GetMaterial() { return m_material; }
 
-	gl4::Buffer* m_vertexBuffer{ nullptr };
-	gl4::Buffer* m_indexBuffer{ nullptr };
-	std::optional<Material> m_material{};
+private:
+	uint32_t       m_vertexCount{ 0 };
+	uint32_t       m_indicesCount{ 0 };
+
+	gl4::Buffer*   m_vertexBuffer{ nullptr };
+	gl4::Buffer*   m_indexBuffer{ nullptr };
+	PhongMaterial* m_material{ nullptr };
 };

@@ -118,7 +118,7 @@ void MainRenderPass::Begin(Camera& cam, const glm::mat4& proj)
 	gl4::Cmd::BindStorageBuffer(0, *m_lightSSBO);
 }
 //=============================================================================
-void MainRenderPass::DrawModel(GameModel& model)
+void MainRenderPass::DrawModel(GameModelOld& model)
 {
 	const gl4::Sampler& sampler = (model.textureFilter == gl4::MagFilter::Linear) 
 		? m_linearSampler.value() 

@@ -68,7 +68,7 @@ void WorldRender::EndFrame()
 	m_currentModel = 0;
 }
 //=============================================================================
-void WorldRender::setDrawModel(GameModel* model)
+void WorldRender::setDrawModel(GameModelOld* model)
 {
 	m_models[m_currentModel++] = model;
 }

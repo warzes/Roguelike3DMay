@@ -5,10 +5,6 @@ namespace gl4
 	class Texture;
 }
 
-#define MATERIAL_DIFFUSE glm::vec3(1.0f)
-#define MATERIAL_SPECULAR glm::vec3(1.0f)
-#define MATERIAL_SHININESS 64.f
-
 struct PhongMaterial final
 {
 	gl4::Texture* diffuseTexture{ nullptr };
@@ -20,9 +16,9 @@ struct PhongMaterial final
 	float heightScale{ 0.1f };
 	float emissionStrength{ 1.0f };
 
-	glm::vec3 diffuse{ MATERIAL_DIFFUSE };
-	glm::vec3 specular{ MATERIAL_SPECULAR };
-	float     shininess{ MATERIAL_SHININESS };
+	glm::vec3 diffuse{ 1.0f };
+	glm::vec3 specular{ 1.0f };
+	float     shininess{ 64.f };
 
 	bool noLighing{ false };
 };

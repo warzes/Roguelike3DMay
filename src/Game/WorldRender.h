@@ -24,10 +24,10 @@ public:
 	void EndFrame();
 
 private:
-	void setDrawModel(GameModel* model);
+	void setDrawModel(GameModelOld* model);
 
 	World&                  m_world;
-	std::vector<GameModel*> m_models{ MaxWorldModelDraw };
+	std::vector<GameModelOld*> m_models{ MaxWorldModelDraw };
 	size_t                  m_currentModel{ 0 };
 
 	ShadowPass              m_shadowPass;

@@ -196,7 +196,7 @@ std::vector<Mesh> LoadObjMesh(const std::string& path, MaterialManager& material
 	{
 		meshes.emplace_back(meshDesc.vertices[i],
 			meshDesc.indices[i],
-			*materialManager.GetMaterial(meshDesc.materials[i]));
+			nullptr/**materialManager.GetMaterial(meshDesc.materials[i])*/);
 	}
 
 	return meshes;

@@ -35,7 +35,7 @@ private:
 	std::optional<gl4::Texture> m_colorBuffer;
 	std::optional<gl4::Texture> m_depthBuffer;
 
-	GameModel        m_model1;
-	GameModel        m_model2;
-	GameModel        m_model3;
+	GameModelOld        m_model1;
+	GameModelOld        m_model2;
+	GameModelOld        m_model3;
 };
