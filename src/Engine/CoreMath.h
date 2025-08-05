@@ -3,7 +3,53 @@
 namespace math
 {
 	constexpr const float PI = glm::pi<float>();
-	constexpr const float TWOPI = PI * 2;
+	constexpr const float HALF_PI = PI * 0.5f;
+	constexpr const float TWO_PI = PI * 2.0f;
+	constexpr const float LN2 = 0.6931471805599453094f;
+
+	template <typename T>
+	constexpr T Max()
+	{
+		return std::numeric_limits<T>::max();
+	}
+
+	template <typename T>
+	constexpr T Min()
+	{
+		return std::numeric_limits<T>::min();
+	}
+
+	template <typename T>
+	constexpr T Nan()
+	{
+		return std::numeric_limits<T>::quiet_NaN();
+	}
+
+	template <typename T>
+	bool IsNan(T const& x)
+	{
+		return std::isnan(x);
+	}
+
+	constexpr inline bool IsPowerOfTwo(int const value)
+	{
+		return (value != 0) && ((value & (value - 1)) == 0);
+	}
+
+	constexpr inline int UpperPowerOfTwo(int const value)
+	{
+		return static_cast<int>(std::pow(2.0f, std::ceil(std::log(static_cast<float>(value)) / LN2)));
+	}
+
+	constexpr inline int LowerPowerOfTwo(int const value)
+	{
+		return static_cast<int>(std::pow(2.0f, std::floor(std::log(static_cast<float>(value)) / LN2)));
+	}
+
+	constexpr inline int NearestPowerOfTwo(int const value)
+	{
+		return static_cast<int>(std::pow(2.0f, std::round(std::log(static_cast<float>(value)) / LN2)));
+	}
 
 	inline void GetFrustumPlanes(glm::mat4 viewProj, glm::vec4* planes)
 	{
