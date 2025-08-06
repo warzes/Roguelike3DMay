@@ -8,7 +8,7 @@ namespace gl
 
 	struct InputAssemblyState final
 	{
-		PrimitiveTopology topology = PrimitiveTopology::TRIANGLE_LIST;
+		PrimitiveTopology topology = PrimitiveTopology::TriangleList;
 		bool primitiveRestartEnable = false;
 
 		bool operator==(const InputAssemblyState&) const noexcept = default;
@@ -100,7 +100,7 @@ namespace gl
 		BlendFactor srcAlphaBlendFactor{ BlendFactor::One };              // srcAlpha
 		BlendFactor dstAlphaBlendFactor{ BlendFactor::Zero };             // dstAlpha
 		BlendOp alphaBlendOp{ BlendOp::Add };                  // modeAlpha
-		ColorComponentFlags colorWriteMask{ ColorComponentFlag::RGBA_BITS }; // glColorMaski
+		ColorComponentFlags colorWriteMask{ ColorComponentFlag::RGBABits }; // glColorMaski
 
 		bool operator==(const ColorBlendAttachmentState&) const noexcept = default;
 	};

@@ -67,7 +67,7 @@ bool ShadowPass::createPipeline()
 		.name = "Model In Depth Pipeline",
 		.vertexShader = &vertexShader,
 		.fragmentShader = &fragmentShader,
-		.inputAssemblyState = {.topology = gl::PrimitiveTopology::TRIANGLE_LIST},
+		.inputAssemblyState = {.topology = gl::PrimitiveTopology::TriangleList},
 		.vertexInputState = {MeshVertexInputBindingDescs},
 		.depthState = {.depthTestEnable = true, .depthWriteEnable = true},
 		});

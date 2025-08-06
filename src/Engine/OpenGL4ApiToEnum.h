@@ -165,7 +165,7 @@ namespace gl::detail
 
 	inline GLenum EnumToGL(ClipDepthRange depthRange)
 	{
-		if (depthRange == ClipDepthRange::NEGATIVE_ONE_TO_ONE)
+		if (depthRange == ClipDepthRange::NegativeOneToOne)
 			return GL_NEGATIVE_ONE_TO_ONE;
 		return GL_ZERO_TO_ONE;
 	}
@@ -173,9 +173,9 @@ namespace gl::detail
 	inline GLbitfield AspectMaskToGL(AspectMask bits)
 	{
 		GLbitfield ret = 0;
-		ret |= bits & AspectMaskBit::COLOR_BUFFER_BIT ? GL_COLOR_BUFFER_BIT : 0;
-		ret |= bits & AspectMaskBit::DEPTH_BUFFER_BIT ? GL_DEPTH_BUFFER_BIT : 0;
-		ret |= bits & AspectMaskBit::STENCIL_BUFFER_BIT ? GL_STENCIL_BUFFER_BIT : 0;
+		ret |= bits & AspectMaskBit::ColorBufferBit ? GL_COLOR_BUFFER_BIT : 0;
+		ret |= bits & AspectMaskBit::DepthBufferBit ? GL_DEPTH_BUFFER_BIT : 0;
+		ret |= bits & AspectMaskBit::StencilBufferBit ? GL_STENCIL_BUFFER_BIT : 0;
 		return ret;
 	}
 
@@ -220,8 +220,8 @@ namespace gl::detail
 	{
 		switch (swizzle)
 		{
-		case ComponentSwizzle::ZERO: return GL_ZERO;
-		case ComponentSwizzle::ONE:  return GL_ONE;
+		case ComponentSwizzle::Zero: return GL_ZERO;
+		case ComponentSwizzle::One:  return GL_ONE;
 		case ComponentSwizzle::R:    return GL_RED;
 		case ComponentSwizzle::G:    return GL_GREEN;
 		case ComponentSwizzle::B:    return GL_BLUE;
@@ -675,7 +675,7 @@ namespace gl::detail
 		case Format::R32G32B32A32_FLOAT:
 		case Format::R11G11B10_FLOAT:
 		case Format::R9G9B9_E5:
-			return GlBaseTypeClass::FLOAT;
+			return GlBaseTypeClass::Float;
 		case Format::R8_SINT:
 		case Format::R16_SINT:
 		case Format::R32_SINT:
@@ -688,7 +688,7 @@ namespace gl::detail
 		case Format::R8G8B8A8_SINT:
 		case Format::R16G16B16A16_SINT:
 		case Format::R32G32B32A32_SINT:
-			return GlBaseTypeClass::SINT;
+			return GlBaseTypeClass::SInt;
 		case Format::R10G10B10A2_UINT:
 		case Format::R8_UINT:
 		case Format::R16_UINT:
@@ -702,8 +702,8 @@ namespace gl::detail
 		case Format::R8G8B8A8_UINT:
 		case Format::R16G16B16A16_UINT:
 		case Format::R32G32B32A32_UINT:
-			return GlBaseTypeClass::UINT;
-		default: assert(0); return GlBaseTypeClass::FLOAT;
+			return GlBaseTypeClass::UInt;
+		default: assert(0); return GlBaseTypeClass::Float;
 		}
 	}
 	inline bool IsValidImageFormat(Format format)
@@ -920,13 +920,13 @@ namespace gl::detail
 	{
 		switch (topology)
 		{
-		case PrimitiveTopology::POINT_LIST:     return GL_POINTS;
-		case PrimitiveTopology::LINE_LIST:      return GL_LINES;
-		case PrimitiveTopology::LINE_STRIP:     return GL_LINE_STRIP;
-		case PrimitiveTopology::TRIANGLE_LIST:  return GL_TRIANGLES;
-		case PrimitiveTopology::TRIANGLE_STRIP: return GL_TRIANGLE_STRIP;
-		case PrimitiveTopology::TRIANGLE_FAN:   return GL_TRIANGLE_FAN;
-		case PrimitiveTopology::PATCH_LIST:     return GL_PATCHES;
+		case PrimitiveTopology::PointList:     return GL_POINTS;
+		case PrimitiveTopology::LineList:      return GL_LINES;
+		case PrimitiveTopology::LineStrip:     return GL_LINE_STRIP;
+		case PrimitiveTopology::TriangleList:  return GL_TRIANGLES;
+		case PrimitiveTopology::TriangleStrip: return GL_TRIANGLE_STRIP;
+		case PrimitiveTopology::TriangleFan:   return GL_TRIANGLE_FAN;
+		case PrimitiveTopology::PatchList:     return GL_PATCHES;
 		default: assert(0);                     return 0;
 		}
 	}
@@ -935,9 +935,9 @@ namespace gl::detail
 	{
 		switch (type)
 		{
-		case IndexType::UNSIGNED_BYTE:  return GL_UNSIGNED_BYTE;
-		case IndexType::UNSIGNED_SHORT: return GL_UNSIGNED_SHORT;
-		case IndexType::UNSIGNED_INT:   return GL_UNSIGNED_INT;
+		case IndexType::UByte:  return GL_UNSIGNED_BYTE;
+		case IndexType::UShort: return GL_UNSIGNED_SHORT;
+		case IndexType::UInt:   return GL_UNSIGNED_INT;
 		default: assert(0);             return 0;
 		}
 	}
@@ -945,9 +945,9 @@ namespace gl::detail
 	{
 		switch (indexType)
 		{
-		case IndexType::UNSIGNED_BYTE:  return 1;
-		case IndexType::UNSIGNED_SHORT: return 2;
-		case IndexType::UNSIGNED_INT:   return 4;
+		case IndexType::UByte:  return 1;
+		case IndexType::UShort: return 2;
+		case IndexType::UInt:   return 4;
 		default: assert(0);             return 0;
 		}
 	}
@@ -955,18 +955,18 @@ namespace gl::detail
 	inline GLbitfield BarrierBitsToGL(MemoryBarrierBits bits)
 	{
 		GLbitfield ret = 0;
-		ret |= bits & MemoryBarrierBit::VERTEX_BUFFER_BIT ? GL_VERTEX_ATTRIB_ARRAY_BARRIER_BIT : 0;
-		ret |= bits & MemoryBarrierBit::INDEX_BUFFER_BIT ? GL_ELEMENT_ARRAY_BARRIER_BIT : 0;
-		ret |= bits & MemoryBarrierBit::UNIFORM_BUFFER_BIT ? GL_UNIFORM_BARRIER_BIT : 0;
-		ret |= bits & MemoryBarrierBit::TEXTURE_FETCH_BIT ? GL_TEXTURE_FETCH_BARRIER_BIT : 0;
-		ret |= bits & MemoryBarrierBit::IMAGE_ACCESS_BIT ? GL_SHADER_IMAGE_ACCESS_BARRIER_BIT : 0;
-		ret |= bits & MemoryBarrierBit::COMMAND_BUFFER_BIT ? GL_COMMAND_BARRIER_BIT : 0;
-		ret |= bits & MemoryBarrierBit::TEXTURE_UPDATE_BIT ? GL_TEXTURE_UPDATE_BARRIER_BIT : 0;
-		ret |= bits & MemoryBarrierBit::BUFFER_UPDATE_BIT ? GL_BUFFER_UPDATE_BARRIER_BIT : 0;
-		ret |= bits & MemoryBarrierBit::MAPPED_BUFFER_BIT ? GL_CLIENT_MAPPED_BUFFER_BARRIER_BIT : 0;
-		ret |= bits & MemoryBarrierBit::FRAMEBUFFER_BIT ? GL_FRAMEBUFFER_BARRIER_BIT : 0;
-		ret |= bits & MemoryBarrierBit::SHADER_STORAGE_BIT ? GL_SHADER_STORAGE_BARRIER_BIT : 0;
-		ret |= bits & MemoryBarrierBit::QUERY_COUNTER_BIT ? GL_QUERY_BUFFER_BARRIER_BIT : 0;
+		ret |= bits & MemoryBarrierBit::VertexBufferBit ? GL_VERTEX_ATTRIB_ARRAY_BARRIER_BIT : 0;
+		ret |= bits & MemoryBarrierBit::IndexBufferBit ? GL_ELEMENT_ARRAY_BARRIER_BIT : 0;
+		ret |= bits & MemoryBarrierBit::UniformBufferBit ? GL_UNIFORM_BARRIER_BIT : 0;
+		ret |= bits & MemoryBarrierBit::TextureFetchBit ? GL_TEXTURE_FETCH_BARRIER_BIT : 0;
+		ret |= bits & MemoryBarrierBit::ImageAccessBit ? GL_SHADER_IMAGE_ACCESS_BARRIER_BIT : 0;
+		ret |= bits & MemoryBarrierBit::CommandBufferBit ? GL_COMMAND_BARRIER_BIT : 0;
+		ret |= bits & MemoryBarrierBit::TextureUpdateBit ? GL_TEXTURE_UPDATE_BARRIER_BIT : 0;
+		ret |= bits & MemoryBarrierBit::BufferUpdateBit ? GL_BUFFER_UPDATE_BARRIER_BIT : 0;
+		ret |= bits & MemoryBarrierBit::MappedBufferBit ? GL_CLIENT_MAPPED_BUFFER_BARRIER_BIT : 0;
+		ret |= bits & MemoryBarrierBit::FramebufferBit ? GL_FRAMEBUFFER_BARRIER_BIT : 0;
+		ret |= bits & MemoryBarrierBit::ShaderStorageBit ? GL_SHADER_STORAGE_BARRIER_BIT : 0;
+		ret |= bits & MemoryBarrierBit::QueryCounterBit ? GL_QUERY_BUFFER_BARRIER_BIT : 0;
 		return ret;
 	}
 

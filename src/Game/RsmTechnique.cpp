@@ -283,7 +283,7 @@ namespace RSM
 					gl::Cmd::BindComputePipeline(rsmIndirectFilteredPipeline);
 					gl::Cmd::BindSampledImage(7, *noiseTex, nearestSampler);
 					rsmUniformBuffer.UpdateData(rsmUniforms);
-					gl::MemoryBarrier(gl::MemoryBarrierBit::TEXTURE_FETCH_BIT | gl::MemoryBarrierBit::IMAGE_ACCESS_BIT);
+					gl::MemoryBarrier(gl::MemoryBarrierBit::TextureFetchBit | gl::MemoryBarrierBit::ImageAccessBit);
 					gl::Cmd::BindImage(0, *indirectUnfilteredTex, 0);
 					gl::Cmd::DispatchInvocations(workSize);
 				}
@@ -319,7 +319,7 @@ namespace RSM
 					gl::Cmd::BindImage(0, *indirectFilteredTex, 0);
 					gl::Cmd::BindImage(1, *historyLengthTex, 0);
 					gl::Cmd::BindUniformBuffer(0, reprojectionUniformBuffer);
-					gl::MemoryBarrier(gl::MemoryBarrierBit::TEXTURE_FETCH_BIT | gl::MemoryBarrierBit::IMAGE_ACCESS_BIT);
+					gl::MemoryBarrier(gl::MemoryBarrierBit::TextureFetchBit | gl::MemoryBarrierBit::ImageAccessBit);
 					gl::Cmd::DispatchInvocations(workSize);
 				}
 
@@ -349,14 +349,14 @@ namespace RSM
 						filterUniformBuffer.UpdateData(filterUniforms);
 						gl::Cmd::BindSampledImage(0, *indirectFilteredTex, nearestSampler);
 						gl::Cmd::BindImage(0, *indirectUnfilteredTex, 0);
-						gl::MemoryBarrier(gl::MemoryBarrierBit::TEXTURE_FETCH_BIT);
+						gl::MemoryBarrier(gl::MemoryBarrierBit::TextureFetchBit);
 						gl::Cmd::DispatchInvocations(workSize);
 
 						filterUniforms.direction = { 1, 0 };
 						filterUniformBuffer.UpdateData(filterUniforms);
 						gl::Cmd::BindSampledImage(0, *indirectUnfilteredTex, nearestSampler);
 						gl::Cmd::BindImage(0, *indirectUnfilteredTexPrev, 0);
-						gl::MemoryBarrier(gl::MemoryBarrierBit::TEXTURE_FETCH_BIT);
+						gl::MemoryBarrier(gl::MemoryBarrierBit::TextureFetchBit);
 						gl::Cmd::DispatchInvocations(workSize);
 
 						for (int i = 1; i < 5 - std::log2f(float(inverseResolutionScale)); i++)
@@ -367,14 +367,14 @@ namespace RSM
 							filterUniformBuffer.UpdateData(filterUniforms);
 							gl::Cmd::BindSampledImage(0, i == 1 ? *indirectUnfilteredTexPrev : *indirectFilteredTex, nearestSampler);
 							gl::Cmd::BindImage(0, *indirectUnfilteredTex, 0);
-							gl::MemoryBarrier(gl::MemoryBarrierBit::TEXTURE_FETCH_BIT);
+							gl::MemoryBarrier(gl::MemoryBarrierBit::TextureFetchBit);
 							gl::Cmd::DispatchInvocations(workSize);
 
 							filterUniforms.direction = { 1, 0 };
 							filterUniformBuffer.UpdateData(filterUniforms);
 							gl::Cmd::BindSampledImage(0, *indirectUnfilteredTex, nearestSampler);
 							gl::Cmd::BindImage(0, *indirectFilteredTex, 0);
-							gl::MemoryBarrier(gl::MemoryBarrierBit::TEXTURE_FETCH_BIT);
+							gl::MemoryBarrier(gl::MemoryBarrierBit::TextureFetchBit);
 							gl::Cmd::DispatchInvocations(workSize);
 						}
 					}
@@ -413,7 +413,7 @@ namespace RSM
 
 							gl::Cmd::BindSampledImage(0, *in, nearestSampler);
 							gl::Cmd::BindImage(0, *out, 0);
-							gl::MemoryBarrier(gl::MemoryBarrierBit::TEXTURE_FETCH_BIT);
+							gl::MemoryBarrier(gl::MemoryBarrierBit::TextureFetchBit);
 							gl::Cmd::DispatchInvocations(workSize);
 						}
 					}
@@ -431,7 +431,7 @@ namespace RSM
 						gl::Cmd::BindSampledImage(0, *indirectFilteredTex, nearestSampler);
 						gl::Cmd::BindSampledImage(1, gAlbedo, nearestSampler);
 						gl::Cmd::BindImage(0, *illuminationOutTex, 0);
-						gl::MemoryBarrier(gl::MemoryBarrierBit::TEXTURE_FETCH_BIT);
+						gl::MemoryBarrier(gl::MemoryBarrierBit::TextureFetchBit);
 						gl::Cmd::DispatchInvocations(illuminationOutTex->Extent());
 					}
 					else // Use bilateral upscale
@@ -458,7 +458,7 @@ namespace RSM
 						filterUniformBuffer.UpdateData(filterUniforms);
 						gl::Cmd::BindUniformBuffer(0, filterUniformBuffer);
 						gl::Cmd::BindImage(0, *illuminationOutTex, 0);
-						gl::MemoryBarrier(gl::MemoryBarrierBit::TEXTURE_FETCH_BIT);
+						gl::MemoryBarrier(gl::MemoryBarrierBit::TextureFetchBit);
 						gl::Cmd::DispatchInvocations(illuminationOutTex->Extent());
 					}
 				}
@@ -492,25 +492,25 @@ namespace RSM
 				// Quarter resolution indirect illumination pass
 				rsmUniforms.currentPass = 0;
 				rsmUniformBuffer.UpdateData(rsmUniforms);
-				gl::MemoryBarrier(gl::MemoryBarrierBit::TEXTURE_FETCH_BIT);
+				gl::MemoryBarrier(gl::MemoryBarrierBit::TextureFetchBit);
 				gl::Cmd::DispatchInvocations(workSize);
 
 				// Reconstruction pass 1
 				rsmUniforms.currentPass = 1;
 				rsmUniformBuffer.UpdateData(rsmUniforms);
-				gl::MemoryBarrier(gl::MemoryBarrierBit::TEXTURE_FETCH_BIT);
+				gl::MemoryBarrier(gl::MemoryBarrierBit::TextureFetchBit);
 				gl::Cmd::DispatchInvocations(workSize);
 
 				// Reconstruction pass 2
 				rsmUniforms.currentPass = 2;
 				rsmUniformBuffer.UpdateData(rsmUniforms);
-				gl::MemoryBarrier(gl::MemoryBarrierBit::TEXTURE_FETCH_BIT);
+				gl::MemoryBarrier(gl::MemoryBarrierBit::TextureFetchBit);
 				gl::Cmd::DispatchInvocations(workSize);
 
 				// Reconstruction pass 3
 				rsmUniforms.currentPass = 3;
 				rsmUniformBuffer.UpdateData(rsmUniforms);
-				gl::MemoryBarrier(gl::MemoryBarrierBit::TEXTURE_FETCH_BIT);
+				gl::MemoryBarrier(gl::MemoryBarrierBit::TextureFetchBit);
 				gl::Cmd::DispatchInvocations(workSize);
 			}
 		}

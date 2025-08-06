@@ -79,7 +79,7 @@ namespace gl
 		float maxDepth{ 1.0f }; // glDepthRangef
 		ClipDepthRange depthRange = // glClipControl
 #ifdef SE_DEFAULT_CLIP_DEPTH_RANGE_NEGATIVE_ONE_TO_ONE
-			ClipDepthRange::NEGATIVE_ONE_TO_ONE;
+			ClipDepthRange::NegativeOneToOne;
 #else
 			ClipDepthRange::ZERO_TO_ONE;
 #endif
@@ -152,7 +152,7 @@ namespace gl
 		Extent3D sourceExtent,
 		Extent3D targetExtent,
 		MagFilter filter,
-		AspectMask aspect = AspectMaskBit::COLOR_BUFFER_BIT);
+		AspectMask aspect = AspectMaskBit::ColorBufferBit);
 
 	/// @brief Blits a texture to the swapchain. Supports minification and magnification
 	void BlitTextureToSwapchain(const Texture& source,
@@ -161,7 +161,7 @@ namespace gl
 		Extent3D sourceExtent,
 		Extent3D targetExtent,
 		MagFilter filter,
-		AspectMask aspect = AspectMaskBit::COLOR_BUFFER_BIT);
+		AspectMask aspect = AspectMaskBit::ColorBufferBit);
 
 	struct CopyTextureInfo final
 	{

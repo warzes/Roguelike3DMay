@@ -83,10 +83,10 @@ void gl::BeginSwapChainRendering(const SwapchainRenderInfo& renderInfo)
 	case AttachmentLoadOp::Load: break;
 	case AttachmentLoadOp::Clear:
 	{
-		if (gContext.lastColorMask[0] != ColorComponentFlag::RGBA_BITS)
+		if (gContext.lastColorMask[0] != ColorComponentFlag::RGBABits)
 		{
 			glColorMaski(0, true, true, true, true);
-			gContext.lastColorMask[0] = ColorComponentFlag::RGBA_BITS;
+			gContext.lastColorMask[0] = ColorComponentFlag::RGBABits;
 		}
 		glClearNamedFramebufferfv(0, GL_COLOR, 0, &ri.clearColorValue[0]);
 		break;
@@ -189,10 +189,10 @@ void gl::BeginRendering(const RenderInfo& renderInfo)
 		case AttachmentLoadOp::Load: break;
 		case AttachmentLoadOp::Clear:
 		{
-			if (gContext.lastColorMask[i] != ColorComponentFlag::RGBA_BITS)
+			if (gContext.lastColorMask[i] != ColorComponentFlag::RGBABits)
 			{
 				glColorMaski(i, true, true, true, true);
-				gContext.lastColorMask[i] = ColorComponentFlag::RGBA_BITS;
+				gContext.lastColorMask[i] = ColorComponentFlag::RGBABits;
 			}
 
 			auto format = attachment.texture.get().GetCreateInfo().format;

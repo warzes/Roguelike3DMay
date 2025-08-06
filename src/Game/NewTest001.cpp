@@ -64,7 +64,7 @@ void main()
 			 .name = "Triangle Pipeline",
 			.vertexShader = &vertexShader,
 			.fragmentShader = &fragmentShader,
-			.inputAssemblyState = {.topology = gl::PrimitiveTopology::TRIANGLE_LIST},
+			.inputAssemblyState = {.topology = gl::PrimitiveTopology::TriangleList},
 			.vertexInputState = {inputDescs},
 		});
 	}

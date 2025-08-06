@@ -21,7 +21,7 @@ Mesh::~Mesh()
 void Mesh::Bind()
 {
 	gl::Cmd::BindVertexBuffer(0, *m_vertexBuffer, 0, sizeof(MeshVertex));
-	gl::Cmd::BindIndexBuffer(*m_indexBuffer, gl::IndexType::UNSIGNED_INT);
+	gl::Cmd::BindIndexBuffer(*m_indexBuffer, gl::IndexType::UInt);
 	gl::Cmd::DrawIndexed(m_indicesCount, 1, 0, 0, 0);
 }
 //=============================================================================

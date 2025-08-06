@@ -274,10 +274,10 @@ namespace
 		}
 
 		// create debug views
-		frame.gAlbedoSwizzled = frame.gAlbedo->CreateSwizzleView({ .a = gl::ComponentSwizzle::ONE });
-		frame.gNormalSwizzled = frame.gNormal->CreateSwizzleView({ .a = gl::ComponentSwizzle::ONE });
-		frame.gDepthSwizzled = frame.gDepth->CreateSwizzleView({ .a = gl::ComponentSwizzle::ONE });
-		frame.gRsmIlluminanceSwizzled = frame.rsm->GetIndirectLighting().CreateSwizzleView({ .a = gl::ComponentSwizzle::ONE });
+		frame.gAlbedoSwizzled = frame.gAlbedo->CreateSwizzleView({ .a = gl::ComponentSwizzle::One });
+		frame.gNormalSwizzled = frame.gNormal->CreateSwizzleView({ .a = gl::ComponentSwizzle::One });
+		frame.gDepthSwizzled = frame.gDepth->CreateSwizzleView({ .a = gl::ComponentSwizzle::One });
+		frame.gRsmIlluminanceSwizzled = frame.rsm->GetIndirectLighting().CreateSwizzleView({ .a = gl::ComponentSwizzle::One });
 	}
 }
 //=============================================================================
@@ -292,9 +292,9 @@ bool NewTest005::OnInit()
 	rsmFlux = gl::CreateTexture2D({ gShadowmapWidth, gShadowmapHeight }, gl::Format::R11G11B10_FLOAT);
 	rsmNormal = gl::CreateTexture2D({ gShadowmapWidth, gShadowmapHeight }, gl::Format::R16G16B16_SNORM);
 	rsmDepth = gl::CreateTexture2D({ gShadowmapWidth, gShadowmapHeight }, gl::Format::D16_UNORM);
-	rsmFluxSwizzled = rsmFlux->CreateSwizzleView({ .a = gl::ComponentSwizzle::ONE });
-	rsmNormalSwizzled = rsmNormal->CreateSwizzleView({ .a = gl::ComponentSwizzle::ONE });
-	rsmDepthSwizzled = rsmDepth->CreateSwizzleView({ .a = gl::ComponentSwizzle::ONE });
+	rsmFluxSwizzled = rsmFlux->CreateSwizzleView({ .a = gl::ComponentSwizzle::One });
+	rsmNormalSwizzled = rsmNormal->CreateSwizzleView({ .a = gl::ComponentSwizzle::One });
+	rsmDepthSwizzled = rsmDepth->CreateSwizzleView({ .a = gl::ComponentSwizzle::One });
 	// Create constant-size buffers
 	globalUniformsBuffer = gl::TypedBuffer<GlobalUniforms>(gl::BufferStorageFlag::DynamicStorage);
 	shadingUniformsBuffer = gl::TypedBuffer<ShadingUniforms>(gl::BufferStorageFlag::DynamicStorage);
@@ -477,7 +477,7 @@ void NewTest005::OnRender()
 			.viewport =
 			gl::Viewport{
 			  .drawRect = {{0, 0}, {renderWidth, renderHeight}},
-			  .depthRange = gl::ClipDepthRange::NEGATIVE_ONE_TO_ONE,
+			  .depthRange = gl::ClipDepthRange::NegativeOneToOne,
 			},
 		  .colorAttachments = cgAttachments,
 		  .depthAttachment = gDepthAttachment,
@@ -501,7 +501,7 @@ void NewTest005::OnRender()
 				gl::Cmd::BindSampledImage(0, textureSampler.texture, gl::Sampler(sampler));
 			}
 			gl::Cmd::BindVertexBuffer(0, mesh.vertexBuffer, 0, sizeof(Utility::Vertex));
-			gl::Cmd::BindIndexBuffer(mesh.indexBuffer, gl::IndexType::UNSIGNED_INT);
+			gl::Cmd::BindIndexBuffer(mesh.indexBuffer, gl::IndexType::UInt);
 			gl::Cmd::DrawIndexed(static_cast<uint32_t>(mesh.indexBuffer.Size()) / sizeof(uint32_t), 1, 0, 0, i);
 		}
 	}
@@ -548,7 +548,7 @@ void NewTest005::OnRender()
 				gl::Cmd::BindSampledImage(0, textureSampler.texture, gl::Sampler(textureSampler.sampler));
 			}
 			gl::Cmd::BindVertexBuffer(0, mesh.vertexBuffer, 0, sizeof(Utility::Vertex));
-			gl::Cmd::BindIndexBuffer(mesh.indexBuffer, gl::IndexType::UNSIGNED_INT);
+			gl::Cmd::BindIndexBuffer(mesh.indexBuffer, gl::IndexType::UInt);
 			gl::Cmd::DrawIndexed(static_cast<uint32_t>(mesh.indexBuffer.Size()) / sizeof(uint32_t), 1, 0, 0, i);
 		}
 	}

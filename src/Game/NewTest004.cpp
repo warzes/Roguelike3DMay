@@ -252,10 +252,10 @@ namespace
 		frame.rsm = RSM::RsmTechnique(width, height);
 
 		// create debug views
-		frame.gAlbedoSwizzled = frame.gAlbedo->CreateSwizzleView({ .a = gl::ComponentSwizzle::ONE });
-		frame.gNormalSwizzled = frame.gNormal->CreateSwizzleView({ .a = gl::ComponentSwizzle::ONE });
-		frame.gDepthSwizzled = frame.gDepth->CreateSwizzleView({ .a = gl::ComponentSwizzle::ONE });
-		frame.gRsmIlluminanceSwizzled = frame.rsm->GetIndirectLighting().CreateSwizzleView({ .a = gl::ComponentSwizzle::ONE });
+		frame.gAlbedoSwizzled = frame.gAlbedo->CreateSwizzleView({ .a = gl::ComponentSwizzle::One });
+		frame.gNormalSwizzled = frame.gNormal->CreateSwizzleView({ .a = gl::ComponentSwizzle::One });
+		frame.gDepthSwizzled = frame.gDepth->CreateSwizzleView({ .a = gl::ComponentSwizzle::One });
+		frame.gRsmIlluminanceSwizzled = frame.rsm->GetIndirectLighting().CreateSwizzleView({ .a = gl::ComponentSwizzle::One });
 	}
 }
 //=============================================================================
@@ -270,9 +270,9 @@ bool NewTest004::OnInit()
 	rsmFlux = gl::CreateTexture2D({ gShadowmapWidth, gShadowmapHeight }, gl::Format::R11G11B10_FLOAT);
 	rsmNormal = gl::CreateTexture2D({ gShadowmapWidth, gShadowmapHeight }, gl::Format::R16G16B16_SNORM);
 	rsmDepth = gl::CreateTexture2D({ gShadowmapWidth, gShadowmapHeight }, gl::Format::D16_UNORM);
-	rsmFluxSwizzled = rsmFlux->CreateSwizzleView({ .a = gl::ComponentSwizzle::ONE });
-	rsmNormalSwizzled = rsmNormal->CreateSwizzleView({ .a = gl::ComponentSwizzle::ONE });
-	rsmDepthSwizzled = rsmDepth->CreateSwizzleView({ .a = gl::ComponentSwizzle::ONE });
+	rsmFluxSwizzled = rsmFlux->CreateSwizzleView({ .a = gl::ComponentSwizzle::One });
+	rsmNormalSwizzled = rsmNormal->CreateSwizzleView({ .a = gl::ComponentSwizzle::One });
+	rsmDepthSwizzled = rsmDepth->CreateSwizzleView({ .a = gl::ComponentSwizzle::One });
 	// Create constant-size buffers
 	globalUniformsBuffer = gl::TypedBuffer<GlobalUniforms>(gl::BufferStorageFlag::DynamicStorage);
 	shadingUniformsBuffer = gl::TypedBuffer<ShadingUniforms>(gl::BufferStorageFlag::DynamicStorage);
@@ -411,7 +411,7 @@ void NewTest004::OnRender()
 	{
 		gl::Cmd::BindGraphicsPipeline(scenePipeline.value());
 		gl::Cmd::BindVertexBuffer(0, *vertexBuffer, 0, sizeof(Vertex));
-		gl::Cmd::BindIndexBuffer(*indexBuffer, gl::IndexType::UNSIGNED_SHORT);
+		gl::Cmd::BindIndexBuffer(*indexBuffer, gl::IndexType::UShort);
 		gl::Cmd::BindUniformBuffer(0, globalUniformsBuffer.value());
 		gl::Cmd::BindStorageBuffer(1, *objectBuffer);
 		gl::Cmd::DrawIndexed(static_cast<uint32_t>(gCubeIndices.size()), sceneInstanceCount, 0, 0, 0);
@@ -446,7 +446,7 @@ void NewTest004::OnRender()
 	{
 		gl::Cmd::BindGraphicsPipeline(rsmScenePipeline.value());
 		gl::Cmd::BindVertexBuffer(0, *vertexBuffer, 0, sizeof(Vertex));
-		gl::Cmd::BindIndexBuffer(*indexBuffer, gl::IndexType::UNSIGNED_SHORT);
+		gl::Cmd::BindIndexBuffer(*indexBuffer, gl::IndexType::UShort);
 		gl::Cmd::BindUniformBuffer(0, globalUniformsBuffer.value());
 		gl::Cmd::BindUniformBuffer(1, shadingUniformsBuffer.value());
 		gl::Cmd::BindStorageBuffer(1, *objectBuffer);

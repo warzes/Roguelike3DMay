@@ -150,7 +150,7 @@ bool GameModelManager::createPipeline()
 		 .name = "Model Pipeline",
 		.vertexShader = &vertexShader,
 		.fragmentShader = &fragmentShader,
-		.inputAssemblyState = {.topology = gl::PrimitiveTopology::TRIANGLE_LIST},
+		.inputAssemblyState = {.topology = gl::PrimitiveTopology::TriangleList},
 		.vertexInputState = {MeshVertexInputBindingDescs},
 		.depthState = {.depthTestEnable = true, .depthWriteEnable = true},
 		});
@@ -166,7 +166,7 @@ bool GameModelManager::createPipeline()
 		 .name = "Model In Depth Pipeline",
 		.vertexShader = &vertexShader2,
 		.fragmentShader = &fragmentShader2,
-		.inputAssemblyState = {.topology = gl::PrimitiveTopology::TRIANGLE_LIST},
+		.inputAssemblyState = {.topology = gl::PrimitiveTopology::TriangleList},
 		.vertexInputState = {MeshVertexInputBindingDescs},
 		.depthState = {.depthTestEnable = true, .depthWriteEnable = true },
 		});

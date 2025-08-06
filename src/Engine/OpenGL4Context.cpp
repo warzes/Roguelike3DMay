@@ -33,7 +33,7 @@ void gl::InvalidatePipelineState()
 	for (size_t i = 0; i < MAX_COLOR_ATTACHMENTS; i++)
 	{
 		ColorComponentFlags& flags = gContext.lastColorMask[i];
-		flags = ColorComponentFlag::RGBA_BITS;
+		flags = ColorComponentFlag::RGBABits;
 		glColorMaski(static_cast<GLuint>(i), true, true, true, true);
 	}
 

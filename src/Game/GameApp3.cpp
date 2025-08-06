@@ -265,7 +265,7 @@ bool GameApp3::createPipeline()
 		.name = "Model Pipeline",
 		.vertexShader = &vertexShader,
 		.fragmentShader = &fragmentShader,
-		.inputAssemblyState = {.topology = gl::PrimitiveTopology::TRIANGLE_LIST},
+		.inputAssemblyState = {.topology = gl::PrimitiveTopology::TriangleList},
 		.vertexInputState = {MeshVertexInputBindingDescs},
 		.rasterizationState = {/*.frontFace = gl::FrontFace::Clockwise*/ .cullMode = gl::CullMode::None },
 		.depthState = {.depthTestEnable = true, .depthWriteEnable = true},

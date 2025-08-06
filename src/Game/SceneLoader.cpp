@@ -34,7 +34,7 @@ namespace Utility
 		};
 
 		// Converts a Vulkan BCn VkFormat name to gl
-		gl::Format VkBcFormatToFwog(uint32_t vkFormat)
+		gl::Format VkBcFormatToEngine(uint32_t vkFormat)
 		{
 			// https://registry.khronos.org/vulkan/specs/1.3-extensions/man/html/VkFormat.html
 			switch (vkFormat)
@@ -274,7 +274,7 @@ namespace Utility
 					else
 					{
 						// Use the format that the image is already in
-						format = VkBcFormatToFwog(ktx->vkFormat);
+						format = VkBcFormatToEngine(ktx->vkFormat);
 					}
 
 					auto textureData = gl::CreateTexture2DMip(dims, format, ktx->numLevels, image.name);

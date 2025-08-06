@@ -275,10 +275,10 @@ void gl::Cmd::BindGraphicsPipeline(const GraphicsPipeline& pipeline)
 		if (gContext.lastColorMask[i] != cba.colorWriteMask)
 		{
 			glColorMaski(i,
-				(cba.colorWriteMask & ColorComponentFlag::R_BIT) != ColorComponentFlag::NONE,
-				(cba.colorWriteMask & ColorComponentFlag::G_BIT) != ColorComponentFlag::NONE,
-				(cba.colorWriteMask & ColorComponentFlag::B_BIT) != ColorComponentFlag::NONE,
-				(cba.colorWriteMask & ColorComponentFlag::A_BIT) != ColorComponentFlag::NONE);
+				(cba.colorWriteMask & ColorComponentFlag::RedBit) != ColorComponentFlag::None,
+				(cba.colorWriteMask & ColorComponentFlag::GreenBit) != ColorComponentFlag::None,
+				(cba.colorWriteMask & ColorComponentFlag::BlueBit) != ColorComponentFlag::None,
+				(cba.colorWriteMask & ColorComponentFlag::AlphaBit) != ColorComponentFlag::None);
 			gContext.lastColorMask[i] = cba.colorWriteMask;
 		}
 	}
