@@ -2,11 +2,22 @@
 
 #include "FlagsUtils.h"
 #include "BasicConstants.h"
-#include "OpenGL4Core.h"
 
 namespace gl
 {
-	/// @brief Used to constrain the types accepted by Buffer
+	enum class BufferStorageFlag : uint32_t
+	{
+		None = 0,
+		// Allows the user to update the buffer's contents with UpdateData
+		DynamicStorage = 1 << 0,
+		// Hints to the implementation to place the buffer storage in host memory
+		ClientStorage = 1 << 1,
+		// Maps the buffer (persistently and coherently) upon creation
+		MapMemory = 1 << 2,
+	};
+	SE_DECLARE_FLAG_TYPE(BufferStorageFlags, BufferStorageFlag, uint32_t)
+
+	// Used to constrain the types accepted by Buffer
 	class TriviallyCopyableByteSpan final : public std::span<const std::byte>
 	{
 	public:
@@ -27,7 +38,7 @@ namespace gl
 		}
 	};
 
-	/// @brief Parameters for Buffer::FillData
+	// Parameters for Buffer::FillData
 	struct BufferFillInfo final
 	{
 		uint64_t offset{ 0 };
@@ -35,7 +46,7 @@ namespace gl
 		uint32_t data{ 0 };
 	};
 
-	/// @brief Encapsulates an OpenGL buffer
+	// Encapsulates an OpenGL buffer
 	class Buffer
 	{
 	public:
@@ -56,16 +67,16 @@ namespace gl
 		[[nodiscard]] auto Size() const noexcept { return m_size; }
 		[[nodiscard]] bool IsMapped() const noexcept { return m_mappedMemory != nullptr; }
 
-		/// @brief Gets a pointer that is mapped to the buffer's data store
-		/// @return A pointer to mapped memory if the buffer was created with BufferStorageFlag::MapMemory, otherwise nullptr
+		// Gets a pointer that is mapped to the buffer's data store
+		// @return A pointer to mapped memory if the buffer was created with BufferStorageFlag::MapMemory, otherwise nullptr
 		[[nodiscard]] void* GetMappedPointer() noexcept { return m_mappedMemory; }
 		[[nodiscard]] const void* GetMappedPointer() const noexcept { return m_mappedMemory; }
 
 		void UpdateData(TriviallyCopyableByteSpan data, size_t destOffsetBytes = 0);
 		void FillData(const BufferFillInfo& clear = {});	
 
-		/// @brief Invalidates the content of the buffer's data store
-		/// This call can be used to optimize driver synchronization in certain cases.
+		// Invalidates the content of the buffer's data store
+		// This call can be used to optimize driver synchronization in certain cases.
 		void Invalidate();
 
 	protected:
@@ -79,8 +90,8 @@ namespace gl
 		void*              m_mappedMemory{};
 	};
 
-	/// @brief A buffer that provides type-safe operations
-	/// @tparam T A trivially copyable type
+	// A buffer that provides type-safe operations
+	// @param T A trivially copyable type
 	template<class T>
 		requires(std::is_trivially_copyable_v<T>)
 	class TypedBuffer final : public Buffer

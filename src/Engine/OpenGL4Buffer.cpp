@@ -1,22 +1,38 @@
 ﻿#include "stdafx.h"
 #include "OpenGL4Buffer.h"
-#include "OpenGL4ApiToEnum.h"
 #include "Log.h"
+роверить ии
+продолжить избавляться от OpenGL4ApiToEnum и OpenGL4Core
 //=============================================================================
 namespace
 {
+	inline GLbitfield bufferStorageFlagsToGL(gl::BufferStorageFlags flags)
+	{
+		GLbitfield ret = 0;
+		ret |= flags & gl::BufferStorageFlag::DynamicStorage ? GL_DYNAMIC_STORAGE_BIT : 0;
+		ret |= flags & gl::BufferStorageFlag::ClientStorage ? GL_CLIENT_STORAGE_BIT : 0;
+
+		// https://gpuopen.com/learn/get-the-most-out-of-smart-access-memory/
+		// https://basnieuwenhuizen.nl/the-catastrophe-of-reading-from-vram/
+		// https://asawicki.info/news_1740_vulkan_memory_types_on_pc_and_how_to_use_them
+		constexpr GLenum memMapFlags = GL_MAP_READ_BIT | GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT;
+		ret |= flags & gl::BufferStorageFlag::MapMemory ? memMapFlags : 0;
+		return ret;
+	}
+
 	constexpr size_t roundUp(size_t numberToRoundUp, size_t multipleOf)
 	{
 		assert(multipleOf);
 		return ((numberToRoundUp + multipleOf - 1) / multipleOf) * multipleOf;
 	}
+
 }
 //=============================================================================
 gl::Buffer::Buffer(const void* data, size_t size, BufferStorageFlags storageFlags, std::string_view name)
 	: m_size(roundUp(size, 16))
 	, m_storageFlags(storageFlags)
 {
-	GLbitfield glflags = detail::BufferStorageFlagsToGL(storageFlags);
+	GLbitfield glflags = bufferStorageFlagsToGL(storageFlags);
 	glCreateBuffers(1, &m_id);
 	glNamedBufferStorage(m_id, static_cast<GLsizeiptr>(m_size), data, glflags);
 	if (storageFlags & BufferStorageFlag::MapMemory)

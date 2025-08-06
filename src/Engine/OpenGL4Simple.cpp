@@ -782,41 +782,41 @@ constexpr size_t roundUp(size_t numberToRoundUp, size_t multipleOf)
 	return ((numberToRoundUp + multipleOf - 1) / multipleOf) * multipleOf;
 }
 //=============================================================================
-gl::BufferStorageId gl::CreateStorageBuffer(size_t size, BufferStorageFlags storageFlags, std::string_view name)
-{
-	return CreateStorageBuffer(nullptr, size, storageFlags, name);
-}
-//=============================================================================
-gl::BufferStorageId gl::CreateStorageBuffer(TriviallyCopyableByteSpan data, BufferStorageFlags storageFlags, std::string_view name)
-{
-	return CreateStorageBuffer(data.data(), data.size_bytes(), storageFlags, name);
-}
-//=============================================================================
-gl::BufferStorageId gl::CreateStorageBuffer(const void* data, size_t size, BufferStorageFlags storageFlags, std::string_view name)
-{
-	gl::BufferStorageId id;
-	glCreateBuffers(1, &id.id);
-
-	id.size = roundUp(size, 16);
-	id.storageFlags = storageFlags;
-
-	GLbitfield glflags = detail::BufferStorageFlagsToGL(storageFlags);
-	glNamedBufferStorage(id, (GLsizeiptr)id.size, data, glflags);
-
-	if (storageFlags & BufferStorageFlag::MapMemory)
-	{
-		// GL_MAP_UNSYNCHRONIZED_BIT should be used if the user can map and unmap buffers at their own will
-		constexpr GLenum access = GL_MAP_READ_BIT | GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT;
-		id.mappedMemory = glMapNamedBufferRange(id, 0, (GLsizeiptr)size, access);
-	}
-
-	if (!name.empty())
-	{
-		glObjectLabel(GL_BUFFER, id, static_cast<GLsizei>(name.length()), name.data());
-	}
-
-	return id;
-}
+//gl::BufferStorageId gl::CreateStorageBuffer(size_t size, BufferStorageFlags storageFlags, std::string_view name)
+//{
+//	return CreateStorageBuffer(nullptr, size, storageFlags, name);
+//}
+////=============================================================================
+//gl::BufferStorageId gl::CreateStorageBuffer(TriviallyCopyableByteSpan data, BufferStorageFlags storageFlags, std::string_view name)
+//{
+//	return CreateStorageBuffer(data.data(), data.size_bytes(), storageFlags, name);
+//}
+////=============================================================================
+//gl::BufferStorageId gl::CreateStorageBuffer(const void* data, size_t size, BufferStorageFlags storageFlags, std::string_view name)
+//{
+//	gl::BufferStorageId id;
+//	glCreateBuffers(1, &id.id);
+//
+//	id.size = roundUp(size, 16);
+//	id.storageFlags = storageFlags;
+//
+//	GLbitfield glflags = detail::BufferStorageFlagsToGL(storageFlags);
+//	glNamedBufferStorage(id, (GLsizeiptr)id.size, data, glflags);
+//
+//	if (storageFlags & BufferStorageFlag::MapMemory)
+//	{
+//		// GL_MAP_UNSYNCHRONIZED_BIT should be used if the user can map and unmap buffers at their own will
+//		constexpr GLenum access = GL_MAP_READ_BIT | GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT;
+//		id.mappedMemory = glMapNamedBufferRange(id, 0, (GLsizeiptr)size, access);
+//	}
+//
+//	if (!name.empty())
+//	{
+//		glObjectLabel(GL_BUFFER, id, static_cast<GLsizei>(name.length()), name.data());
+//	}
+//
+//	return id;
+//}
 //=============================================================================
 void gl::UpdateData(BufferStorageId id, TriviallyCopyableByteSpan data, size_t destOffsetBytes)
 {

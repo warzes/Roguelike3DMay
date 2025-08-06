@@ -53,9 +53,6 @@
     <ClCompile Include="OpenGL4Simple.cpp">
       <Filter>OLD\RHI\old</Filter>
     </ClCompile>
-    <ClCompile Include="OpenGL4Buffer.cpp">
-      <Filter>RHI\NewFilter1\Resources</Filter>
-    </ClCompile>
     <ClCompile Include="OpenGL4Texture.cpp">
       <Filter>RHI\NewFilter1\Resources</Filter>
     </ClCompile>
@@ -129,6 +126,9 @@
       <Filter>RHI\NewFilter1</Filter>
     </ClCompile>
     <ClCompile Include="OpenGL4Shader.cpp">
+      <Filter>RHI\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenGL4Buffer.cpp">
       <Filter>RHI\Resources</Filter>
     </ClCompile>
   </ItemGroup>
@@ -216,9 +216,6 @@
     <ClInclude Include="OpenGL4Advance.h">
       <Filter>OLD\RHI\old</Filter>
     </ClInclude>
-    <ClInclude Include="OpenGL4Buffer.h">
-      <Filter>RHI\NewFilter1\Resources</Filter>
-    </ClInclude>
     <ClInclude Include="BasicConstants.h">
       <Filter>Core</Filter>
     </ClInclude>
@@ -301,6 +298,9 @@
       <Filter>RHI\NewFilter1</Filter>
     </ClInclude>
     <ClInclude Include="OpenGL4Shader.h">
+      <Filter>RHI\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL4Buffer.h">
       <Filter>RHI\Resources</Filter>
     </ClInclude>
   </ItemGroup>

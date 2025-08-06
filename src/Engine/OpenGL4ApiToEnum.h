@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include "OpenGL4Core.h"
-//#include "OpenGL4Buffer.h"
+#include "OpenGL4Buffer.h"
 
 // TODO: все inline в constexpr? НЕТ, assert(0) в компалтайм - UB
 
@@ -940,20 +940,6 @@ namespace gl::detail
 		ret |= bits & MemoryBarrierBit::FramebufferBit ? GL_FRAMEBUFFER_BARRIER_BIT : 0;
 		ret |= bits & MemoryBarrierBit::ShaderStorageBit ? GL_SHADER_STORAGE_BARRIER_BIT : 0;
 		ret |= bits & MemoryBarrierBit::QueryCounterBit ? GL_QUERY_BUFFER_BARRIER_BIT : 0;
-		return ret;
-	}
-
-	inline GLbitfield BufferStorageFlagsToGL(BufferStorageFlags flags)
-	{
-		GLbitfield ret = 0;
-		ret |= flags & BufferStorageFlag::DynamicStorage ? GL_DYNAMIC_STORAGE_BIT : 0;
-		ret |= flags & BufferStorageFlag::ClientStorage ? GL_CLIENT_STORAGE_BIT : 0;
-
-		// https://gpuopen.com/learn/get-the-most-out-of-smart-access-memory/
-		// https://basnieuwenhuizen.nl/the-catastrophe-of-reading-from-vram/
-		// https://asawicki.info/news_1740_vulkan_memory_types_on_pc_and_how_to_use_them
-		constexpr GLenum memMapFlags = GL_MAP_READ_BIT | GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT;
-		ret |= flags & BufferStorageFlag::MapMemory ? memMapFlags : 0;
 		return ret;
 	}
 
