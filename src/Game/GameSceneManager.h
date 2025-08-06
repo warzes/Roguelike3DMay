@@ -28,13 +28,13 @@ public:
 	void DrawInDepth(Camera& cam);
 
 private:
-	std::optional<gl4::TypedBuffer<sceneUBO::SceneUniforms>> m_sceneUniformUbo;
+	std::optional<gl::TypedBuffer<sceneUBO::SceneUniforms>> m_sceneUniformUbo;
 
 	GameModelManager m_modelManager;
 
 	// TODO: менеджер света
 	std::vector<LightOld> m_lights;
-	std::optional<gl4::Buffer> m_lightSSBO;
+	std::optional<gl::Buffer> m_lightSSBO;
 
 	ShadowPassManager m_shadowPassMgr;
 };

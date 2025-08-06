@@ -45,62 +45,62 @@ void main()
 }
 )";
 
-	std::optional<gl4::Buffer> vertexPosBuffer;
-	std::optional<gl4::Buffer> vertexColorBuffer;
-	std::optional<gl4::TypedBuffer<float>> timeBuffer;
-	std::optional<gl4::GraphicsPipeline> pipeline;
-	std::optional<gl4::Texture> msColorTex;
-	std::optional<gl4::Texture> resolveColorTex;
+	std::optional<gl::Buffer> vertexPosBuffer;
+	std::optional<gl::Buffer> vertexColorBuffer;
+	std::optional<gl::TypedBuffer<float>> timeBuffer;
+	std::optional<gl::GraphicsPipeline> pipeline;
+	std::optional<gl::Texture> msColorTex;
+	std::optional<gl::Texture> resolveColorTex;
 
 	double timeAccum = 0.0;
-	gl4::SampleCount numSamples = gl4::SampleCount::Samples8;
+	gl::SampleCount numSamples = gl::SampleCount::Samples8;
 
-	gl4::GraphicsPipeline CreatePipeline()
+	gl::GraphicsPipeline CreatePipeline()
 	{
-		auto descPos = gl4::VertexInputBindingDescription{
+		auto descPos = gl::VertexInputBindingDescription{
 		  .location = 0,
 		  .binding = 0,
-		  .format = gl4::Format::R32G32_FLOAT,
+		  .format = gl::Format::R32G32_FLOAT,
 		  .offset = 0,
 		};
-		auto descColor = gl4::VertexInputBindingDescription{
+		auto descColor = gl::VertexInputBindingDescription{
 		  .location = 1,
 		  .binding = 1,
-		  .format = gl4::Format::R8G8B8_UNORM,
+		  .format = gl::Format::R8G8B8_UNORM,
 		  .offset = 0,
 		};
 		auto inputDescs = { descPos, descColor };
 
-		auto vertexShader = gl4::Shader(gl4::PipelineStage::VertexShader, shaderCodeVertex, "Triangle VS");
-		auto fragmentShader = gl4::Shader(gl4::PipelineStage::FragmentShader, shaderCodeFragment, "Triangle FS");
+		auto vertexShader = gl::Shader(gl::PipelineStage::VertexShader, shaderCodeVertex, "Triangle VS");
+		auto fragmentShader = gl::Shader(gl::PipelineStage::FragmentShader, shaderCodeFragment, "Triangle FS");
 
-		return gl4::GraphicsPipeline({
+		return gl::GraphicsPipeline({
 			 .name = "Triangle Pipeline",
 			.vertexShader = &vertexShader,
 			.fragmentShader = &fragmentShader,
-			.inputAssemblyState = {.topology = gl4::PrimitiveTopology::TRIANGLE_LIST},
+			.inputAssemblyState = {.topology = gl::PrimitiveTopology::TRIANGLE_LIST},
 			.vertexInputState = {inputDescs},
 			});
 	}
 
 	void resize(uint16_t width, uint16_t height)
 	{
-		msColorTex = gl4::Texture({
-				.imageType = gl4::ImageType::Tex2DMultisample,
-				.format = gl4::Format::R8G8B8A8_SRGB,
+		msColorTex = gl::Texture({
+				.imageType = gl::ImageType::Tex2DMultisample,
+				.format = gl::Format::R8G8B8A8_SRGB,
 				.extent = {width / 8u, height / 8u},
 				.mipLevels = 1,
 				.arrayLayers = 1,
 				.sampleCount = numSamples,
 			});
 
-		resolveColorTex = gl4::Texture({
-		  .imageType = gl4::ImageType::Tex2D,
-		  .format = gl4::Format::R8G8B8A8_SRGB,
+		resolveColorTex = gl::Texture({
+		  .imageType = gl::ImageType::Tex2D,
+		  .format = gl::Format::R8G8B8A8_SRGB,
 		  .extent = msColorTex->Extent(),
 		  .mipLevels = 1,
 		  .arrayLayers = 1,
-		  .sampleCount = gl4::SampleCount::Samples1,
+		  .sampleCount = gl::SampleCount::Samples1,
 			});
 	}
 }
@@ -114,9 +114,9 @@ bool NewTest002::OnInit()
 {
 	static constexpr std::array<float, 6> triPositions = { -0.5, -0.5, 0.5, -0.5, 0.0, 0.5 };
 	static constexpr std::array<uint8_t, 9> triColors = { 255, 0, 0, 0, 255, 0, 0, 0, 255 };
-	vertexPosBuffer = gl4::Buffer(triPositions);
-	vertexColorBuffer = gl4::Buffer(triColors);
-	timeBuffer = gl4::TypedBuffer<float>(gl4::BufferStorageFlag::DynamicStorage);
+	vertexPosBuffer = gl::Buffer(triPositions);
+	vertexColorBuffer = gl::Buffer(triColors);
+	timeBuffer = gl::TypedBuffer<float>(gl::BufferStorageFlag::DynamicStorage);
 	pipeline = CreatePipeline();
 
 	resize(GetWindowWidth(), GetWindowHeight());
@@ -142,32 +142,32 @@ void NewTest002::OnUpdate(float deltaTime)
 //=============================================================================
 void NewTest002::OnRender()
 {
-	auto attachment = gl4::RenderColorAttachment{
+	auto attachment = gl::RenderColorAttachment{
 		.texture = msColorTex.value(),
-		.loadOp = gl4::AttachmentLoadOp::Clear,
+		.loadOp = gl::AttachmentLoadOp::Clear,
 		.clearValue = {.1f, .5f, .8f, 1.0f},
 	};
 
-	gl4::BeginRendering({ .colorAttachments = {&attachment, 1}, });
+	gl::BeginRendering({ .colorAttachments = {&attachment, 1}, });
 	{
-		gl4::Cmd::BindGraphicsPipeline(pipeline.value());
-		gl4::Cmd::BindVertexBuffer(0, vertexPosBuffer.value(), 0, 2 * sizeof(float));
-		gl4::Cmd::BindVertexBuffer(1, vertexColorBuffer.value(), 0, 3 * sizeof(uint8_t));
-		gl4::Cmd::BindUniformBuffer(0, timeBuffer.value());
-		gl4::Cmd::Draw(3, 1, 0, 0);
+		gl::Cmd::BindGraphicsPipeline(pipeline.value());
+		gl::Cmd::BindVertexBuffer(0, vertexPosBuffer.value(), 0, 2 * sizeof(float));
+		gl::Cmd::BindVertexBuffer(1, vertexColorBuffer.value(), 0, 3 * sizeof(uint8_t));
+		gl::Cmd::BindUniformBuffer(0, timeBuffer.value());
+		gl::Cmd::Draw(3, 1, 0, 0);
 	}
-	gl4::EndRendering();
+	gl::EndRendering();
 
 	// Resolve multisample texture by blitting it to a same-size non-multisample texture
-	gl4::BlitTexture(*msColorTex, *resolveColorTex, {}, {}, msColorTex->Extent(), resolveColorTex->Extent(), gl4::MagFilter::Linear);
+	gl::BlitTexture(*msColorTex, *resolveColorTex, {}, {}, msColorTex->Extent(), resolveColorTex->Extent(), gl::MagFilter::Linear);
 
 	// Blit resolved texture to screen with nearest neighbor filter to make MSAA resolve more obvious
-	gl4::BlitTextureToSwapchain(*resolveColorTex,
+	gl::BlitTextureToSwapchain(*resolveColorTex,
 		{},
 		{},
 		resolveColorTex->Extent(),
 		{ GetWindowWidth(), GetWindowHeight(), 1},
-		gl4::MagFilter::Nearest);
+		gl::MagFilter::Nearest);
 }
 //=============================================================================
 void NewTest002::OnImGuiDraw()
@@ -179,7 +179,7 @@ void NewTest002::OnImGuiDraw()
 	ImGui::Separator();
 	ImGui::Text("Framerate: %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 	ImGui::Text("Framerate: %.0f Hertz", 1 / GetDeltaTime());
-	ImGui::Text("Max samples: %d", gl4::gContext.properties.limits.maxSamples);
+	ImGui::Text("Max samples: %d", gl::gContext.properties.limits.maxSamples);
 	ImGui::RadioButton("1 Sample", (int*)&numSamples, 1);
 	ImGui::RadioButton("2 Samples", (int*)&numSamples, 2);
 	ImGui::RadioButton("4 Samples", (int*)&numSamples, 4);

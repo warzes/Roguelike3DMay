@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "OpenGL4Core.h"
 #include "OpenGL4DeviceProperties.h"
@@ -9,7 +9,7 @@
 #include "OpenGL4SamplerCache.h"
 #include "OpenGL4Render.h"
 
-namespace gl4
+namespace gl
 {
 	class ContextState final
 	{
@@ -82,4 +82,4 @@ namespace gl4
 	// This is called at the beginning of rendering/compute scopes or when the pipeline state has been invalidated, but only in debug mode.
 	void ZeroResourceBindings();
 
-} // namespace gl4
+} // namespace gl

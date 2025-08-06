@@ -4,7 +4,7 @@
 
 #define SE_DEFAULT_CLIP_DEPTH_RANGE_NEGATIVE_ONE_TO_ONE 1
 
-namespace gl4
+namespace gl
 {
 
 	enum class CompareOp : uint8_t
@@ -405,4 +405,4 @@ namespace gl4
 	};
 	SE_DECLARE_FLAG_TYPE(MemoryBarrierBits, MemoryBarrierBit, uint32_t)	
 
-} // namespace gl4
+} // namespace gl

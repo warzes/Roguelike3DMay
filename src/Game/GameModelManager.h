@@ -56,14 +56,14 @@ public:
 
 private:
 	bool createPipeline();
-	std::optional<gl4::GraphicsPipeline>                      m_pipeline;
-	std::optional<gl4::GraphicsPipeline>                      m_pipelineInDepth;
-	std::optional<gl4::TypedBuffer<modelUBO::GlobalUniforms>> m_globalUniformsUbo;
-	std::optional<gl4::TypedBuffer<modelUBO::ObjectUniforms>> m_objectUniformUbo;
-	std::optional<gl4::TypedBuffer<modelUBO::MaterialUniform>> m_materialUniformUbo;
+	std::optional<gl::GraphicsPipeline>                      m_pipeline;
+	std::optional<gl::GraphicsPipeline>                      m_pipelineInDepth;
+	std::optional<gl::TypedBuffer<modelUBO::GlobalUniforms>> m_globalUniformsUbo;
+	std::optional<gl::TypedBuffer<modelUBO::ObjectUniforms>> m_objectUniformUbo;
+	std::optional<gl::TypedBuffer<modelUBO::MaterialUniform>> m_materialUniformUbo;
 
-	std::optional<gl4::Sampler>                               m_nearestSampler;
-	std::optional<gl4::Sampler>                               m_linearSampler;
+	std::optional<gl::Sampler>                               m_nearestSampler;
+	std::optional<gl::Sampler>                               m_linearSampler;
 
 	std::vector<GameModelOld*> m_models;
 	size_t                  m_currentModel{ 0 };

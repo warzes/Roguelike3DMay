@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "OpenGL4Cmd.h"
 #include "OpenGL4Context.h"
 #include "OpenGL4ApiToEnum.h"
@@ -12,9 +12,9 @@ namespace
 	}
 }
 //=============================================================================
-void SetViewportInternal(const gl4::Viewport& viewport, const gl4::Viewport& lastViewport, bool initViewport); // ==> OpenGL4Render.cpp
+void SetViewportInternal(const gl::Viewport& viewport, const gl::Viewport& lastViewport, bool initViewport); // ==> OpenGL4Render.cpp
 //=============================================================================
-void gl4::Cmd::BindGraphicsPipeline(const GraphicsPipeline& pipeline)
+void gl::Cmd::BindGraphicsPipeline(const GraphicsPipeline& pipeline)
 {
 	assert(gContext.isRendering);
 	assert(pipeline.Handle() != 0);
@@ -286,7 +286,7 @@ void gl4::Cmd::BindGraphicsPipeline(const GraphicsPipeline& pipeline)
 	gContext.lastGraphicsPipeline = pipelineState;
 }
 //=============================================================================
-void gl4::Cmd::BindComputePipeline(const ComputePipeline& pipeline)
+void gl::Cmd::BindComputePipeline(const ComputePipeline& pipeline)
 {
 	assert(gContext.isComputeActive);
 	assert(pipeline.Handle() != 0);
@@ -312,7 +312,7 @@ void gl4::Cmd::BindComputePipeline(const ComputePipeline& pipeline)
 	glUseProgram(static_cast<GLuint>(pipeline.Handle()));
 }
 //=============================================================================
-void gl4::Cmd::SetViewport(const Viewport& viewport)
+void gl::Cmd::SetViewport(const Viewport& viewport)
 {
 	assert(gContext.isRendering);
 
@@ -321,7 +321,7 @@ void gl4::Cmd::SetViewport(const Viewport& viewport)
 	gContext.lastViewport = viewport;
 }
 //=============================================================================
-void gl4::Cmd::SetScissor(const Rect2D& scissor)
+void gl::Cmd::SetScissor(const Rect2D& scissor)
 {
 	assert(gContext.isRendering);
 
@@ -341,7 +341,7 @@ void gl4::Cmd::SetScissor(const Rect2D& scissor)
 	gContext.lastScissor = scissor;
 }
 //=============================================================================
-void gl4::Cmd::BindVertexBuffer(uint32_t bindingIndex, const Buffer& buffer, uint64_t offset, uint64_t stride)
+void gl::Cmd::BindVertexBuffer(uint32_t bindingIndex, const Buffer& buffer, uint64_t offset, uint64_t stride)
 {
 	assert(gContext.isRendering);
 
@@ -352,7 +352,7 @@ void gl4::Cmd::BindVertexBuffer(uint32_t bindingIndex, const Buffer& buffer, uin
 		static_cast<GLsizei>(stride));
 }
 //=============================================================================
-void gl4::Cmd::BindIndexBuffer(const Buffer& buffer, IndexType indexType)
+void gl::Cmd::BindIndexBuffer(const Buffer& buffer, IndexType indexType)
 {
 	assert(gContext.isRendering);
 
@@ -361,7 +361,7 @@ void gl4::Cmd::BindIndexBuffer(const Buffer& buffer, IndexType indexType)
 	glVertexArrayElementBuffer(gContext.currentVao, buffer.Handle());
 }
 //=============================================================================
-void gl4::Cmd::Draw(uint32_t vertexCount, uint32_t instanceCount, uint32_t firstVertex, uint32_t firstInstance)
+void gl::Cmd::Draw(uint32_t vertexCount, uint32_t instanceCount, uint32_t firstVertex, uint32_t firstInstance)
 {
 	assert(gContext.isRendering);
 
@@ -372,7 +372,7 @@ void gl4::Cmd::Draw(uint32_t vertexCount, uint32_t instanceCount, uint32_t first
 		firstInstance);
 }
 //=============================================================================
-void gl4::Cmd::DrawIndexed(uint32_t indexCount, uint32_t instanceCount, uint32_t firstIndex, int32_t vertexOffset, uint32_t firstInstance)
+void gl::Cmd::DrawIndexed(uint32_t indexCount, uint32_t instanceCount, uint32_t firstIndex, int32_t vertexOffset, uint32_t firstInstance)
 {
 	assert(gContext.isRendering);
 	assert(gContext.isIndexBufferBound);
@@ -388,7 +388,7 @@ void gl4::Cmd::DrawIndexed(uint32_t indexCount, uint32_t instanceCount, uint32_t
 		firstInstance);
 }
 //=============================================================================
-void gl4::Cmd::DrawIndirect(const Buffer& commandBuffer, uint64_t commandBufferOffset, uint32_t drawCount, uint32_t stride)
+void gl::Cmd::DrawIndirect(const Buffer& commandBuffer, uint64_t commandBufferOffset, uint32_t drawCount, uint32_t stride)
 {
 	assert(gContext.isRendering);
 
@@ -399,7 +399,7 @@ void gl4::Cmd::DrawIndirect(const Buffer& commandBuffer, uint64_t commandBufferO
 		stride);
 }
 //=============================================================================
-void gl4::Cmd::DrawIndirectCount(const Buffer& commandBuffer,
+void gl::Cmd::DrawIndirectCount(const Buffer& commandBuffer,
 	uint64_t commandBufferOffset,
 	const Buffer& countBuffer,
 	uint64_t countBufferOffset,
@@ -417,7 +417,7 @@ void gl4::Cmd::DrawIndirectCount(const Buffer& commandBuffer,
 		stride);
 }
 //=============================================================================
-void gl4::Cmd::DrawIndexedIndirect(const Buffer& commandBuffer, uint64_t commandBufferOffset, uint32_t drawCount, uint32_t stride)
+void gl::Cmd::DrawIndexedIndirect(const Buffer& commandBuffer, uint64_t commandBufferOffset, uint32_t drawCount, uint32_t stride)
 {
 	assert(gContext.isRendering);
 	assert(gContext.isIndexBufferBound);
@@ -430,7 +430,7 @@ void gl4::Cmd::DrawIndexedIndirect(const Buffer& commandBuffer, uint64_t command
 		stride);
 }
 //=============================================================================
-void gl4::Cmd::DrawIndexedIndirectCount(const Buffer& commandBuffer,
+void gl::Cmd::DrawIndexedIndirectCount(const Buffer& commandBuffer,
 	uint64_t commandBufferOffset,
 	const Buffer& countBuffer,
 	uint64_t countBufferOffset,
@@ -450,7 +450,7 @@ void gl4::Cmd::DrawIndexedIndirectCount(const Buffer& commandBuffer,
 		stride);
 }
 //=============================================================================
-void gl4::Cmd::BindUniformBuffer(uint32_t index, const Buffer& buffer, uint64_t offset, uint64_t size)
+void gl::Cmd::BindUniformBuffer(uint32_t index, const Buffer& buffer, uint64_t offset, uint64_t size)
 {
 	assert(gContext.isRendering || gContext.isComputeActive);
 
@@ -462,7 +462,7 @@ void gl4::Cmd::BindUniformBuffer(uint32_t index, const Buffer& buffer, uint64_t 
 	glBindBufferRange(GL_UNIFORM_BUFFER, index, buffer.Handle(), offset, size);
 }
 //=============================================================================
-void gl4::Cmd::BindUniformBuffer(std::string_view block, const Buffer& buffer, uint64_t offset, uint64_t size)
+void gl::Cmd::BindUniformBuffer(std::string_view block, const Buffer& buffer, uint64_t offset, uint64_t size)
 {
 	const auto* uniformBlocks = gContext.isComputeActive ? &gContext.lastComputePipeline->uniformBlocks
 		: &gContext.lastGraphicsPipeline->uniformBlocks;
@@ -474,7 +474,7 @@ void gl4::Cmd::BindUniformBuffer(std::string_view block, const Buffer& buffer, u
 	BindUniformBuffer(it->second, buffer, offset, size);
 }
 //=============================================================================
-void gl4::Cmd::BindStorageBuffer(uint32_t index, const Buffer& buffer, uint64_t offset, uint64_t size)
+void gl::Cmd::BindStorageBuffer(uint32_t index, const Buffer& buffer, uint64_t offset, uint64_t size)
 {
 	assert(gContext.isRendering || gContext.isComputeActive);
 
@@ -486,7 +486,7 @@ void gl4::Cmd::BindStorageBuffer(uint32_t index, const Buffer& buffer, uint64_t 
 	glBindBufferRange(GL_SHADER_STORAGE_BUFFER, index, buffer.Handle(), offset, size);
 }
 //=============================================================================
-void gl4::Cmd::BindStorageBuffer(std::string_view block, const Buffer& buffer, uint64_t offset, uint64_t size)
+void gl::Cmd::BindStorageBuffer(std::string_view block, const Buffer& buffer, uint64_t offset, uint64_t size)
 {
 	const auto* storageBlocks = gContext.isComputeActive ? &gContext.lastComputePipeline->storageBlocks
 		: &gContext.lastGraphicsPipeline->storageBlocks;
@@ -498,7 +498,7 @@ void gl4::Cmd::BindStorageBuffer(std::string_view block, const Buffer& buffer, u
 	BindStorageBuffer(it->second, buffer, offset, size);
 }
 //=============================================================================
-void gl4::Cmd::BindSampledImage(uint32_t index, const Texture& texture, const Sampler& sampler)
+void gl::Cmd::BindSampledImage(uint32_t index, const Texture& texture, const Sampler& sampler)
 {
 	assert(gContext.isRendering || gContext.isComputeActive);
 
@@ -506,7 +506,7 @@ void gl4::Cmd::BindSampledImage(uint32_t index, const Texture& texture, const Sa
 	glBindSampler(index, sampler.Handle());
 }
 //=============================================================================
-void gl4::Cmd::BindSampledImage(std::string_view uniform, const Texture& texture, const Sampler& sampler)
+void gl::Cmd::BindSampledImage(std::string_view uniform, const Texture& texture, const Sampler& sampler)
 {
 	const auto* samplersAndImages = gContext.isComputeActive ? &gContext.lastComputePipeline->samplersAndImages
 		: &gContext.lastGraphicsPipeline->samplersAndImages;
@@ -518,7 +518,7 @@ void gl4::Cmd::BindSampledImage(std::string_view uniform, const Texture& texture
 	BindSampledImage(it->second, texture, sampler);
 }
 //=============================================================================
-void gl4::Cmd::BindImage(uint32_t index, const Texture& texture, uint32_t level)
+void gl::Cmd::BindImage(uint32_t index, const Texture& texture, uint32_t level)
 {
 	assert(gContext.isRendering || gContext.isComputeActive);
 	assert(level < texture.GetCreateInfo().mipLevels);
@@ -533,7 +533,7 @@ void gl4::Cmd::BindImage(uint32_t index, const Texture& texture, uint32_t level)
 		detail::EnumToGL(texture.GetCreateInfo().format));
 }
 //=============================================================================
-void gl4::Cmd::BindImage(std::string_view uniform, const Texture& texture, uint32_t level)
+void gl::Cmd::BindImage(std::string_view uniform, const Texture& texture, uint32_t level)
 {
 	const auto* samplersAndImages = gContext.isComputeActive ? &gContext.lastComputePipeline->samplersAndImages
 		: &gContext.lastGraphicsPipeline->samplersAndImages;
@@ -545,26 +545,26 @@ void gl4::Cmd::BindImage(std::string_view uniform, const Texture& texture, uint3
 	BindImage(it->second, texture, level);
 }
 //=============================================================================
-void gl4::Cmd::Dispatch(uint32_t groupCountX, uint32_t groupCountY, uint32_t groupCountZ)
+void gl::Cmd::Dispatch(uint32_t groupCountX, uint32_t groupCountY, uint32_t groupCountZ)
 {
 	assert(gContext.isComputeActive);
 
 	glDispatchCompute(groupCountX, groupCountY, groupCountZ);
 }
 //=============================================================================
-void gl4::Cmd::Dispatch(Extent3D groupCount)
+void gl::Cmd::Dispatch(Extent3D groupCount)
 {
 	assert(gContext.isComputeActive);
 
 	glDispatchCompute(groupCount.width, groupCount.height, groupCount.depth);
 }
 //=============================================================================
-void gl4::Cmd::DispatchInvocations(uint32_t invocationCountX, uint32_t invocationCountY, uint32_t invocationCountZ)
+void gl::Cmd::DispatchInvocations(uint32_t invocationCountX, uint32_t invocationCountY, uint32_t invocationCountZ)
 {
 	DispatchInvocations(Extent3D{ invocationCountX, invocationCountY, invocationCountZ });
 }
 //=============================================================================
-void gl4::Cmd::DispatchInvocations(Extent3D invocationCount)
+void gl::Cmd::DispatchInvocations(Extent3D invocationCount)
 {
 	assert(gContext.isComputeActive);
 
@@ -574,7 +574,7 @@ void gl4::Cmd::DispatchInvocations(Extent3D invocationCount)
 	glDispatchCompute(groupCount.width, groupCount.height, groupCount.depth);
 }
 //=============================================================================
-void gl4::Cmd::DispatchInvocations(const Texture& texture, uint32_t lod)
+void gl::Cmd::DispatchInvocations(const Texture& texture, uint32_t lod)
 {
 	const auto imageType = texture.GetCreateInfo().imageType;
 	auto extent = texture.Extent();
@@ -595,7 +595,7 @@ void gl4::Cmd::DispatchInvocations(const Texture& texture, uint32_t lod)
 	DispatchInvocations(extent);
 }
 //=============================================================================
-void gl4::Cmd::DispatchIndirect(const Buffer& commandBuffer, uint64_t commandBufferOffset)
+void gl::Cmd::DispatchIndirect(const Buffer& commandBuffer, uint64_t commandBufferOffset)
 {
 	assert(gContext.isComputeActive);
 

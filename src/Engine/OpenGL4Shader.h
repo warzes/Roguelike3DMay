@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-namespace gl4
+namespace gl
 {
 	enum class PipelineStage : uint8_t
 	{
@@ -48,4 +48,4 @@ namespace gl4
 		GLuint m_id{0};
 	};
 
-} // namespace gl4
+} // namespace gl

@@ -84,13 +84,13 @@ void main()
 )";
 
 
-	gl4::ShaderProgramId cubeProgram;
+	gl::ShaderProgramId cubeProgram;
 	int cubeModelLoc;
 	int cubeViewLoc;
 	int cubeProjectionLoc;
 	int cubeCameraPosLoc;
 
-	gl4::ShaderProgramId skyboxProgram;
+	gl::ShaderProgramId skyboxProgram;
 	int skyViewLoc;
 	int skyProjectionLoc;
 
@@ -107,17 +107,17 @@ EngineCreateInfo TestSkyboxWithCube::GetCreateInfo() const
 //=============================================================================
 bool TestSkyboxWithCube::OnInit()
 {
-	cubeProgram = gl4::CreateShaderProgram(cubeShaderVertex, cubeShaderFragment);
-	cubeModelLoc = gl4::GetUniformLocation(cubeProgram, "model");
-	cubeViewLoc = gl4::GetUniformLocation(cubeProgram, "view");
-	cubeProjectionLoc = gl4::GetUniformLocation(cubeProgram, "projection");
-	cubeCameraPosLoc = gl4::GetUniformLocation(cubeProgram, "cameraPos");
+	cubeProgram = gl::CreateShaderProgram(cubeShaderVertex, cubeShaderFragment);
+	cubeModelLoc = gl::GetUniformLocation(cubeProgram, "model");
+	cubeViewLoc = gl::GetUniformLocation(cubeProgram, "view");
+	cubeProjectionLoc = gl::GetUniformLocation(cubeProgram, "projection");
+	cubeCameraPosLoc = gl::GetUniformLocation(cubeProgram, "cameraPos");
 
-	skyboxProgram = gl4::CreateShaderProgram(skyboxShaderVertex, skyboxShaderFragment);
-	skyViewLoc = gl4::GetUniformLocation(skyboxProgram, "view");
-	skyProjectionLoc = gl4::GetUniformLocation(skyboxProgram, "projection");
+	skyboxProgram = gl::CreateShaderProgram(skyboxShaderVertex, skyboxShaderFragment);
+	skyViewLoc = gl::GetUniformLocation(skyboxProgram, "view");
+	skyProjectionLoc = gl::GetUniformLocation(skyboxProgram, "projection");
 
-	cubeTexture = gl4::LoadTexture2D("CoreData/textures/colorful.png", true);
+	cubeTexture = gl::LoadTexture2D("CoreData/textures/colorful.png", true);
 
 	const std::vector<std::string> files
 	{
@@ -128,7 +128,7 @@ bool TestSkyboxWithCube::OnInit()
 		"front.png",
 		"back.png"
 	};
-	skyboxTexture = gl4::LoadCubeMap(files, "ExampleData/textures/skybox_blue_space/");
+	skyboxTexture = gl::LoadCubeMap(files, "ExampleData/textures/skybox_blue_space/");
 	
 	camera.SetPosition(glm::vec3(0.0f, 0.0f, -1.0f));
 
@@ -168,7 +168,7 @@ void TestSkyboxWithCube::OnUpdate(float deltaTime)
 //=============================================================================
 void TestSkyboxWithCube::OnRender()
 {
-	gl4::SetFrameBuffer({ 0 }, GetWindowWidth(), GetWindowHeight(), GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	gl::SetFrameBuffer({ 0 }, GetWindowWidth(), GetWindowHeight(), GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glm::mat4 view = camera.GetViewMatrix();
 	glm::mat4 proj = glm::perspective(glm::radians(60.0f), GetWindowAspect(), 0.01f, 1000.0f);
@@ -178,10 +178,10 @@ void TestSkyboxWithCube::OnRender()
 		glUseProgram(cubeProgram);
 		glm::mat4 model = glm::mat4(1.0f);
 		model = glm::scale(model, glm::vec3(0.5f));
-		gl4::SetUniform(cubeProgram, cubeModelLoc, model);
-		gl4::SetUniform(cubeProgram, cubeViewLoc, view);
-		gl4::SetUniform(cubeProgram, cubeProjectionLoc, proj);
-		gl4::SetUniform(cubeProgram, cubeCameraPosLoc, camera.Position);
+		gl::SetUniform(cubeProgram, cubeModelLoc, model);
+		gl::SetUniform(cubeProgram, cubeViewLoc, view);
+		gl::SetUniform(cubeProgram, cubeProjectionLoc, proj);
+		gl::SetUniform(cubeProgram, cubeCameraPosLoc, camera.Position);
 		glBindTextureUnit(0, skyboxTexture);
 		glBindTextureUnit(1, cubeTexture);
 		GetGraphicSystem().DrawCube();
@@ -194,8 +194,8 @@ void TestSkyboxWithCube::OnRender()
 
 		glUseProgram(skyboxProgram);
 		auto skyboxView = glm::mat4(glm::mat3(view)); // Remove translation from the view matrix
-		gl4::SetUniform(skyboxProgram, skyViewLoc, skyboxView);
-		gl4::SetUniform(skyboxProgram, skyProjectionLoc, proj);
+		gl::SetUniform(skyboxProgram, skyViewLoc, skyboxView);
+		gl::SetUniform(skyboxProgram, skyProjectionLoc, proj);
 		glBindTextureUnit(0, skyboxTexture);
 		GetGraphicSystem().DrawCube();
 		glBindVertexArray(0);

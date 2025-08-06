@@ -1,10 +1,10 @@
-#pragma once
+﻿#pragma once
 
 #include "OpenGL4Sampler.h"
 
 
 
-namespace gl4::detail
+namespace gl::detail
 {
 	class SamplerCache
 	{
@@ -15,11 +15,11 @@ namespace gl4::detail
 		SamplerCache(SamplerCache&&) noexcept = default;
 		SamplerCache& operator=(SamplerCache&&) noexcept = default;
 
-		gl4::Sampler CreateOrGetCachedTextureSampler(const gl4::SamplerState& samplerState);
+		gl::Sampler CreateOrGetCachedTextureSampler(const gl::SamplerState& samplerState);
 		[[nodiscard]] size_t Size() const;
 		void Clear();
 
 	private:
-		std::unordered_map<gl4::SamplerState, gl4::Sampler> m_samplerCache;
+		std::unordered_map<gl::SamplerState, gl::Sampler> m_samplerCache;
 	};
-} // namespace gl4::detail
+} // namespace gl::detail

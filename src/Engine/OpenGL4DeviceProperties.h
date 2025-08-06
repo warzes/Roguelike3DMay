@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-namespace gl4
+namespace gl
 {
 	struct SubgroupLimits final
 	{
@@ -115,4 +115,4 @@ namespace gl4
 	};
 	DeviceProperties InitDeviceProperties();
 
-} // namespace gl4
+} // namespace gl

@@ -1,17 +1,17 @@
 ﻿#pragma once
 
-namespace gl4
+namespace gl
 {
 	class Texture;
 }
 
 struct PhongMaterial final
 {
-	gl4::Texture* diffuseTexture{ nullptr };
-	gl4::Texture* specularTexture{ nullptr };
-	gl4::Texture* normalTexture{ nullptr };
-	gl4::Texture* depthTexture{ nullptr };
-	gl4::Texture* emissionTexture{ nullptr };
+	gl::Texture* diffuseTexture{ nullptr };
+	gl::Texture* specularTexture{ nullptr };
+	gl::Texture* normalTexture{ nullptr };
+	gl::Texture* depthTexture{ nullptr };
+	gl::Texture* emissionTexture{ nullptr };
 
 	float heightScale{ 0.1f };
 	float emissionStrength{ 1.0f };
@@ -26,11 +26,11 @@ struct PhongMaterial final
 class Material final
 {
 public:
-	gl4::Texture* albedoTex{};
-	gl4::Texture* roughnessTex{};
-	gl4::Texture* metalnessTex{};
-	gl4::Texture* normalTex{};
-	gl4::Texture* ambientOcclusionTex{};
+	gl::Texture* albedoTex{};
+	gl::Texture* roughnessTex{};
+	gl::Texture* metalnessTex{};
+	gl::Texture* normalTex{};
+	gl::Texture* ambientOcclusionTex{};
 
 	// OLD ===>
 	//int32_t baseColorTextureIndex{ -1 };

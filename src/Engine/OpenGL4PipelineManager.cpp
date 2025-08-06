@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "OpenGL4PipelineManager.h"
 #include "OpenGL4Shader.h"
 #include "OpenGL4Context.h"
@@ -6,12 +6,12 @@
 //=============================================================================
 namespace
 {
-	std::unordered_map<GLuint, std::shared_ptr<const gl4::detail::GraphicsPipelineInfoOwning>> gGraphicsPipelines;
-	std::unordered_map<GLuint, std::shared_ptr<const gl4::detail::ComputePipelineInfoOwning>> gComputePipelines;
+	std::unordered_map<GLuint, std::shared_ptr<const gl::detail::GraphicsPipelineInfoOwning>> gGraphicsPipelines;
+	std::unordered_map<GLuint, std::shared_ptr<const gl::detail::ComputePipelineInfoOwning>> gComputePipelines;
 
-	gl4::detail::GraphicsPipelineInfoOwning makePipelineInfoOwning(const gl4::GraphicsPipelineInfo& info)
+	gl::detail::GraphicsPipelineInfoOwning makePipelineInfoOwning(const gl::GraphicsPipelineInfo& info)
 	{
-		return gl4::detail::GraphicsPipelineInfoOwning{
+		return gl::detail::GraphicsPipelineInfoOwning{
 			.name = std::string(info.name),
 			.inputAssemblyState = info.inputAssemblyState,
 			.vertexInputState =
@@ -117,7 +117,7 @@ namespace
 	}
 }
 //=============================================================================
-uint64_t gl4::detail::CompileGraphicsPipelineInternal(const GraphicsPipelineInfo& info)
+uint64_t gl::detail::CompileGraphicsPipelineInternal(const GraphicsPipelineInfo& info)
 {
 	assert(info.vertexShader && "A graphics pipeline must at least have a vertex shader");
 	if (info.tessellationControlShader || info.tessellationEvaluationShader)
@@ -163,7 +163,7 @@ uint64_t gl4::detail::CompileGraphicsPipelineInternal(const GraphicsPipelineInfo
 	return program;
 }
 //=============================================================================
-std::shared_ptr<const gl4::detail::GraphicsPipelineInfoOwning> gl4::detail::GetGraphicsPipelineInternal(uint64_t pipeline)
+std::shared_ptr<const gl::detail::GraphicsPipelineInfoOwning> gl::detail::GetGraphicsPipelineInternal(uint64_t pipeline)
 {
 	if (auto it = gGraphicsPipelines.find(static_cast<GLuint>(pipeline)); it != gGraphicsPipelines.end())
 	{
@@ -172,7 +172,7 @@ std::shared_ptr<const gl4::detail::GraphicsPipelineInfoOwning> gl4::detail::GetG
 	return nullptr;
 }
 //=============================================================================
-void gl4::detail::DestroyGraphicsPipelineInternal(uint64_t pipeline)
+void gl::detail::DestroyGraphicsPipelineInternal(uint64_t pipeline)
 {
 	auto it = gGraphicsPipelines.find(static_cast<GLuint>(pipeline));
 	if (it == gGraphicsPipelines.end())
@@ -186,7 +186,7 @@ void gl4::detail::DestroyGraphicsPipelineInternal(uint64_t pipeline)
 	gGraphicsPipelines.erase(it);
 }
 //=============================================================================
-uint64_t gl4::detail::CompileComputePipelineInternal(const ComputePipelineInfo& info)
+uint64_t gl::detail::CompileComputePipelineInternal(const ComputePipelineInfo& info)
 {
 	assert(info.shader);
 	GLuint program = glCreateProgram();
@@ -226,7 +226,7 @@ uint64_t gl4::detail::CompileComputePipelineInternal(const ComputePipelineInfo& 
 	return program;
 }
 //=============================================================================
-std::shared_ptr<const gl4::detail::ComputePipelineInfoOwning> gl4::detail::GetComputePipelineInternal(uint64_t pipeline)
+std::shared_ptr<const gl::detail::ComputePipelineInfoOwning> gl::detail::GetComputePipelineInternal(uint64_t pipeline)
 {
 	if (auto it = gComputePipelines.find(static_cast<GLuint>(pipeline)); it != gComputePipelines.end())
 	{
@@ -235,7 +235,7 @@ std::shared_ptr<const gl4::detail::ComputePipelineInfoOwning> gl4::detail::GetCo
 	return nullptr;
 }
 //=============================================================================
-void gl4::detail::DestroyComputePipelineInternal(uint64_t pipeline)
+void gl::detail::DestroyComputePipelineInternal(uint64_t pipeline)
 {
 	auto it = gComputePipelines.find(static_cast<GLuint>(pipeline));
 	if (it == gComputePipelines.end())

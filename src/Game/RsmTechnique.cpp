@@ -34,48 +34,48 @@ static std::string LoadFileWithInclude(std::string_view path)
 	return includedStr;
 }
 
-static gl4::ComputePipeline CreateRsmIndirectPipeline()
+static gl::ComputePipeline CreateRsmIndirectPipeline()
 {
-	auto cs = gl4::Shader(gl4::PipelineStage::ComputeShader, io::LoadFile("ExampleData/shaders/rsm/Indirect.comp.glsl"));
-	return gl4::ComputePipeline({ .shader = &cs });
+	auto cs = gl::Shader(gl::PipelineStage::ComputeShader, io::LoadFile("ExampleData/shaders/rsm/Indirect.comp.glsl"));
+	return gl::ComputePipeline({ .shader = &cs });
 }
 
-static gl4::ComputePipeline CreateRsmIndirectFilteredPipeline()
+static gl::ComputePipeline CreateRsmIndirectFilteredPipeline()
 {
-	auto cs = gl4::Shader(gl4::PipelineStage::ComputeShader,
+	auto cs = gl::Shader(gl::PipelineStage::ComputeShader,
 		io::LoadFile("ExampleData/shaders/rsm/IndirectDitheredFiltered.comp.glsl"));
-	return gl4::ComputePipeline({ .shader = &cs });
+	return gl::ComputePipeline({ .shader = &cs });
 }
 
-static gl4::ComputePipeline CreateRsmReprojectPipeline()
+static gl::ComputePipeline CreateRsmReprojectPipeline()
 {
-	auto cs = gl4::Shader(gl4::PipelineStage::ComputeShader, LoadFileWithInclude("ExampleData/shaders/rsm/Reproject.comp.glsl"));
-	return gl4::ComputePipeline({ .shader = &cs });
+	auto cs = gl::Shader(gl::PipelineStage::ComputeShader, LoadFileWithInclude("ExampleData/shaders/rsm/Reproject.comp.glsl"));
+	return gl::ComputePipeline({ .shader = &cs });
 }
 
-static gl4::ComputePipeline CreateBilateral5x5Pipeline()
+static gl::ComputePipeline CreateBilateral5x5Pipeline()
 {
-	auto cs = gl4::Shader(gl4::PipelineStage::ComputeShader, LoadFileWithInclude("ExampleData/shaders/rsm/Bilateral5x5.comp.glsl"));
-	return gl4::ComputePipeline({ .shader = &cs });
+	auto cs = gl::Shader(gl::PipelineStage::ComputeShader, LoadFileWithInclude("ExampleData/shaders/rsm/Bilateral5x5.comp.glsl"));
+	return gl::ComputePipeline({ .shader = &cs });
 }
 
-static gl4::ComputePipeline CreateModulatePipeline()
+static gl::ComputePipeline CreateModulatePipeline()
 {
-	auto cs = gl4::Shader(gl4::PipelineStage::ComputeShader, LoadFileWithInclude("ExampleData/shaders/rsm/Modulate.comp.glsl"));
-	return gl4::ComputePipeline({ .shader = &cs });
+	auto cs = gl::Shader(gl::PipelineStage::ComputeShader, LoadFileWithInclude("ExampleData/shaders/rsm/Modulate.comp.glsl"));
+	return gl::ComputePipeline({ .shader = &cs });
 }
 
-static gl4::ComputePipeline CreateModulateUpscalePipeline()
+static gl::ComputePipeline CreateModulateUpscalePipeline()
 {
 	auto cs =
-		gl4::Shader(gl4::PipelineStage::ComputeShader, LoadFileWithInclude("ExampleData/shaders/rsm/ModulateUpscale.comp.glsl"));
-	return gl4::ComputePipeline({ .shader = &cs });
+		gl::Shader(gl::PipelineStage::ComputeShader, LoadFileWithInclude("ExampleData/shaders/rsm/ModulateUpscale.comp.glsl"));
+	return gl::ComputePipeline({ .shader = &cs });
 }
 
-static gl4::ComputePipeline CreateBlitPipeline()
+static gl::ComputePipeline CreateBlitPipeline()
 {
-	auto cs = gl4::Shader(gl4::PipelineStage::ComputeShader, LoadFileWithInclude("ExampleData/shaders/rsm/BlitTexture.comp.glsl"));
-	return gl4::ComputePipeline({ .shader = &cs });
+	auto cs = gl::Shader(gl::PipelineStage::ComputeShader, LoadFileWithInclude("ExampleData/shaders/rsm/BlitTexture.comp.glsl"));
+	return gl::ComputePipeline({ .shader = &cs });
 }
 
 namespace RSM
@@ -83,10 +83,10 @@ namespace RSM
 	RsmTechnique::RsmTechnique(uint32_t width_, uint32_t height_)
 		: seedX(pcg_hash(17)),
 		seedY(pcg_hash(seedX)),
-		rsmUniformBuffer(gl4::BufferStorageFlag::DynamicStorage),
-		cameraUniformBuffer(gl4::BufferStorageFlag::DynamicStorage),
-		reprojectionUniformBuffer(gl4::BufferStorageFlag::DynamicStorage),
-		filterUniformBuffer(gl4::BufferStorageFlag::DynamicStorage),
+		rsmUniformBuffer(gl::BufferStorageFlag::DynamicStorage),
+		cameraUniformBuffer(gl::BufferStorageFlag::DynamicStorage),
+		reprojectionUniformBuffer(gl::BufferStorageFlag::DynamicStorage),
+		filterUniformBuffer(gl::BufferStorageFlag::DynamicStorage),
 		rsmIndirectPipeline(CreateRsmIndirectPipeline()),
 		rsmIndirectFilteredPipeline(CreateRsmIndirectFilteredPipeline()),
 		rsmReprojectPipeline(CreateRsmReprojectPipeline()),
@@ -104,13 +104,13 @@ namespace RSM
 			stbi_load("CoreData/textures/bluenoise256.png", &x, &y, nullptr, 4));
 
 		assert(noise);
-		noiseTex = gl4::CreateTexture2D({ static_cast<uint32_t>(x), static_cast<uint32_t>(y) }, gl4::Format::R8G8B8A8_UNORM);
+		noiseTex = gl::CreateTexture2D({ static_cast<uint32_t>(x), static_cast<uint32_t>(y) }, gl::Format::R8G8B8A8_UNORM);
 		noiseTex->UpdateImage({
 		.level = 0,
 		.offset = {},
 		.extent = {static_cast<uint32_t>(x), static_cast<uint32_t>(y)},
-		.format = gl4::UploadFormat::RGBA,
-		.type = gl4::UploadType::UBYTE,
+		.format = gl::UploadFormat::RGBA,
+		.type = gl::UploadType::UBYTE,
 		.pixels = noise.get(),
 			});
 	}
@@ -121,22 +121,22 @@ namespace RSM
 		height = newHeight;
 		internalWidth = width / inverseResolutionScale;
 		internalHeight = height / inverseResolutionScale;
-		indirectUnfilteredTex = gl4::CreateTexture2D({ internalWidth, internalHeight }, gl4::Format::R16G16B16A16_FLOAT);
-		indirectUnfilteredTexPrev = gl4::CreateTexture2D({ internalWidth, internalHeight }, gl4::Format::R16G16B16A16_FLOAT);
-		indirectFilteredTex = gl4::CreateTexture2D({ internalWidth, internalHeight }, gl4::Format::R16G16B16A16_FLOAT);
-		indirectFilteredTexPingPong = gl4::CreateTexture2D({ internalWidth, internalHeight }, gl4::Format::R16G16B16A16_FLOAT);
-		historyLengthTex = gl4::CreateTexture2D({ internalWidth, internalHeight }, gl4::Format::R8_UINT);
-		illuminationUpscaled = gl4::CreateTexture2D({ width, height }, gl4::Format::R16G16B16A16_FLOAT);
-		rsmFluxSmall = gl4::CreateTexture2D({ (uint32_t)smallRsmSize, (uint32_t)smallRsmSize }, gl4::Format::R11G11B10_FLOAT);
-		rsmNormalSmall = gl4::CreateTexture2D({ (uint32_t)smallRsmSize, (uint32_t)smallRsmSize }, gl4::Format::R8G8B8A8_SNORM);
-		rsmDepthSmall = gl4::CreateTexture2D({ (uint32_t)smallRsmSize, (uint32_t)smallRsmSize }, gl4::Format::R32_FLOAT);
+		indirectUnfilteredTex = gl::CreateTexture2D({ internalWidth, internalHeight }, gl::Format::R16G16B16A16_FLOAT);
+		indirectUnfilteredTexPrev = gl::CreateTexture2D({ internalWidth, internalHeight }, gl::Format::R16G16B16A16_FLOAT);
+		indirectFilteredTex = gl::CreateTexture2D({ internalWidth, internalHeight }, gl::Format::R16G16B16A16_FLOAT);
+		indirectFilteredTexPingPong = gl::CreateTexture2D({ internalWidth, internalHeight }, gl::Format::R16G16B16A16_FLOAT);
+		historyLengthTex = gl::CreateTexture2D({ internalWidth, internalHeight }, gl::Format::R8_UINT);
+		illuminationUpscaled = gl::CreateTexture2D({ width, height }, gl::Format::R16G16B16A16_FLOAT);
+		rsmFluxSmall = gl::CreateTexture2D({ (uint32_t)smallRsmSize, (uint32_t)smallRsmSize }, gl::Format::R11G11B10_FLOAT);
+		rsmNormalSmall = gl::CreateTexture2D({ (uint32_t)smallRsmSize, (uint32_t)smallRsmSize }, gl::Format::R8G8B8A8_SNORM);
+		rsmDepthSmall = gl::CreateTexture2D({ (uint32_t)smallRsmSize, (uint32_t)smallRsmSize }, gl::Format::R32_FLOAT);
 
 		if (inverseResolutionScale > 1)
 		{
-			gNormalSmall = gl4::CreateTexture2D({ internalWidth, internalHeight }, gl4::Format::R8G8B8A8_SNORM);
-			gNormalPrevSmall = gl4::CreateTexture2D({ internalWidth, internalHeight }, gl4::Format::R8G8B8A8_SNORM);
-			gDepthSmall = gl4::CreateTexture2D({ internalWidth, internalHeight }, gl4::Format::R32_FLOAT);
-			gDepthPrevSmall = gl4::CreateTexture2D({ internalWidth, internalHeight }, gl4::Format::R32_FLOAT);
+			gNormalSmall = gl::CreateTexture2D({ internalWidth, internalHeight }, gl::Format::R8G8B8A8_SNORM);
+			gNormalPrevSmall = gl::CreateTexture2D({ internalWidth, internalHeight }, gl::Format::R8G8B8A8_SNORM);
+			gDepthSmall = gl::CreateTexture2D({ internalWidth, internalHeight }, gl::Format::R32_FLOAT);
+			gDepthPrevSmall = gl::CreateTexture2D({ internalWidth, internalHeight }, gl::Format::R32_FLOAT);
 		}
 		else
 		{
@@ -148,46 +148,46 @@ namespace RSM
 
 		historyLengthTex->ClearImage({
 		.extent = historyLengthTex->Extent(),
-		.format = gl4::UploadFormat::R_INTEGER,
-		.type = gl4::UploadType::UBYTE,
+		.format = gl::UploadFormat::R_INTEGER,
+		.type = gl::UploadType::UBYTE,
 		.data = nullptr,
 			});
 
 		indirectUnfilteredTex->ClearImage({
 		.extent = indirectUnfilteredTex->Extent(),
-		.format = gl4::UploadFormat::RGBA,
-		.type = gl4::UploadType::UBYTE,
+		.format = gl::UploadFormat::RGBA,
+		.type = gl::UploadType::UBYTE,
 		.data = nullptr,
 			});
 	}
 
 	void RsmTechnique::ComputeIndirectLighting(const glm::mat4& lightViewProj,
 		const CameraUniforms& cameraUniforms,
-		const gl4::Texture& gAlbedo,
-		const gl4::Texture& gNormal,
-		const gl4::Texture& gDepth,
-		const gl4::Texture& rsmFlux,
-		const gl4::Texture& rsmNormal,
-		const gl4::Texture& rsmDepth,
-		const gl4::Texture& gDepthPrev,
-		const gl4::Texture& gNormalPrev,
-		const gl4::Texture& gMotion)
+		const gl::Texture& gAlbedo,
+		const gl::Texture& gNormal,
+		const gl::Texture& gDepth,
+		const gl::Texture& rsmFlux,
+		const gl::Texture& rsmNormal,
+		const gl::Texture& rsmDepth,
+		const gl::Texture& gDepthPrev,
+		const gl::Texture& gNormalPrev,
+		const gl::Texture& gMotion)
 	{
-		gl4::SamplerState ss;
-		ss.minFilter = gl4::MinFilter::Nearest;
-		ss.magFilter = gl4::MagFilter::Nearest;
-		ss.addressModeU = gl4::AddressMode::Repeat;
-		ss.addressModeV = gl4::AddressMode::Repeat;
-		auto nearestSampler = gl4::Sampler(ss);
+		gl::SamplerState ss;
+		ss.minFilter = gl::MinFilter::Nearest;
+		ss.magFilter = gl::MagFilter::Nearest;
+		ss.addressModeU = gl::AddressMode::Repeat;
+		ss.addressModeV = gl::AddressMode::Repeat;
+		auto nearestSampler = gl::Sampler(ss);
 
-		ss.borderColor = gl4::BorderColor::FloatTransparentBlack;
-		ss.addressModeU = gl4::AddressMode::ClampToBorder;
-		ss.addressModeV = gl4::AddressMode::ClampToBorder;
-		auto nearestSamplerClamped = gl4::Sampler(ss);
+		ss.borderColor = gl::BorderColor::FloatTransparentBlack;
+		ss.addressModeU = gl::AddressMode::ClampToBorder;
+		ss.addressModeV = gl::AddressMode::ClampToBorder;
+		auto nearestSamplerClamped = gl::Sampler(ss);
 
-		ss.minFilter = gl4::MinFilter::Linear;
-		ss.magFilter = gl4::MagFilter::Linear;
-		auto linearSampler = gl4::Sampler(ss);
+		ss.minFilter = gl::MinFilter::Linear;
+		ss.magFilter = gl::MagFilter::Linear;
+		auto linearSampler = gl::Sampler(ss);
 
 		rsmUniforms = {
 		.sunViewProj = lightViewProj,
@@ -218,17 +218,17 @@ namespace RSM
 
 		cameraUniformBuffer.UpdateData(cameraUniforms);
 
-		gl4::BeginCompute("Indirect Illumination");
+		gl::BeginCompute("Indirect Illumination");
 		{
-			gl4::Cmd::BindSampledImage(0, *indirectUnfilteredTex, nearestSampler);
-			gl4::Cmd::BindSampledImage(1, gAlbedo, nearestSampler);
-			gl4::Cmd::BindSampledImage(2, gNormalSmall ? *gNormalSmall : gNormal, nearestSampler);
-			gl4::Cmd::BindSampledImage(3, gDepthSmall ? *gDepthSmall : gDepth, nearestSampler);
-			gl4::Cmd::BindSampledImage(4, *rsmFluxSmall, nearestSamplerClamped);
-			gl4::Cmd::BindSampledImage(5, *rsmNormalSmall, nearestSampler);
-			gl4::Cmd::BindSampledImage(6, *rsmDepthSmall, nearestSampler);
-			gl4::Cmd::BindUniformBuffer(0, cameraUniformBuffer);
-			gl4::Cmd::BindUniformBuffer(1, rsmUniformBuffer);
+			gl::Cmd::BindSampledImage(0, *indirectUnfilteredTex, nearestSampler);
+			gl::Cmd::BindSampledImage(1, gAlbedo, nearestSampler);
+			gl::Cmd::BindSampledImage(2, gNormalSmall ? *gNormalSmall : gNormal, nearestSampler);
+			gl::Cmd::BindSampledImage(3, gDepthSmall ? *gDepthSmall : gDepth, nearestSampler);
+			gl::Cmd::BindSampledImage(4, *rsmFluxSmall, nearestSamplerClamped);
+			gl::Cmd::BindSampledImage(5, *rsmNormalSmall, nearestSampler);
+			gl::Cmd::BindSampledImage(6, *rsmDepthSmall, nearestSampler);
+			gl::Cmd::BindUniformBuffer(0, cameraUniformBuffer);
+			gl::Cmd::BindUniformBuffer(1, rsmUniformBuffer);
 
 			if (rsmFiltered)
 			{
@@ -236,61 +236,61 @@ namespace RSM
 
 				if (inverseResolutionScale > 1)
 				{
-					gl4::ScopedDebugMarker marker2("Downsample G-buffer");
+					gl::ScopedDebugMarker marker2("Downsample G-buffer");
 
-					gl4::Cmd::BindComputePipeline(blitPipeline);
-					gl4::Cmd::BindSampledImage(0, gNormal, nearestSampler);
-					gl4::Cmd::BindImage(0, *gNormalSmall, 0);
-					gl4::Cmd::DispatchInvocations(workSize);
+					gl::Cmd::BindComputePipeline(blitPipeline);
+					gl::Cmd::BindSampledImage(0, gNormal, nearestSampler);
+					gl::Cmd::BindImage(0, *gNormalSmall, 0);
+					gl::Cmd::DispatchInvocations(workSize);
 
-					gl4::Cmd::BindSampledImage(0, gNormalPrev, nearestSampler);
-					gl4::Cmd::BindImage(0, *gNormalPrevSmall, 0);
-					gl4::Cmd::DispatchInvocations(workSize);
+					gl::Cmd::BindSampledImage(0, gNormalPrev, nearestSampler);
+					gl::Cmd::BindImage(0, *gNormalPrevSmall, 0);
+					gl::Cmd::DispatchInvocations(workSize);
 
-					gl4::Cmd::BindSampledImage(0, gDepth, nearestSampler);
-					gl4::Cmd::BindImage(0, *gDepthSmall, 0);
-					gl4::Cmd::DispatchInvocations(workSize);
+					gl::Cmd::BindSampledImage(0, gDepth, nearestSampler);
+					gl::Cmd::BindImage(0, *gDepthSmall, 0);
+					gl::Cmd::DispatchInvocations(workSize);
 
-					gl4::Cmd::BindSampledImage(0, gDepthPrev, nearestSampler);
-					gl4::Cmd::BindImage(0, *gDepthPrevSmall, 0);
-					gl4::Cmd::DispatchInvocations(workSize);
+					gl::Cmd::BindSampledImage(0, gDepthPrev, nearestSampler);
+					gl::Cmd::BindImage(0, *gDepthPrevSmall, 0);
+					gl::Cmd::DispatchInvocations(workSize);
 				}
 
 				{
-					gl4::ScopedDebugMarker marker2("Downsample RSM");
+					gl::ScopedDebugMarker marker2("Downsample RSM");
 
-					gl4::Cmd::BindComputePipeline(blitPipeline);
+					gl::Cmd::BindComputePipeline(blitPipeline);
 
-					gl4::Cmd::BindSampledImage(0, rsmFlux, nearestSampler);
-					gl4::Cmd::BindImage(0, *rsmFluxSmall, 0);
-					gl4::Cmd::DispatchInvocations(rsmFluxSmall->Extent());
+					gl::Cmd::BindSampledImage(0, rsmFlux, nearestSampler);
+					gl::Cmd::BindImage(0, *rsmFluxSmall, 0);
+					gl::Cmd::DispatchInvocations(rsmFluxSmall->Extent());
 
-					gl4::Cmd::BindSampledImage(0, rsmNormal, nearestSampler);
-					gl4::Cmd::BindImage(0, *rsmNormalSmall, 0);
-					gl4::Cmd::DispatchInvocations(rsmNormalSmall->Extent());
+					gl::Cmd::BindSampledImage(0, rsmNormal, nearestSampler);
+					gl::Cmd::BindImage(0, *rsmNormalSmall, 0);
+					gl::Cmd::DispatchInvocations(rsmNormalSmall->Extent());
 
-					gl4::Cmd::BindSampledImage(0, rsmDepth, nearestSampler);
-					gl4::Cmd::BindImage(0, *rsmDepthSmall, 0);
-					gl4::Cmd::DispatchInvocations(rsmDepthSmall->Extent());
+					gl::Cmd::BindSampledImage(0, rsmDepth, nearestSampler);
+					gl::Cmd::BindImage(0, *rsmDepthSmall, 0);
+					gl::Cmd::DispatchInvocations(rsmDepthSmall->Extent());
 				}
 
 				rsmUniforms.currentPass = 0;
 
 				// Evaluate indirect illumination (sample the reflective shadow map)
 				{
-					gl4::ScopedDebugMarker marker2("Sample RSM");
+					gl::ScopedDebugMarker marker2("Sample RSM");
 
-					gl4::Cmd::BindComputePipeline(rsmIndirectFilteredPipeline);
-					gl4::Cmd::BindSampledImage(7, *noiseTex, nearestSampler);
+					gl::Cmd::BindComputePipeline(rsmIndirectFilteredPipeline);
+					gl::Cmd::BindSampledImage(7, *noiseTex, nearestSampler);
 					rsmUniformBuffer.UpdateData(rsmUniforms);
-					gl4::MemoryBarrier(gl4::MemoryBarrierBit::TEXTURE_FETCH_BIT | gl4::MemoryBarrierBit::IMAGE_ACCESS_BIT);
-					gl4::Cmd::BindImage(0, *indirectUnfilteredTex, 0);
-					gl4::Cmd::DispatchInvocations(workSize);
+					gl::MemoryBarrier(gl::MemoryBarrierBit::TEXTURE_FETCH_BIT | gl::MemoryBarrierBit::IMAGE_ACCESS_BIT);
+					gl::Cmd::BindImage(0, *indirectUnfilteredTex, 0);
+					gl::Cmd::DispatchInvocations(workSize);
 				}
 
 				// Temporally accumulate samples before filtering
 				{
-					gl4::ScopedDebugMarker marker2("Temporal Accumulation");
+					gl::ScopedDebugMarker marker2("Temporal Accumulation");
 
 					ReprojectionUniforms reprojectionUniforms = {
 					.invViewProjCurrent = cameraUniforms.invViewProj,
@@ -308,19 +308,19 @@ namespace RSM
 					};
 					viewProjPrevious = cameraUniforms.viewProj;
 					reprojectionUniformBuffer.UpdateData(reprojectionUniforms);
-					gl4::Cmd::BindComputePipeline(rsmReprojectPipeline);
-					gl4::Cmd::BindSampledImage(0, *indirectUnfilteredTex, nearestSampler);
-					gl4::Cmd::BindSampledImage(1, *indirectUnfilteredTexPrev, linearSampler);
-					gl4::Cmd::BindSampledImage(2, gDepthSmall ? *gDepthSmall : gDepth, nearestSampler);
-					gl4::Cmd::BindSampledImage(3, gDepthPrevSmall ? *gDepthPrevSmall : gDepthPrev, linearSampler);
-					gl4::Cmd::BindSampledImage(4, gNormalSmall ? *gNormalSmall : gNormal, nearestSampler);
-					gl4::Cmd::BindSampledImage(5, gNormalPrevSmall ? *gNormalPrevSmall : gNormalPrev, linearSampler);
-					gl4::Cmd::BindSampledImage(6, gMotion, linearSampler);
-					gl4::Cmd::BindImage(0, *indirectFilteredTex, 0);
-					gl4::Cmd::BindImage(1, *historyLengthTex, 0);
-					gl4::Cmd::BindUniformBuffer(0, reprojectionUniformBuffer);
-					gl4::MemoryBarrier(gl4::MemoryBarrierBit::TEXTURE_FETCH_BIT | gl4::MemoryBarrierBit::IMAGE_ACCESS_BIT);
-					gl4::Cmd::DispatchInvocations(workSize);
+					gl::Cmd::BindComputePipeline(rsmReprojectPipeline);
+					gl::Cmd::BindSampledImage(0, *indirectUnfilteredTex, nearestSampler);
+					gl::Cmd::BindSampledImage(1, *indirectUnfilteredTexPrev, linearSampler);
+					gl::Cmd::BindSampledImage(2, gDepthSmall ? *gDepthSmall : gDepth, nearestSampler);
+					gl::Cmd::BindSampledImage(3, gDepthPrevSmall ? *gDepthPrevSmall : gDepthPrev, linearSampler);
+					gl::Cmd::BindSampledImage(4, gNormalSmall ? *gNormalSmall : gNormal, nearestSampler);
+					gl::Cmd::BindSampledImage(5, gNormalPrevSmall ? *gNormalPrevSmall : gNormalPrev, linearSampler);
+					gl::Cmd::BindSampledImage(6, gMotion, linearSampler);
+					gl::Cmd::BindImage(0, *indirectFilteredTex, 0);
+					gl::Cmd::BindImage(1, *historyLengthTex, 0);
+					gl::Cmd::BindUniformBuffer(0, reprojectionUniformBuffer);
+					gl::MemoryBarrier(gl::MemoryBarrierBit::TEXTURE_FETCH_BIT | gl::MemoryBarrierBit::IMAGE_ACCESS_BIT);
+					gl::Cmd::DispatchInvocations(workSize);
 				}
 
 				FilterUniforms filterUniforms = {
@@ -333,13 +333,13 @@ namespace RSM
 				};
 
 				{
-					gl4::ScopedDebugMarker marker2("Filter");
+					gl::ScopedDebugMarker marker2("Filter");
 
-					gl4::Cmd::BindComputePipeline(bilateral5x5Pipeline);
-					gl4::Cmd::BindSampledImage(1, gNormalSmall ? *gNormalSmall : gNormal, nearestSampler);
-					gl4::Cmd::BindSampledImage(2, gDepthSmall ? *gDepthSmall : gDepth, nearestSampler);
-					gl4::Cmd::BindSampledImage(3, *historyLengthTex, nearestSampler);
-					gl4::Cmd::BindUniformBuffer(0, filterUniformBuffer);
+					gl::Cmd::BindComputePipeline(bilateral5x5Pipeline);
+					gl::Cmd::BindSampledImage(1, gNormalSmall ? *gNormalSmall : gNormal, nearestSampler);
+					gl::Cmd::BindSampledImage(2, gDepthSmall ? *gDepthSmall : gDepth, nearestSampler);
+					gl::Cmd::BindSampledImage(3, *historyLengthTex, nearestSampler);
+					gl::Cmd::BindUniformBuffer(0, filterUniformBuffer);
 
 					if (useSeparableFilter)
 					{
@@ -347,17 +347,17 @@ namespace RSM
 
 						filterUniforms.direction = { 0, 1 };
 						filterUniformBuffer.UpdateData(filterUniforms);
-						gl4::Cmd::BindSampledImage(0, *indirectFilteredTex, nearestSampler);
-						gl4::Cmd::BindImage(0, *indirectUnfilteredTex, 0);
-						gl4::MemoryBarrier(gl4::MemoryBarrierBit::TEXTURE_FETCH_BIT);
-						gl4::Cmd::DispatchInvocations(workSize);
+						gl::Cmd::BindSampledImage(0, *indirectFilteredTex, nearestSampler);
+						gl::Cmd::BindImage(0, *indirectUnfilteredTex, 0);
+						gl::MemoryBarrier(gl::MemoryBarrierBit::TEXTURE_FETCH_BIT);
+						gl::Cmd::DispatchInvocations(workSize);
 
 						filterUniforms.direction = { 1, 0 };
 						filterUniformBuffer.UpdateData(filterUniforms);
-						gl4::Cmd::BindSampledImage(0, *indirectUnfilteredTex, nearestSampler);
-						gl4::Cmd::BindImage(0, *indirectUnfilteredTexPrev, 0);
-						gl4::MemoryBarrier(gl4::MemoryBarrierBit::TEXTURE_FETCH_BIT);
-						gl4::Cmd::DispatchInvocations(workSize);
+						gl::Cmd::BindSampledImage(0, *indirectUnfilteredTex, nearestSampler);
+						gl::Cmd::BindImage(0, *indirectUnfilteredTexPrev, 0);
+						gl::MemoryBarrier(gl::MemoryBarrierBit::TEXTURE_FETCH_BIT);
+						gl::Cmd::DispatchInvocations(workSize);
 
 						for (int i = 1; i < 5 - std::log2f(float(inverseResolutionScale)); i++)
 						{
@@ -365,17 +365,17 @@ namespace RSM
 
 							filterUniforms.direction = { 0, 1 };
 							filterUniformBuffer.UpdateData(filterUniforms);
-							gl4::Cmd::BindSampledImage(0, i == 1 ? *indirectUnfilteredTexPrev : *indirectFilteredTex, nearestSampler);
-							gl4::Cmd::BindImage(0, *indirectUnfilteredTex, 0);
-							gl4::MemoryBarrier(gl4::MemoryBarrierBit::TEXTURE_FETCH_BIT);
-							gl4::Cmd::DispatchInvocations(workSize);
+							gl::Cmd::BindSampledImage(0, i == 1 ? *indirectUnfilteredTexPrev : *indirectFilteredTex, nearestSampler);
+							gl::Cmd::BindImage(0, *indirectUnfilteredTex, 0);
+							gl::MemoryBarrier(gl::MemoryBarrierBit::TEXTURE_FETCH_BIT);
+							gl::Cmd::DispatchInvocations(workSize);
 
 							filterUniforms.direction = { 1, 0 };
 							filterUniformBuffer.UpdateData(filterUniforms);
-							gl4::Cmd::BindSampledImage(0, *indirectUnfilteredTex, nearestSampler);
-							gl4::Cmd::BindImage(0, *indirectFilteredTex, 0);
-							gl4::MemoryBarrier(gl4::MemoryBarrierBit::TEXTURE_FETCH_BIT);
-							gl4::Cmd::DispatchInvocations(workSize);
+							gl::Cmd::BindSampledImage(0, *indirectUnfilteredTex, nearestSampler);
+							gl::Cmd::BindImage(0, *indirectFilteredTex, 0);
+							gl::MemoryBarrier(gl::MemoryBarrierBit::TEXTURE_FETCH_BIT);
+							gl::Cmd::DispatchInvocations(workSize);
 						}
 					}
 					else
@@ -388,8 +388,8 @@ namespace RSM
 							filterUniformBuffer.UpdateData(filterUniforms);
 
 							// The output of the first filter pass gets stored in the history
-							const gl4::Texture* in{};
-							const gl4::Texture* out{};
+							const gl::Texture* in{};
+							const gl::Texture* out{};
 							if (i == 0)
 							{
 								in = &indirectFilteredTex.value();
@@ -411,10 +411,10 @@ namespace RSM
 								out = &indirectUnfilteredTex.value();
 							}
 
-							gl4::Cmd::BindSampledImage(0, *in, nearestSampler);
-							gl4::Cmd::BindImage(0, *out, 0);
-							gl4::MemoryBarrier(gl4::MemoryBarrierBit::TEXTURE_FETCH_BIT);
-							gl4::Cmd::DispatchInvocations(workSize);
+							gl::Cmd::BindSampledImage(0, *in, nearestSampler);
+							gl::Cmd::BindImage(0, *out, 0);
+							gl::MemoryBarrier(gl::MemoryBarrierBit::TEXTURE_FETCH_BIT);
+							gl::Cmd::DispatchInvocations(workSize);
 						}
 					}
 				}
@@ -425,65 +425,65 @@ namespace RSM
 					// No upscale required
 					if (inverseResolutionScale == 1)
 					{
-						gl4::ScopedDebugMarker marker2("Modulate Albedo");
+						gl::ScopedDebugMarker marker2("Modulate Albedo");
 
-						gl4::Cmd::BindComputePipeline(modulatePipeline);
-						gl4::Cmd::BindSampledImage(0, *indirectFilteredTex, nearestSampler);
-						gl4::Cmd::BindSampledImage(1, gAlbedo, nearestSampler);
-						gl4::Cmd::BindImage(0, *illuminationOutTex, 0);
-						gl4::MemoryBarrier(gl4::MemoryBarrierBit::TEXTURE_FETCH_BIT);
-						gl4::Cmd::DispatchInvocations(illuminationOutTex->Extent());
+						gl::Cmd::BindComputePipeline(modulatePipeline);
+						gl::Cmd::BindSampledImage(0, *indirectFilteredTex, nearestSampler);
+						gl::Cmd::BindSampledImage(1, gAlbedo, nearestSampler);
+						gl::Cmd::BindImage(0, *illuminationOutTex, 0);
+						gl::MemoryBarrier(gl::MemoryBarrierBit::TEXTURE_FETCH_BIT);
+						gl::Cmd::DispatchInvocations(illuminationOutTex->Extent());
 					}
 					else // Use bilateral upscale
 					{
-						gl4::ScopedDebugMarker marker2("Modulate Albedo (Upscale)");
+						gl::ScopedDebugMarker marker2("Modulate Albedo (Upscale)");
 
-						gl4::Cmd::BindComputePipeline(modulateUpscalePipeline);
+						gl::Cmd::BindComputePipeline(modulateUpscalePipeline);
 
 						if (!useSeparableFilter && (5 - int(std::log2f(float(inverseResolutionScale)))) % 2 == 0)
 						{
-							gl4::Cmd::BindSampledImage(0, *indirectUnfilteredTex, nearestSampler);
+							gl::Cmd::BindSampledImage(0, *indirectUnfilteredTex, nearestSampler);
 						}
 						else
 						{
-							gl4::Cmd::BindSampledImage(0, *indirectFilteredTex, nearestSampler);
+							gl::Cmd::BindSampledImage(0, *indirectFilteredTex, nearestSampler);
 						}
 
-						gl4::Cmd::BindSampledImage(1, gAlbedo, nearestSampler);
-						gl4::Cmd::BindSampledImage(2, gNormal, nearestSampler);
-						gl4::Cmd::BindSampledImage(3, gDepth, nearestSampler);
-						gl4::Cmd::BindSampledImage(4, *gNormalSmall, nearestSampler);
-						gl4::Cmd::BindSampledImage(5, *gDepthSmall, nearestSampler);
+						gl::Cmd::BindSampledImage(1, gAlbedo, nearestSampler);
+						gl::Cmd::BindSampledImage(2, gNormal, nearestSampler);
+						gl::Cmd::BindSampledImage(3, gDepth, nearestSampler);
+						gl::Cmd::BindSampledImage(4, *gNormalSmall, nearestSampler);
+						gl::Cmd::BindSampledImage(5, *gDepthSmall, nearestSampler);
 						filterUniforms.targetDim = { illuminationOutTex->Extent().width, illuminationOutTex->Extent().height };
 						filterUniformBuffer.UpdateData(filterUniforms);
-						gl4::Cmd::BindUniformBuffer(0, filterUniformBuffer);
-						gl4::Cmd::BindImage(0, *illuminationOutTex, 0);
-						gl4::MemoryBarrier(gl4::MemoryBarrierBit::TEXTURE_FETCH_BIT);
-						gl4::Cmd::DispatchInvocations(illuminationOutTex->Extent());
+						gl::Cmd::BindUniformBuffer(0, filterUniformBuffer);
+						gl::Cmd::BindImage(0, *illuminationOutTex, 0);
+						gl::MemoryBarrier(gl::MemoryBarrierBit::TEXTURE_FETCH_BIT);
+						gl::Cmd::DispatchInvocations(illuminationOutTex->Extent());
 					}
 				}
 				else
 				{
-					gl4::BlitTexture(*indirectFilteredTex,
+					gl::BlitTexture(*indirectFilteredTex,
 						*illuminationOutTex,
 						{},
 						{},
 						indirectFilteredTex->Extent(),
 						illuminationOutTex->Extent(),
-						gl4::MagFilter::Nearest);
+						gl::MagFilter::Nearest);
 				}
 			}
 			else // Unfiltered RSM: the original paper
 			{
-				gl4::Cmd::BindComputePipeline(rsmIndirectPipeline);
-				gl4::Cmd::BindSampledImage(1, gAlbedo, nearestSampler);
-				gl4::Cmd::BindSampledImage(2, gNormal, nearestSampler);
-				gl4::Cmd::BindSampledImage(3, gDepth, nearestSampler);
-				gl4::Cmd::BindSampledImage(4, rsmFlux, nearestSamplerClamped);
-				gl4::Cmd::BindSampledImage(5, rsmNormal, nearestSampler);
-				gl4::Cmd::BindSampledImage(6, rsmDepth, nearestSampler);
-				gl4::Cmd::BindSampledImage(0, *illuminationUpscaled, nearestSampler);
-				gl4::Cmd::BindImage(0, *illuminationUpscaled, 0);
+				gl::Cmd::BindComputePipeline(rsmIndirectPipeline);
+				gl::Cmd::BindSampledImage(1, gAlbedo, nearestSampler);
+				gl::Cmd::BindSampledImage(2, gNormal, nearestSampler);
+				gl::Cmd::BindSampledImage(3, gDepth, nearestSampler);
+				gl::Cmd::BindSampledImage(4, rsmFlux, nearestSamplerClamped);
+				gl::Cmd::BindSampledImage(5, rsmNormal, nearestSampler);
+				gl::Cmd::BindSampledImage(6, rsmDepth, nearestSampler);
+				gl::Cmd::BindSampledImage(0, *illuminationUpscaled, nearestSampler);
+				gl::Cmd::BindImage(0, *illuminationUpscaled, 0);
 
 				const auto workgroupSize = rsmIndirectFilteredPipeline.WorkgroupSize();
 				const auto workSize =
@@ -492,32 +492,32 @@ namespace RSM
 				// Quarter resolution indirect illumination pass
 				rsmUniforms.currentPass = 0;
 				rsmUniformBuffer.UpdateData(rsmUniforms);
-				gl4::MemoryBarrier(gl4::MemoryBarrierBit::TEXTURE_FETCH_BIT);
-				gl4::Cmd::DispatchInvocations(workSize);
+				gl::MemoryBarrier(gl::MemoryBarrierBit::TEXTURE_FETCH_BIT);
+				gl::Cmd::DispatchInvocations(workSize);
 
 				// Reconstruction pass 1
 				rsmUniforms.currentPass = 1;
 				rsmUniformBuffer.UpdateData(rsmUniforms);
-				gl4::MemoryBarrier(gl4::MemoryBarrierBit::TEXTURE_FETCH_BIT);
-				gl4::Cmd::DispatchInvocations(workSize);
+				gl::MemoryBarrier(gl::MemoryBarrierBit::TEXTURE_FETCH_BIT);
+				gl::Cmd::DispatchInvocations(workSize);
 
 				// Reconstruction pass 2
 				rsmUniforms.currentPass = 2;
 				rsmUniformBuffer.UpdateData(rsmUniforms);
-				gl4::MemoryBarrier(gl4::MemoryBarrierBit::TEXTURE_FETCH_BIT);
-				gl4::Cmd::DispatchInvocations(workSize);
+				gl::MemoryBarrier(gl::MemoryBarrierBit::TEXTURE_FETCH_BIT);
+				gl::Cmd::DispatchInvocations(workSize);
 
 				// Reconstruction pass 3
 				rsmUniforms.currentPass = 3;
 				rsmUniformBuffer.UpdateData(rsmUniforms);
-				gl4::MemoryBarrier(gl4::MemoryBarrierBit::TEXTURE_FETCH_BIT);
-				gl4::Cmd::DispatchInvocations(workSize);
+				gl::MemoryBarrier(gl::MemoryBarrierBit::TEXTURE_FETCH_BIT);
+				gl::Cmd::DispatchInvocations(workSize);
 			}
 		}
-		gl4::EndCompute();
+		gl::EndCompute();
 	}
 
-	gl4::Texture& RsmTechnique::GetIndirectLighting()
+	gl::Texture& RsmTechnique::GetIndirectLighting()
 	{
 		if (rsmFiltered)
 		{

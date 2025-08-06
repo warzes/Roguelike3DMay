@@ -76,22 +76,22 @@ void GameApp2::OnRender()
 	//-------------------------------------------------------------------------
 	// MAIN PASS
 	//-------------------------------------------------------------------------
-	auto finalColorAttachment = gl4::RenderColorAttachment{
+	auto finalColorAttachment = gl::RenderColorAttachment{
 		.texture = m_finalColorBuffer.value(),
-		.loadOp = gl4::AttachmentLoadOp::Clear,
+		.loadOp = gl::AttachmentLoadOp::Clear,
 		.clearValue = { 0.1f, 0.5f, 0.8f, 1.0f },
 	};
-	auto finalDepthAttachment = gl4::RenderDepthStencilAttachment{
+	auto finalDepthAttachment = gl::RenderDepthStencilAttachment{
 	  .texture = m_finalDepthBuffer.value(),
-	  .loadOp = gl4::AttachmentLoadOp::Clear,
+	  .loadOp = gl::AttachmentLoadOp::Clear,
 	  .clearValue = {.depth = 1.0f},
 	};
 
-	gl4::BeginRendering({ .colorAttachments = {&finalColorAttachment, 1}, .depthAttachment = finalDepthAttachment });
+	gl::BeginRendering({ .colorAttachments = {&finalColorAttachment, 1}, .depthAttachment = finalDepthAttachment });
 	{
 		m_renderWorld.StartMainRenderPass(m_camera, m_projection);
 	}
-	gl4::EndRendering();
+	gl::EndRendering();
 
 	//-------------------------------------------------------------------------
 	// END DRAW WORLD
@@ -101,7 +101,7 @@ void GameApp2::OnRender()
 	//-------------------------------------------------------------------------
 	// FINAL PASS
 	//-------------------------------------------------------------------------
-	gl4::BlitTextureToSwapchain(*m_finalColorBuffer, {}, {}, m_finalColorBuffer->Extent(), { GetWindowWidth(), GetWindowHeight(), 1 }, gl4::MagFilter::Nearest);
+	gl::BlitTextureToSwapchain(*m_finalColorBuffer, {}, {}, m_finalColorBuffer->Extent(), { GetWindowWidth(), GetWindowHeight(), 1 }, gl::MagFilter::Nearest);
 }
 //=============================================================================
 void GameApp2::OnImGuiDraw()
@@ -111,8 +111,8 @@ void GameApp2::OnImGuiDraw()
 //=============================================================================
 void GameApp2::OnResize(uint16_t width, uint16_t height)
 {
-	m_finalColorBuffer = gl4::CreateTexture2D({ width, height }, gl4::Format::R8G8B8A8_SRGB, "FinalColorBuffer");
-	m_finalDepthBuffer = gl4::CreateTexture2D({ width, height }, gl4::Format::D32_FLOAT,     "FinalDepthBuffer");
+	m_finalColorBuffer = gl::CreateTexture2D({ width, height }, gl::Format::R8G8B8A8_SRGB, "FinalColorBuffer");
+	m_finalDepthBuffer = gl::CreateTexture2D({ width, height }, gl::Format::D32_FLOAT,     "FinalDepthBuffer");
 
 	m_projection = glm::perspective(glm::radians(65.0f), GetWindowAspect(), 0.01f, 1000.0f);
 }

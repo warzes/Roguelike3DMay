@@ -244,8 +244,8 @@ void main()
 }
 )";
 
-	gl4::ShaderProgramId shader;
-	gl4::ShaderProgramId lightSphereShader;
+	gl::ShaderProgramId shader;
+	gl::ShaderProgramId lightSphereShader;
 
 	Camera camera;
 
@@ -262,8 +262,8 @@ EngineCreateInfo TestPBR::GetCreateInfo() const
 //=============================================================================
 bool TestPBR::OnInit()
 {
-	shader = gl4::CreateShaderProgram(shaderCodeVertex, shaderCodeFragment);
-	lightSphereShader = gl4::CreateShaderProgram(shaderLightCodeVertex, shaderLightCodeFragment);
+	shader = gl::CreateShaderProgram(shaderCodeVertex, shaderCodeFragment);
+	lightSphereShader = gl::CreateShaderProgram(shaderLightCodeVertex, shaderLightCodeFragment);
 
 	lights.emplace_back(glm::vec3(0.0f, 0.0f, 5.0f), glm::vec3(150.0f, 40.0f, 40.0f));
 	lights.emplace_back(glm::vec3(5.f, 0.0f, 5.0f), glm::vec3(40.0f, 150.0f, 40.0f));
@@ -335,7 +335,7 @@ void TestPBR::OnUpdate(float deltaTime)
 //=============================================================================
 void TestPBR::OnRender()
 {
-	gl4::SetFrameBuffer({ 0 }, GetWindowWidth(), GetWindowHeight(), GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	gl::SetFrameBuffer({ 0 }, GetWindowWidth(), GetWindowHeight(), GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glm::mat4 view = camera.GetViewMatrix();
 	glm::mat4 proj = glm::perspective(glm::radians(60.0f), GetWindowAspect(), 0.01f, 1000.0f);
@@ -343,26 +343,26 @@ void TestPBR::OnRender()
 	// вывод квада
 	{
 		glUseProgram(shader);
-		gl4::SetUniform(shader, "projection", proj);
-		gl4::SetUniform(shader, "view", view);
-		gl4::SetUniform(shader, "camPos", camera.Position);
+		gl::SetUniform(shader, "projection", proj);
+		gl::SetUniform(shader, "view", view);
+		gl::SetUniform(shader, "camPos", camera.Position);
 
 		for (unsigned int i = 0; i < lights.size(); ++i)
 		{
-			gl4::SetUniform(shader, "lightPositions[" + std::to_string(i) + "]", lights[i].Position);
-			gl4::SetUniform(shader, "lightColors[" + std::to_string(i) + "]", lights[i].Color);
+			gl::SetUniform(shader, "lightPositions[" + std::to_string(i) + "]", lights[i].Position);
+			gl::SetUniform(shader, "lightColors[" + std::to_string(i) + "]", lights[i].Color);
 		}
 
 		RenderScene(shader);
 
 		glUseProgram(lightSphereShader);
-		gl4::SetUniform(lightSphereShader, "projection", proj);
-		gl4::SetUniform(lightSphereShader, "view", view);
+		gl::SetUniform(lightSphereShader, "projection", proj);
+		gl::SetUniform(lightSphereShader, "view", view);
 		for (auto& l : lights)
 		{
-			gl4::SetUniform(lightSphereShader, "lightPosition", l.Position);
-			gl4::SetUniform(lightSphereShader, "radius", 0.4f);
-			gl4::SetUniform(lightSphereShader, "lightColor", l.Color);
+			gl::SetUniform(lightSphereShader, "lightPosition", l.Position);
+			gl::SetUniform(lightSphereShader, "radius", 0.4f);
+			gl::SetUniform(lightSphereShader, "lightColor", l.Color);
 			GetGraphicSystem().DrawQuad();
 		}
 
@@ -382,17 +382,17 @@ void TestPBR::OnResize(uint16_t width, uint16_t height)
 {
 }
 //=============================================================================
-void TestPBR::RenderScene(gl4::ShaderProgramId shader)
+void TestPBR::RenderScene(gl::ShaderProgramId shader)
 {
 	bool skipTextureBinding = false;
 
 	glm::mat4 modelMatrix = glm::mat4(1.0f);
-	gl4::SetUniform(shader, "model", modelMatrix);
+	gl::SetUniform(shader, "model", modelMatrix);
 	renderModel1->Draw(shader, skipTextureBinding);
 
 	modelMatrix = glm::mat4(1.0f);
 	modelMatrix = glm::translate(modelMatrix, glm::vec3(-2.5f, 0.0f, 0.0f));
-	gl4::SetUniform(shader, "model", modelMatrix);
+	gl::SetUniform(shader, "model", modelMatrix);
 	renderModel2->Draw(shader, skipTextureBinding);
 }
 //=============================================================================

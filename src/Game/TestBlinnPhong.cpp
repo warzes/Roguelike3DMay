@@ -67,15 +67,15 @@ void main()
 }
 )";
 
-	gl4::ShaderProgramId program;
+	gl::ShaderProgramId program;
 	int ViewLoc;
 	int ProjLoc;
 	int lightPosLoc;
 	int viewPosLoc;
 
 	GLuint texture;
-	gl4::BufferId vbo;
-	gl4::VertexArrayId vao;
+	gl::BufferId vbo;
+	gl::VertexArrayId vao;
 
 	Camera camera;
 
@@ -89,13 +89,13 @@ EngineCreateInfo TestBlinnPhong::GetCreateInfo() const
 //=============================================================================
 bool TestBlinnPhong::OnInit()
 {
-	program = gl4::CreateShaderProgram(shaderCodeVertex, shaderCodeFragment);
-	ViewLoc = gl4::GetUniformLocation(program, "view");
-	ProjLoc = gl4::GetUniformLocation(program, "projection");
-	lightPosLoc = gl4::GetUniformLocation(program, "lightPos");
-	viewPosLoc = gl4::GetUniformLocation(program, "viewPos");
+	program = gl::CreateShaderProgram(shaderCodeVertex, shaderCodeFragment);
+	ViewLoc = gl::GetUniformLocation(program, "view");
+	ProjLoc = gl::GetUniformLocation(program, "projection");
+	lightPosLoc = gl::GetUniformLocation(program, "lightPos");
+	viewPosLoc = gl::GetUniformLocation(program, "viewPos");
 
-	texture = gl4::LoadTexture2D("ExampleData/textures/wood.png", false);
+	texture = gl::LoadTexture2D("ExampleData/textures/wood.png", false);
 
 	struct Vertex
 	{
@@ -104,7 +104,7 @@ bool TestBlinnPhong::OnInit()
 		glm::vec2 uv;
 	};
 
-	std::vector<gl4::VertexAttributeRaw> attribs = {
+	std::vector<gl::VertexAttributeRaw> attribs = {
 		{0, 3, GL_FLOAT, false, offsetof(Vertex, pos)},
 		{1, 3, GL_FLOAT, false, offsetof(Vertex, normals)},
 		{2, 2, GL_FLOAT, false, offsetof(Vertex, uv)},
@@ -123,8 +123,8 @@ bool TestBlinnPhong::OnInit()
 	};
 
 
-	vbo = gl4::CreateBufferStorage(0, sizeof(vertices), vertices);
-	vao = gl4::CreateVertexArray(vbo, sizeof(Vertex), attribs);
+	vbo = gl::CreateBufferStorage(0, sizeof(vertices), vertices);
+	vao = gl::CreateVertexArray(vbo, sizeof(Vertex), attribs);
 
 	camera.SetPosition(glm::vec3(0.0f, 0.0f, -1.0f));
 
@@ -139,9 +139,9 @@ bool TestBlinnPhong::OnInit()
 void TestBlinnPhong::OnClose()
 {
 	glDeleteTextures(1, &texture);
-	gl4::Destroy(program);
-	gl4::Destroy(vbo);
-	gl4::Destroy(vao);
+	gl::Destroy(program);
+	gl::Destroy(vbo);
+	gl::Destroy(vao);
 }
 //=============================================================================
 void TestBlinnPhong::OnUpdate(float deltaTime)
@@ -169,7 +169,7 @@ void TestBlinnPhong::OnUpdate(float deltaTime)
 //=============================================================================
 void TestBlinnPhong::OnRender()
 {
-	gl4::SetFrameBuffer({ 0 }, GetWindowWidth(), GetWindowHeight(), GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	gl::SetFrameBuffer({ 0 }, GetWindowWidth(), GetWindowHeight(), GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glm::mat4 view = camera.GetViewMatrix();
 	glm::mat4 proj = glm::perspective(glm::radians(60.0f), GetWindowAspect(), 0.01f, 1000.0f);
@@ -177,11 +177,11 @@ void TestBlinnPhong::OnRender()
 	// вывод квада
 	{
 		glUseProgram(program);
-		gl4::SetUniform(program, ViewLoc, view);
-		gl4::SetUniform(program, ProjLoc, proj);
+		gl::SetUniform(program, ViewLoc, view);
+		gl::SetUniform(program, ProjLoc, proj);
 
-		gl4::SetUniform(program, lightPosLoc, lightPos);
-		gl4::SetUniform(program, viewPosLoc, camera.Position);
+		gl::SetUniform(program, lightPosLoc, lightPos);
+		gl::SetUniform(program, viewPosLoc, camera.Position);
 
 		glBindTextureUnit(0, texture);
 		glBindVertexArray(vao);

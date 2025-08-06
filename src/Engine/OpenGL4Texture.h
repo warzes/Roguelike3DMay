@@ -2,7 +2,7 @@
 
 #include "OpenGL4Core.h"
 
-namespace gl4
+namespace gl
 {
 	class Buffer;
 	struct CopyBufferToTextureInfo;
@@ -200,4 +200,4 @@ namespace gl4
 		TextureViewCreateInfo m_viewInfo{};
 	};
 
-} // namespace gl4
+} // namespace gl

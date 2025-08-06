@@ -103,35 +103,35 @@ namespace
 
 
 	static constexpr auto sceneInputBindingDescs = std::array{
-	  gl4::VertexInputBindingDescription{
+	  gl::VertexInputBindingDescription{
 			// position
 			.location = 0,
 			.binding = 0,
-			.format = gl4::Format::R32G32B32_FLOAT,
+			.format = gl::Format::R32G32B32_FLOAT,
 			.offset = offsetof(Vertex, position),
 		  },
-		  gl4::VertexInputBindingDescription{
+		  gl::VertexInputBindingDescription{
 			// normal
 			.location = 1,
 			.binding = 0,
-			.format = gl4::Format::R32G32B32_FLOAT,
+			.format = gl::Format::R32G32B32_FLOAT,
 			.offset = offsetof(Vertex, normal),
 		  },
-		  gl4::VertexInputBindingDescription{
+		  gl::VertexInputBindingDescription{
 			// texcoord
 			.location = 2,
 			.binding = 0,
-			.format = gl4::Format::R32G32_FLOAT,
+			.format = gl::Format::R32G32_FLOAT,
 			.offset = offsetof(Vertex, uv),
 		  },
 	};
 
-	gl4::GraphicsPipeline CreateScenePipeline()
+	gl::GraphicsPipeline CreateScenePipeline()
 	{
-		auto vs = gl4::Shader(gl4::PipelineStage::VertexShader, io::LoadFile("ExampleData/shaders/NewTest004/SceneDeferred.vert.glsl"));
-		auto fs = gl4::Shader(gl4::PipelineStage::FragmentShader, io::LoadFile("ExampleData/shaders/NewTest004/SceneDeferred.frag.glsl"));
+		auto vs = gl::Shader(gl::PipelineStage::VertexShader, io::LoadFile("ExampleData/shaders/NewTest004/SceneDeferred.vert.glsl"));
+		auto fs = gl::Shader(gl::PipelineStage::FragmentShader, io::LoadFile("ExampleData/shaders/NewTest004/SceneDeferred.frag.glsl"));
 
-		return gl4::GraphicsPipeline({
+		return gl::GraphicsPipeline({
 		  .vertexShader = &vs,
 		  .fragmentShader = &fs,
 		  .vertexInputState = {sceneInputBindingDescs},
@@ -139,12 +139,12 @@ namespace
 			});
 	}
 
-	gl4::GraphicsPipeline CreateShadowPipeline()
+	gl::GraphicsPipeline CreateShadowPipeline()
 	{
-		auto vs = gl4::Shader(gl4::PipelineStage::VertexShader, io::LoadFile("ExampleData/shaders/NewTest004/SceneDeferred.vert.glsl"));
-		auto fs = gl4::Shader(gl4::PipelineStage::FragmentShader, io::LoadFile("ExampleData/shaders/NewTest004/RSMScene.frag.glsl"));
+		auto vs = gl::Shader(gl::PipelineStage::VertexShader, io::LoadFile("ExampleData/shaders/NewTest004/SceneDeferred.vert.glsl"));
+		auto fs = gl::Shader(gl::PipelineStage::FragmentShader, io::LoadFile("ExampleData/shaders/NewTest004/RSMScene.frag.glsl"));
 
-		return gl4::GraphicsPipeline({
+		return gl::GraphicsPipeline({
 		  .vertexShader = &vs,
 		  .fragmentShader = &fs,
 		  .vertexInputState = {sceneInputBindingDescs},
@@ -152,27 +152,27 @@ namespace
 			});
 	}
 
-	gl4::GraphicsPipeline CreateShadingPipeline()
+	gl::GraphicsPipeline CreateShadingPipeline()
 	{
-		auto vs = gl4::Shader(gl4::PipelineStage::VertexShader, io::LoadFile("ExampleData/shaders/NewTest004/FullScreenTri.vert.glsl"));
-		auto fs = gl4::Shader(gl4::PipelineStage::FragmentShader, io::LoadFile("ExampleData/shaders/NewTest004/ShadeDeferred.frag.glsl"));
+		auto vs = gl::Shader(gl::PipelineStage::VertexShader, io::LoadFile("ExampleData/shaders/NewTest004/FullScreenTri.vert.glsl"));
+		auto fs = gl::Shader(gl::PipelineStage::FragmentShader, io::LoadFile("ExampleData/shaders/NewTest004/ShadeDeferred.frag.glsl"));
 
-		return gl4::GraphicsPipeline({
+		return gl::GraphicsPipeline({
 		  .vertexShader = &vs,
 		  .fragmentShader = &fs,
-		  .rasterizationState = {.cullMode = gl4::CullMode::None},
+		  .rasterizationState = {.cullMode = gl::CullMode::None},
 			});
 	}
 
-	gl4::GraphicsPipeline CreateDebugTexturePipeline()
+	gl::GraphicsPipeline CreateDebugTexturePipeline()
 	{
-		auto vs = gl4::Shader(gl4::PipelineStage::VertexShader, io::LoadFile("ExampleData/shaders/NewTest004/FullScreenTri.vert.glsl"));
-		auto fs = gl4::Shader(gl4::PipelineStage::FragmentShader, io::LoadFile("ExampleData/shaders/NewTest004/Texture.frag.glsl"));
+		auto vs = gl::Shader(gl::PipelineStage::VertexShader, io::LoadFile("ExampleData/shaders/NewTest004/FullScreenTri.vert.glsl"));
+		auto fs = gl::Shader(gl::PipelineStage::FragmentShader, io::LoadFile("ExampleData/shaders/NewTest004/Texture.frag.glsl"));
 
-		return gl4::GraphicsPipeline({
+		return gl::GraphicsPipeline({
 		  .vertexShader = &vs,
 		  .fragmentShader = &fs,
-		  .rasterizationState = {.cullMode = gl4::CullMode::None},
+		  .rasterizationState = {.cullMode = gl::CullMode::None},
 			});
 	}
 
@@ -193,48 +193,48 @@ namespace
 	struct Frame
 	{
 		// g-buffer textures
-		std::optional<gl4::Texture> gAlbedo;
-		std::optional<gl4::Texture> gNormal;
-		std::optional<gl4::Texture> gDepth;
-		std::optional<gl4::Texture> gNormalPrev;
-		std::optional<gl4::Texture> gDepthPrev;
-		std::optional<gl4::Texture> gMotion;
+		std::optional<gl::Texture> gAlbedo;
+		std::optional<gl::Texture> gNormal;
+		std::optional<gl::Texture> gDepth;
+		std::optional<gl::Texture> gNormalPrev;
+		std::optional<gl::Texture> gDepthPrev;
+		std::optional<gl::Texture> gMotion;
 		std::optional<RSM::RsmTechnique> rsm;
 
 		// For debug drawing with ImGui
-		std::optional<gl4::TextureView> gAlbedoSwizzled;
-		std::optional<gl4::TextureView> gNormalSwizzled;
-		std::optional<gl4::TextureView> gDepthSwizzled;
-		std::optional<gl4::TextureView> gRsmIlluminanceSwizzled;
+		std::optional<gl::TextureView> gAlbedoSwizzled;
+		std::optional<gl::TextureView> gNormalSwizzled;
+		std::optional<gl::TextureView> gDepthSwizzled;
+		std::optional<gl::TextureView> gRsmIlluminanceSwizzled;
 	};
 	Frame frame{};
 
 	// Buffers describing the scene's objects and geometry
-	std::optional<gl4::Buffer> vertexBuffer;
-	std::optional<gl4::Buffer> indexBuffer;
-	std::optional<gl4::Buffer> objectBuffer;
+	std::optional<gl::Buffer> vertexBuffer;
+	std::optional<gl::Buffer> indexBuffer;
+	std::optional<gl::Buffer> objectBuffer;
 
 	// Reflective shadow map textures
-	std::optional<gl4::Texture> rsmFlux;
-	std::optional<gl4::Texture> rsmNormal;
-	std::optional<gl4::Texture> rsmDepth;
+	std::optional<gl::Texture> rsmFlux;
+	std::optional<gl::Texture> rsmNormal;
+	std::optional<gl::Texture> rsmDepth;
 
 	// For debug drawing with ImGui
-	std::optional<gl4::TextureView> rsmFluxSwizzled;
-	std::optional<gl4::TextureView> rsmNormalSwizzled;
-	std::optional<gl4::TextureView> rsmDepthSwizzled;
+	std::optional<gl::TextureView> rsmFluxSwizzled;
+	std::optional<gl::TextureView> rsmNormalSwizzled;
+	std::optional<gl::TextureView> rsmDepthSwizzled;
 
 	ShadingUniforms shadingUniforms;
 	GlobalUniforms globalUniforms{};
 	uint64_t frameIndex = 0;
 
-	std::optional<gl4::TypedBuffer<GlobalUniforms>> globalUniformsBuffer;
-	std::optional<gl4::TypedBuffer<ShadingUniforms>> shadingUniformsBuffer;
+	std::optional<gl::TypedBuffer<GlobalUniforms>> globalUniformsBuffer;
+	std::optional<gl::TypedBuffer<ShadingUniforms>> shadingUniformsBuffer;
 
-	std::optional<gl4::GraphicsPipeline> scenePipeline;
-	std::optional<gl4::GraphicsPipeline> rsmScenePipeline;
-	std::optional<gl4::GraphicsPipeline> shadingPipeline;
-	std::optional<gl4::GraphicsPipeline> debugTexturePipeline;
+	std::optional<gl::GraphicsPipeline> scenePipeline;
+	std::optional<gl::GraphicsPipeline> rsmScenePipeline;
+	std::optional<gl::GraphicsPipeline> shadingPipeline;
+	std::optional<gl::GraphicsPipeline> debugTexturePipeline;
 
 	Camera mainCamera;
 
@@ -242,20 +242,20 @@ namespace
 	void resize(uint16_t width, uint16_t height)
 	{
 		// create gbuffer textures and render info
-		frame.gAlbedo = gl4::CreateTexture2D({ width, height }, gl4::Format::R8G8B8A8_SRGB);
-		frame.gNormal = gl4::CreateTexture2D({ width, height }, gl4::Format::R16G16B16_SNORM);
-		frame.gDepth = gl4::CreateTexture2D({ width, height }, gl4::Format::D32_UNORM);
-		frame.gNormalPrev = gl4::CreateTexture2D({ width, height }, gl4::Format::R16G16B16_SNORM);
-		frame.gDepthPrev = gl4::CreateTexture2D({ width, height }, gl4::Format::D32_UNORM);
-		frame.gMotion = gl4::CreateTexture2D({ width, height }, gl4::Format::R16G16_FLOAT);
+		frame.gAlbedo = gl::CreateTexture2D({ width, height }, gl::Format::R8G8B8A8_SRGB);
+		frame.gNormal = gl::CreateTexture2D({ width, height }, gl::Format::R16G16B16_SNORM);
+		frame.gDepth = gl::CreateTexture2D({ width, height }, gl::Format::D32_UNORM);
+		frame.gNormalPrev = gl::CreateTexture2D({ width, height }, gl::Format::R16G16B16_SNORM);
+		frame.gDepthPrev = gl::CreateTexture2D({ width, height }, gl::Format::D32_UNORM);
+		frame.gMotion = gl::CreateTexture2D({ width, height }, gl::Format::R16G16_FLOAT);
 
 		frame.rsm = RSM::RsmTechnique(width, height);
 
 		// create debug views
-		frame.gAlbedoSwizzled = frame.gAlbedo->CreateSwizzleView({ .a = gl4::ComponentSwizzle::ONE });
-		frame.gNormalSwizzled = frame.gNormal->CreateSwizzleView({ .a = gl4::ComponentSwizzle::ONE });
-		frame.gDepthSwizzled = frame.gDepth->CreateSwizzleView({ .a = gl4::ComponentSwizzle::ONE });
-		frame.gRsmIlluminanceSwizzled = frame.rsm->GetIndirectLighting().CreateSwizzleView({ .a = gl4::ComponentSwizzle::ONE });
+		frame.gAlbedoSwizzled = frame.gAlbedo->CreateSwizzleView({ .a = gl::ComponentSwizzle::ONE });
+		frame.gNormalSwizzled = frame.gNormal->CreateSwizzleView({ .a = gl::ComponentSwizzle::ONE });
+		frame.gDepthSwizzled = frame.gDepth->CreateSwizzleView({ .a = gl::ComponentSwizzle::ONE });
+		frame.gRsmIlluminanceSwizzled = frame.rsm->GetIndirectLighting().CreateSwizzleView({ .a = gl::ComponentSwizzle::ONE });
 	}
 }
 //=============================================================================
@@ -267,15 +267,15 @@ EngineCreateInfo NewTest004::GetCreateInfo() const
 bool NewTest004::OnInit()
 {
 	// Create RSM textures
-	rsmFlux = gl4::CreateTexture2D({ gShadowmapWidth, gShadowmapHeight }, gl4::Format::R11G11B10_FLOAT);
-	rsmNormal = gl4::CreateTexture2D({ gShadowmapWidth, gShadowmapHeight }, gl4::Format::R16G16B16_SNORM);
-	rsmDepth = gl4::CreateTexture2D({ gShadowmapWidth, gShadowmapHeight }, gl4::Format::D16_UNORM);
-	rsmFluxSwizzled = rsmFlux->CreateSwizzleView({ .a = gl4::ComponentSwizzle::ONE });
-	rsmNormalSwizzled = rsmNormal->CreateSwizzleView({ .a = gl4::ComponentSwizzle::ONE });
-	rsmDepthSwizzled = rsmDepth->CreateSwizzleView({ .a = gl4::ComponentSwizzle::ONE });
+	rsmFlux = gl::CreateTexture2D({ gShadowmapWidth, gShadowmapHeight }, gl::Format::R11G11B10_FLOAT);
+	rsmNormal = gl::CreateTexture2D({ gShadowmapWidth, gShadowmapHeight }, gl::Format::R16G16B16_SNORM);
+	rsmDepth = gl::CreateTexture2D({ gShadowmapWidth, gShadowmapHeight }, gl::Format::D16_UNORM);
+	rsmFluxSwizzled = rsmFlux->CreateSwizzleView({ .a = gl::ComponentSwizzle::ONE });
+	rsmNormalSwizzled = rsmNormal->CreateSwizzleView({ .a = gl::ComponentSwizzle::ONE });
+	rsmDepthSwizzled = rsmDepth->CreateSwizzleView({ .a = gl::ComponentSwizzle::ONE });
 	// Create constant-size buffers
-	globalUniformsBuffer = gl4::TypedBuffer<GlobalUniforms>(gl4::BufferStorageFlag::DynamicStorage);
-	shadingUniformsBuffer = gl4::TypedBuffer<ShadingUniforms>(gl4::BufferStorageFlag::DynamicStorage);
+	globalUniformsBuffer = gl::TypedBuffer<GlobalUniforms>(gl::BufferStorageFlag::DynamicStorage);
+	shadingUniformsBuffer = gl::TypedBuffer<ShadingUniforms>(gl::BufferStorageFlag::DynamicStorage);
 	// Create the pipelines used in the application
 	scenePipeline = CreateScenePipeline();
 	rsmScenePipeline = CreateShadowPipeline();
@@ -309,7 +309,7 @@ bool NewTest004::OnInit()
 
 	vertexBuffer.emplace(gCubeVertices);
 	indexBuffer.emplace(gCubeIndices);
-	objectBuffer.emplace(std::span(objectUniforms), gl4::BufferStorageFlag::DynamicStorage);
+	objectBuffer.emplace(std::span(objectUniforms), gl::BufferStorageFlag::DynamicStorage);
 
 	mainCamera.SetPosition(glm::vec3{ 0, .5, -1 });
 
@@ -374,97 +374,97 @@ void NewTest004::OnRender()
 	shadingUniforms.sunViewProj = projtemp * glm::lookAt(eye, glm::vec3(0), glm::vec3{ 0, 1, 0 });
 	shadingUniformsBuffer->UpdateData(shadingUniforms);
 
-	gl4::SamplerState ss;
-	ss.minFilter = gl4::MinFilter::Nearest;
-	ss.magFilter = gl4::MagFilter::Nearest;
-	ss.addressModeU = gl4::AddressMode::Repeat;
-	ss.addressModeV = gl4::AddressMode::Repeat;
-	auto nearestSampler = gl4::Sampler(ss);
+	gl::SamplerState ss;
+	ss.minFilter = gl::MinFilter::Nearest;
+	ss.magFilter = gl::MagFilter::Nearest;
+	ss.addressModeU = gl::AddressMode::Repeat;
+	ss.addressModeV = gl::AddressMode::Repeat;
+	auto nearestSampler = gl::Sampler(ss);
 
 	// Render scene geometry to the g-buffer
 	// DontCare indicates that the previous contents can be discarded before rendering
-	auto gAlbedoAttachment = gl4::RenderColorAttachment{
+	auto gAlbedoAttachment = gl::RenderColorAttachment{
 	  .texture = frame.gAlbedo.value(),
-	  .loadOp = gl4::AttachmentLoadOp::DontCare,
+	  .loadOp = gl::AttachmentLoadOp::DontCare,
 	};
-	auto gNormalAttachment = gl4::RenderColorAttachment{
+	auto gNormalAttachment = gl::RenderColorAttachment{
 	  .texture = frame.gNormal.value(),
-	  .loadOp = gl4::AttachmentLoadOp::DontCare,
+	  .loadOp = gl::AttachmentLoadOp::DontCare,
 	};
-	auto gMotionAttachment = gl4::RenderColorAttachment{
+	auto gMotionAttachment = gl::RenderColorAttachment{
 	  .texture = frame.gMotion.value(),
-	  .loadOp = gl4::AttachmentLoadOp::Clear,
+	  .loadOp = gl::AttachmentLoadOp::Clear,
 	  .clearValue = glm::vec4{0.0f},
 	};
-	auto gDepthAttachment = gl4::RenderDepthStencilAttachment{
+	auto gDepthAttachment = gl::RenderDepthStencilAttachment{
 	  .texture = frame.gDepth.value(),
-	  .loadOp = gl4::AttachmentLoadOp::Clear,
+	  .loadOp = gl::AttachmentLoadOp::Clear,
 	  .clearValue = {.depth = 1.0f},
 	};
-	gl4::RenderColorAttachment cgAttachments[] = { gAlbedoAttachment, gNormalAttachment, gMotionAttachment };
+	gl::RenderColorAttachment cgAttachments[] = { gAlbedoAttachment, gNormalAttachment, gMotionAttachment };
 
-	gl4::BeginRendering({
+	gl::BeginRendering({
 		  .name = "Base Pass",
 		  .colorAttachments = cgAttachments,
 		  .depthAttachment = gDepthAttachment,
 		});
 	{
-		gl4::Cmd::BindGraphicsPipeline(scenePipeline.value());
-		gl4::Cmd::BindVertexBuffer(0, *vertexBuffer, 0, sizeof(Vertex));
-		gl4::Cmd::BindIndexBuffer(*indexBuffer, gl4::IndexType::UNSIGNED_SHORT);
-		gl4::Cmd::BindUniformBuffer(0, globalUniformsBuffer.value());
-		gl4::Cmd::BindStorageBuffer(1, *objectBuffer);
-		gl4::Cmd::DrawIndexed(static_cast<uint32_t>(gCubeIndices.size()), sceneInstanceCount, 0, 0, 0);
+		gl::Cmd::BindGraphicsPipeline(scenePipeline.value());
+		gl::Cmd::BindVertexBuffer(0, *vertexBuffer, 0, sizeof(Vertex));
+		gl::Cmd::BindIndexBuffer(*indexBuffer, gl::IndexType::UNSIGNED_SHORT);
+		gl::Cmd::BindUniformBuffer(0, globalUniformsBuffer.value());
+		gl::Cmd::BindStorageBuffer(1, *objectBuffer);
+		gl::Cmd::DrawIndexed(static_cast<uint32_t>(gCubeIndices.size()), sceneInstanceCount, 0, 0, 0);
 	}
-	gl4::EndRendering();
+	gl::EndRendering();
 
 
 	globalUniforms.viewProj = shadingUniforms.sunViewProj;
 	globalUniformsBuffer->UpdateData(globalUniforms);
 
 	// Shadow map (RSM) scene pass
-	auto rcolorAttachment = gl4::RenderColorAttachment{
+	auto rcolorAttachment = gl::RenderColorAttachment{
 	  .texture = rsmFlux.value(),
-	  .loadOp = gl4::AttachmentLoadOp::DontCare,
+	  .loadOp = gl::AttachmentLoadOp::DontCare,
 	};
-	auto rnormalAttachment = gl4::RenderColorAttachment{
+	auto rnormalAttachment = gl::RenderColorAttachment{
 	  .texture = rsmNormal.value(),
-	  .loadOp = gl4::AttachmentLoadOp::DontCare,
+	  .loadOp = gl::AttachmentLoadOp::DontCare,
 	};
-	auto rdepthAttachment = gl4::RenderDepthStencilAttachment{
+	auto rdepthAttachment = gl::RenderDepthStencilAttachment{
 	  .texture = rsmDepth.value(),
-	  .loadOp = gl4::AttachmentLoadOp::Clear,
+	  .loadOp = gl::AttachmentLoadOp::Clear,
 	  .clearValue = {.depth = 1.0f},
 	};
-	gl4::RenderColorAttachment crAttachments[] = { rcolorAttachment, rnormalAttachment };
+	gl::RenderColorAttachment crAttachments[] = { rcolorAttachment, rnormalAttachment };
 
-	gl4::BeginRendering({
+	gl::BeginRendering({
 		  .name = "RSM Scene",
 		  .colorAttachments = crAttachments,
 		  .depthAttachment = rdepthAttachment,
 		});
 	{
-		gl4::Cmd::BindGraphicsPipeline(rsmScenePipeline.value());
-		gl4::Cmd::BindVertexBuffer(0, *vertexBuffer, 0, sizeof(Vertex));
-		gl4::Cmd::BindIndexBuffer(*indexBuffer, gl4::IndexType::UNSIGNED_SHORT);
-		gl4::Cmd::BindUniformBuffer(0, globalUniformsBuffer.value());
-		gl4::Cmd::BindUniformBuffer(1, shadingUniformsBuffer.value());
-		gl4::Cmd::BindStorageBuffer(1, *objectBuffer);
-		gl4::Cmd::DrawIndexed(static_cast<uint32_t>(gCubeIndices.size()), sceneInstanceCount, 0, 0, 0);
+		gl::Cmd::BindGraphicsPipeline(rsmScenePipeline.value());
+		gl::Cmd::BindVertexBuffer(0, *vertexBuffer, 0, sizeof(Vertex));
+		gl::Cmd::BindIndexBuffer(*indexBuffer, gl::IndexType::UNSIGNED_SHORT);
+		gl::Cmd::BindUniformBuffer(0, globalUniformsBuffer.value());
+		gl::Cmd::BindUniformBuffer(1, shadingUniformsBuffer.value());
+		gl::Cmd::BindStorageBuffer(1, *objectBuffer);
+		gl::Cmd::DrawIndexed(static_cast<uint32_t>(gCubeIndices.size()), sceneInstanceCount, 0, 0, 0);
 	}
-	gl4::EndRendering();
+	gl::EndRendering();
 
 	globalUniforms.viewProj = viewProj;
 	globalUniforms.invViewProj = glm::inverse(viewProj);
 	globalUniformsBuffer->UpdateData(globalUniforms);
 
 	{
-		static gl4::TimerQueryAsync timer(5);
+		static gl::TimerQueryAsync timer(5);
 		if (auto t = timer.PopTimestamp())
 		{
 			illuminationTime = *t / 10e5;
 		}
-		gl4::TimerScoped scopedTimer(timer);
+		gl::TimerScoped scopedTimer(timer);
 
 		auto rsmCameraUniforms = RSM::CameraUniforms{
 		  .viewProj = viewProj,
@@ -488,31 +488,31 @@ void NewTest004::OnRender()
 	}
 
 	// shading pass (full screen tri)
-	gl4::BeginSwapChainRendering({
+	gl::BeginSwapChainRendering({
 		  .name = "Shading",
 		  .viewport =
-			gl4::Viewport{
+			gl::Viewport{
 			  .drawRect{.offset = {0, 0}, .extent = {GetWindowWidth(), GetWindowHeight()}},
 			  .minDepth = 0.0f,
 			  .maxDepth = 1.0f,
 			},
-		  .colorLoadOp = gl4::AttachmentLoadOp::Clear,
+		  .colorLoadOp = gl::AttachmentLoadOp::Clear,
 		  .clearColorValue = {.1f, .3f, .5f, 0.0f},
-		  .depthLoadOp = gl4::AttachmentLoadOp::DontCare,
-		  .stencilLoadOp = gl4::AttachmentLoadOp::DontCare,
+		  .depthLoadOp = gl::AttachmentLoadOp::DontCare,
+		  .stencilLoadOp = gl::AttachmentLoadOp::DontCare,
 		});
 	{
-		gl4::Cmd::BindGraphicsPipeline(shadingPipeline.value());
-		gl4::Cmd::BindSampledImage(0, *frame.gAlbedo, nearestSampler);
-		gl4::Cmd::BindSampledImage(1, *frame.gNormal, nearestSampler);
-		gl4::Cmd::BindSampledImage(2, *frame.gDepth, nearestSampler);
-		gl4::Cmd::BindSampledImage(3, frame.rsm->GetIndirectLighting(), nearestSampler);
-		gl4::Cmd::BindSampledImage(4, rsmDepth.value(), nearestSampler);
-		gl4::Cmd::BindUniformBuffer(0, globalUniformsBuffer.value());
-		gl4::Cmd::BindUniformBuffer(1, shadingUniformsBuffer.value());
-		gl4::Cmd::Draw(3, 1, 0, 0);
+		gl::Cmd::BindGraphicsPipeline(shadingPipeline.value());
+		gl::Cmd::BindSampledImage(0, *frame.gAlbedo, nearestSampler);
+		gl::Cmd::BindSampledImage(1, *frame.gNormal, nearestSampler);
+		gl::Cmd::BindSampledImage(2, *frame.gDepth, nearestSampler);
+		gl::Cmd::BindSampledImage(3, frame.rsm->GetIndirectLighting(), nearestSampler);
+		gl::Cmd::BindSampledImage(4, rsmDepth.value(), nearestSampler);
+		gl::Cmd::BindUniformBuffer(0, globalUniformsBuffer.value());
+		gl::Cmd::BindUniformBuffer(1, shadingUniformsBuffer.value());
+		gl::Cmd::Draw(3, 1, 0, 0);
 
-		const gl4::Texture* tex{};
+		const gl::Texture* tex{};
 		if (glfwGetKey(GetGLFWWindow(), GLFW_KEY_F1) == GLFW_PRESS)
 			tex = &frame.gAlbedo.value();
 		if (glfwGetKey(GetGLFWWindow(), GLFW_KEY_F2) == GLFW_PRESS)
@@ -523,12 +523,12 @@ void NewTest004::OnRender()
 			tex = &frame.rsm->GetIndirectLighting();
 		if (tex)
 		{
-			gl4::Cmd::BindGraphicsPipeline(debugTexturePipeline.value());
-			gl4::Cmd::BindSampledImage(0, *tex, nearestSampler);
-			gl4::Cmd::Draw(3, 1, 0, 0);
+			gl::Cmd::BindGraphicsPipeline(debugTexturePipeline.value());
+			gl::Cmd::BindSampledImage(0, *tex, nearestSampler);
+			gl::Cmd::Draw(3, 1, 0, 0);
 		}
 	}
-	gl4::EndRendering();
+	gl::EndRendering();
 }
 //=============================================================================
 void NewTest004::OnImGuiDraw()

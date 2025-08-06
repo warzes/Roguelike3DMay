@@ -1,6 +1,6 @@
-#pragma once
+﻿#pragma once
 
-namespace gl4
+namespace gl
 {
 	class ScopedDebugMarker final
 	{
@@ -12,4 +12,4 @@ namespace gl4
 
 		ScopedDebugMarker& operator=(const ScopedDebugMarker&) = delete;
 	};
-} // namespace gl4
+} // namespace gl

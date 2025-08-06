@@ -2,7 +2,7 @@
 
 #include "OpenGL4Simple.h"
 
-namespace gl4
+namespace gl
 {
 	class Query final
 	{

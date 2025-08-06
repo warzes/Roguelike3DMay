@@ -32,8 +32,8 @@ private:
 	void drawModel(GameModelOld& model);
 	void drawModel(std::optional<GameModel> model);
 
-	std::optional<gl4::Texture> m_finalColorBuffer;
-	std::optional<gl4::Texture> m_finalDepthBuffer;
+	std::optional<gl::Texture> m_finalColorBuffer;
+	std::optional<gl::Texture> m_finalDepthBuffer;
 
 	Camera                      m_camera;
 	glm::mat4                   m_projection;
@@ -43,14 +43,14 @@ private:
 
 	std::optional<GameModel> m_model3;
 
-	std::optional<gl4::GraphicsPipeline>              m_pipeline;
-	std::optional<gl4::TypedBuffer<GlobalUniforms>>   m_globalUbo;
+	std::optional<gl::GraphicsPipeline>              m_pipeline;
+	std::optional<gl::TypedBuffer<GlobalUniforms>>   m_globalUbo;
 	GlobalUniforms                                    m_globalUboData;
-	std::optional<gl4::TypedBuffer<ObjectUniforms>>   m_objectUbo;
+	std::optional<gl::TypedBuffer<ObjectUniforms>>   m_objectUbo;
 	ObjectUniforms                                    m_objectUboData;
-	std::optional<gl4::TypedBuffer<MaterialUniforms>> m_materialUbo;
+	std::optional<gl::TypedBuffer<MaterialUniforms>> m_materialUbo;
 	MaterialUniforms                                  m_materialUboData;
 
-	std::optional<gl4::Sampler>                       m_nearestSampler;
-	std::optional<gl4::Sampler>                       m_linearSampler;
+	std::optional<gl::Sampler>                       m_nearestSampler;
+	std::optional<gl::Sampler>                       m_linearSampler;
 };

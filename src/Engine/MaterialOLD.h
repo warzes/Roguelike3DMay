@@ -4,7 +4,7 @@
 
 struct TextureFile final
 {
-	gl4::Texture2DId id;
+	gl::Texture2DId id;
 	std::string name;
 };
 

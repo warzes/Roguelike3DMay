@@ -161,11 +161,11 @@ MeshOLD ModelOLD::processMesh(const aiMesh* mesh, const aiScene* scene, const gl
 
 			if (!m_textureMap.contains(key)) // Make sure never loaded before
 			{
-				gl4::TextureParameter param = gl4::defaultTextureParameter2D;
+				gl::TextureParameter param = gl::defaultTextureParameter2D;
 				param.genMipMap = true;
 
 				TextureFile texture;
-				texture.id = gl4::LoadTexture2D((m_directory + '/' + str.C_Str()).c_str(), false, param);
+				texture.id = gl::LoadTexture2D((m_directory + '/' + str.C_Str()).c_str(), false, param);
 				texture.name = str.C_Str();
 				m_textureMap[key] = texture;
 			}

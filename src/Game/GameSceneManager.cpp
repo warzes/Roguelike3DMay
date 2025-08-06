@@ -27,7 +27,7 @@ bool GameSceneManager::Init()
 	if (!m_shadowPassMgr.Init())
 		return false;
 
-	m_sceneUniformUbo = gl4::TypedBuffer<sceneUBO::SceneUniforms>(gl4::BufferStorageFlag::DynamicStorage);
+	m_sceneUniformUbo = gl::TypedBuffer<sceneUBO::SceneUniforms>(gl::BufferStorageFlag::DynamicStorage);
 
 	m_lights.resize(3);
 
@@ -54,7 +54,7 @@ bool GameSceneManager::Init()
 	m_lights[2].quadratic = 0.44f;
 	m_lights[2].ambient = glm::vec3(0.01f);
 
-	m_lightSSBO.emplace(std::span(m_lights), gl4::BufferStorageFlag::DynamicStorage);
+	m_lightSSBO.emplace(std::span(m_lights), gl::BufferStorageFlag::DynamicStorage);
 
 	return true;
 }
@@ -85,17 +85,17 @@ void GameSceneManager::Draw(Camera& cam)
 	sceneUbo.lightPos = m_shadowPassMgr.GetShadowPass().lightPos;
 	m_sceneUniformUbo->UpdateData(sceneUbo);
 
-	gl4::Cmd::BindUniformBuffer(1, m_sceneUniformUbo.value());
-	gl4::Cmd::BindStorageBuffer(0, *m_lightSSBO);
+	gl::Cmd::BindUniformBuffer(1, m_sceneUniformUbo.value());
+	gl::Cmd::BindStorageBuffer(0, *m_lightSSBO);
 	m_modelManager.Draw(cam, m_shadowPassMgr);
 }
 //=============================================================================
 void GameSceneManager::DrawInDepth(Camera& cam)
 {
-	gl4::BeginRendering(*m_shadowPassMgr.GetShadowPass().viewport);
+	gl::BeginRendering(*m_shadowPassMgr.GetShadowPass().viewport);
 	{
 		m_modelManager.DrawInDepth(cam, m_shadowPassMgr);
 	}
-	gl4::EndRendering();
+	gl::EndRendering();
 }
 //=============================================================================

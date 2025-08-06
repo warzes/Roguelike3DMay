@@ -19,8 +19,8 @@ namespace Utility
 
 	struct CombinedTextureSampler
 	{
-		gl4::TextureView texture;
-		gl4::SamplerState sampler;
+		gl::TextureView texture;
+		gl::SamplerState sampler;
 	};
 
 	enum class MaterialFlagBit
@@ -55,8 +55,8 @@ namespace Utility
 	struct Mesh
 	{
 		//const GeometryBuffers* buffers;
-		gl4::Buffer vertexBuffer;
-		gl4::Buffer indexBuffer;
+		gl::Buffer vertexBuffer;
+		gl::Buffer indexBuffer;
 		uint32_t materialIdx{};
 		glm::mat4 transform{};
 	};
@@ -83,8 +83,8 @@ namespace Utility
 		std::vector<Vertex> vertices;
 		std::vector<index_t> indices;
 		std::vector<GpuMaterialBindless> materials;
-		std::vector<gl4::Texture> textures;
-		std::vector<gl4::SamplerState> samplers;
+		std::vector<gl::Texture> textures;
+		std::vector<gl::SamplerState> samplers;
 	};
 
 	bool LoadModelFromFile(Scene& scene,

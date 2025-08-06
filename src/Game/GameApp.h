@@ -32,8 +32,8 @@ private:
 
 	Camera           m_camera;
 
-	std::optional<gl4::Texture> m_colorBuffer;
-	std::optional<gl4::Texture> m_depthBuffer;
+	std::optional<gl::Texture> m_colorBuffer;
+	std::optional<gl::Texture> m_depthBuffer;
 
 	GameModelOld        m_model1;
 	GameModelOld        m_model2;

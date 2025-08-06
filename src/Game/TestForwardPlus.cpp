@@ -62,9 +62,9 @@ void main() {
 
 	DepthPrepass depthPrepass;
 	
-	gl4::ShaderProgramId depthDebugProgram;
+	gl::ShaderProgramId depthDebugProgram;
 	
-	gl4::ShaderProgramId lightCullingProgram;
+	gl::ShaderProgramId lightCullingProgram;
 	int lightCullingInvViewProjectionLoc;
 	int lightCullingCamPosLoc;
 	int lightCullingLightCountLoc;
@@ -72,7 +72,7 @@ void main() {
 	int lightCullingTileNumsLoc;
 
 
-	gl4::ShaderProgramId lightProgram;
+	gl::ShaderProgramId lightProgram;
 	int lightProgramProjectionLoc;
 	int lightProgramViewLoc;
 	int lightProgramModelLoc;
@@ -97,7 +97,7 @@ void main() {
 	GLuint tileCountPerRow;
 	GLuint tileCountPerCol;
 
-	gl4::FrameBufferId renderFBO;
+	gl::FrameBufferId renderFBO;
 	GLuint rboColorBuffer;
 	GLuint rboDepthBuffer;
 
@@ -113,7 +113,7 @@ void main() {
 	{
 		if (rboColorBuffer) glDeleteRenderbuffers(1, &rboColorBuffer);
 		if (rboDepthBuffer) glDeleteRenderbuffers(1, &rboDepthBuffer);
-		if (renderFBO) gl4::Destroy(renderFBO);
+		if (renderFBO) gl::Destroy(renderFBO);
 
 		glCreateRenderbuffers(1, &rboColorBuffer);
 		glNamedRenderbufferStorage(rboColorBuffer, GL_RGB32F, width, height);
@@ -194,31 +194,31 @@ bool TestForwardPlus::OnInit()
 	GLuint tilesCount = tileCountPerRow * tileCountPerCol;
 
 	depthPrepass.Create(GetWindowWidth(), GetWindowHeight());
-	depthDebugProgram = gl4::CreateShaderProgram(depthDebugShaderCodeVertex, depthDebugShaderCodeFragment);
-	lightCullingProgram = gl4::CreateShaderProgram(io::ReadShaderCode("ExampleData/shaders/TestForwardPlus/lightculling.comp", {}).c_str());
+	depthDebugProgram = gl::CreateShaderProgram(depthDebugShaderCodeVertex, depthDebugShaderCodeFragment);
+	lightCullingProgram = gl::CreateShaderProgram(io::ReadShaderCode("ExampleData/shaders/TestForwardPlus/lightculling.comp", {}).c_str());
 
-	lightCullingInvViewProjectionLoc = gl4::GetUniformLocation(lightCullingProgram, "invViewProjection");
-	lightCullingCamPosLoc = gl4::GetUniformLocation(lightCullingProgram, "cameraPosition");
-	lightCullingLightCountLoc = gl4::GetUniformLocation(lightCullingProgram, "lightNum");
-	lightCullingViewportSizeLoc = gl4::GetUniformLocation(lightCullingProgram, "viewportSize");
-	lightCullingTileNumsLoc = gl4::GetUniformLocation(lightCullingProgram, "tileNums");
+	lightCullingInvViewProjectionLoc = gl::GetUniformLocation(lightCullingProgram, "invViewProjection");
+	lightCullingCamPosLoc = gl::GetUniformLocation(lightCullingProgram, "cameraPosition");
+	lightCullingLightCountLoc = gl::GetUniformLocation(lightCullingProgram, "lightNum");
+	lightCullingViewportSizeLoc = gl::GetUniformLocation(lightCullingProgram, "viewportSize");
+	lightCullingTileNumsLoc = gl::GetUniformLocation(lightCullingProgram, "tileNums");
 
-	lightProgram = gl4::CreateShaderProgram(
+	lightProgram = gl::CreateShaderProgram(
 		io::ReadShaderCode("ExampleData/shaders/TestForwardPlus/forwardplus.vert", {}).c_str(), 
 		io::ReadShaderCode("ExampleData/shaders/TestForwardPlus/forwardplus.frag", {}).c_str());
 
-	lightProgramProjectionLoc = gl4::GetUniformLocation(lightProgram, "projection");
-	lightProgramViewLoc = gl4::GetUniformLocation(lightProgram, "view");
-	lightProgramModelLoc = gl4::GetUniformLocation(lightProgram, "model");
-	lightProgramProjViewLoc = gl4::GetUniformLocation(lightProgram, "projView");
-	lightProgramViewPositionLoc = gl4::GetUniformLocation(lightProgram, "viewPosition");
-	lightProgramViewportSizeLoc = gl4::GetUniformLocation(lightProgram, "viewportSize");
-	lightProgramTileNumsLoc = gl4::GetUniformLocation(lightProgram, "tileNums");
-	lightProgramLightDebugLoc = gl4::GetUniformLocation(lightProgram, "debugViewIndex");
+	lightProgramProjectionLoc = gl::GetUniformLocation(lightProgram, "projection");
+	lightProgramViewLoc = gl::GetUniformLocation(lightProgram, "view");
+	lightProgramModelLoc = gl::GetUniformLocation(lightProgram, "model");
+	lightProgramProjViewLoc = gl::GetUniformLocation(lightProgram, "projView");
+	lightProgramViewPositionLoc = gl::GetUniformLocation(lightProgram, "viewPosition");
+	lightProgramViewportSizeLoc = gl::GetUniformLocation(lightProgram, "viewportSize");
+	lightProgramTileNumsLoc = gl::GetUniformLocation(lightProgram, "tileNums");
+	lightProgramLightDebugLoc = gl::GetUniformLocation(lightProgram, "debugViewIndex");
 
 	// create light buffer
-	SSBOLights = gl4::CreateBufferStorage(GL_MAP_READ_BIT | GL_MAP_WRITE_BIT, MAX_POINT_LIGHT_PER_TILE * sizeof(PointLight3), nullptr);
-	SSBOVisibleLights = gl4::CreateBuffer(GL_DYNAMIC_DRAW, tileCountPerRow * tileCountPerCol * sizeof(DummyVisibleLightsForTile), nullptr);
+	SSBOLights = gl::CreateBufferStorage(GL_MAP_READ_BIT | GL_MAP_WRITE_BIT, MAX_POINT_LIGHT_PER_TILE * sizeof(PointLight3), nullptr);
+	SSBOVisibleLights = gl::CreateBuffer(GL_DYNAMIC_DRAW, tileCountPerRow * tileCountPerCol * sizeof(DummyVisibleLightsForTile), nullptr);
 
 	// Generate lights
 	SetupLights();
@@ -293,11 +293,11 @@ void TestForwardPlus::OnRender()
 	if (ViewModes == DEPTH)
 	{
 		glUseProgram(depthDebugProgram);
-		gl4::SetUniform(depthDebugProgram, "VP", viewProjection);
-		gl4::SetUniform(depthDebugProgram, "model", modelMat);
-		gl4::SetUniform(depthDebugProgram, "near", nearPlane);
-		gl4::SetUniform(depthDebugProgram, "far", farPlane);
-		gl4::SetFrameBuffer({ 0 }, GetWindowWidth(), GetWindowHeight(), GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		gl::SetUniform(depthDebugProgram, "VP", viewProjection);
+		gl::SetUniform(depthDebugProgram, "model", modelMat);
+		gl::SetUniform(depthDebugProgram, "near", nearPlane);
+		gl::SetUniform(depthDebugProgram, "far", farPlane);
+		gl::SetFrameBuffer({ 0 }, GetWindowWidth(), GetWindowHeight(), GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		model->Draw(depthDebugProgram, true);
 	}
 	else
@@ -306,11 +306,11 @@ void TestForwardPlus::OnRender()
 		{
 			glUseProgram(lightCullingProgram);
 
-			gl4::SetUniform(lightCullingProgram, lightCullingInvViewProjectionLoc, invViewProjection);
-			gl4::SetUniform(lightCullingProgram, lightCullingCamPosLoc, camera.Position);
-			gl4::SetUniform(lightCullingProgram, lightCullingLightCountLoc, numberOfLights);
-			gl4::SetUniform(lightCullingProgram, lightCullingViewportSizeLoc, glm::ivec2(GetWindowWidth(), GetWindowHeight()));
-			gl4::SetUniform(lightCullingProgram, lightCullingTileNumsLoc, glm::ivec2(tileCountPerRow, tileCountPerCol));
+			gl::SetUniform(lightCullingProgram, lightCullingInvViewProjectionLoc, invViewProjection);
+			gl::SetUniform(lightCullingProgram, lightCullingCamPosLoc, camera.Position);
+			gl::SetUniform(lightCullingProgram, lightCullingLightCountLoc, numberOfLights);
+			gl::SetUniform(lightCullingProgram, lightCullingViewportSizeLoc, glm::ivec2(GetWindowWidth(), GetWindowHeight()));
+			gl::SetUniform(lightCullingProgram, lightCullingTileNumsLoc, glm::ivec2(tileCountPerRow, tileCountPerCol));
 
 			depthPrepass.BindTexture(0);
 
@@ -325,17 +325,17 @@ void TestForwardPlus::OnRender()
 		{
 			glEnable(GL_DEPTH_TEST);
 			glDepthFunc(GL_LESS);
-			gl4::SetFrameBuffer(renderFBO, GetWindowWidth(), GetWindowHeight(), GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+			gl::SetFrameBuffer(renderFBO, GetWindowWidth(), GetWindowHeight(), GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 			glUseProgram(lightProgram);
-			gl4::SetUniform(lightProgram, lightProgramProjectionLoc, projection);
-			gl4::SetUniform(lightProgram, lightProgramViewLoc, view);
-			gl4::SetUniform(lightProgram, lightProgramModelLoc, modelMat);
-			gl4::SetUniform(lightProgram, lightProgramProjViewLoc, viewProjection);
-			gl4::SetUniform(lightProgram, lightProgramViewPositionLoc, camera.Position);
-			gl4::SetUniform(lightProgram, lightProgramViewportSizeLoc, glm::ivec2(GetWindowWidth(), GetWindowHeight()));
-			gl4::SetUniform(lightProgram, lightProgramTileNumsLoc, glm::ivec2(tileCountPerRow, tileCountPerCol));
-			gl4::SetUniform(lightProgram, lightProgramLightDebugLoc, (ViewModes == LIGHT) ? 1 : 0);
+			gl::SetUniform(lightProgram, lightProgramProjectionLoc, projection);
+			gl::SetUniform(lightProgram, lightProgramViewLoc, view);
+			gl::SetUniform(lightProgram, lightProgramModelLoc, modelMat);
+			gl::SetUniform(lightProgram, lightProgramProjViewLoc, viewProjection);
+			gl::SetUniform(lightProgram, lightProgramViewPositionLoc, camera.Position);
+			gl::SetUniform(lightProgram, lightProgramViewportSizeLoc, glm::ivec2(GetWindowWidth(), GetWindowHeight()));
+			gl::SetUniform(lightProgram, lightProgramTileNumsLoc, glm::ivec2(tileCountPerRow, tileCountPerCol));
+			gl::SetUniform(lightProgram, lightProgramLightDebugLoc, (ViewModes == LIGHT) ? 1 : 0);
 
 			model->Draw(lightProgram);
 		}

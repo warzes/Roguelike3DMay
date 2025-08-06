@@ -8,7 +8,7 @@ struct GameModelOld final
 	Mesh* mesh{ nullptr };
 
 	PhongMaterial  material;
-	gl4::MagFilter textureFilter{};
+	gl::MagFilter textureFilter{};
 
 	glm::vec3 position{ 0.0f };
 	glm::vec3 rotation{ 0.0f }; // в градусах // TODO: заменить на кватернион?
@@ -22,7 +22,7 @@ struct GameModel final
 	void Free();
 
 	std::vector<Mesh*> meshes;
-	gl4::MagFilter textureFilter{};
+	gl::MagFilter textureFilter{};
 
 	AABB      aabb;
 	glm::vec3 position{ 0.0f };

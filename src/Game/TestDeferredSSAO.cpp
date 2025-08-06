@@ -65,7 +65,7 @@ void main()
 
 	Camera camera;
 
-	gl4::ShaderProgramId lightSphereShader;
+	gl::ShaderProgramId lightSphereShader;
 
 	std::vector<LightOLD> lights{};
 	std::vector<float> lightAngles{};
@@ -130,7 +130,7 @@ void TestDeferredSSAO::OnUpdate(float deltaTime)
 //=============================================================================
 void TestDeferredSSAO::OnRender()
 {
-	gl4::SetFrameBuffer({ 0 }, GetWindowWidth(), GetWindowHeight(), GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	gl::SetFrameBuffer({ 0 }, GetWindowWidth(), GetWindowHeight(), GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glm::mat4 view = camera.GetViewMatrix();
 	glm::mat4 proj = glm::perspective(glm::radians(60.0f), GetWindowAspect(), 0.01f, 1000.0f);
@@ -202,7 +202,7 @@ void TestDeferredSSAO::UpdateLightPositions()
 //=============================================================================
 void TestDeferredSSAO::InitLights()
 {
-	lightSphereShader = gl4::CreateShaderProgram(lightSphereShaderVertex, lightSphereShaderFragment);
+	lightSphereShader = gl::CreateShaderProgram(lightSphereShaderVertex, lightSphereShaderFragment);
 	const float pi2 = glm::two_pi<float>();
 	constexpr uint32_t NR_LIGHTS = 200;
 	for (uint32_t i = 0; i < NR_LIGHTS; ++i)
@@ -230,7 +230,7 @@ void TestDeferredSSAO::InitLights()
 	}
 
 	glUseProgram(lightSphereShader);
-	gl4::SetUniform(lightSphereShader, "radius", 0.2f);
+	gl::SetUniform(lightSphereShader, "radius", 0.2f);
 }
 //=============================================================================
 void TestDeferredSSAO::RenderLights()
@@ -238,24 +238,24 @@ void TestDeferredSSAO::RenderLights()
 	glm::mat4 proj = glm::perspective(glm::radians(60.0f), GetWindowAspect(), 0.01f, 1000.0f);
 
 	glUseProgram(lightSphereShader);
-	gl4::SetUniform(lightSphereShader, "projection", proj);
-	gl4::SetUniform(lightSphereShader, "view", camera.GetViewMatrix());
+	gl::SetUniform(lightSphereShader, "projection", proj);
+	gl::SetUniform(lightSphereShader, "view", camera.GetViewMatrix());
 	for (const LightOLD& light : lights)
 	{
-		gl4::SetUniform(lightSphereShader, "lightPosition", light.Position);
-		gl4::SetUniform(lightSphereShader, "radius", 0.4f);
-		gl4::SetUniform(lightSphereShader, "lightColor", light.Color);
+		gl::SetUniform(lightSphereShader, "lightPosition", light.Position);
+		gl::SetUniform(lightSphereShader, "radius", 0.4f);
+		gl::SetUniform(lightSphereShader, "lightColor", light.Color);
 		GetGraphicSystem().DrawQuad();
 	}
 }
 //=============================================================================
-void TestDeferredSSAO::RenderScene(gl4::ShaderProgramId shader) const
+void TestDeferredSSAO::RenderScene(gl::ShaderProgramId shader) const
 {
 	glm::mat4 modelMat = glm::mat4(1.0f);
 	modelMat = glm::translate(modelMat, glm::vec3(8.0f, 0.0f, 1.0f));
 	modelMat = glm::scale(modelMat, glm::vec3(2.0f));
 	glUseProgram(shader);
-	gl4::SetUniform(shader, "model", modelMat);
+	gl::SetUniform(shader, "model", modelMat);
 	model->Draw(shader);
 }
 //=============================================================================

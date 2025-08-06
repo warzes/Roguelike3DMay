@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "OpenGL4Buffer.h"
 #include "OpenGL4ApiToEnum.h"
 #include "Log.h"
@@ -12,7 +12,7 @@ namespace
 	}
 }
 //=============================================================================
-gl4::Buffer::Buffer(const void* data, size_t size, BufferStorageFlags storageFlags, std::string_view name)
+gl::Buffer::Buffer(const void* data, size_t size, BufferStorageFlags storageFlags, std::string_view name)
 	: m_size(roundUp(size, 16))
 	, m_storageFlags(storageFlags)
 {
@@ -34,17 +34,17 @@ gl4::Buffer::Buffer(const void* data, size_t size, BufferStorageFlags storageFla
 	Debug("Created Buffer with handle " + std::to_string(m_id));
 }
 //=============================================================================
-gl4::Buffer::Buffer(size_t size, BufferStorageFlags storageFlags, std::string_view name)
+gl::Buffer::Buffer(size_t size, BufferStorageFlags storageFlags, std::string_view name)
 	: Buffer(nullptr, size, storageFlags, name)
 {
 }
 //=============================================================================
-gl4::Buffer::Buffer(TriviallyCopyableByteSpan data, BufferStorageFlags storageFlags, std::string_view name)
+gl::Buffer::Buffer(TriviallyCopyableByteSpan data, BufferStorageFlags storageFlags, std::string_view name)
 	: Buffer(data.data(), data.size_bytes(), storageFlags, name)
 {
 }
 //=============================================================================
-gl4::Buffer::Buffer(Buffer&& old) noexcept
+gl::Buffer::Buffer(Buffer&& old) noexcept
 	: m_size(std::exchange(old.m_size, 0)),
 	m_storageFlags(std::exchange(old.m_storageFlags, BufferStorageFlag::None)),
 	m_id(std::exchange(old.m_id, 0)),
@@ -52,7 +52,7 @@ gl4::Buffer::Buffer(Buffer&& old) noexcept
 {
 }
 //=============================================================================
-gl4::Buffer& gl4::Buffer::operator=(Buffer&& old) noexcept
+gl::Buffer& gl::Buffer::operator=(Buffer&& old) noexcept
 {
 	if (&old == this)
 		return *this;
@@ -60,7 +60,7 @@ gl4::Buffer& gl4::Buffer::operator=(Buffer&& old) noexcept
 	return *new (this) Buffer(std::move(old));
 }
 //=============================================================================
-gl4::Buffer::~Buffer()
+gl::Buffer::~Buffer()
 {
 	if (m_id)
 	{
@@ -74,19 +74,19 @@ gl4::Buffer::~Buffer()
 	}
 }
 //=============================================================================
-void gl4::Buffer::UpdateData(TriviallyCopyableByteSpan data, size_t destOffsetBytes)
+void gl::Buffer::UpdateData(TriviallyCopyableByteSpan data, size_t destOffsetBytes)
 {
 	updateData(data.data(), data.size_bytes(), destOffsetBytes);
 }
 //=============================================================================
-void gl4::Buffer::updateData(const void* data, size_t size, size_t offset)
+void gl::Buffer::updateData(const void* data, size_t size, size_t offset)
 {
 	assert((m_storageFlags & BufferStorageFlag::DynamicStorage) && "UpdateData can only be called on buffers created with the DynamicStorage flag");
 	assert(size + offset <= Size());
 	glNamedBufferSubData(m_id, static_cast<GLuint>(offset), static_cast<GLuint>(size), data);
 }
 //=============================================================================
-void gl4::Buffer::FillData(const BufferFillInfo& clear)
+void gl::Buffer::FillData(const BufferFillInfo& clear)
 {
 	const auto actualSize = clear.size == WHOLE_BUFFER ? m_size : clear.size;
 	assert(actualSize % 4 == 0 && "Size must be a multiple of 4 bytes");
@@ -99,7 +99,7 @@ void gl4::Buffer::FillData(const BufferFillInfo& clear)
 		&clear.data);
 }
 //=============================================================================
-void gl4::Buffer::Invalidate()
+void gl::Buffer::Invalidate()
 {
 	glInvalidateBufferData(m_id);
 }

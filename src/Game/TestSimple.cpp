@@ -116,7 +116,7 @@ void main()
 		glm::vec3 viewPos;
 	};
 
-	gl4::ShaderProgramId program;
+	gl::ShaderProgramId program;
 
 	MVPData mvpData;
 	GLuint mvpUbo;
@@ -124,14 +124,14 @@ void main()
 	Light2Data lightData;
 	GLuint lightUbo;
 
-	gl4::ShaderProgramId lampDrawProgram;
+	gl::ShaderProgramId lampDrawProgram;
 	int lampModelLoc;
 	int lampViewLoc;
 	int lampProjLoc;
 
 	GLuint texture;
-	gl4::BufferId vbo;
-	gl4::VertexArrayId vao;
+	gl::BufferId vbo;
+	gl::VertexArrayId vao;
 
 	Camera camera;
 
@@ -147,17 +147,17 @@ EngineCreateInfo TestSimple::GetCreateInfo() const
 //=============================================================================
 bool TestSimple::OnInit()
 {
-	program = gl4::CreateShaderProgram(shaderCodeVertex, shaderCodeFragment);
+	program = gl::CreateShaderProgram(shaderCodeVertex, shaderCodeFragment);
 
-	mvpUbo = gl4::CreateBufferStorage(GL_DYNAMIC_STORAGE_BIT, sizeof(MVPData), nullptr);
-	lightUbo = gl4::CreateBufferStorage(GL_DYNAMIC_STORAGE_BIT, sizeof(Light2Data), nullptr);
+	mvpUbo = gl::CreateBufferStorage(GL_DYNAMIC_STORAGE_BIT, sizeof(MVPData), nullptr);
+	lightUbo = gl::CreateBufferStorage(GL_DYNAMIC_STORAGE_BIT, sizeof(Light2Data), nullptr);
 
-	lampDrawProgram = gl4::CreateShaderProgram(lampShaderCodeVertex, lampShaderCodeFragment);
-	lampModelLoc = gl4::GetUniformLocation(lampDrawProgram, "model");
-	lampViewLoc = gl4::GetUniformLocation(lampDrawProgram, "view");
-	lampProjLoc = gl4::GetUniformLocation(lampDrawProgram, "projection");
+	lampDrawProgram = gl::CreateShaderProgram(lampShaderCodeVertex, lampShaderCodeFragment);
+	lampModelLoc = gl::GetUniformLocation(lampDrawProgram, "model");
+	lampViewLoc = gl::GetUniformLocation(lampDrawProgram, "view");
+	lampProjLoc = gl::GetUniformLocation(lampDrawProgram, "projection");
 
-	texture = gl4::LoadTexture2D("ExampleData/textures/wood.png", false);
+	texture = gl::LoadTexture2D("ExampleData/textures/wood.png", false);
 
 	model = new ModelOLD("ExampleData/mesh/Sponza/Sponza.gltf");
 
@@ -168,7 +168,7 @@ bool TestSimple::OnInit()
 		glm::vec2 uv;
 	};
 
-	std::vector<gl4::VertexAttributeRaw> attribs = {
+	std::vector<gl::VertexAttributeRaw> attribs = {
 		{0, 3, GL_FLOAT, false, offsetof(Vertex, pos)},
 		{1, 3, GL_FLOAT, false, offsetof(Vertex, normal)},
 		{2, 2, GL_FLOAT, false, offsetof(Vertex, uv)},
@@ -186,8 +186,8 @@ bool TestSimple::OnInit()
 		 10.0f, -0.5f, -10.0f,  0.0f, 1.0f, 0.0f,  10.0f, 10.0f
 	};
 
-	vbo = gl4::CreateBufferStorage(0, sizeof(vertices), vertices);
-	vao = gl4::CreateVertexArray(vbo, sizeof(Vertex), attribs);
+	vbo = gl::CreateBufferStorage(0, sizeof(vertices), vertices);
+	vao = gl::CreateVertexArray(vbo, sizeof(Vertex), attribs);
 
 	camera.SetPosition(glm::vec3(0.0f, 0.0f, -1.0f));
 
@@ -201,9 +201,9 @@ bool TestSimple::OnInit()
 void TestSimple::OnClose()
 {
 	glDeleteTextures(1, &texture);
-	gl4::Destroy(program);
-	gl4::Destroy(vbo);
-	gl4::Destroy(vao);
+	gl::Destroy(program);
+	gl::Destroy(vbo);
+	gl::Destroy(vao);
 }
 //=============================================================================
 void TestSimple::OnUpdate(float deltaTime)
@@ -230,7 +230,7 @@ void TestSimple::OnUpdate(float deltaTime)
 //=============================================================================
 void TestSimple::OnRender()
 {
-	gl4::SetFrameBuffer({ 0 }, GetWindowWidth(), GetWindowHeight(), GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	gl::SetFrameBuffer({ 0 }, GetWindowWidth(), GetWindowHeight(), GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	mvpData.model = glm::mat4(1.0f);
 	mvpData.view = camera.GetViewMatrix();
@@ -264,13 +264,13 @@ void TestSimple::OnRender()
 	// рендер источника света
 	{
 		glUseProgram(lampDrawProgram);
-		gl4::SetUniform(lampDrawProgram, lampProjLoc, mvpData.projection);
-		gl4::SetUniform(lampDrawProgram, lampViewLoc, mvpData.view);
+		gl::SetUniform(lampDrawProgram, lampProjLoc, mvpData.projection);
+		gl::SetUniform(lampDrawProgram, lampViewLoc, mvpData.view);
 
 		glm::mat4 modelMat = glm::mat4(1.0f);
 		modelMat = glm::translate(modelMat, lightPos);
 		modelMat = glm::scale(modelMat, glm::vec3(0.2f));
-		gl4::SetUniform(lampDrawProgram, lampModelLoc, modelMat);
+		gl::SetUniform(lampDrawProgram, lampModelLoc, modelMat);
 
 		GetGraphicSystem().DrawCube();
 	}

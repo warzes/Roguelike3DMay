@@ -23,25 +23,25 @@ private:
 
 	World* m_world{ nullptr };
 
-	std::optional<gl4::GraphicsPipeline>              m_pipeline;
-	std::optional<gl4::TypedBuffer<GlobalUniforms>>   m_globalUbo;
+	std::optional<gl::GraphicsPipeline>              m_pipeline;
+	std::optional<gl::TypedBuffer<GlobalUniforms>>   m_globalUbo;
 	GlobalUniforms                                    m_globalUboData;
-	std::optional<gl4::TypedBuffer<ObjectUniforms>>   m_objectUbo;
+	std::optional<gl::TypedBuffer<ObjectUniforms>>   m_objectUbo;
 	ObjectUniforms                                    m_objectUboData;
-	std::optional<gl4::TypedBuffer<MainFragmentUniforms>> m_mainFragUbo;
+	std::optional<gl::TypedBuffer<MainFragmentUniforms>> m_mainFragUbo;
 	MainFragmentUniforms                                  m_mainFragUboData;
 
-	std::optional<gl4::TypedBuffer<MaterialUniforms>> m_materialUbo;
+	std::optional<gl::TypedBuffer<MaterialUniforms>> m_materialUbo;
 	MaterialUniforms                                  m_materialUboData;
 
-	std::optional<gl4::Sampler>                       m_nearestSampler;
-	std::optional<gl4::Sampler>                       m_linearSampler;
+	std::optional<gl::Sampler>                       m_nearestSampler;
+	std::optional<gl::Sampler>                       m_linearSampler;
 
-	std::optional<gl4::Buffer>                        m_lightSSBO;
+	std::optional<gl::Buffer>                        m_lightSSBO;
 
 	size_t m_numBlockerSearchSamples = DEFAULT_NUM_SAMPLES;
 	size_t m_numPCFSamples = DEFAULT_NUM_SAMPLES;
-	std::optional<gl4::Texture> m_distributions0;
-	std::optional<gl4::Texture> m_distributions1;
-	std::optional<gl4::Sampler> m_distributionsSampler;
+	std::optional<gl::Texture> m_distributions0;
+	std::optional<gl::Texture> m_distributions1;
+	std::optional<gl::Sampler> m_distributionsSampler;
 };

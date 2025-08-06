@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 
-namespace gl4
+namespace gl
 {
 	/// @brief Synchronous single-buffered GPU-timeline timer. Querying the timer will result in a stall
 	/// as commands are flushed and waited on to complete
@@ -105,4 +105,4 @@ namespace gl4
 	private:
 		T& m_zone;
 	};
-} // namespace gl4
+} // namespace gl

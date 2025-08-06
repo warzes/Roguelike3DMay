@@ -2,7 +2,7 @@
 
 #include "OpenGL4Render.h"
 
-namespace gl4
+namespace gl
 {
 	/// @brief Functions that set pipeline state, binds resources, or issues draws or dispatches
 	/// These functions are analogous to Vulkan vkCmd* calls, which can only be made inside of an active command buffer.
@@ -197,4 +197,4 @@ namespace gl4
 
 	} // namespace Cmd
 
-} // namespace gl4
+} // namespace gl

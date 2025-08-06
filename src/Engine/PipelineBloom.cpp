@@ -90,7 +90,7 @@ void main()
 }
 )";
 
-		m_mainShader = gl4::CreateShaderProgram(shaderCodeVertex, shaderCodeFragment);
+		m_mainShader = gl::CreateShaderProgram(shaderCodeVertex, shaderCodeFragment);
 
 	}
 
@@ -147,7 +147,7 @@ void main()
 }
 )";
 
-		m_shaderBlur = gl4::CreateShaderProgram(shaderCodeVertex, shaderCodeFragment);
+		m_shaderBlur = gl::CreateShaderProgram(shaderCodeVertex, shaderCodeFragment);
 
 	}
 
@@ -195,7 +195,7 @@ void main()
 }
 )";
 
-		m_shaderFinal = gl4::CreateShaderProgram(shaderCodeVertex, shaderCodeFragment);
+		m_shaderFinal = gl::CreateShaderProgram(shaderCodeVertex, shaderCodeFragment);
 
 	}
 
@@ -260,10 +260,10 @@ void main()
 
 	// Shader
 	glUseProgram(m_shaderBlur);
-	gl4::SetUniform(m_shaderBlur, "image", 0);
+	gl::SetUniform(m_shaderBlur, "image", 0);
 	glUseProgram(m_shaderFinal);
-	gl4::SetUniform(m_shaderFinal, "scene", 0);
-	gl4::SetUniform(m_shaderFinal, "bloomBlur", 1);
+	gl::SetUniform(m_shaderFinal, "scene", 0);
+	gl::SetUniform(m_shaderFinal, "bloomBlur", 1);
 }
 //=============================================================================
 void PipelineBloom::StartFirstPass(const glm::mat4& projection, const glm::mat4& view, const glm::vec3& cameraPosition, const glm::vec3& lightPosition) const
@@ -271,10 +271,10 @@ void PipelineBloom::StartFirstPass(const glm::mat4& projection, const glm::mat4&
 	glBindFramebuffer(GL_FRAMEBUFFER, m_hdrFBO);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glUseProgram(m_mainShader);
-	gl4::SetUniform(m_mainShader, "projection", projection);
-	gl4::SetUniform(m_mainShader, "view", view);
-	gl4::SetUniform(m_mainShader, "viewPos", cameraPosition);
-	gl4::SetUniform(m_mainShader, "lightPos", lightPosition);
+	gl::SetUniform(m_mainShader, "projection", projection);
+	gl::SetUniform(m_mainShader, "view", view);
+	gl::SetUniform(m_mainShader, "viewPos", cameraPosition);
+	gl::SetUniform(m_mainShader, "lightPos", lightPosition);
 }
 //=============================================================================
 void PipelineBloom::EndFirstPass() const
@@ -290,7 +290,7 @@ void PipelineBloom::StartBlurPass()
 	for (uint32_t i = 0; i < m_blurIteration; i++)
 	{
 		glBindFramebuffer(GL_FRAMEBUFFER, m_pingpongFBO[m_horizontal]);
-		gl4::SetUniform(m_shaderBlur, "horizontal", m_horizontal);
+		gl::SetUniform(m_shaderBlur, "horizontal", m_horizontal);
 		glBindTextureUnit(0,
 			i == 0 ?
 			m_colorBuffers[1] :

@@ -6,7 +6,7 @@
 //=============================================================================
 #pragma region [ Hash ]
 //=============================================================================
-inline size_t vertexInputStateHash(const gl4::VertexInputState& k)
+inline size_t vertexInputStateHash(const gl::VertexInputState& k)
 {
 	size_t hashVal{};
 
@@ -28,18 +28,18 @@ inline size_t vertexInputStateHash(const gl4::VertexInputState& k)
 //{
 //	std::string_view   debugName;
 //
-//	gl4::InputAssemblyState inputAssemblyState;
-//	gl4::TessellationState  tessellationState;
-//	gl4::RasterizationState rasterizationState;
-//	gl4::MultisampleState   multisampleState;
-//	gl4::DepthState         depthState;
-//	gl4::StencilState       stencilState;
-//	gl4::ColorBlendState    colorBlendState;
+//	gl::InputAssemblyState inputAssemblyState;
+//	gl::TessellationState  tessellationState;
+//	gl::RasterizationState rasterizationState;
+//	gl::MultisampleState   multisampleState;
+//	gl::DepthState         depthState;
+//	gl::StencilState       stencilState;
+//	gl::ColorBlendState    colorBlendState;
 //
 //	bool valid{ false };
 //
 //	GraphicsPipelineCache& operator=(const GraphicsPipelineCache&) = default;
-//	GraphicsPipelineCache& operator=(const gl4::GraphicsPipelineId& p)
+//	GraphicsPipelineCache& operator=(const gl::GraphicsPipelineId& p)
 //	{
 //		valid = true;
 //
@@ -55,7 +55,7 @@ inline size_t vertexInputStateHash(const gl4::VertexInputState& k)
 //		return *this;
 //	}
 //
-//	bool operator==(const gl4::GraphicsPipelineId& p) const noexcept
+//	bool operator==(const gl::GraphicsPipelineId& p) const noexcept
 //	{
 //		return (
 //			valid == p.valid &&
@@ -91,31 +91,31 @@ namespace
 	// (the user uses framebuffer attachments to decide if they want the linear->sRGB conversion).
 	bool srgbWasDisabled = false;
 		
-	gl4::ShaderProgramId lastProgram; // шейдер отделен от pipeline так как есть еще вычислительный шейдер и долно сбрасывать
+	gl::ShaderProgramId lastProgram; // шейдер отделен от pipeline так как есть еще вычислительный шейдер и долно сбрасывать
 
 	// Potentially used for state deduplication.
-	gl4::VertexArrayId currentVao{ 0 };
-	gl4::FrameBufferId currentFBO{ 0 };
+	gl::VertexArrayId currentVao{ 0 };
+	gl::FrameBufferId currentFBO{ 0 };
 
 	// Currently unused (and probably shouldn't be used)
-	const gl4::RenderInfo* lastRenderInfo{};
+	const gl::RenderInfo* lastRenderInfo{};
 
 	// These can be set at the start of rendering, so they need to be tracked separately from the other pipeline state.
-	std::array<gl4::ColorComponentFlags, MAX_COLOR_ATTACHMENTS> lastColorMask = {};
+	std::array<gl::ColorComponentFlags, MAX_COLOR_ATTACHMENTS> lastColorMask = {};
 	bool lastDepthMask = true;
 	uint32_t lastStencilMask[2] = { static_cast<uint32_t>(-1), static_cast<uint32_t>(-1) };
 	bool initViewport = true;
-	gl4::Viewport lastViewport = {};
+	gl::Viewport lastViewport = {};
 	Rect2D lastScissor = {};
 	bool scissorEnabled = false;
 
 	// These persist until another Pipeline is bound.
 	// They are not used for state deduplication, as they are arguments for GL draw calls.
-	gl4::PrimitiveTopology currentTopology{};
-	gl4::IndexType currentIndexType{};
+	gl::PrimitiveTopology currentTopology{};
+	gl::IndexType currentIndexType{};
 
-	std::unordered_map<size_t, gl4::VertexArrayId> vertexArrayCache;
-	std::unordered_map<gl4::SamplerState, gl4::SamplerId> samplerCache;
+	std::unordered_map<size_t, gl::VertexArrayId> vertexArrayCache;
+	std::unordered_map<gl::SamplerState, gl::SamplerId> samplerCache;
 }
 //=============================================================================
 void ClearOpenGLState()
@@ -153,9 +153,9 @@ void ClearOpenGLState()
 //=============================================================================
 void ClearResourceCache()
 {
-	for (auto& [_, vao] : vertexArrayCache) { gl4::Destroy(vao); }
+	for (auto& [_, vao] : vertexArrayCache) { gl::Destroy(vao); }
 	vertexArrayCache.clear();
-	for (auto& [_, sampler] : samplerCache) { gl4::Destroy(sampler); }
+	for (auto& [_, sampler] : samplerCache) { gl::Destroy(sampler); }
 	samplerCache.clear();
 }
 //=============================================================================
@@ -218,7 +218,7 @@ inline void validateShader(GLuint id, GLenum type, const GLchar* shaderText)
 	}
 }
 //=============================================================================
-GLuint gl4::CreateShader(GLenum type, const std::string& source, std::string_view name)
+GLuint gl::CreateShader(GLenum type, const std::string& source, std::string_view name)
 {
 	assert(!source.empty());
 
@@ -238,7 +238,7 @@ GLuint gl4::CreateShader(GLenum type, const std::string& source, std::string_vie
 	return id;
 }
 //=============================================================================
-GLuint gl4::CreateShaderSpirv(GLenum type, const ShaderSpirvInfo& spirvInfo, std::string_view name)
+GLuint gl::CreateShaderSpirv(GLenum type, const ShaderSpirvInfo& spirvInfo, std::string_view name)
 {
 	GLuint id = glCreateShader(type); assert(id);
 
@@ -265,7 +265,7 @@ GLuint gl4::CreateShaderSpirv(GLenum type, const ShaderSpirvInfo& spirvInfo, std
 	return id;
 }
 //=============================================================================
-std::string gl4::GetShaderSourceCode(GLuint id)
+std::string gl::GetShaderSourceCode(GLuint id)
 {
 	if (glIsShader(id) != GL_TRUE)
 	{
@@ -300,9 +300,9 @@ inline void checkProgramStatus(GLuint program)
 	}
 }
 //=============================================================================
-gl4::ShaderProgramId gl4::CreateShaderProgram(const std::string& computeSrc)
+gl::ShaderProgramId gl::CreateShaderProgram(const std::string& computeSrc)
 {
-	gl4::ShaderProgramId program{ glCreateProgram() };
+	gl::ShaderProgramId program{ glCreateProgram() };
 	GLuint shader = CreateShader(GL_COMPUTE_SHADER, computeSrc);
 	glAttachShader(program, shader);
 	glLinkProgram(program);
@@ -311,14 +311,14 @@ gl4::ShaderProgramId gl4::CreateShaderProgram(const std::string& computeSrc)
 	return program;
 }
 //=============================================================================
-gl4::ShaderProgramId gl4::CreateShaderProgram(const std::string& vertexSrc, const std::string& fragmentSrc)
+gl::ShaderProgramId gl::CreateShaderProgram(const std::string& vertexSrc, const std::string& fragmentSrc)
 {
 	return CreateShaderProgram(vertexSrc, {}, fragmentSrc);
 }
 //=============================================================================
-gl4::ShaderProgramId gl4::CreateShaderProgram(const std::string& vertexSrc, const std::string& geometrySrc, const std::string& fragmentSrc)
+gl::ShaderProgramId gl::CreateShaderProgram(const std::string& vertexSrc, const std::string& geometrySrc, const std::string& fragmentSrc)
 {
-	gl4::ShaderProgramId program{ glCreateProgram() };
+	gl::ShaderProgramId program{ glCreateProgram() };
 
 	std::pair<GLenum, const std::string&> shaders[] = {
 		{GL_VERTEX_SHADER,          vertexSrc},
@@ -345,330 +345,330 @@ gl4::ShaderProgramId gl4::CreateShaderProgram(const std::string& vertexSrc, cons
 	return program;
 }
 //=============================================================================
-void gl4::Bind(ShaderProgramId id)
+void gl::Bind(ShaderProgramId id)
 {
 	// TODO: возможно кеширование
 	glUseProgram(id);
 }
 //=============================================================================
-int gl4::GetUniformLocation(ShaderProgramId program, const std::string& name)
+int gl::GetUniformLocation(ShaderProgramId program, const std::string& name)
 {
 	return glGetUniformLocation(program, name.c_str());
 }
 //=============================================================================
-GLuint gl4::GetUniformBlockIndex(ShaderProgramId program, const std::string& name)
+GLuint gl::GetUniformBlockIndex(ShaderProgramId program, const std::string& name)
 {
 	return glGetUniformBlockIndex(program, name.c_str());
 }
 //=============================================================================
 #pragma region [ SetUniform ]
 //=============================================================================
-void gl4::SetUniform(ShaderProgramId program, int location, bool value)
+void gl::SetUniform(ShaderProgramId program, int location, bool value)
 {
 	glProgramUniform1i(program, location, static_cast<int>(value));
 }
 //=============================================================================
-void gl4::SetUniform(ShaderProgramId program, int location, int value)
+void gl::SetUniform(ShaderProgramId program, int location, int value)
 {
 	glProgramUniform1i(program, location, value);
 }
 //=============================================================================
-void gl4::SetUniform(ShaderProgramId program, int location, int v1, int v2)
+void gl::SetUniform(ShaderProgramId program, int location, int v1, int v2)
 {
 	glProgramUniform2i(program, location, v1, v2);
 }
 //=============================================================================
-void gl4::SetUniform(ShaderProgramId program, int location, int v1, int v2, int v3)
+void gl::SetUniform(ShaderProgramId program, int location, int v1, int v2, int v3)
 {
 	glProgramUniform3i(program, location, v1, v2, v3);
 }
 //=============================================================================
-void gl4::SetUniform(ShaderProgramId program, int location, int v1, int v2, int v3, int v4)
+void gl::SetUniform(ShaderProgramId program, int location, int v1, int v2, int v3, int v4)
 {
 	glProgramUniform4i(program, location, v1, v2, v3, v4);
 }
 //=============================================================================
-void gl4::SetUniform(ShaderProgramId program, int location, uint32_t value)
+void gl::SetUniform(ShaderProgramId program, int location, uint32_t value)
 {
 	glProgramUniform1ui(program, location, value);
 }
 //=============================================================================
-void gl4::SetUniform(ShaderProgramId program, int location, uint32_t v1, uint32_t v2)
+void gl::SetUniform(ShaderProgramId program, int location, uint32_t v1, uint32_t v2)
 {
 	glProgramUniform2ui(program, location, v1, v2);
 }
 //=============================================================================
-void gl4::SetUniform(ShaderProgramId program, int location, uint32_t v1, uint32_t v2, uint32_t v3)
+void gl::SetUniform(ShaderProgramId program, int location, uint32_t v1, uint32_t v2, uint32_t v3)
 {
 	glProgramUniform3ui(program, location, v1, v2, v3);
 }
 //=============================================================================
-void gl4::SetUniform(ShaderProgramId program, int location, uint32_t v1, uint32_t v2, uint32_t v3, uint32_t v4)
+void gl::SetUniform(ShaderProgramId program, int location, uint32_t v1, uint32_t v2, uint32_t v3, uint32_t v4)
 {
 	glProgramUniform4ui(program, location, v1, v2, v3, v4);
 }
 //=============================================================================
-void gl4::SetUniform(ShaderProgramId program, int location, float value)
+void gl::SetUniform(ShaderProgramId program, int location, float value)
 {
 	glProgramUniform1f(program, location, value);
 }
 //=============================================================================
-void gl4::SetUniform(ShaderProgramId program, int location, float v1, float v2)
+void gl::SetUniform(ShaderProgramId program, int location, float v1, float v2)
 {
 	glProgramUniform2f(program, location, v1, v2);
 }
 //=============================================================================
-void gl4::SetUniform(ShaderProgramId program, int location, float v1, float v2, float v3)
+void gl::SetUniform(ShaderProgramId program, int location, float v1, float v2, float v3)
 {
 	glProgramUniform3f(program, location, v1, v2, v3);
 }
 //=============================================================================
-void gl4::SetUniform(ShaderProgramId program, int location, float v1, float v2, float v3, float v4)
+void gl::SetUniform(ShaderProgramId program, int location, float v1, float v2, float v3, float v4)
 {
 	glProgramUniform4f(program, location, v1, v2, v3, v4);
 }
 //=============================================================================
-void gl4::SetUniform(ShaderProgramId program, int location, const glm::vec2& value)
+void gl::SetUniform(ShaderProgramId program, int location, const glm::vec2& value)
 {
 	glProgramUniform2fv(program, location, 1, glm::value_ptr(value));
 }
 //=============================================================================
-void gl4::SetUniform(ShaderProgramId program, int location, const glm::ivec2& value)
+void gl::SetUniform(ShaderProgramId program, int location, const glm::ivec2& value)
 {
 	glProgramUniform2iv(program, location, 1, glm::value_ptr(value));
 }
 //=============================================================================
-void gl4::SetUniform(ShaderProgramId program, int location, const glm::uvec2& value)
+void gl::SetUniform(ShaderProgramId program, int location, const glm::uvec2& value)
 {
 	glProgramUniform2uiv(program, location, 1, glm::value_ptr(value));
 }
 //=============================================================================
-void gl4::SetUniform(ShaderProgramId program, int location, const glm::vec3& value)
+void gl::SetUniform(ShaderProgramId program, int location, const glm::vec3& value)
 {
 	glProgramUniform3fv(program, location, 1, glm::value_ptr(value));
 }
 //=============================================================================
-void gl4::SetUniform(ShaderProgramId program, int location, const glm::ivec3& value)
+void gl::SetUniform(ShaderProgramId program, int location, const glm::ivec3& value)
 {
 	glProgramUniform3iv(program, location, 1, glm::value_ptr(value));
 }
 //=============================================================================
-void gl4::SetUniform(ShaderProgramId program, int location, const glm::uvec3& value)
+void gl::SetUniform(ShaderProgramId program, int location, const glm::uvec3& value)
 {
 	glProgramUniform3uiv(program, location, 1, glm::value_ptr(value));
 }
 //=============================================================================
-void gl4::SetUniform(ShaderProgramId program, int location, const glm::vec4& value)
+void gl::SetUniform(ShaderProgramId program, int location, const glm::vec4& value)
 {
 	glProgramUniform4fv(program, location, 1, glm::value_ptr(value));
 }
 //=============================================================================
-void gl4::SetUniform(ShaderProgramId program, int location, const glm::ivec4& value)
+void gl::SetUniform(ShaderProgramId program, int location, const glm::ivec4& value)
 {
 	glProgramUniform4iv(program, location, 1, glm::value_ptr(value));
 }
 //=============================================================================
-void gl4::SetUniform(ShaderProgramId program, int location, const glm::uvec4& value)
+void gl::SetUniform(ShaderProgramId program, int location, const glm::uvec4& value)
 {
 	glProgramUniform4uiv(program, location, 1, glm::value_ptr(value));
 }
 //=============================================================================
-void gl4::SetUniform(ShaderProgramId program, int location, const glm::mat2& mat, bool transpose)
+void gl::SetUniform(ShaderProgramId program, int location, const glm::mat2& mat, bool transpose)
 {
 	glProgramUniformMatrix2fv(program, location, 1, transpose ? GL_TRUE : GL_FALSE, glm::value_ptr(mat));
 }
 //=============================================================================
-void gl4::SetUniform(ShaderProgramId program, int location, const glm::mat3& mat, bool transpose)
+void gl::SetUniform(ShaderProgramId program, int location, const glm::mat3& mat, bool transpose)
 {
 	glProgramUniformMatrix3fv(program, location, 1, transpose ? GL_TRUE : GL_FALSE, glm::value_ptr(mat));
 }
 //=============================================================================
-void gl4::SetUniform(ShaderProgramId program, int location, const glm::mat4& mat, bool transpose)
+void gl::SetUniform(ShaderProgramId program, int location, const glm::mat4& mat, bool transpose)
 {
 	glProgramUniformMatrix4fv(program, location, 1, transpose ? GL_TRUE : GL_FALSE, glm::value_ptr(mat));
 }
 //=============================================================================
-void gl4::SetUniform(ShaderProgramId program, int location, const glm::mat2x3& mat, bool transpose)
+void gl::SetUniform(ShaderProgramId program, int location, const glm::mat2x3& mat, bool transpose)
 {
 	glProgramUniformMatrix2x3fv(program, location, 1, transpose ? GL_TRUE : GL_FALSE, glm::value_ptr(mat));
 }
 //=============================================================================
-void gl4::SetUniform(ShaderProgramId program, int location, const glm::mat3x2& mat, bool transpose)
+void gl::SetUniform(ShaderProgramId program, int location, const glm::mat3x2& mat, bool transpose)
 {
 	glProgramUniformMatrix3x2fv(program, location, 1, transpose ? GL_TRUE : GL_FALSE, glm::value_ptr(mat));
 }
 //=============================================================================
-void gl4::SetUniform(ShaderProgramId program, int location, const glm::mat2x4& mat, bool transpose)
+void gl::SetUniform(ShaderProgramId program, int location, const glm::mat2x4& mat, bool transpose)
 {
 	glProgramUniformMatrix2x4fv(program, location, 1, transpose ? GL_TRUE : GL_FALSE, glm::value_ptr(mat));
 }
 //=============================================================================
-void gl4::SetUniform(ShaderProgramId program, int location, const glm::mat4x2& mat, bool transpose)
+void gl::SetUniform(ShaderProgramId program, int location, const glm::mat4x2& mat, bool transpose)
 {
 	glProgramUniformMatrix4x2fv(program, location, 1, transpose ? GL_TRUE : GL_FALSE, glm::value_ptr(mat));
 }
 //=============================================================================
-void gl4::SetUniform(ShaderProgramId program, int location, const glm::mat3x4& mat, bool transpose)
+void gl::SetUniform(ShaderProgramId program, int location, const glm::mat3x4& mat, bool transpose)
 {
 	glProgramUniformMatrix3x4fv(program, location, 1, transpose ? GL_TRUE : GL_FALSE, glm::value_ptr(mat));
 }
 //=============================================================================
-void gl4::SetUniform(ShaderProgramId program, int location, const glm::mat4x3& mat, bool transpose)
+void gl::SetUniform(ShaderProgramId program, int location, const glm::mat4x3& mat, bool transpose)
 {
 	glProgramUniformMatrix4x3fv(program, location, 1, transpose ? GL_TRUE : GL_FALSE, glm::value_ptr(mat));
 }
 //=============================================================================
-void gl4::SetUniform(ShaderProgramId program, const std::string& locName, bool value)
+void gl::SetUniform(ShaderProgramId program, const std::string& locName, bool value)
 {
 	glProgramUniform1i(program, glGetUniformLocation(program, locName.c_str()), static_cast<int>(value));
 }
 //=============================================================================
-void gl4::SetUniform(ShaderProgramId program, const std::string& locName, int value)
+void gl::SetUniform(ShaderProgramId program, const std::string& locName, int value)
 {
 	glProgramUniform1i(program, glGetUniformLocation(program, locName.c_str()), value);
 }
 //=============================================================================
-void gl4::SetUniform(ShaderProgramId program, const std::string& locName, int v1, int v2)
+void gl::SetUniform(ShaderProgramId program, const std::string& locName, int v1, int v2)
 {
 	glProgramUniform2i(program, glGetUniformLocation(program, locName.c_str()), v1, v2);
 }
 //=============================================================================
-void gl4::SetUniform(ShaderProgramId program, const std::string& locName, int v1, int v2, int v3)
+void gl::SetUniform(ShaderProgramId program, const std::string& locName, int v1, int v2, int v3)
 {
 	glProgramUniform3i(program, glGetUniformLocation(program, locName.c_str()), v1, v2, v3);
 }
 //=============================================================================
-void gl4::SetUniform(ShaderProgramId program, const std::string& locName, int v1, int v2, int v3, int v4)
+void gl::SetUniform(ShaderProgramId program, const std::string& locName, int v1, int v2, int v3, int v4)
 {
 	glProgramUniform4i(program, glGetUniformLocation(program, locName.c_str()), v1, v2, v3, v4);
 }
 //=============================================================================
-void gl4::SetUniform(ShaderProgramId program, const std::string& locName, uint32_t value)
+void gl::SetUniform(ShaderProgramId program, const std::string& locName, uint32_t value)
 {
 	glProgramUniform1ui(program, glGetUniformLocation(program, locName.c_str()), value);
 }
 //=============================================================================
-void gl4::SetUniform(ShaderProgramId program, const std::string& locName, uint32_t v1, uint32_t v2)
+void gl::SetUniform(ShaderProgramId program, const std::string& locName, uint32_t v1, uint32_t v2)
 {
 	glProgramUniform2ui(program, glGetUniformLocation(program, locName.c_str()), v1, v2);
 }
 //=============================================================================
-void gl4::SetUniform(ShaderProgramId program, const std::string& locName, uint32_t v1, uint32_t v2, uint32_t v3)
+void gl::SetUniform(ShaderProgramId program, const std::string& locName, uint32_t v1, uint32_t v2, uint32_t v3)
 {
 	glProgramUniform3ui(program, glGetUniformLocation(program, locName.c_str()), v1, v2, v3);
 }
 //=============================================================================
-void gl4::SetUniform(ShaderProgramId program, const std::string& locName, uint32_t v1, uint32_t v2, uint32_t v3, uint32_t v4)
+void gl::SetUniform(ShaderProgramId program, const std::string& locName, uint32_t v1, uint32_t v2, uint32_t v3, uint32_t v4)
 {
 	glProgramUniform4ui(program, glGetUniformLocation(program, locName.c_str()), v1, v2, v3, v4);
 }
 //=============================================================================
-void gl4::SetUniform(ShaderProgramId program, const std::string& locName, float value)
+void gl::SetUniform(ShaderProgramId program, const std::string& locName, float value)
 {
 	glProgramUniform1f(program, glGetUniformLocation(program, locName.c_str()), value);
 }
 //=============================================================================
-void gl4::SetUniform(ShaderProgramId program, const std::string& locName, float v1, float v2)
+void gl::SetUniform(ShaderProgramId program, const std::string& locName, float v1, float v2)
 {
 	glProgramUniform2f(program, glGetUniformLocation(program, locName.c_str()), v1, v2);
 }
 //=============================================================================
-void gl4::SetUniform(ShaderProgramId program, const std::string& locName, float v1, float v2, float v3)
+void gl::SetUniform(ShaderProgramId program, const std::string& locName, float v1, float v2, float v3)
 {
 	glProgramUniform3f(program, glGetUniformLocation(program, locName.c_str()), v1, v2, v3);
 }
 //=============================================================================
-void gl4::SetUniform(ShaderProgramId program, const std::string& locName, float v1, float v2, float v3, float v4)
+void gl::SetUniform(ShaderProgramId program, const std::string& locName, float v1, float v2, float v3, float v4)
 {
 	glProgramUniform4f(program, glGetUniformLocation(program, locName.c_str()), v1, v2, v3, v4);
 }
 //=============================================================================
-void gl4::SetUniform(ShaderProgramId program, const std::string& locName, const glm::vec2& value)
+void gl::SetUniform(ShaderProgramId program, const std::string& locName, const glm::vec2& value)
 {
 	glProgramUniform2fv(program, glGetUniformLocation(program, locName.c_str()), 1, glm::value_ptr(value));
 }
 //=============================================================================
-void gl4::SetUniform(ShaderProgramId program, const std::string& locName, const glm::ivec2& value)
+void gl::SetUniform(ShaderProgramId program, const std::string& locName, const glm::ivec2& value)
 {
 	glProgramUniform2iv(program, glGetUniformLocation(program, locName.c_str()), 1, glm::value_ptr(value));
 }
 //=============================================================================
-void gl4::SetUniform(ShaderProgramId program, const std::string& locName, const glm::uvec2& value)
+void gl::SetUniform(ShaderProgramId program, const std::string& locName, const glm::uvec2& value)
 {
 	glProgramUniform2uiv(program, glGetUniformLocation(program, locName.c_str()), 1, glm::value_ptr(value));
 }
 //=============================================================================
-void gl4::SetUniform(ShaderProgramId program, const std::string& locName, const glm::vec3& value)
+void gl::SetUniform(ShaderProgramId program, const std::string& locName, const glm::vec3& value)
 {
 	glProgramUniform3fv(program, glGetUniformLocation(program, locName.c_str()), 1, glm::value_ptr(value));
 }
 //=============================================================================
-void gl4::SetUniform(ShaderProgramId program, const std::string& locName, const glm::ivec3& value)
+void gl::SetUniform(ShaderProgramId program, const std::string& locName, const glm::ivec3& value)
 {
 	glProgramUniform3iv(program, glGetUniformLocation(program, locName.c_str()), 1, glm::value_ptr(value));
 }
 //=============================================================================
-void gl4::SetUniform(ShaderProgramId program, const std::string& locName, const glm::uvec3& value)
+void gl::SetUniform(ShaderProgramId program, const std::string& locName, const glm::uvec3& value)
 {
 	glProgramUniform3uiv(program, glGetUniformLocation(program, locName.c_str()), 1, glm::value_ptr(value));
 }
 //=============================================================================
-void gl4::SetUniform(ShaderProgramId program, const std::string& locName, const glm::vec4& value)
+void gl::SetUniform(ShaderProgramId program, const std::string& locName, const glm::vec4& value)
 {
 	glProgramUniform4fv(program, glGetUniformLocation(program, locName.c_str()), 1, glm::value_ptr(value));
 }
 //=============================================================================
-void gl4::SetUniform(ShaderProgramId program, const std::string& locName, const glm::ivec4& value)
+void gl::SetUniform(ShaderProgramId program, const std::string& locName, const glm::ivec4& value)
 {
 	glProgramUniform4iv(program, glGetUniformLocation(program, locName.c_str()), 1, glm::value_ptr(value));
 }
 //=============================================================================
-void gl4::SetUniform(ShaderProgramId program, const std::string& locName, const glm::uvec4& value)
+void gl::SetUniform(ShaderProgramId program, const std::string& locName, const glm::uvec4& value)
 {
 	glProgramUniform4uiv(program, glGetUniformLocation(program, locName.c_str()), 1, glm::value_ptr(value));
 }
 //=============================================================================
-void gl4::SetUniform(ShaderProgramId program, const std::string& locName, const glm::mat2& mat, bool transpose)
+void gl::SetUniform(ShaderProgramId program, const std::string& locName, const glm::mat2& mat, bool transpose)
 {
 	glProgramUniformMatrix2fv(program, glGetUniformLocation(program, locName.c_str()), 1, transpose ? GL_TRUE : GL_FALSE, glm::value_ptr(mat));
 }
 //=============================================================================
-void gl4::SetUniform(ShaderProgramId program, const std::string& locName, const glm::mat3& mat, bool transpose)
+void gl::SetUniform(ShaderProgramId program, const std::string& locName, const glm::mat3& mat, bool transpose)
 {
 	glProgramUniformMatrix3fv(program, glGetUniformLocation(program, locName.c_str()), 1, transpose ? GL_TRUE : GL_FALSE, glm::value_ptr(mat));
 }
 //=============================================================================
-void gl4::SetUniform(ShaderProgramId program, const std::string& locName, const glm::mat4& mat, bool transpose)
+void gl::SetUniform(ShaderProgramId program, const std::string& locName, const glm::mat4& mat, bool transpose)
 {
 	glProgramUniformMatrix4fv(program, glGetUniformLocation(program, locName.c_str()), 1, transpose ? GL_TRUE : GL_FALSE, glm::value_ptr(mat));
 }
 //=============================================================================
-void gl4::SetUniform(ShaderProgramId program, const std::string& locName, const glm::mat2x3& mat, bool transpose)
+void gl::SetUniform(ShaderProgramId program, const std::string& locName, const glm::mat2x3& mat, bool transpose)
 {
 	glProgramUniformMatrix2x3fv(program, glGetUniformLocation(program, locName.c_str()), 1, transpose ? GL_TRUE : GL_FALSE, glm::value_ptr(mat));
 }
 //=============================================================================
-void gl4::SetUniform(ShaderProgramId program, const std::string& locName, const glm::mat3x2& mat, bool transpose)
+void gl::SetUniform(ShaderProgramId program, const std::string& locName, const glm::mat3x2& mat, bool transpose)
 {
 	glProgramUniformMatrix3x2fv(program, glGetUniformLocation(program, locName.c_str()), 1, transpose ? GL_TRUE : GL_FALSE, glm::value_ptr(mat));
 }
 //=============================================================================
-void gl4::SetUniform(ShaderProgramId program, const std::string& locName, const glm::mat2x4& mat, bool transpose)
+void gl::SetUniform(ShaderProgramId program, const std::string& locName, const glm::mat2x4& mat, bool transpose)
 {
 	glProgramUniformMatrix2x4fv(program, glGetUniformLocation(program, locName.c_str()), 1, transpose ? GL_TRUE : GL_FALSE, glm::value_ptr(mat));
 }
 //=============================================================================
-void gl4::SetUniform(ShaderProgramId program, const std::string& locName, const glm::mat4x2& mat, bool transpose)
+void gl::SetUniform(ShaderProgramId program, const std::string& locName, const glm::mat4x2& mat, bool transpose)
 {
 	glProgramUniformMatrix4x2fv(program, glGetUniformLocation(program, locName.c_str()), 1, transpose ? GL_TRUE : GL_FALSE, glm::value_ptr(mat));
 }
 //=============================================================================
-void gl4::SetUniform(ShaderProgramId program, const std::string& locName, const glm::mat3x4& mat, bool transpose)
+void gl::SetUniform(ShaderProgramId program, const std::string& locName, const glm::mat3x4& mat, bool transpose)
 {
 	glProgramUniformMatrix3x4fv(program, glGetUniformLocation(program, locName.c_str()), 1, transpose ? GL_TRUE : GL_FALSE, glm::value_ptr(mat));
 }
 //=============================================================================
-void gl4::SetUniform(ShaderProgramId program, const std::string& locName, const glm::mat4x3& mat, bool transpose)
+void gl::SetUniform(ShaderProgramId program, const std::string& locName, const glm::mat4x3& mat, bool transpose)
 {
 	glProgramUniformMatrix4x3fv(program, glGetUniformLocation(program, locName.c_str()), 1, transpose ? GL_TRUE : GL_FALSE, glm::value_ptr(mat));
 }
@@ -679,95 +679,95 @@ void gl4::SetUniform(ShaderProgramId program, const std::string& locName, const 
 //=============================================================================
 #pragma region [ Buffer ]
 //=============================================================================
-gl4::BufferId gl4::CreateBuffer(GLenum usage, GLsizeiptr size, const void* data)
+gl::BufferId gl::CreateBuffer(GLenum usage, GLsizeiptr size, const void* data)
 {
-	gl4::BufferId buffer;
+	gl::BufferId buffer;
 	glCreateBuffers(1, &buffer.id);
 	glNamedBufferData(buffer, size, data, usage);
 	return buffer;
 }
 //=============================================================================
-gl4::BufferId gl4::CreateBufferStorage(GLbitfield flags, GLsizeiptr size, const void* data)
+gl::BufferId gl::CreateBufferStorage(GLbitfield flags, GLsizeiptr size, const void* data)
 {
-	gl4::BufferId buffer;
+	gl::BufferId buffer;
 	glCreateBuffers(1, &buffer.id);
 	glNamedBufferStorage(buffer, size, data, flags);
 	return buffer;
 }
 //=============================================================================
-gl4::BufferId gl4::CreateBufferStorage(GLbitfield flags, GLsizeiptr sizeElement, GLsizeiptr numElement, const void* data)
+gl::BufferId gl::CreateBufferStorage(GLbitfield flags, GLsizeiptr sizeElement, GLsizeiptr numElement, const void* data)
 {
 	return CreateBufferStorage(flags, sizeElement * numElement, data);
 }
 //=============================================================================
-void gl4::SetSubData(BufferId id, GLintptr offset, GLsizeiptr size, const void* data)
+void gl::SetSubData(BufferId id, GLintptr offset, GLsizeiptr size, const void* data)
 {
 	glNamedBufferSubData(id, offset, size, data);
 }
 //=============================================================================
-void gl4::CopySubData(BufferId readBuffer, BufferId writeBuffer, GLintptr readOffset, GLintptr writeOffset, GLsizeiptr size)
+void gl::CopySubData(BufferId readBuffer, BufferId writeBuffer, GLintptr readOffset, GLintptr writeOffset, GLsizeiptr size)
 {
 	glCopyNamedBufferSubData(readBuffer, writeBuffer, readOffset, writeOffset, size);
 }
 //=============================================================================
-void gl4::ClearData(BufferId id, GLenum internalFormat, GLenum format, GLenum type, const void* data)
+void gl::ClearData(BufferId id, GLenum internalFormat, GLenum format, GLenum type, const void* data)
 {
 	glClearNamedBufferData(id, internalFormat, format, type, data);
 }
 //=============================================================================
-void gl4::ClearSubData(BufferId id, GLenum internalFormat, GLintptr offset, GLsizeiptr size, GLenum format, GLenum type, const void* data)
+void gl::ClearSubData(BufferId id, GLenum internalFormat, GLintptr offset, GLsizeiptr size, GLenum format, GLenum type, const void* data)
 {
 	glClearNamedBufferSubData(id, internalFormat, offset, size, format, type, data);
 }
 //=============================================================================
-void gl4::InvalidateData(BufferId id)
+void gl::InvalidateData(BufferId id)
 {
 	glInvalidateBufferData(id);
 }
 //=============================================================================
-void gl4::InvalidateSubData(BufferId id, GLintptr offset, GLsizeiptr length)
+void gl::InvalidateSubData(BufferId id, GLintptr offset, GLsizeiptr length)
 {
 	glInvalidateBufferSubData(id, offset, length);
 }
 //=============================================================================
-void* gl4::Map(BufferId id, GLenum access)
+void* gl::Map(BufferId id, GLenum access)
 {
 	return glMapNamedBuffer(id, access);
 }
 //=============================================================================
-void* gl4::MapRange(BufferId id, GLintptr offset, GLsizeiptr length, GLbitfield access)
+void* gl::MapRange(BufferId id, GLintptr offset, GLsizeiptr length, GLbitfield access)
 {
 	return glMapNamedBufferRange(id, offset, length, access);
 }
 //=============================================================================
-bool gl4::UnMap(BufferId id)
+bool gl::UnMap(BufferId id)
 {
 	return glUnmapNamedBuffer(id) == GL_TRUE;
 }
 //=============================================================================
-void gl4::FlushMappedRange(BufferId id, GLintptr offset, GLsizeiptr length)
+void gl::FlushMappedRange(BufferId id, GLintptr offset, GLsizeiptr length)
 {
 	glFlushMappedNamedBufferRange(id, offset, length);
 }
 //=============================================================================
-void* gl4::GetBufferPointer(BufferId id)
+void* gl::GetBufferPointer(BufferId id)
 {
 	void* ptr;
 	glGetNamedBufferPointerv(id, GL_BUFFER_MAP_POINTER, &ptr);
 	return ptr;
 }
 //=============================================================================
-void gl4::GetSubData(BufferId id, GLintptr offset, GLsizeiptr size, void* data)
+void gl::GetSubData(BufferId id, GLintptr offset, GLsizeiptr size, void* data)
 {
 	glGetNamedBufferSubData(id, offset, size, data);
 }
 //=============================================================================
-void gl4::BindBufferBase(BufferId id, GLenum target, GLuint index)
+void gl::BindBufferBase(BufferId id, GLenum target, GLuint index)
 {
 	glBindBufferBase(target, index, id);
 }
 //=============================================================================
-void gl4::BindBufferRange(BufferId id, GLenum target, GLuint index, GLintptr offset, GLsizeiptr size)
+void gl::BindBufferRange(BufferId id, GLenum target, GLuint index, GLintptr offset, GLsizeiptr size)
 {
 	glBindBufferRange(target, index, id, offset, size);
 }
@@ -782,19 +782,19 @@ constexpr size_t roundUp(size_t numberToRoundUp, size_t multipleOf)
 	return ((numberToRoundUp + multipleOf - 1) / multipleOf) * multipleOf;
 }
 //=============================================================================
-gl4::BufferStorageId gl4::CreateStorageBuffer(size_t size, BufferStorageFlags storageFlags, std::string_view name)
+gl::BufferStorageId gl::CreateStorageBuffer(size_t size, BufferStorageFlags storageFlags, std::string_view name)
 {
 	return CreateStorageBuffer(nullptr, size, storageFlags, name);
 }
 //=============================================================================
-gl4::BufferStorageId gl4::CreateStorageBuffer(TriviallyCopyableByteSpan data, BufferStorageFlags storageFlags, std::string_view name)
+gl::BufferStorageId gl::CreateStorageBuffer(TriviallyCopyableByteSpan data, BufferStorageFlags storageFlags, std::string_view name)
 {
 	return CreateStorageBuffer(data.data(), data.size_bytes(), storageFlags, name);
 }
 //=============================================================================
-gl4::BufferStorageId gl4::CreateStorageBuffer(const void* data, size_t size, BufferStorageFlags storageFlags, std::string_view name)
+gl::BufferStorageId gl::CreateStorageBuffer(const void* data, size_t size, BufferStorageFlags storageFlags, std::string_view name)
 {
-	gl4::BufferStorageId id;
+	gl::BufferStorageId id;
 	glCreateBuffers(1, &id.id);
 
 	id.size = roundUp(size, 16);
@@ -818,12 +818,12 @@ gl4::BufferStorageId gl4::CreateStorageBuffer(const void* data, size_t size, Buf
 	return id;
 }
 //=============================================================================
-void gl4::UpdateData(BufferStorageId id, TriviallyCopyableByteSpan data, size_t destOffsetBytes)
+void gl::UpdateData(BufferStorageId id, TriviallyCopyableByteSpan data, size_t destOffsetBytes)
 {
 	UpdateData(id, data.data(), data.size_bytes(), destOffsetBytes);
 }
 //=============================================================================
-void gl4::UpdateData(BufferStorageId id, const void* data, size_t size, size_t offset)
+void gl::UpdateData(BufferStorageId id, const void* data, size_t size, size_t offset)
 {
 	assert((id.storageFlags & BufferStorageFlag::DynamicStorage) &&
 		"UpdateData can only be called on buffers created with the DynamicStorage flag");
@@ -831,7 +831,7 @@ void gl4::UpdateData(BufferStorageId id, const void* data, size_t size, size_t o
 	glNamedBufferSubData(id, static_cast<GLuint>(offset), static_cast<GLuint>(size), data);
 }
 //=============================================================================
-void gl4::FillData(BufferStorageId id, const BufferFillInfo& clear)
+void gl::FillData(BufferStorageId id, const BufferFillInfo& clear)
 {
 	const auto actualSize = clear.size == WHOLE_BUFFER ? id.size : clear.size;
 	assert(actualSize % 4 == 0 && "Size must be a multiple of 4 bytes");
@@ -844,7 +844,7 @@ void gl4::FillData(BufferStorageId id, const BufferFillInfo& clear)
 		&clear.data);
 }
 //=============================================================================
-void gl4::Invalidate(BufferStorageId id)
+void gl::Invalidate(BufferStorageId id)
 {
 	glInvalidateBufferData(id);
 }
@@ -853,7 +853,7 @@ void gl4::Invalidate(BufferStorageId id)
 //=============================================================================
 #pragma region [ Vertex Array ]
 //=============================================================================
-void gl4::SetVertexAttrib(GLuint vao, GLuint attribIndex, GLint size, GLenum type, GLboolean normalized, GLuint relativeOffset, GLuint bindingIndex)
+void gl::SetVertexAttrib(GLuint vao, GLuint attribIndex, GLint size, GLenum type, GLboolean normalized, GLuint relativeOffset, GLuint bindingIndex)
 {
 	// TODO: еще есть glVertexArrayBindingDivisor для инстанса
 
@@ -866,12 +866,12 @@ void gl4::SetVertexAttrib(GLuint vao, GLuint attribIndex, GLint size, GLenum typ
 		glVertexArrayAttribFormat(vao, attribIndex, size, type, normalized, relativeOffset);
 }
 //=============================================================================
-void gl4::SetVertexAttrib(GLuint vao, const VertexAttributeRaw& attr)
+void gl::SetVertexAttrib(GLuint vao, const VertexAttributeRaw& attr)
 {
 	SetVertexAttrib(vao, attr.index, attr.size, attr.type, attr.normalized ? GL_TRUE : GL_FALSE, attr.relativeOffset, attr.bindingIndex);
 }
 //=============================================================================
-void gl4::SetVertexAttrib(GLuint vao, const std::vector<VertexAttributeRaw>& attributes)
+void gl::SetVertexAttrib(GLuint vao, const std::vector<VertexAttributeRaw>& attributes)
 {
 	for (size_t i = 0; i < attributes.size(); i++)
 	{
@@ -879,34 +879,34 @@ void gl4::SetVertexAttrib(GLuint vao, const std::vector<VertexAttributeRaw>& att
 	}
 }
 //=============================================================================
-gl4::VertexArrayId gl4::CreateVertexArray()
+gl::VertexArrayId gl::CreateVertexArray()
 {
-	gl4::VertexArrayId vao;
+	gl::VertexArrayId vao;
 	glCreateVertexArrays(1, &vao.id);
 	return vao;
 }
 //=============================================================================
-gl4::VertexArrayId gl4::CreateVertexArray(const std::vector<VertexAttributeRaw>& attributes)
+gl::VertexArrayId gl::CreateVertexArray(const std::vector<VertexAttributeRaw>& attributes)
 {
-	gl4::VertexArrayId vao = CreateVertexArray();
+	gl::VertexArrayId vao = CreateVertexArray();
 	SetVertexAttrib(vao, attributes);
 	return vao;
 }
 //=============================================================================
-gl4::VertexArrayId gl4::CreateVertexArray(gl4::BufferId vbo, size_t vertexSize, const std::vector<VertexAttributeRaw>& attributes)
+gl::VertexArrayId gl::CreateVertexArray(gl::BufferId vbo, size_t vertexSize, const std::vector<VertexAttributeRaw>& attributes)
 {
 	return CreateVertexArray(vbo, { 0 }, vertexSize, attributes);
 }
 //=============================================================================
-gl4::VertexArrayId gl4::CreateVertexArray(gl4::BufferId vbo, gl4::BufferId ibo, size_t vertexSize, const std::vector<VertexAttributeRaw>& attributes)
+gl::VertexArrayId gl::CreateVertexArray(gl::BufferId vbo, gl::BufferId ibo, size_t vertexSize, const std::vector<VertexAttributeRaw>& attributes)
 {
-	gl4::VertexArrayId vao = CreateVertexArray(attributes);
+	gl::VertexArrayId vao = CreateVertexArray(attributes);
 	SetVertexBuffer(vao, vbo, 0, 0, (GLsizei)vertexSize);
 	SetIndexBuffer(vao, ibo);
 	return vao;
 }
 //=============================================================================
-gl4::VertexArrayId gl4::CreateVertexArray(const VertexInputState& inputState)
+gl::VertexArrayId gl::CreateVertexArray(const VertexInputState& inputState)
 {
 	auto inputHash = vertexInputStateHash(inputState);
 	if (auto it = vertexArrayCache.find(inputHash); it != vertexArrayCache.end())
@@ -914,7 +914,7 @@ gl4::VertexArrayId gl4::CreateVertexArray(const VertexInputState& inputState)
 		return it->second;
 	}
 
-	gl4::VertexArrayId id;
+	gl::VertexArrayId id;
 	glCreateVertexArrays(1, &id.id);
 
 	for (uint32_t i = 0; i < inputState.vertexBindingDescriptions.size(); i++)
@@ -939,18 +939,18 @@ gl4::VertexArrayId gl4::CreateVertexArray(const VertexInputState& inputState)
 	return vertexArrayCache.insert({ inputHash, id }).first->second;
 }
 //=============================================================================
-void gl4::SetVertexBuffer(VertexArrayId id, BufferId vbo, GLuint bindingindex, GLintptr offset, GLsizei stride)
+void gl::SetVertexBuffer(VertexArrayId id, BufferId vbo, GLuint bindingindex, GLintptr offset, GLsizei stride)
 {
 	// TODO: возможно кеширование
 	if (IsValid(vbo)) glVertexArrayVertexBuffer(id, bindingindex, vbo, offset, stride);
 }
 //=============================================================================
-void gl4::SetIndexBuffer(VertexArrayId id, BufferId ibo)
+void gl::SetIndexBuffer(VertexArrayId id, BufferId ibo)
 {
 	if (IsValid(ibo)) glVertexArrayElementBuffer(id, ibo);
 }
 //=============================================================================
-void gl4::Bind(VertexArrayId id)
+void gl::Bind(VertexArrayId id)
 {
 	// TODO: возможно кеширование
 	glBindVertexArray(id);
@@ -1054,13 +1054,13 @@ inline int getNumMipMapLevels2D(int width, int height)
 	return static_cast<int>(floor(log2(std::max(width, height)))) + 1;
 }
 //=============================================================================
-gl4::Texture2DId gl4::CreateTexture2D(GLenum internalFormat, GLsizei width, GLsizei height, void* data, const TextureParameter& param)
+gl::Texture2DId gl::CreateTexture2D(GLenum internalFormat, GLsizei width, GLsizei height, void* data, const TextureParameter& param)
 {
 	const int numMipmaps = param.genMipMap ? getNumMipMapLevels2D(width, height) : 1;
 
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
-	gl4::Texture2DId texture;
+	gl::Texture2DId texture;
 	glCreateTextures(GL_TEXTURE_2D, 1, &texture.id);
 	glTextureParameteri(texture, GL_TEXTURE_MAX_LEVEL, numMipmaps - 1);
 	glTextureParameteri(texture, GL_TEXTURE_MIN_FILTER, param.minFilter);
@@ -1100,7 +1100,7 @@ inline uint8_t* genDefaultCheckerboardImage(int* width, int* height, int* nrChan
 	return imgData;
 }
 //=============================================================================
-gl4::Texture2DId gl4::LoadTexture2D(const char* texturePath, bool flipVertical, const TextureParameter& param)
+gl::Texture2DId gl::LoadTexture2D(const char* texturePath, bool flipVertical, const TextureParameter& param)
 {
 	stbi_set_flip_vertically_on_load(flipVertical);
 
@@ -1122,13 +1122,13 @@ gl4::Texture2DId gl4::LoadTexture2D(const char* texturePath, bool flipVertical, 
 	else if (nrChannels == 2) internalFormat = GL_RG8;
 	else if (nrChannels == 3) internalFormat = GL_RGB8;
 
-	gl4::Texture2DId texture = CreateTexture2D(internalFormat, width, height, data, param);
+	gl::Texture2DId texture = CreateTexture2D(internalFormat, width, height, data, param);
 
 	stbi_image_free(data);
 	return texture;
 }
 //=============================================================================
-gl4::Texture2DId gl4::LoadTexture2DHDR(const char* texturePath, bool flipVertical, const TextureParameter& param)
+gl::Texture2DId gl::LoadTexture2DHDR(const char* texturePath, bool flipVertical, const TextureParameter& param)
 {
 	// TODO: возможно объединить с LoadTexture2D
 
@@ -1142,18 +1142,18 @@ gl4::Texture2DId gl4::LoadTexture2DHDR(const char* texturePath, bool flipVertica
 		// TODO: создание дефолтной текстуры
 		return { 0 };
 	}
-	gl4::Texture2DId texture = CreateTexture2D(GL_RGB32F, width, height, data, param);
+	gl::Texture2DId texture = CreateTexture2D(GL_RGB32F, width, height, data, param);
 	stbi_image_free(data);
 	return texture;
 }
 //=============================================================================
-gl4::TextureCubeId gl4::LoadCubeMap(const std::vector<std::string>& files, const std::string& directory)
+gl::TextureCubeId gl::LoadCubeMap(const std::vector<std::string>& files, const std::string& directory)
 {
 	// TODO: возможность настроить через TextureParameter
 
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
-	gl4::TextureCubeId texture;
+	gl::TextureCubeId texture;
 	glCreateTextures(GL_TEXTURE_CUBE_MAP, 1, &texture.id);
 
 	stbi_set_flip_vertically_on_load(false);
@@ -1200,70 +1200,70 @@ gl4::TextureCubeId gl4::LoadCubeMap(const std::vector<std::string>& files, const
 	return texture;
 }
 //=============================================================================
-void gl4::SetSubImage(Texture1DId id, GLint level, GLint xoffset, GLsizei width, GLenum format, GLenum type, const void* pixels)
+void gl::SetSubImage(Texture1DId id, GLint level, GLint xoffset, GLsizei width, GLenum format, GLenum type, const void* pixels)
 {
 	glTextureSubImage1D(id, level, xoffset, width, format, type, pixels);
 }
 //=============================================================================
-void gl4::SetSubImage(Texture2DId id, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, const void* pixels)
+void gl::SetSubImage(Texture2DId id, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, const void* pixels)
 {
 	glTextureSubImage2D(id, level, xoffset, yoffset, width, height, format, type, pixels);
 }
 //=============================================================================
-void gl4::SetSubImage(Texture3DId id, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLenum type, const void* pixels)
+void gl::SetSubImage(Texture3DId id, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLenum type, const void* pixels)
 {
 	glTextureSubImage3D(id, level, xoffset, yoffset, zoffset, width, height, depth, format, type, pixels);
 }
 //=============================================================================
-void gl4::SetCompressedSubImage(Texture1DId id, GLint level, GLint xoffset, GLsizei width, GLenum format, GLsizei imageSize, const void* data)
+void gl::SetCompressedSubImage(Texture1DId id, GLint level, GLint xoffset, GLsizei width, GLenum format, GLsizei imageSize, const void* data)
 {
 	glCompressedTextureSubImage1D(id, level, xoffset, width, format, imageSize, data);
 }
 //=============================================================================
-void gl4::SetCompressedSubImage(Texture2DId id, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLsizei imageSize, const void* data)
+void gl::SetCompressedSubImage(Texture2DId id, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLsizei imageSize, const void* data)
 {
 	glCompressedTextureSubImage2D(id, level, xoffset, yoffset, width, height, format, imageSize, data);
 }
 //=============================================================================
-void gl4::SetCompressedSubImage(Texture3DId id, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLsizei imageSize, const void* data)
+void gl::SetCompressedSubImage(Texture3DId id, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLsizei imageSize, const void* data)
 {
 	glCompressedTextureSubImage3D(id, level, xoffset, yoffset, zoffset, width, height, depth, format, imageSize, data);
 }
 //=============================================================================
-void gl4::CopySubImage(Texture1DId id, GLint level, GLint xoffset, GLint x, GLint y, GLsizei width)
+void gl::CopySubImage(Texture1DId id, GLint level, GLint xoffset, GLint x, GLint y, GLsizei width)
 {
 	glCopyTextureSubImage1D(id, level, xoffset, x, y, width);
 }
 //=============================================================================
-void gl4::CopySubImage(Texture2DId id, GLint level, GLint xoffset, GLint yoffset, GLint x, GLint y, GLsizei width, GLsizei height)
+void gl::CopySubImage(Texture2DId id, GLint level, GLint xoffset, GLint yoffset, GLint x, GLint y, GLsizei width, GLsizei height)
 {
 	glCopyTextureSubImage2D(id, level, xoffset, yoffset, x, y, width, height);
 }
 //=============================================================================
-void gl4::CopySubImage(Texture3DId id, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLint x, GLint y, GLsizei width, GLsizei height)
+void gl::CopySubImage(Texture3DId id, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLint x, GLint y, GLsizei width, GLsizei height)
 {
 	glCopyTextureSubImage3D(id, level, xoffset, yoffset, zoffset, x, y, width, height);
 }
 //=============================================================================
-void gl4::Bind(GLuint unit, Texture1DId id)
+void gl::Bind(GLuint unit, Texture1DId id)
 {
 	// кешировать
 	glBindTextureUnit(unit, id);
 }
 //=============================================================================
-void gl4::Bind(GLuint unit, Texture2DId id)
+void gl::Bind(GLuint unit, Texture2DId id)
 {
 	// кешировать
 	glBindTextureUnit(unit, id);
 }
 //=============================================================================
-void gl4::Bind(GLuint unit, Texture3DId id)
+void gl::Bind(GLuint unit, Texture3DId id)
 {
 	// кешировать
 	glBindTextureUnit(unit, id);
 }
 //=============================================================================
-void gl4::Bind(GLuint unit, TextureCubeId id)
+void gl::Bind(GLuint unit, TextureCubeId id)
 {
 	// кешировать
 	glBindTextureUnit(unit, id);
@@ -1273,7 +1273,7 @@ void gl4::Bind(GLuint unit, TextureCubeId id)
 //=============================================================================
 #pragma region [ Sampler ]
 //=============================================================================
-gl4::SamplerId gl4::CreateSampler(const SamplerState& createInfo)
+gl::SamplerId gl::CreateSampler(const SamplerState& createInfo)
 {
 	if (auto it = samplerCache.find(createInfo); it != samplerCache.end())
 		return it->second;
@@ -1347,13 +1347,13 @@ gl4::SamplerId gl4::CreateSampler(const SamplerState& createInfo)
 	return samplerCache.insert({ createInfo, SamplerId(id) }).first->second;
 }
 //=============================================================================
-void gl4::Bind(GLuint unit, SamplerId sampler)
+void gl::Bind(GLuint unit, SamplerId sampler)
 {
 	// TODO: кеширование
 	glBindSampler(unit, sampler);
 }
 //=============================================================================
-void gl4::Bind(GLuint unit, Texture2DId texture, SamplerId sampler)
+void gl::Bind(GLuint unit, Texture2DId texture, SamplerId sampler)
 {
 	Bind(unit, texture);
 	Bind(unit, sampler);
@@ -1363,7 +1363,7 @@ void gl4::Bind(GLuint unit, Texture2DId texture, SamplerId sampler)
 //=============================================================================
 #pragma region [ RenderBuffer ]
 //=============================================================================
-gl4::RenderBufferId gl4::CreateRenderBuffer(GLenum internalFormat, GLsizei width, GLsizei height)
+gl::RenderBufferId gl::CreateRenderBuffer(GLenum internalFormat, GLsizei width, GLsizei height)
 {
 	RenderBufferId id;
 	glCreateRenderbuffers(1, &id.id);
@@ -1371,7 +1371,7 @@ gl4::RenderBufferId gl4::CreateRenderBuffer(GLenum internalFormat, GLsizei width
 	return id;
 }
 //=============================================================================
-gl4::RenderBufferId gl4::CreateRenderBuffer(GLsizei samples, GLenum internalFormat, GLsizei width, GLsizei height)
+gl::RenderBufferId gl::CreateRenderBuffer(GLsizei samples, GLenum internalFormat, GLsizei width, GLsizei height)
 {
 	RenderBufferId id;
 	glCreateRenderbuffers(1, &id.id);
@@ -1383,14 +1383,14 @@ gl4::RenderBufferId gl4::CreateRenderBuffer(GLsizei samples, GLenum internalForm
 //=============================================================================
 #pragma region [ FrameBuffer ]
 //=============================================================================
-GLuint gl4::CreateColorBuffer2D(int width, int height, GLenum formatColor)
+GLuint gl::CreateColorBuffer2D(int width, int height, GLenum formatColor)
 {
 	TextureParameter param = defaultTextureParameter2D;
 	param.wrap = GL_CLAMP_TO_EDGE;
-	return gl4::CreateTexture2D(formatColor, width, height, nullptr, param);
+	return gl::CreateTexture2D(formatColor, width, height, nullptr, param);
 }
 //=============================================================================
-GLuint gl4::CreateDepthBuffer2D(int width, int height, GLenum formatDepth)
+GLuint gl::CreateDepthBuffer2D(int width, int height, GLenum formatDepth)
 {
 	TextureParameter param = {};
 	param.minFilter = GL_NEAREST;
@@ -1399,16 +1399,16 @@ GLuint gl4::CreateDepthBuffer2D(int width, int height, GLenum formatDepth)
 	param.genMipMap = false;
 	param.dataType = GL_FLOAT;
 
-	GLuint texture = gl4::CreateTexture2D(formatDepth, width, height, nullptr, param);
+	GLuint texture = gl::CreateTexture2D(formatDepth, width, height, nullptr, param);
 	constexpr GLfloat border[]{ 1.0f, 1.0f, 1.0f, 1.0f };
 	glTextureParameterfv(texture, GL_TEXTURE_BORDER_COLOR, border);
 
 	return texture;
 }
 //=============================================================================
-gl4::FrameBufferId gl4::CreateFrameBuffer2D(GLuint colorBuffer, GLuint depthBuffer)
+gl::FrameBufferId gl::CreateFrameBuffer2D(GLuint colorBuffer, GLuint depthBuffer)
 {
-	gl4::FrameBufferId framebuffer;
+	gl::FrameBufferId framebuffer;
 	glCreateFramebuffers(1, &framebuffer.id);
 
 	if (colorBuffer > 0)
@@ -1426,9 +1426,9 @@ gl4::FrameBufferId gl4::CreateFrameBuffer2D(GLuint colorBuffer, GLuint depthBuff
 	return framebuffer;
 }
 //=============================================================================
-gl4::FrameBufferId gl4::CreateFrameBuffer2D(Texture2DId colorBuffer, Texture2DId depthBuffer)
+gl::FrameBufferId gl::CreateFrameBuffer2D(Texture2DId colorBuffer, Texture2DId depthBuffer)
 {
-	gl4::FrameBufferId framebuffer;
+	gl::FrameBufferId framebuffer;
 	glCreateFramebuffers(1, &framebuffer.id);
 
 	if (IsValid(colorBuffer))
@@ -1450,9 +1450,9 @@ gl4::FrameBufferId gl4::CreateFrameBuffer2D(Texture2DId colorBuffer, Texture2DId
 	return framebuffer;
 }
 //=============================================================================
-gl4::FrameBufferId gl4::CreateFrameBuffer2D(Texture2DId colorBuffer, RenderBufferId depthBuffer)
+gl::FrameBufferId gl::CreateFrameBuffer2D(Texture2DId colorBuffer, RenderBufferId depthBuffer)
 {
-	gl4::FrameBufferId framebuffer;
+	gl::FrameBufferId framebuffer;
 	glCreateFramebuffers(1, &framebuffer.id);
 
 	if (IsValid(colorBuffer))
@@ -1474,27 +1474,27 @@ gl4::FrameBufferId gl4::CreateFrameBuffer2D(Texture2DId colorBuffer, RenderBuffe
 	return framebuffer;
 }
 //=============================================================================
-void gl4::SetDrawBuffer(FrameBufferId fbo, GLenum buffer)
+void gl::SetDrawBuffer(FrameBufferId fbo, GLenum buffer)
 {
 	glNamedFramebufferDrawBuffer(fbo, buffer);
 }
 //=============================================================================
-void gl4::SetDrawBuffers(FrameBufferId fbo, GLsizei size, const GLenum* buffers)
+void gl::SetDrawBuffers(FrameBufferId fbo, GLsizei size, const GLenum* buffers)
 {
 	glNamedFramebufferDrawBuffers(fbo, size, buffers);
 }
 //=============================================================================
-void gl4::Invalidate(FrameBufferId fbo, GLsizei numAttachments, const GLenum* attachments)
+void gl::Invalidate(FrameBufferId fbo, GLsizei numAttachments, const GLenum* attachments)
 {
 	glInvalidateNamedFramebufferData(fbo, numAttachments, attachments);
 }
 //=============================================================================
-void gl4::InvalidateSubData(FrameBufferId fbo, GLsizei numAttachments, const GLenum* attachments, GLint x, GLint y, GLsizei width, GLsizei height)
+void gl::InvalidateSubData(FrameBufferId fbo, GLsizei numAttachments, const GLenum* attachments, GLint x, GLint y, GLsizei width, GLsizei height)
 {
 	glInvalidateNamedFramebufferSubData(fbo, numAttachments, attachments, x, y, width, height);
 }
 //=============================================================================
-void gl4::SetFrameBuffer(FrameBufferId fbo)
+void gl::SetFrameBuffer(FrameBufferId fbo)
 {
 	if (currentFBO != fbo)
 	{
@@ -1503,7 +1503,7 @@ void gl4::SetFrameBuffer(FrameBufferId fbo)
 	}
 }
 //=============================================================================
-void gl4::SetFrameBuffer(FrameBufferId fbo, int width, int height, GLbitfield clearMask)
+void gl::SetFrameBuffer(FrameBufferId fbo, int width, int height, GLbitfield clearMask)
 {
 	SetFrameBuffer(fbo);
 	glViewport(0, 0, width, height);

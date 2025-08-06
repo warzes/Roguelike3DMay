@@ -9,11 +9,11 @@ uint16_t GetWindowHeight();
 //=============================================================================
 PipelineDeferredSSAO::PipelineDeferredSSAO(int kernelSize, int noiseSize)
 {
-	m_shaderGeometry = gl4::CreateShaderProgram(geometryVertexSource, geometryFragmentSource);
+	m_shaderGeometry = gl::CreateShaderProgram(geometryVertexSource, geometryFragmentSource);
 
-	m_shaderLighting = gl4::CreateShaderProgram(ssaoVertexSource, lightingFragmentSource);
-	m_shaderSSAO = gl4::CreateShaderProgram(ssaoVertexSource, ssaoFragmentSource);
-	m_shaderBlur = gl4::CreateShaderProgram(ssaoVertexSource, blurFragmentSource);
+	m_shaderLighting = gl::CreateShaderProgram(ssaoVertexSource, lightingFragmentSource);
+	m_shaderSSAO = gl::CreateShaderProgram(ssaoVertexSource, ssaoFragmentSource);
+	m_shaderBlur = gl::CreateShaderProgram(ssaoVertexSource, blurFragmentSource);
 
 	// G Buffer
 	glCreateFramebuffers(1, &m_gBufferFBO);
@@ -139,21 +139,21 @@ PipelineDeferredSSAO::PipelineDeferredSSAO(int kernelSize, int noiseSize)
 
 	// Shader configuration
 	glUseProgram(m_shaderLighting);
-	gl4::SetUniform(m_shaderLighting, "gPosition", 0);
-	gl4::SetUniform(m_shaderLighting, "gNormal", 1);
-	gl4::SetUniform(m_shaderLighting, "gAlbedo", 2);
-	gl4::SetUniform(m_shaderLighting, "ssao", 3);
+	gl::SetUniform(m_shaderLighting, "gPosition", 0);
+	gl::SetUniform(m_shaderLighting, "gNormal", 1);
+	gl::SetUniform(m_shaderLighting, "gAlbedo", 2);
+	gl::SetUniform(m_shaderLighting, "ssao", 3);
 
 	glUseProgram(m_shaderSSAO);
-	gl4::SetUniform(m_shaderSSAO, "gPosition", 0);
-	gl4::SetUniform(m_shaderSSAO, "gNormal", 1);
-	gl4::SetUniform(m_shaderSSAO, "texNoise", 2);
-	gl4::SetUniform(m_shaderSSAO, "screen_width", static_cast<float>(GetWindowWidth()));
-	gl4::SetUniform(m_shaderSSAO, "screen_height", static_cast<float>(GetWindowHeight()));
-	gl4::SetUniform(m_shaderSSAO, "noise_size", static_cast<float>(noiseSize));
+	gl::SetUniform(m_shaderSSAO, "gPosition", 0);
+	gl::SetUniform(m_shaderSSAO, "gNormal", 1);
+	gl::SetUniform(m_shaderSSAO, "texNoise", 2);
+	gl::SetUniform(m_shaderSSAO, "screen_width", static_cast<float>(GetWindowWidth()));
+	gl::SetUniform(m_shaderSSAO, "screen_height", static_cast<float>(GetWindowHeight()));
+	gl::SetUniform(m_shaderSSAO, "noise_size", static_cast<float>(noiseSize));
 
 	glUseProgram(m_shaderBlur);
-	gl4::SetUniform(m_shaderBlur, "ssaoInput", 0);
+	gl::SetUniform(m_shaderBlur, "ssaoInput", 0);
 
 	// Plane
 	constexpr float quadVertices[]{
@@ -187,10 +187,10 @@ void PipelineDeferredSSAO::StartGeometryPass(const glm::mat4& projection, const 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	const glm::mat4 model = glm::mat4(1.0f);
 	glUseProgram(m_shaderGeometry);
-	gl4::SetUniform(m_shaderGeometry, "projection", projection);
-	gl4::SetUniform(m_shaderGeometry, "view", view);
-	gl4::SetUniform(m_shaderGeometry, "model", model);
-	gl4::SetUniform(m_shaderGeometry, "invertedNormals", 1.0f);
+	gl::SetUniform(m_shaderGeometry, "projection", projection);
+	gl::SetUniform(m_shaderGeometry, "view", view);
+	gl::SetUniform(m_shaderGeometry, "model", model);
+	gl::SetUniform(m_shaderGeometry, "invertedNormals", 1.0f);
 }
 //=============================================================================
 void PipelineDeferredSSAO::EndGeometryPass()
@@ -203,15 +203,15 @@ void PipelineDeferredSSAO::StartSSAOPass(const glm::mat4& projection, int kernel
 	glBindFramebuffer(GL_FRAMEBUFFER, m_ssaoFBO);
 	glClear(GL_COLOR_BUFFER_BIT);
 	glUseProgram(m_shaderSSAO);
-	gl4::SetUniform(m_shaderSSAO, "kernelSize", kernelSize);
-	gl4::SetUniform(m_shaderSSAO, "radius", radius);
-	gl4::SetUniform(m_shaderSSAO, "bias", bias);
+	gl::SetUniform(m_shaderSSAO, "kernelSize", kernelSize);
+	gl::SetUniform(m_shaderSSAO, "radius", radius);
+	gl::SetUniform(m_shaderSSAO, "bias", bias);
 	// Send kernel + rotation 
 	for (int i = 0; i < kernelSize; ++i)
 	{
-		gl4::SetUniform(m_shaderSSAO, "samples[" + std::to_string(i) + "]", m_ssaoKernel[(size_t)i]);
+		gl::SetUniform(m_shaderSSAO, "samples[" + std::to_string(i) + "]", m_ssaoKernel[(size_t)i]);
 	}
-	gl4::SetUniform(m_shaderSSAO, "projection", projection);
+	gl::SetUniform(m_shaderSSAO, "projection", projection);
 	glBindTextureUnit(0, m_gPositionTexture);
 	glBindTextureUnit(1, m_gNormalTexture);
 	glBindTextureUnit(2, m_noiseTexture);
@@ -236,16 +236,16 @@ void PipelineDeferredSSAO::StartLightingPass(const std::vector<LightOLD>& lights
 	for (unsigned int i = 0; i < lights.size(); ++i)
 	{
 		glm::vec3 lightPosView = glm::vec3(cameraView * glm::vec4(lights[i].Position, 1.0));
-		gl4::SetUniform(m_shaderLighting, "lights[" + std::to_string(i) + "].Position", lightPosView);
-		gl4::SetUniform(m_shaderLighting, "lights[" + std::to_string(i) + "].Color", lights[i].Color);
+		gl::SetUniform(m_shaderLighting, "lights[" + std::to_string(i) + "].Position", lightPosView);
+		gl::SetUniform(m_shaderLighting, "lights[" + std::to_string(i) + "].Color", lights[i].Color);
 	}
 
 	// Attenuation parameters
 	constexpr float linear = 2.9f;
 	constexpr float quadratic = 3.8f;
-	gl4::SetUniform(m_shaderLighting, "linear", linear);
-	gl4::SetUniform(m_shaderLighting, "quadratic", quadratic);
-	gl4::SetUniform(m_shaderLighting, "viewPos", cameraPosition);
+	gl::SetUniform(m_shaderLighting, "linear", linear);
+	gl::SetUniform(m_shaderLighting, "quadratic", quadratic);
+	gl::SetUniform(m_shaderLighting, "viewPos", cameraPosition);
 	glBindTextureUnit(0, m_gPositionTexture);
 	glBindTextureUnit(1, m_gNormalTexture);
 	glBindTextureUnit(2, m_gAlbedoTexture);

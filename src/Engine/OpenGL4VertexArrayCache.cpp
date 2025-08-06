@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "OpenGL4VertexArrayCache.h"
 #include "OpenGL4ApiToEnum.h"
 #include "OpenGL4PipelineManager.h"
@@ -7,7 +7,7 @@
 //=============================================================================
 namespace
 {
-	inline size_t vertexInputStateHash(const gl4::detail::VertexInputStateOwning& k)
+	inline size_t vertexInputStateHash(const gl::detail::VertexInputStateOwning& k)
 	{
 		size_t hashVal{};
 
@@ -22,7 +22,7 @@ namespace
 	}
 }
 //=============================================================================
-uint32_t gl4::detail::VertexArrayCache::CreateOrGetCachedVertexArray(const VertexInputStateOwning& inputState)
+uint32_t gl::detail::VertexArrayCache::CreateOrGetCachedVertexArray(const VertexInputStateOwning& inputState)
 {
 	auto inputHash = vertexInputStateHash(inputState);
 	if (auto it = m_vertexArrayCache.find(inputHash); it != m_vertexArrayCache.end())
@@ -44,9 +44,9 @@ uint32_t gl4::detail::VertexArrayCache::CreateOrGetCachedVertexArray(const Verte
 		auto internalType = detail::FormatToFormatClass(desc.format);
 		switch (internalType)
 		{
-		case gl4::GlFormatClass::Float: glVertexArrayAttribFormat(vao, desc.location, size, type, normalized, desc.offset); break;
-		case gl4::GlFormatClass::Int: glVertexArrayAttribIFormat(vao, desc.location, size, type, desc.offset); break;
-		case gl4::GlFormatClass::Long: glVertexArrayAttribLFormat(vao, desc.location, size, type, desc.offset); break;
+		case gl::GlFormatClass::Float: glVertexArrayAttribFormat(vao, desc.location, size, type, normalized, desc.offset); break;
+		case gl::GlFormatClass::Int: glVertexArrayAttribIFormat(vao, desc.location, size, type, desc.offset); break;
+		case gl::GlFormatClass::Long: glVertexArrayAttribLFormat(vao, desc.location, size, type, desc.offset); break;
 		default: assert(0);
 		}
 	}
@@ -56,7 +56,7 @@ uint32_t gl4::detail::VertexArrayCache::CreateOrGetCachedVertexArray(const Verte
 	return m_vertexArrayCache.insert({ inputHash, vao }).first->second;
 }
 //=============================================================================
-void gl4::detail::VertexArrayCache::Clear()
+void gl::detail::VertexArrayCache::Clear()
 {
 	for (auto [_, vao] : m_vertexArrayCache)
 	{

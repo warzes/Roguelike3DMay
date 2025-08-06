@@ -1,18 +1,18 @@
 ﻿#include "stdafx.h"
 #include "OpenGL4Timer.h"
 //=============================================================================
-gl4::TimerQuery::TimerQuery()
+gl::TimerQuery::TimerQuery()
 {
 	glGenQueries(2, m_queries);
 	glQueryCounter(m_queries[0], GL_TIMESTAMP);
 }
 //=============================================================================
-gl4::TimerQuery::~TimerQuery()
+gl::TimerQuery::~TimerQuery()
 {
 	glDeleteQueries(2, m_queries);
 }
 //=============================================================================
-uint64_t gl4::TimerQuery::GetTimestamp()
+uint64_t gl::TimerQuery::GetTimestamp()
 {
 	int complete = 0;
 	glQueryCounter(m_queries[1], GL_TIMESTAMP);
@@ -25,20 +25,20 @@ uint64_t gl4::TimerQuery::GetTimestamp()
 	return endTime - startTime;
 }
 //=============================================================================
-gl4::TimerQueryAsync::TimerQueryAsync(uint32_t N) : m_capacity(N)
+gl::TimerQueryAsync::TimerQueryAsync(uint32_t N) : m_capacity(N)
 {
 	assert(m_capacity > 0);
 	m_queries = new uint32_t[m_capacity * 2];
 	glGenQueries(m_capacity * 2, m_queries);
 }
 //=============================================================================
-gl4::TimerQueryAsync::~TimerQueryAsync()
+gl::TimerQueryAsync::~TimerQueryAsync()
 {
 	glDeleteQueries(m_capacity * 2, m_queries);
 	delete[] m_queries;
 }
 //=============================================================================
-void gl4::TimerQueryAsync::BeginZone()
+void gl::TimerQueryAsync::BeginZone()
 {
 	// begin a query if there is at least one inactive
 	if (m_count < m_capacity)
@@ -47,7 +47,7 @@ void gl4::TimerQueryAsync::BeginZone()
 	}
 }
 //=============================================================================
-void gl4::TimerQueryAsync::EndZone()
+void gl::TimerQueryAsync::EndZone()
 {
 	// end a query if there is at least one inactive
 	if (m_count < m_capacity)
@@ -58,7 +58,7 @@ void gl4::TimerQueryAsync::EndZone()
 	}
 }
 //=============================================================================
-std::optional<uint64_t> gl4::TimerQueryAsync::PopTimestamp()
+std::optional<uint64_t> gl::TimerQueryAsync::PopTimestamp()
 {
 	// return nothing if there is no active query
 	if (m_count == 0)

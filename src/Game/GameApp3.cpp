@@ -44,7 +44,7 @@ bool GameApp3::OnInit()
 	std::vector<uint32_t> indices = { 0, 1, 2, 3, 4, 5 };
 
 	m_model1.mesh = LoadDataMesh(vertices, indices);
-	m_model1.textureFilter = gl4::MagFilter::Nearest;
+	m_model1.textureFilter = gl::MagFilter::Nearest;
 	m_model1.material.diffuseTexture = TextureManager::GetTexture("ExampleData/textures/wood.jpg");
 	m_model1.material.normalTexture = TextureManager::GetTexture("CoreData/textures/normal01.tga");
 
@@ -58,23 +58,23 @@ bool GameApp3::OnInit()
 	if (!createPipeline())
 		return false;
 
-	m_globalUbo = gl4::TypedBuffer<GlobalUniforms>(gl4::BufferStorageFlag::DynamicStorage);
-	m_objectUbo = gl4::TypedBuffer<ObjectUniforms>(gl4::BufferStorageFlag::DynamicStorage);
-	m_materialUbo = gl4::TypedBuffer<MaterialUniforms>(gl4::BufferStorageFlag::DynamicStorage);
+	m_globalUbo = gl::TypedBuffer<GlobalUniforms>(gl::BufferStorageFlag::DynamicStorage);
+	m_objectUbo = gl::TypedBuffer<ObjectUniforms>(gl::BufferStorageFlag::DynamicStorage);
+	m_materialUbo = gl::TypedBuffer<MaterialUniforms>(gl::BufferStorageFlag::DynamicStorage);
 
-	gl4::SamplerState sampleDesc;
-	sampleDesc.minFilter = gl4::MinFilter::Nearest;
-	sampleDesc.magFilter = gl4::MagFilter::Nearest;
-	sampleDesc.addressModeU = gl4::AddressMode::Repeat;
-	sampleDesc.addressModeV = gl4::AddressMode::Repeat;
-	m_nearestSampler = gl4::Sampler(sampleDesc);
+	gl::SamplerState sampleDesc;
+	sampleDesc.minFilter = gl::MinFilter::Nearest;
+	sampleDesc.magFilter = gl::MagFilter::Nearest;
+	sampleDesc.addressModeU = gl::AddressMode::Repeat;
+	sampleDesc.addressModeV = gl::AddressMode::Repeat;
+	m_nearestSampler = gl::Sampler(sampleDesc);
 
-	sampleDesc.anisotropy = gl4::SampleCount::Samples16;
-	sampleDesc.minFilter = gl4::MinFilter::LinearMimapLinear;
-	sampleDesc.magFilter = gl4::MagFilter::Linear;
-	sampleDesc.addressModeU = gl4::AddressMode::Repeat;
-	sampleDesc.addressModeV = gl4::AddressMode::Repeat;
-	m_linearSampler = gl4::Sampler(sampleDesc);
+	sampleDesc.anisotropy = gl::SampleCount::Samples16;
+	sampleDesc.minFilter = gl::MinFilter::LinearMimapLinear;
+	sampleDesc.magFilter = gl::MagFilter::Linear;
+	sampleDesc.addressModeU = gl::AddressMode::Repeat;
+	sampleDesc.addressModeV = gl::AddressMode::Repeat;
+	m_linearSampler = gl::Sampler(sampleDesc);
 
 	return true;
 }
@@ -116,39 +116,39 @@ void GameApp3::OnUpdate(float deltaTime)
 void GameApp3::OnRender()
 {
 	{
-		auto finalColorAttachment = gl4::RenderColorAttachment{
+		auto finalColorAttachment = gl::RenderColorAttachment{
 			.texture = m_finalColorBuffer.value(),
-			.loadOp = gl4::AttachmentLoadOp::Clear,
+			.loadOp = gl::AttachmentLoadOp::Clear,
 			.clearValue = { 0.1f, 0.5f, 0.8f, 1.0f },
 		};
-		auto finalDepthAttachment = gl4::RenderDepthStencilAttachment{
+		auto finalDepthAttachment = gl::RenderDepthStencilAttachment{
 		  .texture = m_finalDepthBuffer.value(),
-		  .loadOp = gl4::AttachmentLoadOp::Clear,
+		  .loadOp = gl::AttachmentLoadOp::Clear,
 		  .clearValue = {.depth = 1.0f},
 		};
 
-		gl4::BeginRendering({ .colorAttachments = {&finalColorAttachment, 1}, .depthAttachment = finalDepthAttachment });
+		gl::BeginRendering({ .colorAttachments = {&finalColorAttachment, 1}, .depthAttachment = finalDepthAttachment });
 		{
 			m_globalUboData.view = m_camera.GetViewMatrix();
 			m_globalUboData.proj = m_projection;
 			m_globalUboData.eyePosition = m_camera.Position;
 			m_globalUbo->UpdateData(m_globalUboData);
 
-			gl4::Cmd::BindGraphicsPipeline(m_pipeline.value());
-			gl4::Cmd::BindUniformBuffer(0, m_globalUbo.value());
+			gl::Cmd::BindGraphicsPipeline(m_pipeline.value());
+			gl::Cmd::BindUniformBuffer(0, m_globalUbo.value());
 
 			drawModel(m_model1);
 			drawModel(m_model2);
 			drawModel(m_model3);
 
 		}
-		gl4::EndRendering();
+		gl::EndRendering();
 	}
 		
 	//-------------------------------------------------------------------------
 	// FINAL PASS
 	//-------------------------------------------------------------------------
-	gl4::BlitTextureToSwapchain(*m_finalColorBuffer, {}, {}, m_finalColorBuffer->Extent(), { GetWindowWidth(), GetWindowHeight(), 1 }, gl4::MagFilter::Nearest);
+	gl::BlitTextureToSwapchain(*m_finalColorBuffer, {}, {}, m_finalColorBuffer->Extent(), { GetWindowWidth(), GetWindowHeight(), 1 }, gl::MagFilter::Nearest);
 }
 //=============================================================================
 void GameApp3::OnImGuiDraw()
@@ -158,8 +158,8 @@ void GameApp3::OnImGuiDraw()
 //=============================================================================
 void GameApp3::OnResize(uint16_t width, uint16_t height)
 {
-	m_finalColorBuffer = gl4::CreateTexture2D({ width, height }, gl4::Format::R8G8B8A8_SRGB, "FinalColorBuffer");
-	m_finalDepthBuffer = gl4::CreateTexture2D({ width, height }, gl4::Format::D32_FLOAT, "FinalDepthBuffer");
+	m_finalColorBuffer = gl::CreateTexture2D({ width, height }, gl::Format::R8G8B8A8_SRGB, "FinalColorBuffer");
+	m_finalDepthBuffer = gl::CreateTexture2D({ width, height }, gl::Format::D32_FLOAT, "FinalDepthBuffer");
 
 	m_projection = glm::perspective(glm::radians(65.0f), GetWindowAspect(), 0.01f, 1000.0f);
 }
@@ -182,13 +182,13 @@ void GameApp3::OnKey(int key, int scanCode, int action, int mods)
 //=============================================================================
 void GameApp3::drawModel(GameModelOld& model)
 {
-	const gl4::Sampler& sampler = (model.textureFilter == gl4::MagFilter::Linear)
+	const gl::Sampler& sampler = (model.textureFilter == gl::MagFilter::Linear)
 		? m_linearSampler.value()
 		: m_nearestSampler.value();
 
 	m_objectUboData.model = model.GetModelMat();
 	m_objectUbo->UpdateData(m_objectUboData);
-	gl4::Cmd::BindUniformBuffer(1, m_objectUbo.value());
+	gl::Cmd::BindUniformBuffer(1, m_objectUbo.value());
 
 	m_materialUboData.diffuse = glm::vec4(1.0f, 0.0f, 1.0f, 1.0f);
 	m_materialUboData.hasDiffuseTexture = model.material.diffuseTexture != nullptr;
@@ -198,31 +198,31 @@ void GameApp3::drawModel(GameModelOld& model)
 	m_materialUboData.hasDepthMapTexture = model.material.depthTexture != nullptr;
 	m_materialUboData.noLighing = model.material.noLighing;
 	m_materialUbo->UpdateData(m_materialUboData);
-	gl4::Cmd::BindUniformBuffer(2, m_materialUbo.value());
+	gl::Cmd::BindUniformBuffer(2, m_materialUbo.value());
 		
 	if (model.material.diffuseTexture)
-		gl4::Cmd::BindSampledImage(0, *model.material.diffuseTexture, sampler);
+		gl::Cmd::BindSampledImage(0, *model.material.diffuseTexture, sampler);
 	if (model.material.specularTexture)
-		gl4::Cmd::BindSampledImage(1, *model.material.specularTexture, sampler);
+		gl::Cmd::BindSampledImage(1, *model.material.specularTexture, sampler);
 	if (model.material.emissionTexture)
-		gl4::Cmd::BindSampledImage(2, *model.material.emissionTexture, sampler);
+		gl::Cmd::BindSampledImage(2, *model.material.emissionTexture, sampler);
 	if (model.material.normalTexture)
-		gl4::Cmd::BindSampledImage(3, *model.material.normalTexture, sampler);
+		gl::Cmd::BindSampledImage(3, *model.material.normalTexture, sampler);
 	if (model.material.depthTexture)
-		gl4::Cmd::BindSampledImage(4, *model.material.depthTexture, sampler);
+		gl::Cmd::BindSampledImage(4, *model.material.depthTexture, sampler);
 
 	model.mesh->Bind();
 }
 //=============================================================================
 void GameApp3::drawModel(std::optional<GameModel> model)
 {
-	const gl4::Sampler& sampler = (model.value().textureFilter == gl4::MagFilter::Linear)
+	const gl::Sampler& sampler = (model.value().textureFilter == gl::MagFilter::Linear)
 		? m_linearSampler.value()
 		: m_nearestSampler.value();
 
 	m_objectUboData.model = model.value().GetModelMat();
 	m_objectUbo->UpdateData(m_objectUboData);
-	gl4::Cmd::BindUniformBuffer(1, m_objectUbo.value());
+	gl::Cmd::BindUniformBuffer(1, m_objectUbo.value());
 
 	for (size_t i = 0; i < model.value().meshes.size(); i++)
 	{
@@ -237,18 +237,18 @@ void GameApp3::drawModel(std::optional<GameModel> model)
 		m_materialUboData.hasDepthMapTexture = meshes->GetMaterial()->depthTexture != nullptr;
 		m_materialUboData.noLighing = meshes->GetMaterial()->noLighing;
 		m_materialUbo->UpdateData(m_materialUboData);
-		gl4::Cmd::BindUniformBuffer(2, m_materialUbo.value());
+		gl::Cmd::BindUniformBuffer(2, m_materialUbo.value());
 
 		if (meshes->GetMaterial()->diffuseTexture)
-			gl4::Cmd::BindSampledImage(0, *meshes->GetMaterial()->diffuseTexture, sampler);
+			gl::Cmd::BindSampledImage(0, *meshes->GetMaterial()->diffuseTexture, sampler);
 		if (meshes->GetMaterial()->specularTexture)
-			gl4::Cmd::BindSampledImage(1, *meshes->GetMaterial()->specularTexture, sampler);
+			gl::Cmd::BindSampledImage(1, *meshes->GetMaterial()->specularTexture, sampler);
 		if (meshes->GetMaterial()->emissionTexture)
-			gl4::Cmd::BindSampledImage(2, *meshes->GetMaterial()->emissionTexture, sampler);
+			gl::Cmd::BindSampledImage(2, *meshes->GetMaterial()->emissionTexture, sampler);
 		if (meshes->GetMaterial()->normalTexture)
-			gl4::Cmd::BindSampledImage(3, *meshes->GetMaterial()->normalTexture, sampler);
+			gl::Cmd::BindSampledImage(3, *meshes->GetMaterial()->normalTexture, sampler);
 		if (meshes->GetMaterial()->depthTexture)
-			gl4::Cmd::BindSampledImage(4, *meshes->GetMaterial()->depthTexture, sampler);
+			gl::Cmd::BindSampledImage(4, *meshes->GetMaterial()->depthTexture, sampler);
 
 		meshes->Bind();
 	}
@@ -256,18 +256,18 @@ void GameApp3::drawModel(std::optional<GameModel> model)
 //=============================================================================
 bool GameApp3::createPipeline()
 {
-	auto vertexShader = gl4::Shader(gl4::PipelineStage::VertexShader, io::ReadShaderCode("GameData/shaders/MainShader3.vert"), "MainShader VS");
+	auto vertexShader = gl::Shader(gl::PipelineStage::VertexShader, io::ReadShaderCode("GameData/shaders/MainShader3.vert"), "MainShader VS");
 	if (!vertexShader.IsValid()) return false;
-	auto fragmentShader = gl4::Shader(gl4::PipelineStage::FragmentShader, io::ReadShaderCode("GameData/shaders/MainShader3.frag"), "MainShader FS");
+	auto fragmentShader = gl::Shader(gl::PipelineStage::FragmentShader, io::ReadShaderCode("GameData/shaders/MainShader3.frag"), "MainShader FS");
 	if (!fragmentShader.IsValid()) return false;
 
-	m_pipeline = gl4::GraphicsPipeline({
+	m_pipeline = gl::GraphicsPipeline({
 		.name = "Model Pipeline",
 		.vertexShader = &vertexShader,
 		.fragmentShader = &fragmentShader,
-		.inputAssemblyState = {.topology = gl4::PrimitiveTopology::TRIANGLE_LIST},
+		.inputAssemblyState = {.topology = gl::PrimitiveTopology::TRIANGLE_LIST},
 		.vertexInputState = {MeshVertexInputBindingDescs},
-		.rasterizationState = {/*.frontFace = gl4::FrontFace::Clockwise*/ .cullMode = gl4::CullMode::None },
+		.rasterizationState = {/*.frontFace = gl::FrontFace::Clockwise*/ .cullMode = gl::CullMode::None },
 		.depthState = {.depthTestEnable = true, .depthWriteEnable = true},
 		});
 	if (!m_pipeline.has_value()) return false;

@@ -194,14 +194,14 @@ void main()
 	FragColor = vec4(normalize(lightColor), alpha);
 }
 )";
-	gl4::ShaderProgramId lightProgram;
+	gl::ShaderProgramId lightProgram;
 	int lightProjLoc;
 	int lightViewLoc;
 	int lightPositionLoc;
 	int radiusLoc;
 	int lightColorLoc;
 
-	gl4::ShaderProgramId mainProgram;
+	gl::ShaderProgramId mainProgram;
 	int mainProjLoc;
 	int mainViewLoc;
 	int mainModelLoc;
@@ -221,8 +221,8 @@ void main()
 
 	ModelOLD* model;
 
-	gl4::BufferId planevbo;
-	gl4::VertexArrayId planevao;
+	gl::BufferId planevbo;
+	gl::VertexArrayId planevao;
 
 	PipelineShadowMapping* pipeline;
 
@@ -253,28 +253,28 @@ EngineCreateInfo TestShadowMapping::GetCreateInfo() const
 //=============================================================================
 bool TestShadowMapping::OnInit()
 {
-	mainProgram = gl4::CreateShaderProgram(mainShaderCodeVertex, mainShaderCodeFragment);
-	mainProjLoc = gl4::GetUniformLocation(mainProgram, "projection");
-	mainViewLoc = gl4::GetUniformLocation(mainProgram, "view");
-	mainModelLoc = gl4::GetUniformLocation(mainProgram, "model");
-	mainLightSpaceMatrixLoc = gl4::GetUniformLocation(mainProgram, "lightSpaceMatrix");
-	mainTextureDiffuse1Loc = gl4::GetUniformLocation(mainProgram, "texture_diffuse1");
-	mainShadowMapLoc = gl4::GetUniformLocation(mainProgram, "shadowMap");
-	mainLightPosLoc = gl4::GetUniformLocation(mainProgram, "lightPos");
-	mainViewPosLoc = gl4::GetUniformLocation(mainProgram, "viewPos");
-	mainMinBiasLoc = gl4::GetUniformLocation(mainProgram, "minBias");
-	mainMaxBiasLoc = gl4::GetUniformLocation(mainProgram, "maxBias");
-	mainAmbientPowerLoc = gl4::GetUniformLocation(mainProgram, "ambientPower");
-	mainSpecularPowerLoc = gl4::GetUniformLocation(mainProgram, "specularPower");
+	mainProgram = gl::CreateShaderProgram(mainShaderCodeVertex, mainShaderCodeFragment);
+	mainProjLoc = gl::GetUniformLocation(mainProgram, "projection");
+	mainViewLoc = gl::GetUniformLocation(mainProgram, "view");
+	mainModelLoc = gl::GetUniformLocation(mainProgram, "model");
+	mainLightSpaceMatrixLoc = gl::GetUniformLocation(mainProgram, "lightSpaceMatrix");
+	mainTextureDiffuse1Loc = gl::GetUniformLocation(mainProgram, "texture_diffuse1");
+	mainShadowMapLoc = gl::GetUniformLocation(mainProgram, "shadowMap");
+	mainLightPosLoc = gl::GetUniformLocation(mainProgram, "lightPos");
+	mainViewPosLoc = gl::GetUniformLocation(mainProgram, "viewPos");
+	mainMinBiasLoc = gl::GetUniformLocation(mainProgram, "minBias");
+	mainMaxBiasLoc = gl::GetUniformLocation(mainProgram, "maxBias");
+	mainAmbientPowerLoc = gl::GetUniformLocation(mainProgram, "ambientPower");
+	mainSpecularPowerLoc = gl::GetUniformLocation(mainProgram, "specularPower");
 
-	lightProgram = gl4::CreateShaderProgram(lightShaderCodeVertex, lightShaderCodeFragment);
-	lightProjLoc = gl4::GetUniformLocation(lightProgram, "projection");
-	lightViewLoc = gl4::GetUniformLocation(lightProgram, "view");
-	lightPositionLoc = gl4::GetUniformLocation(lightProgram, "lightPosition");
-	radiusLoc = gl4::GetUniformLocation(lightProgram, "radius");
-	lightColorLoc = gl4::GetUniformLocation(lightProgram, "lightColor");
+	lightProgram = gl::CreateShaderProgram(lightShaderCodeVertex, lightShaderCodeFragment);
+	lightProjLoc = gl::GetUniformLocation(lightProgram, "projection");
+	lightViewLoc = gl::GetUniformLocation(lightProgram, "view");
+	lightPositionLoc = gl::GetUniformLocation(lightProgram, "lightPosition");
+	radiusLoc = gl::GetUniformLocation(lightProgram, "radius");
+	lightColorLoc = gl::GetUniformLocation(lightProgram, "lightColor");
 
-	texture = gl4::LoadTexture2D("CoreData/textures/White1x1.png");
+	texture = gl::LoadTexture2D("CoreData/textures/White1x1.png");
 
 	model = new ModelOLD("ExampleData/mesh/Zaku/scene.gltf");
 
@@ -285,7 +285,7 @@ bool TestShadowMapping::OnInit()
 		glm::vec2 uv;
 	};
 
-	std::vector<gl4::VertexAttributeRaw> attribs = {
+	std::vector<gl::VertexAttributeRaw> attribs = {
 		{0, 3, GL_FLOAT, false, offsetof(Vertex, pos)},
 		{1, 3, GL_FLOAT, false, offsetof(Vertex, normal)},
 		{2, 2, GL_FLOAT, false, offsetof(Vertex, uv)},
@@ -303,8 +303,8 @@ bool TestShadowMapping::OnInit()
 		 25.0f, 0.0f, -25.0f,  0.0f, 1.0f, 0.0f,  25.0f, 25.0f
 	};
 
-	planevbo = gl4::CreateBufferStorage(0, sizeof(planeVertices), planeVertices);
-	planevao = gl4::CreateVertexArray(planevbo, sizeof(Vertex), attribs);
+	planevbo = gl::CreateBufferStorage(0, sizeof(planeVertices), planeVertices);
+	planevao = gl::CreateVertexArray(planevbo, sizeof(Vertex), attribs);
 
 
 	camera.SetPosition(glm::vec3(0.0f, 0.0f, -1.0f));
@@ -369,19 +369,19 @@ void TestShadowMapping::OnRender()
 	RenderScene(depthShader, depthModelLoc);
 
 	// Render Scene
-	gl4::SetFrameBuffer({ 0 }, GetWindowWidth(), GetWindowHeight(), GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	gl::SetFrameBuffer({ 0 }, GetWindowWidth(), GetWindowHeight(), GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glUseProgram(mainProgram);
-	gl4::SetUniform(mainProgram, mainTextureDiffuse1Loc, 0);
-	gl4::SetUniform(mainProgram, mainShadowMapLoc, 1);
-	gl4::SetUniform(mainProgram, mainMinBiasLoc, minBias);
-	gl4::SetUniform(mainProgram, mainMaxBiasLoc, maxBias);
-	gl4::SetUniform(mainProgram, mainAmbientPowerLoc, ambientPower);
-	gl4::SetUniform(mainProgram, mainSpecularPowerLoc, specularPower);
-	gl4::SetUniform(mainProgram, mainProjLoc, proj);
-	gl4::SetUniform(mainProgram, mainViewLoc, view);
-	gl4::SetUniform(mainProgram, mainViewPosLoc, camera.Position);
-	gl4::SetUniform(mainProgram, mainLightPosLoc, light.Position);
-	gl4::SetUniform(mainProgram, mainLightSpaceMatrixLoc, pipeline->GetLightSpaceMatrix());
+	gl::SetUniform(mainProgram, mainTextureDiffuse1Loc, 0);
+	gl::SetUniform(mainProgram, mainShadowMapLoc, 1);
+	gl::SetUniform(mainProgram, mainMinBiasLoc, minBias);
+	gl::SetUniform(mainProgram, mainMaxBiasLoc, maxBias);
+	gl::SetUniform(mainProgram, mainAmbientPowerLoc, ambientPower);
+	gl::SetUniform(mainProgram, mainSpecularPowerLoc, specularPower);
+	gl::SetUniform(mainProgram, mainProjLoc, proj);
+	gl::SetUniform(mainProgram, mainViewLoc, view);
+	gl::SetUniform(mainProgram, mainViewPosLoc, camera.Position);
+	gl::SetUniform(mainProgram, mainLightPosLoc, light.Position);
+	gl::SetUniform(mainProgram, mainLightSpaceMatrixLoc, pipeline->GetLightSpaceMatrix());
 
 	glBindTextureUnit(0, texture);
 	pipeline->BindDepthTexture(1);
@@ -390,11 +390,11 @@ void TestShadowMapping::OnRender()
 
 	// Debug light
 	glUseProgram(lightProgram);
-	gl4::SetUniform(lightProgram, lightProjLoc, proj);
-	gl4::SetUniform(lightProgram, lightViewLoc, view);
-	gl4::SetUniform(lightProgram, lightPositionLoc, light.Position);
-	gl4::SetUniform(lightProgram, radiusLoc, 0.4f);
-	gl4::SetUniform(lightProgram, lightColorLoc, light.Color);
+	gl::SetUniform(lightProgram, lightProjLoc, proj);
+	gl::SetUniform(lightProgram, lightViewLoc, view);
+	gl::SetUniform(lightProgram, lightPositionLoc, light.Position);
+	gl::SetUniform(lightProgram, radiusLoc, 0.4f);
+	gl::SetUniform(lightProgram, lightColorLoc, light.Color);
 	GetGraphicSystem().DrawQuad();
 
 	// Debug depth
@@ -428,26 +428,26 @@ void TestShadowMapping::OnResize(uint16_t width, uint16_t height)
 {
 }
 //=============================================================================
-void TestShadowMapping::RenderScene(gl4::ShaderProgramId shader, int modelMatLoc)
+void TestShadowMapping::RenderScene(gl::ShaderProgramId shader, int modelMatLoc)
 {
 	glm::mat4 modelMat = glm::mat4(1.0f);
-	gl4::SetUniform(shader, modelMatLoc, modelMat);
+	gl::SetUniform(shader, modelMatLoc, modelMat);
 	glBindVertexArray(planevao);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 
 	modelMat = glm::mat4(1.0f);
 	modelMat = glm::translate(modelMat, glm::vec3(2.0f, 0.0f, 1.0f));
-	gl4::SetUniform(shader, modelMatLoc, modelMat);
+	gl::SetUniform(shader, modelMatLoc, modelMat);
 	model->Draw(shader);
 
 	modelMat = glm::mat4(1.0f);
 	modelMat = glm::translate(modelMat, glm::vec3(0.0f, 0.0f, 2.0f));
-	gl4::SetUniform(shader, modelMatLoc, modelMat);
+	gl::SetUniform(shader, modelMatLoc, modelMat);
 	model->Draw(shader);
 
 	modelMat = glm::mat4(1.0f);
 	modelMat = glm::translate(modelMat, glm::vec3(-1.5f, 0.0f, 0.0f));
-	gl4::SetUniform(shader, modelMatLoc, modelMat);
+	gl::SetUniform(shader, modelMatLoc, modelMat);
 	model->Draw(shader);
 }
 //=============================================================================

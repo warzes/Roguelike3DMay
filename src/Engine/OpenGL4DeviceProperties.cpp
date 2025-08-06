@@ -1,7 +1,7 @@
 ﻿#include "stdafx.h"
 #include "OpenGL4DeviceProperties.h"
 //=============================================================================
-gl4::DeviceProperties gl4::InitDeviceProperties()
+gl::DeviceProperties gl::InitDeviceProperties()
 {
 	DeviceProperties prop;
 

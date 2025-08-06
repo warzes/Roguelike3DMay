@@ -18,11 +18,11 @@ public:
 private:
 	void resizeFBO(int width, int height);
 
-	gl4::ShaderProgramId m_program{ 0 };
+	gl::ShaderProgramId m_program{ 0 };
 	int    m_uniformVPLoc{ -1 };
 	int    m_uniformModelLoc{ -1 };
 
-	gl4::FrameBufferId m_depthpassFBO{ 0 };
+	gl::FrameBufferId m_depthpassFBO{ 0 };
 	GLuint m_depthpassTextureDepth{ 0 };
 	int    m_width{ 0 };
 	int    m_height{ 0 };

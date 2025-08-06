@@ -6,7 +6,7 @@
 
 // TODO: все inline в constexpr?
 
-namespace gl4::detail
+namespace gl::detail
 {
 	constexpr GLenum EnumToGL(PipelineStage stage)
 	{
@@ -984,4 +984,4 @@ namespace gl4::detail
 		return ret;
 	}
 
-} // namespace gl4::detail
+} // namespace gl::detail

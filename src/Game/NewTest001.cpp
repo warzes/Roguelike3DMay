@@ -37,34 +37,34 @@ void main()
 }
 )";
 
-	std::optional<gl4::Buffer> vertexPosBuffer;
-	std::optional<gl4::Buffer> vertexColorBuffer;
-	std::optional<gl4::GraphicsPipeline> pipeline;
+	std::optional<gl::Buffer> vertexPosBuffer;
+	std::optional<gl::Buffer> vertexColorBuffer;
+	std::optional<gl::GraphicsPipeline> pipeline;
 
-	gl4::GraphicsPipeline CreatePipeline()
+	gl::GraphicsPipeline CreatePipeline()
 	{
-		auto descPos = gl4::VertexInputBindingDescription{
+		auto descPos = gl::VertexInputBindingDescription{
 		  .location = 0,
 		  .binding = 0,
-		  .format = gl4::Format::R32G32_FLOAT,
+		  .format = gl::Format::R32G32_FLOAT,
 		  .offset = 0,
 		};
-		auto descColor = gl4::VertexInputBindingDescription{
+		auto descColor = gl::VertexInputBindingDescription{
 		  .location = 1,
 		  .binding = 1,
-		  .format = gl4::Format::R8G8B8_UNORM,
+		  .format = gl::Format::R8G8B8_UNORM,
 		  .offset = 0,
 		};
 		auto inputDescs = { descPos, descColor };
 
-		auto vertexShader = gl4::Shader(gl4::PipelineStage::VertexShader, shaderCodeVertex, "Triangle VS");
-		auto fragmentShader = gl4::Shader(gl4::PipelineStage::FragmentShader, shaderCodeFragment, "Triangle FS");
+		auto vertexShader = gl::Shader(gl::PipelineStage::VertexShader, shaderCodeVertex, "Triangle VS");
+		auto fragmentShader = gl::Shader(gl::PipelineStage::FragmentShader, shaderCodeFragment, "Triangle FS");
 
-		return gl4::GraphicsPipeline({
+		return gl::GraphicsPipeline({
 			 .name = "Triangle Pipeline",
 			.vertexShader = &vertexShader,
 			.fragmentShader = &fragmentShader,
-			.inputAssemblyState = {.topology = gl4::PrimitiveTopology::TRIANGLE_LIST},
+			.inputAssemblyState = {.topology = gl::PrimitiveTopology::TRIANGLE_LIST},
 			.vertexInputState = {inputDescs},
 		});
 	}
@@ -82,8 +82,8 @@ bool NewTest001::OnInit()
 		-1.0f, -1.0f, 
 		 1.0f, -1.0f };
 	static constexpr std::array<uint8_t, 9> triColors = { 255, 0, 0, 0, 255, 0, 0, 0, 255 };
-	vertexPosBuffer = gl4::Buffer(triPositions);
-	vertexColorBuffer = gl4::Buffer(triColors);
+	vertexPosBuffer = gl::Buffer(triPositions);
+	vertexColorBuffer = gl::Buffer(triColors);
 	pipeline = CreatePipeline();
 
 	return true;
@@ -102,22 +102,22 @@ void NewTest001::OnUpdate(float deltaTime)
 //=============================================================================
 void NewTest001::OnRender()
 {
-	const gl4::SwapchainRenderInfo renderInfo
+	const gl::SwapchainRenderInfo renderInfo
 	{
 		.name = "Render Triangle",
 		.viewport = {.drawRect{.offset = {0, 0}, .extent = {GetWindowWidth(), GetWindowHeight()}}},
-		.colorLoadOp = gl4::AttachmentLoadOp::Clear,
+		.colorLoadOp = gl::AttachmentLoadOp::Clear,
 		.clearColorValue = {.1f, .5f, .8f, 1.0f},
 	};
 
-	gl4::BeginSwapChainRendering(renderInfo);
+	gl::BeginSwapChainRendering(renderInfo);
 	{
-		gl4::Cmd::BindGraphicsPipeline(pipeline.value());
-		gl4::Cmd::BindVertexBuffer(0, vertexPosBuffer.value(), 0, 2 * sizeof(float));
-		gl4::Cmd::BindVertexBuffer(1, vertexColorBuffer.value(), 0, 3 * sizeof(uint8_t));
-		gl4::Cmd::Draw(3, 1, 0, 0);
+		gl::Cmd::BindGraphicsPipeline(pipeline.value());
+		gl::Cmd::BindVertexBuffer(0, vertexPosBuffer.value(), 0, 2 * sizeof(float));
+		gl::Cmd::BindVertexBuffer(1, vertexColorBuffer.value(), 0, 3 * sizeof(uint8_t));
+		gl::Cmd::Draw(3, 1, 0, 0);
 	}
-	gl4::EndRendering();
+	gl::EndRendering();
 }
 //=============================================================================
 void NewTest001::OnImGuiDraw()

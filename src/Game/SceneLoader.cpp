@@ -33,44 +33,44 @@ namespace Utility
 			timepoint_t timepoint_;
 		};
 
-		// Converts a Vulkan BCn VkFormat name to gl4
-		gl4::Format VkBcFormatToFwog(uint32_t vkFormat)
+		// Converts a Vulkan BCn VkFormat name to gl
+		gl::Format VkBcFormatToFwog(uint32_t vkFormat)
 		{
 			// https://registry.khronos.org/vulkan/specs/1.3-extensions/man/html/VkFormat.html
 			switch (vkFormat)
 			{
-			case 131: return gl4::Format::BC1_RGB_UNORM;
-			case 132: return gl4::Format::BC1_RGB_SRGB;
-			case 133: return gl4::Format::BC1_RGBA_UNORM;
-			case 134: return gl4::Format::BC1_RGBA_SRGB;
-			case 135: return gl4::Format::BC2_RGBA_UNORM;
-			case 136: return gl4::Format::BC2_RGBA_SRGB;
-			case 137: return gl4::Format::BC3_RGBA_UNORM;
-			case 138: return gl4::Format::BC3_RGBA_SRGB;
-			case 139: return gl4::Format::BC4_R_UNORM;
-			case 140: return gl4::Format::BC4_R_SNORM;
-			case 141: return gl4::Format::BC5_RG_UNORM;
-			case 142: return gl4::Format::BC5_RG_SNORM;
-			case 143: return gl4::Format::BC6H_RGB_UFLOAT;
-			case 144: return gl4::Format::BC6H_RGB_SFLOAT;
-			case 145: return gl4::Format::BC7_RGBA_UNORM;
-			case 146: return gl4::Format::BC7_RGBA_SRGB;
+			case 131: return gl::Format::BC1_RGB_UNORM;
+			case 132: return gl::Format::BC1_RGB_SRGB;
+			case 133: return gl::Format::BC1_RGBA_UNORM;
+			case 134: return gl::Format::BC1_RGBA_SRGB;
+			case 135: return gl::Format::BC2_RGBA_UNORM;
+			case 136: return gl::Format::BC2_RGBA_SRGB;
+			case 137: return gl::Format::BC3_RGBA_UNORM;
+			case 138: return gl::Format::BC3_RGBA_SRGB;
+			case 139: return gl::Format::BC4_R_UNORM;
+			case 140: return gl::Format::BC4_R_SNORM;
+			case 141: return gl::Format::BC5_RG_UNORM;
+			case 142: return gl::Format::BC5_RG_SNORM;
+			case 143: return gl::Format::BC6H_RGB_UFLOAT;
+			case 144: return gl::Format::BC6H_RGB_SFLOAT;
+			case 145: return gl::Format::BC7_RGBA_UNORM;
+			case 146: return gl::Format::BC7_RGBA_SRGB;
 			default: assert(1); return {};
 			}
 		}
 
 		// Converts a format to the sRGB version of itself, for use in a texture view
-		gl4::Format FormatToSrgb(gl4::Format format)
+		gl::Format FormatToSrgb(gl::Format format)
 		{
 			switch (format)
 			{
-			case gl4::Format::BC1_RGBA_UNORM: return gl4::Format::BC1_RGBA_SRGB;
-			case gl4::Format::BC1_RGB_UNORM: return gl4::Format::BC1_RGB_SRGB;
-			case gl4::Format::BC2_RGBA_UNORM: return gl4::Format::BC3_RGBA_SRGB;
-			case gl4::Format::BC3_RGBA_UNORM: return gl4::Format::BC3_RGBA_SRGB;
-			case gl4::Format::BC7_RGBA_UNORM: return gl4::Format::BC7_RGBA_SRGB;
-			case gl4::Format::R8G8B8A8_UNORM: return gl4::Format::R8G8B8A8_SRGB;
-			case gl4::Format::R8G8B8_UNORM: return gl4::Format::R8G8B8_SRGB;
+			case gl::Format::BC1_RGBA_UNORM: return gl::Format::BC1_RGBA_SRGB;
+			case gl::Format::BC1_RGB_UNORM: return gl::Format::BC1_RGB_SRGB;
+			case gl::Format::BC2_RGBA_UNORM: return gl::Format::BC3_RGBA_SRGB;
+			case gl::Format::BC3_RGBA_UNORM: return gl::Format::BC3_RGBA_SRGB;
+			case gl::Format::BC7_RGBA_UNORM: return gl::Format::BC7_RGBA_SRGB;
+			case gl::Format::R8G8B8A8_UNORM: return gl::Format::R8G8B8A8_SRGB;
+			case gl::Format::R8G8B8_UNORM: return gl::Format::R8G8B8_SRGB;
 			default: return format;
 			}
 		}
@@ -86,48 +86,48 @@ namespace Utility
 			return (v.z <= 0.0f) ? ((1.0f - glm::abs(glm::vec2{ p.y, p.x })) * signNotZero(p)) : p;
 		}
 
-		auto ConvertGlAddressMode(uint32_t wrap) -> gl4::AddressMode
+		auto ConvertGlAddressMode(uint32_t wrap) -> gl::AddressMode
 		{
 			switch (wrap)
 			{
-			case GL_CLAMP_TO_EDGE: return gl4::AddressMode::ClampToEdge;
-			case GL_MIRRORED_REPEAT: return gl4::AddressMode::MirroredRepeat;
-			case GL_REPEAT: return gl4::AddressMode::Repeat;
-			default: assert(1); return gl4::AddressMode::Repeat;
+			case GL_CLAMP_TO_EDGE: return gl::AddressMode::ClampToEdge;
+			case GL_MIRRORED_REPEAT: return gl::AddressMode::MirroredRepeat;
+			case GL_REPEAT: return gl::AddressMode::Repeat;
+			default: assert(1); return gl::AddressMode::Repeat;
 			}
 		}
 
-		auto ConvertGlMagFilterMode(uint32_t filter) -> gl4::MagFilter
+		auto ConvertGlMagFilterMode(uint32_t filter) -> gl::MagFilter
 		{
 			switch (filter)
 			{
 			case GL_LINEAR_MIPMAP_LINEAR:  //[[fallthrough]]
 			case GL_LINEAR_MIPMAP_NEAREST: //[[fallthrough]]
-			case GL_LINEAR: return gl4::MagFilter::Linear;
+			case GL_LINEAR: return gl::MagFilter::Linear;
 			case GL_NEAREST_MIPMAP_LINEAR:  //[[fallthrough]]
 			case GL_NEAREST_MIPMAP_NEAREST: //[[fallthrough]]
-			case GL_NEAREST: return gl4::MagFilter::Nearest;
-			default: assert(1); return gl4::MagFilter::Linear;
+			case GL_NEAREST: return gl::MagFilter::Nearest;
+			default: assert(1); return gl::MagFilter::Linear;
 			}
 		}
 
 
 
-		auto GetGlMipmapMagFilter(uint32_t minFilter) -> gl4::MagFilter
+		auto GetGlMipmapMagFilter(uint32_t minFilter) -> gl::MagFilter
 		{
 			switch (minFilter)
 			{
 			case GL_LINEAR_MIPMAP_LINEAR: //[[fallthrough]]
-			case GL_NEAREST_MIPMAP_LINEAR: return gl4::MagFilter::Linear;
+			case GL_NEAREST_MIPMAP_LINEAR: return gl::MagFilter::Linear;
 			case GL_LINEAR_MIPMAP_NEAREST: //[[fallthrough]]
-			case GL_NEAREST_MIPMAP_NEAREST: return gl4::MagFilter::Nearest;
+			case GL_NEAREST_MIPMAP_NEAREST: return gl::MagFilter::Nearest;
 			case GL_LINEAR: //[[fallthrough]]
-			case GL_NEAREST: return gl4::MagFilter::Nearest;
-			default: assert(1); return gl4::MagFilter::Nearest;
+			case GL_NEAREST: return gl::MagFilter::Nearest;
+			default: assert(1); return gl::MagFilter::Nearest;
 			}
 		}
 
-		std::vector<gl4::Texture> LoadImages(const fastgltf::Asset& asset)
+		std::vector<gl::Texture> LoadImages(const fastgltf::Asset& asset)
 		{
 			struct RawImageData
 			{
@@ -249,7 +249,7 @@ namespace Utility
 				});
 
 			// Upload image data to GPU
-			auto loadedImages = std::vector<gl4::Texture>();
+			auto loadedImages = std::vector<gl::Texture>();
 			loadedImages.reserve(rawImageData.size());
 
 			for (const auto& image : rawImageData)
@@ -261,7 +261,7 @@ namespace Utility
 				{
 					auto* ktx = image.ktx.get();
 
-					auto format = gl4::Format::BC7_RGBA_UNORM;
+					auto format = gl::Format::BC7_RGBA_UNORM;
 
 					// If the image needs is in a supercompressed encoding, transcode it to a desired format
 					if (ktxTexture2_NeedsTranscoding(ktx))
@@ -277,7 +277,7 @@ namespace Utility
 						format = VkBcFormatToFwog(ktx->vkFormat);
 					}
 
-					auto textureData = gl4::CreateTexture2DMip(dims, format, ktx->numLevels, image.name);
+					auto textureData = gl::CreateTexture2DMip(dims, format, ktx->numLevels, image.name);
 
 					for (uint32_t level = 0; level < ktx->numLevels; level++)
 					{
@@ -302,17 +302,17 @@ namespace Utility
 					assert(image.pixel_type == GL_UNSIGNED_BYTE);
 					assert(image.bits == 8);
 
-					auto textureData = gl4::CreateTexture2DMip(dims,
-						gl4::Format::R8G8B8A8_UNORM,
+					auto textureData = gl::CreateTexture2DMip(dims,
+						gl::Format::R8G8B8A8_UNORM,
 						uint32_t(1 + floor(log2(glm::max(dims.width, dims.height)))),
 						image.name);
 
-					auto updateInfo = gl4::TextureUpdateInfo{
+					auto updateInfo = gl::TextureUpdateInfo{
 					.level = 0,
 					.offset = {},
 					.extent = {dims.width, dims.height, 1},
-					.format = gl4::UploadFormat::RGBA,
-					.type = gl4::UploadType::UBYTE,
+					.format = gl::UploadFormat::RGBA,
+					.type = gl::UploadType::UBYTE,
 					.pixels = image.data.get(),
 					};
 					textureData.UpdateImage(updateInfo);
@@ -413,11 +413,11 @@ namespace Utility
 		return indices;
 	}
 
-	std::vector<Material> LoadMaterials(const fastgltf::Asset& model, std::span<gl4::Texture> images)
+	std::vector<Material> LoadMaterials(const fastgltf::Asset& model, std::span<gl::Texture> images)
 	{
 		auto LoadSampler = [](const fastgltf::Sampler& sampler)
 			{
-				gl4::SamplerState samplerState{};
+				gl::SamplerState samplerState{};
 
 				samplerState.addressModeU = ConvertGlAddressMode((GLint)sampler.wrapS);
 				samplerState.addressModeV = ConvertGlAddressMode((GLint)sampler.wrapT);
@@ -427,9 +427,9 @@ namespace Utility
 					samplerState.minFilter = ConvertGlFilterMode((GLint)sampler.minFilter.value());
 					samplerState.mipmapFilter = GetGlMipmapFilter((GLint)sampler.minFilter.value());
 
-					if (samplerState.minFilter != gl4::Filter::NONE)
+					if (samplerState.minFilter != gl::Filter::NONE)
 					{
-						samplerState.anisotropy = gl4::SampleCount::Samples16;
+						samplerState.anisotropy = gl::SampleCount::Samples16;
 					}
 				}
 				if (sampler.magFilter.has_value())
@@ -437,8 +437,8 @@ namespace Utility
 					samplerState.magFilter = ConvertGlFilterMode((GLint)sampler.magFilter.value());
 				}*/
 
-				samplerState.minFilter = gl4::MinFilter::Linear; // sampler.minFilter.value()
-				samplerState.magFilter = gl4::MagFilter::Linear; // sampler.magFilter.value()
+				samplerState.minFilter = gl::MinFilter::Linear; // sampler.minFilter.value()
+				samplerState.magFilter = gl::MagFilter::Linear; // sampler.magFilter.value()
 				return samplerState;
 			};
 
@@ -621,8 +621,8 @@ namespace Utility
 		for (auto& mesh : loadedScene->meshes)
 		{
 			scene.meshes.emplace_back(Mesh{
-			.vertexBuffer = gl4::Buffer(std::span(mesh.vertices)),
-			.indexBuffer = gl4::Buffer(std::span(mesh.indices)),
+			.vertexBuffer = gl::Buffer(std::span(mesh.vertices)),
+			.indexBuffer = gl::Buffer(std::span(mesh.indices)),
 			.materialIdx = mesh.materialIdx,
 			.transform = mesh.transform,
 				});
@@ -674,7 +674,7 @@ namespace Utility
 			if (material.gpuMaterial.flags & MaterialFlagBit::HAS_BASE_COLOR_TEXTURE)
 			{
 				auto& [texture, sampler] = material.albedoTextureSampler.value();
-				bindlessMaterial.baseColorTextureHandle = texture.GetBindlessHandle(gl4::Sampler(sampler));
+				bindlessMaterial.baseColorTextureHandle = texture.GetBindlessHandle(gl::Sampler(sampler));
 			}
 			scene.materials.emplace_back(bindlessMaterial);
 		}

@@ -13,9 +13,9 @@ MeshOLD::MeshOLD(std::vector<MeshVertexOLD>&& vertices, std::vector<unsigned int
 //=============================================================================
 void MeshOLD::Delete()
 {
-	gl4::Destroy(m_vao);
-	gl4::Destroy(m_vbo);
-	gl4::Destroy(m_ibo);
+	gl::Destroy(m_vao);
+	gl::Destroy(m_vbo);
+	gl::Destroy(m_ibo);
 }
 //=============================================================================
 void MeshOLD::AddTextureIfEmpty(TextureType tType, const std::string& filePath)
@@ -25,7 +25,7 @@ void MeshOLD::AddTextureIfEmpty(TextureType tType, const std::string& filePath)
 		return;
 	}
 	TextureFile texture;
-	texture.id = gl4::LoadTexture2D(filePath.c_str());
+	texture.id = gl::LoadTexture2D(filePath.c_str());
 	texture.name = filePath;
 	m_textureMap[tType] = texture;
 }
@@ -58,7 +58,7 @@ void MeshOLD::Draw(GLuint shaderProgram, bool skipTexture) const
 //=============================================================================
 void MeshOLD::setupMesh()
 {
-	std::vector<gl4::VertexAttributeRaw> attribs = {
+	std::vector<gl::VertexAttributeRaw> attribs = {
 		{0, 3, GL_FLOAT, false, offsetof(MeshVertexOLD, Position)},
 		{1, 3, GL_FLOAT, false, offsetof(MeshVertexOLD, Normal)},
 		{2, 2, GL_FLOAT, false, offsetof(MeshVertexOLD, TexCoords)},
@@ -69,9 +69,9 @@ void MeshOLD::setupMesh()
 	};
 
 
-	m_vbo = gl4::CreateBufferStorage(0, m_vertices);
-	m_ibo = gl4::CreateBufferStorage(0, m_indices);
-	m_vao = gl4::CreateVertexArray(m_vbo, m_ibo, sizeof(MeshVertexOLD), attribs);
+	m_vbo = gl::CreateBufferStorage(0, m_vertices);
+	m_ibo = gl::CreateBufferStorage(0, m_indices);
+	m_vao = gl::CreateVertexArray(m_vbo, m_ibo, sizeof(MeshVertexOLD), attribs);
 
 #if _DEBUG
 	Print("Mesh vertex count " + std::to_string(m_vertices.size()));

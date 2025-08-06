@@ -3,24 +3,24 @@
 //=============================================================================
 bool ShadowPassManager::Init()
 {
-	gl4::TextureCreateInfo createInfo{
-		.imageType = gl4::ImageType::Tex2D,
-		.format = gl4::Format::D32_FLOAT,
+	gl::TextureCreateInfo createInfo{
+		.imageType = gl::ImageType::Tex2D,
+		.format = gl::Format::D32_FLOAT,
 		.extent = { m_shadow.width, m_shadow.height, 1},
 		.mipLevels = 1,
 		.arrayLayers = 1,
-		.sampleCount = gl4::SampleCount::Samples1,
+		.sampleCount = gl::SampleCount::Samples1,
 	};
-	m_shadow.depthTexture = new gl4::Texture(createInfo, "ShadowDepth");
+	m_shadow.depthTexture = new gl::Texture(createInfo, "ShadowDepth");
 
-	m_shadow.rtAttachment = new gl4::RenderDepthStencilAttachment{
+	m_shadow.rtAttachment = new gl::RenderDepthStencilAttachment{
 		.texture = *m_shadow.depthTexture,
-		.loadOp = gl4::AttachmentLoadOp::Clear,
+		.loadOp = gl::AttachmentLoadOp::Clear,
 		.clearValue = {.depth = 1.0f},
 	};
 
-	//gl4::Viewport view{ .drawRect = {m_shadow.width, m_shadow.height} };
-	m_shadow.viewport = new gl4::RenderInfo( { /*.viewport = view,*/ .depthAttachment = *m_shadow.rtAttachment } );
+	//gl::Viewport view{ .drawRect = {m_shadow.width, m_shadow.height} };
+	m_shadow.viewport = new gl::RenderInfo( { /*.viewport = view,*/ .depthAttachment = *m_shadow.rtAttachment } );
 
 	glm::vec3 shadowLightPos = { 2.0f, 2.0f, 1.0f };
 

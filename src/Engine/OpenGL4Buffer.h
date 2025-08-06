@@ -1,9 +1,9 @@
-#pragma once
+﻿#pragma once
 
 #include "FlagsUtils.h"
 #include "BasicConstants.h"
 
-namespace gl4
+namespace gl
 {
 	/// @brief Used to constrain the types accepted by Buffer
 	class TriviallyCopyableByteSpan final : public std::span<const std::byte>
@@ -135,4 +135,4 @@ namespace gl4
 		[[nodiscard]] const T* GetMappedPointer() const noexcept { return static_cast<T*>(m_mappedMemory); }
 	};
 
-} // namespace gl4
+} // namespace gl

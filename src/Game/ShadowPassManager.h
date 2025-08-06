@@ -2,9 +2,9 @@
 
 struct ShadowPassRT final
 {
-	gl4::Texture*                      depthTexture{ nullptr };
-	gl4::RenderInfo*                   viewport{ nullptr };
-	gl4::RenderDepthStencilAttachment* rtAttachment{ nullptr };
+	gl::Texture*                      depthTexture{ nullptr };
+	gl::RenderInfo*                   viewport{ nullptr };
+	gl::RenderDepthStencilAttachment* rtAttachment{ nullptr };
 	uint32_t                           width{ 4096 };
 	uint32_t                           height{ 4096 };
 

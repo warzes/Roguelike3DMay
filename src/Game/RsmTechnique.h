@@ -24,17 +24,17 @@ namespace RSM
 		// Input: camera uniforms, g-buffers, RSM buffers, previous g-buffer depth (for reprojection)
 		void ComputeIndirectLighting(const glm::mat4& lightViewProj,
 			const CameraUniforms& cameraUniforms,
-			const gl4::Texture& gAlbedo,
-			const gl4::Texture& gNormal,
-			const gl4::Texture& gDepth,
-			const gl4::Texture& rsmFlux,
-			const gl4::Texture& rsmNormal,
-			const gl4::Texture& rsmDepth,
-			const gl4::Texture& gDepthPrev,
-			const gl4::Texture& gNormalPrev,
-			const gl4::Texture& gMotion);
+			const gl::Texture& gAlbedo,
+			const gl::Texture& gNormal,
+			const gl::Texture& gDepth,
+			const gl::Texture& rsmFlux,
+			const gl::Texture& rsmNormal,
+			const gl::Texture& rsmDepth,
+			const gl::Texture& gDepthPrev,
+			const gl::Texture& gNormalPrev,
+			const gl::Texture& gMotion);
 
-		gl4::Texture& GetIndirectLighting();
+		gl::Texture& GetIndirectLighting();
 
 		void DrawGui();
 
@@ -104,30 +104,30 @@ namespace RSM
 		glm::uint seedX;
 		glm::uint seedY;
 		RsmUniforms rsmUniforms;
-		gl4::TypedBuffer<RsmUniforms> rsmUniformBuffer;
-		gl4::TypedBuffer<CameraUniforms> cameraUniformBuffer;
-		gl4::TypedBuffer<ReprojectionUniforms> reprojectionUniformBuffer;
-		gl4::TypedBuffer<FilterUniforms> filterUniformBuffer;
-		gl4::ComputePipeline rsmIndirectPipeline;
-		gl4::ComputePipeline rsmIndirectFilteredPipeline;
-		gl4::ComputePipeline rsmReprojectPipeline;
-		gl4::ComputePipeline bilateral5x5Pipeline;
-		gl4::ComputePipeline modulatePipeline;
-		gl4::ComputePipeline modulateUpscalePipeline;
-		gl4::ComputePipeline blitPipeline;
-		std::optional<gl4::Texture> indirectUnfilteredTex;
-		std::optional<gl4::Texture> indirectUnfilteredTexPrev; // for temporal accumulation
-		std::optional<gl4::Texture> indirectFilteredTex;
-		std::optional<gl4::Texture> indirectFilteredTexPingPong;
-		std::optional<gl4::Texture> historyLengthTex;
-		std::optional<gl4::Texture> illuminationUpscaled;
-		std::optional<gl4::Texture> rsmFluxSmall;
-		std::optional<gl4::Texture> rsmNormalSmall;
-		std::optional<gl4::Texture> rsmDepthSmall;
-		std::optional<gl4::Texture> noiseTex;
-		std::optional<gl4::Texture> gNormalSmall;
-		std::optional<gl4::Texture> gDepthSmall;
-		std::optional<gl4::Texture> gNormalPrevSmall;
-		std::optional<gl4::Texture> gDepthPrevSmall;
+		gl::TypedBuffer<RsmUniforms> rsmUniformBuffer;
+		gl::TypedBuffer<CameraUniforms> cameraUniformBuffer;
+		gl::TypedBuffer<ReprojectionUniforms> reprojectionUniformBuffer;
+		gl::TypedBuffer<FilterUniforms> filterUniformBuffer;
+		gl::ComputePipeline rsmIndirectPipeline;
+		gl::ComputePipeline rsmIndirectFilteredPipeline;
+		gl::ComputePipeline rsmReprojectPipeline;
+		gl::ComputePipeline bilateral5x5Pipeline;
+		gl::ComputePipeline modulatePipeline;
+		gl::ComputePipeline modulateUpscalePipeline;
+		gl::ComputePipeline blitPipeline;
+		std::optional<gl::Texture> indirectUnfilteredTex;
+		std::optional<gl::Texture> indirectUnfilteredTexPrev; // for temporal accumulation
+		std::optional<gl::Texture> indirectFilteredTex;
+		std::optional<gl::Texture> indirectFilteredTexPingPong;
+		std::optional<gl::Texture> historyLengthTex;
+		std::optional<gl::Texture> illuminationUpscaled;
+		std::optional<gl::Texture> rsmFluxSmall;
+		std::optional<gl::Texture> rsmNormalSmall;
+		std::optional<gl::Texture> rsmDepthSmall;
+		std::optional<gl::Texture> noiseTex;
+		std::optional<gl::Texture> gNormalSmall;
+		std::optional<gl::Texture> gDepthSmall;
+		std::optional<gl::Texture> gNormalPrevSmall;
+		std::optional<gl::Texture> gDepthPrevSmall;
 	};
 } // namespace RSM

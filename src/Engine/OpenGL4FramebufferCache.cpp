@@ -6,26 +6,26 @@
 //=============================================================================
 namespace
 {
-	inline gl4::detail::RenderAttachments GetAttachments(const gl4::RenderInfo& renderInfo)
+	inline gl::detail::RenderAttachments GetAttachments(const gl::RenderInfo& renderInfo)
 	{
-		gl4::detail::RenderAttachments attachments;
+		gl::detail::RenderAttachments attachments;
 		for (const auto& colorAttachment : renderInfo.colorAttachments)
 		{
-			attachments.colorAttachments.emplace_back(gl4::detail::TextureProxy{
+			attachments.colorAttachments.emplace_back(gl::detail::TextureProxy{
 				colorAttachment.texture.get().GetCreateInfo(),
 				colorAttachment.texture.get().Handle(),
 				});
 		}
 		if (renderInfo.depthAttachment)
 		{
-			attachments.depthAttachment.emplace(gl4::detail::TextureProxy{
+			attachments.depthAttachment.emplace(gl::detail::TextureProxy{
 				renderInfo.depthAttachment->texture.get().GetCreateInfo(),
 				renderInfo.depthAttachment->texture.get().Handle(),
 				});
 		}
 		if (renderInfo.stencilAttachment)
 		{
-			attachments.stencilAttachment.emplace(gl4::detail::TextureProxy{
+			attachments.stencilAttachment.emplace(gl::detail::TextureProxy{
 				renderInfo.stencilAttachment->texture.get().GetCreateInfo(),
 				renderInfo.stencilAttachment->texture.get().Handle(),
 				});
@@ -35,7 +35,7 @@ namespace
 	}
 }
 //=============================================================================
-uint32_t gl4::detail::FramebufferCache::CreateOrGetCachedFramebuffer(const gl4::RenderInfo& renderInfo)
+uint32_t gl::detail::FramebufferCache::CreateOrGetCachedFramebuffer(const gl::RenderInfo& renderInfo)
 {
 	RenderAttachments attachments = GetAttachments(renderInfo);
 
@@ -95,7 +95,7 @@ uint32_t gl4::detail::FramebufferCache::CreateOrGetCachedFramebuffer(const gl4::
 	return m_framebufferCacheValue.emplace_back(fbo);
 }
 //=============================================================================
-void gl4::detail::FramebufferCache::Clear()
+void gl::detail::FramebufferCache::Clear()
 {
 	for (const auto& fbo : m_framebufferCacheValue)
 	{
@@ -108,7 +108,7 @@ void gl4::detail::FramebufferCache::Clear()
 }
 //=============================================================================
 // Must be called when a texture is deleted, otherwise the cache becomes invalid.
-void gl4::detail::FramebufferCache::RemoveTexture(const Texture& texture)
+void gl::detail::FramebufferCache::RemoveTexture(const Texture& texture)
 {
 	const TextureProxy texp = { texture.GetCreateInfo(), texture.Handle() };
 
@@ -141,7 +141,7 @@ void gl4::detail::FramebufferCache::RemoveTexture(const Texture& texture)
 	}
 }
 //=============================================================================
-bool gl4::detail::RenderAttachments::operator==(const RenderAttachments& rhs) const
+bool gl::detail::RenderAttachments::operator==(const RenderAttachments& rhs) const
 {
 	if (colorAttachments.size() != rhs.colorAttachments.size())
 		return false;

@@ -36,17 +36,17 @@ namespace math
 		return (value != 0) && ((value & (value - 1)) == 0);
 	}
 
-	constexpr inline int UpperPowerOfTwo(int const value)
+	inline int UpperPowerOfTwo(int const value)
 	{
 		return static_cast<int>(std::pow(2.0f, std::ceil(std::log(static_cast<float>(value)) / LN2)));
 	}
 
-	constexpr inline int LowerPowerOfTwo(int const value)
+	inline int LowerPowerOfTwo(int const value)
 	{
 		return static_cast<int>(std::pow(2.0f, std::floor(std::log(static_cast<float>(value)) / LN2)));
 	}
 
-	constexpr inline int NearestPowerOfTwo(int const value)
+	inline int NearestPowerOfTwo(int const value)
 	{
 		return static_cast<int>(std::pow(2.0f, std::round(std::log(static_cast<float>(value)) / LN2)));
 	}

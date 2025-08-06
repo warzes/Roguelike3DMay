@@ -61,14 +61,14 @@ void main()
 		glm::mat4 projection;
 	};
 
-	gl4::ShaderProgramId program;
+	gl::ShaderProgramId program;
 
 	MVPData mvpData;
 	GLuint mvpUbo;
 
 	GLuint texture;
-	gl4::BufferId vbo;
-	gl4::VertexArrayId vao;
+	gl::BufferId vbo;
+	gl::VertexArrayId vao;
 
 	Camera camera;
 
@@ -115,11 +115,11 @@ EngineCreateInfo TestComplex::GetCreateInfo() const
 //=============================================================================
 bool TestComplex::OnInit()
 {
-	program = gl4::CreateShaderProgram(shaderCodeVertex, shaderCodeFragment);
+	program = gl::CreateShaderProgram(shaderCodeVertex, shaderCodeFragment);
 
-	mvpUbo = gl4::CreateBufferStorage(GL_DYNAMIC_STORAGE_BIT, sizeof(MVPData), nullptr);
+	mvpUbo = gl::CreateBufferStorage(GL_DYNAMIC_STORAGE_BIT, sizeof(MVPData), nullptr);
 
-	texture = gl4::LoadTexture2D("ExampleData/textures/wood.png", false);
+	texture = gl::LoadTexture2D("ExampleData/textures/wood.png", false);
 
 	struct Vertex
 	{
@@ -128,7 +128,7 @@ bool TestComplex::OnInit()
 		glm::vec2 uv;
 	};
 
-	std::vector<gl4::VertexAttributeRaw> attribs = {
+	std::vector<gl::VertexAttributeRaw> attribs = {
 		{0, 3, GL_FLOAT, false, offsetof(Vertex, pos)},
 		{1, 3, GL_FLOAT, false, offsetof(Vertex, normal)},
 		{2, 2, GL_FLOAT, false, offsetof(Vertex, uv)},
@@ -146,8 +146,8 @@ bool TestComplex::OnInit()
 		 10.0f, -0.5f, -10.0f,  0.0f, 1.0f, 0.0f,  10.0f, 10.0f
 	};
 
-	vbo = gl4::CreateBufferStorage(0, sizeof(vertices), vertices);
-	vao = gl4::CreateVertexArray(vbo, sizeof(Vertex), attribs);
+	vbo = gl::CreateBufferStorage(0, sizeof(vertices), vertices);
+	vao = gl::CreateVertexArray(vbo, sizeof(Vertex), attribs);
 
 	camera.SetPosition(glm::vec3(0.0f, 0.0f, -1.0f));
 
@@ -305,7 +305,7 @@ void TestComplex::OnRender()
 	deferred->drawLighting(*post_shader);
 
 
-	//gl4::SetFrameBuffer({ 0 }, GetWidth(), GetHeight(), GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	//gl::SetFrameBuffer({ 0 }, GetWidth(), GetHeight(), GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	//mvpData.model = glm::mat4(1.0f);
 	//mvpData.view = camera.GetViewMatrix();

@@ -35,35 +35,35 @@ namespace std
 	};
 }
 
-constexpr std::array<gl4::VertexInputBindingDescription, 5> MeshVertexInputBindingDescs{
-  gl4::VertexInputBindingDescription{
+constexpr std::array<gl::VertexInputBindingDescription, 5> MeshVertexInputBindingDescs{
+  gl::VertexInputBindingDescription{
 	.location = 0,
 	.binding = 0,
-	.format = gl4::Format::R32G32B32_FLOAT,
+	.format = gl::Format::R32G32B32_FLOAT,
 	.offset = offsetof(MeshVertex, position),
   },
-	gl4::VertexInputBindingDescription{
+	gl::VertexInputBindingDescription{
 	.location = 1,
 	.binding = 0,
-	.format = gl4::Format::R32G32B32_FLOAT,
+	.format = gl::Format::R32G32B32_FLOAT,
 	.offset = offsetof(MeshVertex, color),
   },
-  gl4::VertexInputBindingDescription{
+  gl::VertexInputBindingDescription{
 	.location = 2,
 	.binding = 0,
-	.format = gl4::Format::R32G32B32_FLOAT,
+	.format = gl::Format::R32G32B32_FLOAT,
 	.offset = offsetof(MeshVertex, normal),
   },
-	gl4::VertexInputBindingDescription{
+	gl::VertexInputBindingDescription{
 	.location = 3,
 	.binding = 0,
-	.format = gl4::Format::R32G32_FLOAT,
+	.format = gl::Format::R32G32_FLOAT,
 	.offset = offsetof(MeshVertex, uv),
   },
-	gl4::VertexInputBindingDescription{
+	gl::VertexInputBindingDescription{
 	.location = 4,
 	.binding = 0,
-	.format = gl4::Format::R32G32B32_FLOAT,
+	.format = gl::Format::R32G32B32_FLOAT,
 	.offset = offsetof(MeshVertex, tangent),
   },
 };
@@ -89,7 +89,7 @@ private:
 	uint32_t       m_vertexCount{ 0 };
 	uint32_t       m_indicesCount{ 0 };
 
-	gl4::Buffer*   m_vertexBuffer{ nullptr };
-	gl4::Buffer*   m_indexBuffer{ nullptr };
+	gl::Buffer*   m_vertexBuffer{ nullptr };
+	gl::Buffer*   m_indexBuffer{ nullptr };
 	PhongMaterial* m_material{ nullptr };
 };

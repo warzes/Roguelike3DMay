@@ -17,7 +17,7 @@ void TextureManager::Close()
 	m_textures.clear();
 }
 //=============================================================================
-gl4::Texture* TextureManager::GetTexture(const std::string& name, bool flipVertical)
+gl::Texture* TextureManager::GetTexture(const std::string& name, bool flipVertical)
 {
 	auto it = m_textures.find(name);
 	if (it != m_textures.end())
@@ -42,33 +42,33 @@ gl4::Texture* TextureManager::GetTexture(const std::string& name, bool flipVerti
 			Error("Failed to load texture " + name);
 			return nullptr;
 		}
-		gl4::Format imgFormat{ gl4::Format::R8G8B8_UNORM };
-		if (nrChannels == 1)      imgFormat = gl4::Format::R8_UNORM;
-		else if (nrChannels == 2) imgFormat = gl4::Format::R8G8_UNORM;
-		else if (nrChannels == 3) imgFormat = gl4::Format::R8G8B8_UNORM;
-		else if (nrChannels == 4) imgFormat = gl4::Format::R8G8B8A8_UNORM;
+		gl::Format imgFormat{ gl::Format::R8G8B8_UNORM };
+		if (nrChannels == 1)      imgFormat = gl::Format::R8_UNORM;
+		else if (nrChannels == 2) imgFormat = gl::Format::R8G8_UNORM;
+		else if (nrChannels == 3) imgFormat = gl::Format::R8G8B8_UNORM;
+		else if (nrChannels == 4) imgFormat = gl::Format::R8G8B8A8_UNORM;
 
-		const gl4::TextureCreateInfo createInfo{
-		  .imageType   = gl4::ImageType::Tex2D,
+		const gl::TextureCreateInfo createInfo{
+		  .imageType   = gl::ImageType::Tex2D,
 		  .format      = imgFormat,
 		  .extent      = {static_cast<uint32_t>(imgW), static_cast<uint32_t>(imgH), 1},
 		  .mipLevels   = 1,
 		  .arrayLayers = 1,
-		  .sampleCount = gl4::SampleCount::Samples1,
+		  .sampleCount = gl::SampleCount::Samples1,
 		};
-		m_textures[name] = new gl4::Texture(createInfo, name);
-		gl4::Texture& texture = *m_textures[name];
+		m_textures[name] = new gl::Texture(createInfo, name);
+		gl::Texture& texture = *m_textures[name];
 
-		gl4::UploadFormat texFormat{ gl4::UploadFormat::RGB };
-		if (nrChannels == 1)      texFormat = gl4::UploadFormat::R;
-		else if (nrChannels == 2) texFormat = gl4::UploadFormat::RG;
-		else if (nrChannels == 3) texFormat = gl4::UploadFormat::RGB;
-		else if (nrChannels == 4) texFormat = gl4::UploadFormat::RGBA;
+		gl::UploadFormat texFormat{ gl::UploadFormat::RGB };
+		if (nrChannels == 1)      texFormat = gl::UploadFormat::R;
+		else if (nrChannels == 2) texFormat = gl::UploadFormat::RG;
+		else if (nrChannels == 3) texFormat = gl::UploadFormat::RGB;
+		else if (nrChannels == 4) texFormat = gl::UploadFormat::RGBA;
 
 		texture.UpdateImage({
 		  .extent = createInfo.extent,
 		  .format = texFormat,
-		  .type   = gl4::UploadType::FLOAT,
+		  .type   = gl::UploadType::FLOAT,
 		  .pixels = pixels,
 			});
 		stbi_image_free(pixels);

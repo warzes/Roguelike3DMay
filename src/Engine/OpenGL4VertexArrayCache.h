@@ -1,6 +1,6 @@
-#pragma once
+﻿#pragma once
 
-namespace gl4::detail
+namespace gl::detail
 {
 	struct VertexInputStateOwning;
 
@@ -22,4 +22,4 @@ namespace gl4::detail
 	private:
 		std::unordered_map<size_t, uint32_t> m_vertexArrayCache;
 	};
-} // namespace gl4::detail
+} // namespace gl::detail

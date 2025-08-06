@@ -26,10 +26,10 @@ private:
 
 	std::vector<glm::vec3> m_ssaoKernel{};
 
-	gl4::ShaderProgramId m_shaderGeometry{ 0 };
-	gl4::ShaderProgramId m_shaderLighting{ 0 };
-	gl4::ShaderProgramId m_shaderSSAO{ 0 };
-	gl4::ShaderProgramId m_shaderBlur{ 0 };
+	gl::ShaderProgramId m_shaderGeometry{ 0 };
+	gl::ShaderProgramId m_shaderLighting{ 0 };
+	gl::ShaderProgramId m_shaderSSAO{ 0 };
+	gl::ShaderProgramId m_shaderBlur{ 0 };
 
 	GLuint m_quadVAO{ 0 };
 

@@ -29,7 +29,7 @@ TODO:
 	но возможно хватит SSBO
 */
 
-namespace gl4
+namespace gl
 {
 	
 	//-------------------------------------------------------------------------
@@ -437,4 +437,4 @@ namespace gl4
 
 #pragma endregion
 
-} // namespace gl4
+} // namespace gl

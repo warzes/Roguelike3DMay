@@ -12,13 +12,13 @@ PipelineShadowMapping::PipelineShadowMapping(int depthWidth, int depthHeight)
 //=============================================================================
 PipelineShadowMapping::~PipelineShadowMapping()
 {
-	gl4::Destroy(m_depthShader);
-	gl4::Destroy(m_debugShader);
+	gl::Destroy(m_depthShader);
+	gl::Destroy(m_debugShader);
 	glDeleteTextures(1, &m_depthTexture);
-	gl4::Destroy(m_depthFBO);
+	gl::Destroy(m_depthFBO);
 
-	gl4::Destroy(m_quadVBO);
-	gl4::Destroy(m_quadVAO);
+	gl::Destroy(m_quadVBO);
+	gl::Destroy(m_quadVAO);
 }
 //=============================================================================
 void PipelineShadowMapping::StartRenderDepth(float nearPlane, float farPlane, const glm::vec3& lightPosition, const glm::vec3& target)
@@ -29,8 +29,8 @@ void PipelineShadowMapping::StartRenderDepth(float nearPlane, float farPlane, co
 
 	// Render depth
 	glUseProgram(m_depthShader);
-	gl4::SetUniform(m_depthShader, m_lightSpaceMatrixLoc, m_lightSpaceMatrix);
-	gl4::SetFrameBuffer(m_depthFBO, m_depthWidth, m_depthHeight, GL_DEPTH_BUFFER_BIT);
+	gl::SetUniform(m_depthShader, m_lightSpaceMatrixLoc, m_lightSpaceMatrix);
+	gl::SetFrameBuffer(m_depthFBO, m_depthWidth, m_depthHeight, GL_DEPTH_BUFFER_BIT);
 }
 //=============================================================================
 void PipelineShadowMapping::DebugDrawDepthMap()
@@ -68,9 +68,9 @@ void main()
 }
 )";
 
-		m_depthShader         = gl4::CreateShaderProgram(shaderCodeVertex, shaderCodeFragment);
-		m_lightSpaceMatrixLoc = gl4::GetUniformLocation(m_depthShader, "LightSpaceMatrix");
-		m_modelMatrixLoc      = gl4::GetUniformLocation(m_depthShader, "ModelMatrix");
+		m_depthShader         = gl::CreateShaderProgram(shaderCodeVertex, shaderCodeFragment);
+		m_lightSpaceMatrixLoc = gl::GetUniformLocation(m_depthShader, "LightSpaceMatrix");
+		m_modelMatrixLoc      = gl::GetUniformLocation(m_depthShader, "ModelMatrix");
 	}
 
 	// shader shadow mapping debug
@@ -106,15 +106,15 @@ void main()
 }
 )";
 
-		m_debugShader = gl4::CreateShaderProgram(shaderCodeVertex, shaderCodeFragment);
-		m_shadowMapLoc = gl4::GetUniformLocation(m_debugShader, "DepthMap");
+		m_debugShader = gl::CreateShaderProgram(shaderCodeVertex, shaderCodeFragment);
+		m_shadowMapLoc = gl::GetUniformLocation(m_debugShader, "DepthMap");
 		glUseProgram(m_debugShader);
-		gl4::SetUniform(m_debugShader, m_shadowMapLoc, 0);
+		gl::SetUniform(m_debugShader, m_shadowMapLoc, 0);
 		glUseProgram(0);
 	}
 
-	m_depthTexture = gl4::CreateDepthBuffer2D(m_depthWidth, m_depthHeight);
-	m_depthFBO = gl4::CreateFrameBuffer2D(0, m_depthTexture);
+	m_depthTexture = gl::CreateDepthBuffer2D(m_depthWidth, m_depthHeight);
+	m_depthFBO = gl::CreateFrameBuffer2D(0, m_depthTexture);
 }
 //=============================================================================
 void PipelineShadowMapping::initQuad()
@@ -125,7 +125,7 @@ void PipelineShadowMapping::initQuad()
 		glm::vec2 uv;
 	};
 
-	std::vector<gl4::VertexAttributeRaw> attribs = {
+	std::vector<gl::VertexAttributeRaw> attribs = {
 		{0, 3, GL_FLOAT, false, offsetof(Vertex, pos)},
 		{1, 2, GL_FLOAT, false, offsetof(Vertex, uv)},
 	};
@@ -138,7 +138,7 @@ void PipelineShadowMapping::initQuad()
 		{{ 1.0f, -1.0f, 0.0f}, {1.0f, 0.0f}},
 	};
 
-	m_quadVBO = gl4::CreateBufferStorage(0, sizeof(quadVertices), quadVertices);
-	m_quadVAO = gl4::CreateVertexArray(m_quadVBO, sizeof(Vertex), attribs);
+	m_quadVBO = gl::CreateBufferStorage(0, sizeof(quadVertices), quadVertices);
+	m_quadVAO = gl::CreateVertexArray(m_quadVBO, sizeof(Vertex), attribs);
 }
 //=============================================================================

@@ -271,7 +271,7 @@ void IEngineApp::Run()
 					if (drawData->CmdListsCount > 0)
 					{
 						// A frame marker is inserted to distinguish ImGui rendering from the application's in a debugger.
-						auto marker = gl4::ScopedDebugMarker("Draw ImGui");
+						auto marker = gl::ScopedDebugMarker("Draw ImGui");
 						glDisable(GL_FRAMEBUFFER_SRGB);
 						glBindFramebuffer(GL_FRAMEBUFFER, 0);
 						ImGui_ImplOpenGL3_RenderDrawData(drawData);
@@ -498,7 +498,7 @@ void IEngineApp::initOpenGL()
 	glDisable(GL_DITHER);
 	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 
-	gl4::gContext.Init();
+	gl::gContext.Init();
 }
 //=============================================================================
 void IEngineApp::initImGui()
@@ -538,7 +538,7 @@ void IEngineApp::close()
 	void ClearResourceCache();
 	ClearResourceCache();
 
-	gl4::gContext.Close();
+	gl::gContext.Close();
 
 	profiler::Close();
 

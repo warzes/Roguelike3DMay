@@ -4,7 +4,7 @@
 #include "OpenGL4Core.h"
 #include "BasicConstants.h"
 
-namespace gl4
+namespace gl
 {
 	class Texture;
 	class Sampler;
@@ -273,4 +273,4 @@ namespace gl4
 	void SetUniform(uint64_t id, const std::string& label, const glm::mat3& mat);
 	void SetUniform(uint64_t id, const std::string& label, const glm::mat4& mat);
 
-} // namespace gl4
+} // namespace gl

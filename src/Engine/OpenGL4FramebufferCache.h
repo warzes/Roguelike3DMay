@@ -2,12 +2,12 @@
 
 #include "OpenGL4Texture.h"
 
-namespace gl4
+namespace gl
 {
 	struct RenderInfo;
 }
 
-namespace gl4::detail
+namespace gl::detail
 {
 	struct TextureProxy final
 	{
@@ -35,7 +35,7 @@ namespace gl4::detail
 		FramebufferCache(FramebufferCache&&) noexcept = default;
 		FramebufferCache& operator=(FramebufferCache&&) noexcept = default;
 
-		uint32_t CreateOrGetCachedFramebuffer(const gl4::RenderInfo& renderInfo);
+		uint32_t CreateOrGetCachedFramebuffer(const gl::RenderInfo& renderInfo);
 
 		[[nodiscard]] std::size_t Size() const
 		{
@@ -50,4 +50,4 @@ namespace gl4::detail
 		std::vector<RenderAttachments> m_framebufferCacheKey;
 		std::vector<uint32_t>          m_framebufferCacheValue;
 	};
-} // namespace gl4::detail
+} // namespace gl::detail

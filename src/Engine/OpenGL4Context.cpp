@@ -1,28 +1,28 @@
-#include "stdafx.h"
+п»ї#include "stdafx.h"
 #include "OpenGL4Context.h"
 #include "OpenGL4Core.h"
 
 //=============================================================================
-void gl4::ContextState::Init()
+void gl::ContextState::Init()
 {
 	properties = InitDeviceProperties();
 
 	ResetState();
 }
 //=============================================================================
-void gl4::ContextState::Close()
+void gl::ContextState::Close()
 {
 	fboCache.Clear();
 	vaoCache.Clear();
 	samplerCache.Clear();
 }
 //=============================================================================
-void gl4::ContextState::ResetState()
+void gl::ContextState::ResetState()
 {
-// TODO: сброс текущего стейта?
+// TODO: СЃР±СЂРѕСЃ С‚РµРєСѓС‰РµРіРѕ СЃС‚РµР№С‚Р°?
 }
 //=============================================================================
-void gl4::InvalidatePipelineState()
+void gl::InvalidatePipelineState()
 {
 	assert(!gContext.isComputeActive && !gContext.isRendering);
 
@@ -55,9 +55,9 @@ void gl4::InvalidatePipelineState()
 	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 }
 //=============================================================================
-void gl4::ZeroResourceBindings()
+void gl::ZeroResourceBindings()
 {
-	const auto& limits = gl4::gContext.properties.limits;
+	const auto& limits = gl::gContext.properties.limits;
 	for (int i = 0; i < limits.maxImageUnits; i++)
 	{
 		glBindImageTexture(static_cast<GLuint>(i), 0, 0, GL_TRUE, 0, GL_READ_WRITE, GL_RGBA32F);

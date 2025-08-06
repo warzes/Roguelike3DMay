@@ -1,8 +1,8 @@
-#pragma once
+﻿#pragma once
 
 #include "OpenGL4Core.h"
 
-namespace gl4
+namespace gl
 {
 	class Shader;
 
@@ -193,4 +193,4 @@ namespace gl4
 		uint64_t m_id;
 	};
 
-} // namespace gl4
+} // namespace gl

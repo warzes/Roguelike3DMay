@@ -13,13 +13,13 @@ bool GraphicSystem::Create()
 //=============================================================================
 void GraphicSystem::Destroy()
 {
-	gl4::Destroy(m_sphereVBO);
-	gl4::Destroy(m_sphereIBO);
-	gl4::Destroy(m_sphereVAO);
-	gl4::Destroy(m_cubeVBO);
-	gl4::Destroy(m_cubeVAO);
-	gl4::Destroy(m_quadVBO);
-	gl4::Destroy(m_quadVAO);
+	gl::Destroy(m_sphereVBO);
+	gl::Destroy(m_sphereIBO);
+	gl::Destroy(m_sphereVAO);
+	gl::Destroy(m_cubeVBO);
+	gl::Destroy(m_cubeVAO);
+	gl::Destroy(m_quadVBO);
+	gl::Destroy(m_quadVAO);
 }
 //=============================================================================
 void GraphicSystem::DrawSphere()
@@ -48,7 +48,7 @@ void GraphicSystem::createSphere()
 		glm::vec3 normal;
 		glm::vec2 uv;
 	};
-	std::vector<gl4::VertexAttributeRaw> attribs = {
+	std::vector<gl::VertexAttributeRaw> attribs = {
 		{0, 3, GL_FLOAT, false, offsetof(Vertex, position)},
 		{1, 3, GL_FLOAT, false, offsetof(Vertex, normal)},
 		{2, 2, GL_FLOAT, false, offsetof(Vertex, uv)},
@@ -102,9 +102,9 @@ void GraphicSystem::createSphere()
 	}
 	m_sphereIndexCount = static_cast<unsigned int>(indices.size());
 
-	m_sphereVBO = gl4::CreateBufferStorage(0, vertices);
-	m_sphereIBO = gl4::CreateBufferStorage(0, indices);
-	m_sphereVAO = gl4::CreateVertexArray(m_sphereVBO, m_sphereIBO, sizeof(Vertex), attribs);
+	m_sphereVBO = gl::CreateBufferStorage(0, vertices);
+	m_sphereIBO = gl::CreateBufferStorage(0, indices);
+	m_sphereVAO = gl::CreateVertexArray(m_sphereVBO, m_sphereIBO, sizeof(Vertex), attribs);
 }
 //=============================================================================
 void GraphicSystem::createCube()
@@ -163,14 +163,14 @@ void GraphicSystem::createCube()
 		glm::vec2 uv;
 	};
 
-	std::vector<gl4::VertexAttributeRaw> attribs = {
+	std::vector<gl::VertexAttributeRaw> attribs = {
 		{0, 3, GL_FLOAT, false, offsetof(Vertex, pos)},
 		{1, 3, GL_FLOAT, false, offsetof(Vertex, normal)},
 		{2, 2, GL_FLOAT, false, offsetof(Vertex, uv)},
 	};
 
-	m_cubeVBO = gl4::CreateBufferStorage(0, sizeof(vertices), (void*)vertices);
-	m_cubeVAO = gl4::CreateVertexArray(m_cubeVBO, sizeof(Vertex), attribs);
+	m_cubeVBO = gl::CreateBufferStorage(0, sizeof(vertices), (void*)vertices);
+	m_cubeVAO = gl::CreateVertexArray(m_cubeVBO, sizeof(Vertex), attribs);
 }
 //=============================================================================
 void GraphicSystem::createQuad()
@@ -182,7 +182,7 @@ void GraphicSystem::createQuad()
 		glm::vec2 uv;
 	};
 
-	std::vector<gl4::VertexAttributeRaw> attribs = {
+	std::vector<gl::VertexAttributeRaw> attribs = {
 		{0, 3, GL_FLOAT, false, offsetof(Vertex, pos)},
 		{1, 3, GL_FLOAT, false, offsetof(Vertex, normal)},
 		{2, 2, GL_FLOAT, false, offsetof(Vertex, uv)},
@@ -198,7 +198,7 @@ void GraphicSystem::createQuad()
 		{{-1.0f, 0.0f, -1.0f}, {0.0f, 1.0f, 0.0f}, {0.0f, 1.0f}},
 		{{1.0f,  0.0f, -1.0f}, {0.0f, 1.0f, 0.0f}, {1.0f, 1.0f}}
 	};
-	m_quadVBO = gl4::CreateBufferStorage(0, vertices);
-	m_quadVAO = gl4::CreateVertexArray(m_quadVBO, sizeof(Vertex), attribs);
+	m_quadVBO = gl::CreateBufferStorage(0, vertices);
+	m_quadVAO = gl::CreateVertexArray(m_quadVBO, sizeof(Vertex), attribs);
 }
 //=============================================================================

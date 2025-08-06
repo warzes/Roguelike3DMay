@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "OpenGL4Texture.h"
 #include "OpenGL4Sampler.h"
 #include "OpenGL4ApiToEnum.h"
@@ -7,9 +7,9 @@
 //=============================================================================
 namespace
 {
-	inline uint64_t getBlockCompressedImageSize(gl4::Format format, uint32_t width, uint32_t height, uint32_t depth)
+	inline uint64_t getBlockCompressedImageSize(gl::Format format, uint32_t width, uint32_t height, uint32_t depth)
 	{
-		assert(gl4::detail::IsBlockCompressedFormat(format));
+		assert(gl::detail::IsBlockCompressedFormat(format));
 
 		// BCn formats store 4x4 blocks of pixels, even if the dimensions aren't a multiple of 4
 		// We round up to the nearest multiple of 4 for width and height, but not depth, since 3D BCn images are just multiple 2D images stacked
@@ -19,32 +19,32 @@ namespace
 		switch (format)
 		{
 		// BC1 and BC4 store 4x4 blocks with 64 bits (8 bytes)
-		case gl4::Format::BC1_RGB_UNORM:
-		case gl4::Format::BC1_RGBA_UNORM:
-		case gl4::Format::BC1_RGB_SRGB:
-		case gl4::Format::BC1_RGBA_SRGB:
-		case gl4::Format::BC4_R_UNORM:
-		case gl4::Format::BC4_R_SNORM:
+		case gl::Format::BC1_RGB_UNORM:
+		case gl::Format::BC1_RGBA_UNORM:
+		case gl::Format::BC1_RGB_SRGB:
+		case gl::Format::BC1_RGBA_SRGB:
+		case gl::Format::BC4_R_UNORM:
+		case gl::Format::BC4_R_SNORM:
 			return width * height * depth / 2;
 
 		// BC3, BC5, BC6, and BC7 store 4x4 blocks with 128 bits (16 bytes)
-		case gl4::Format::BC2_RGBA_UNORM:
-		case gl4::Format::BC2_RGBA_SRGB:
-		case gl4::Format::BC3_RGBA_UNORM:
-		case gl4::Format::BC3_RGBA_SRGB:
-		case gl4::Format::BC5_RG_UNORM:
-		case gl4::Format::BC5_RG_SNORM:
-		case gl4::Format::BC6H_RGB_UFLOAT:
-		case gl4::Format::BC6H_RGB_SFLOAT:
-		case gl4::Format::BC7_RGBA_UNORM:
-		case gl4::Format::BC7_RGBA_SRGB:
+		case gl::Format::BC2_RGBA_UNORM:
+		case gl::Format::BC2_RGBA_SRGB:
+		case gl::Format::BC3_RGBA_UNORM:
+		case gl::Format::BC3_RGBA_SRGB:
+		case gl::Format::BC5_RG_UNORM:
+		case gl::Format::BC5_RG_SNORM:
+		case gl::Format::BC6H_RGB_UFLOAT:
+		case gl::Format::BC6H_RGB_SFLOAT:
+		case gl::Format::BC7_RGBA_UNORM:
+		case gl::Format::BC7_RGBA_SRGB:
 			return width * height * depth;
 		default: assert(0); return 0;
 		}
 	}
 }
 //=============================================================================
-gl4::Texture::Texture(const TextureCreateInfo& createInfo, std::string_view name) : m_createInfo(createInfo)
+gl::Texture::Texture(const TextureCreateInfo& createInfo, std::string_view name) : m_createInfo(createInfo)
 {
 	glCreateTextures(detail::EnumToGL(createInfo.imageType), 1, &m_id);
 
@@ -124,12 +124,12 @@ gl4::Texture::Texture(const TextureCreateInfo& createInfo, std::string_view name
 	Debug("Created Texture with handle " + std::to_string(m_id));
 }
 //=============================================================================
-gl4::Texture::Texture(Texture&& old) noexcept
+gl::Texture::Texture(Texture&& old) noexcept
 	: m_id(std::exchange(old.m_id, 0)), m_createInfo(old.m_createInfo), m_bindlessHandle(std::exchange(old.m_bindlessHandle, 0))
 {
 }
 //=============================================================================
-gl4::Texture& gl4::Texture::operator=(Texture&& old) noexcept
+gl::Texture& gl::Texture::operator=(Texture&& old) noexcept
 {
 	if (&old == this)
 		return *this;
@@ -137,7 +137,7 @@ gl4::Texture& gl4::Texture::operator=(Texture&& old) noexcept
 	return *new (this) Texture(std::move(old));
 }
 //=============================================================================
-gl4::Texture::~Texture()
+gl::Texture::~Texture()
 {
 	if (m_id == 0) return;
 
@@ -150,7 +150,7 @@ gl4::Texture::~Texture()
 	gContext.fboCache.RemoveTexture(*this);
 }
 //=============================================================================
-gl4::TextureView gl4::Texture::CreateSingleMipView(uint32_t level)
+gl::TextureView gl::Texture::CreateSingleMipView(uint32_t level)
 {
 	TextureViewCreateInfo createInfo{
 		.viewType = m_createInfo.imageType,
@@ -163,7 +163,7 @@ gl4::TextureView gl4::Texture::CreateSingleMipView(uint32_t level)
 	return TextureView(createInfo, *this);
 }
 //=============================================================================
-gl4::TextureView gl4::Texture::CreateSingleLayerView(uint32_t layer)
+gl::TextureView gl::Texture::CreateSingleLayerView(uint32_t layer)
 {
 	TextureViewCreateInfo createInfo{
 		.viewType = m_createInfo.imageType,
@@ -176,7 +176,7 @@ gl4::TextureView gl4::Texture::CreateSingleLayerView(uint32_t layer)
 	return TextureView(createInfo, *this);
 }
 //=============================================================================
-gl4::TextureView gl4::Texture::CreateFormatView(Format newFormat)
+gl::TextureView gl::Texture::CreateFormatView(Format newFormat)
 {
 	TextureViewCreateInfo createInfo{
 		.viewType = m_createInfo.imageType,
@@ -189,7 +189,7 @@ gl4::TextureView gl4::Texture::CreateFormatView(Format newFormat)
 	return TextureView(createInfo, *this);
 }
 //=============================================================================
-gl4::TextureView gl4::Texture::CreateSwizzleView(ComponentMapping components)
+gl::TextureView gl::Texture::CreateSwizzleView(ComponentMapping components)
 {
 	TextureViewCreateInfo createInfo{
 		.viewType = m_createInfo.imageType,
@@ -203,7 +203,7 @@ gl4::TextureView gl4::Texture::CreateSwizzleView(ComponentMapping components)
 	return TextureView(createInfo, *this);
 }
 //=============================================================================
-uint64_t gl4::Texture::GetBindlessHandle(const Sampler& sampler)
+uint64_t gl::Texture::GetBindlessHandle(const Sampler& sampler)
 {
 	assert(gContext.properties.features.bindlessTextures && "GL_ARB_bindless_texture is not supported");
 	assert(m_bindlessHandle == 0 && "Texture already has bindless handle resident.");
@@ -213,19 +213,19 @@ uint64_t gl4::Texture::GetBindlessHandle(const Sampler& sampler)
 	return m_bindlessHandle;
 }
 //=============================================================================
-void gl4::Texture::UpdateImage(const TextureUpdateInfo& info)
+void gl::Texture::UpdateImage(const TextureUpdateInfo& info)
 {
 	glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
 	subImageInternal(info);
 }
 //=============================================================================
-void gl4::Texture::UpdateCompressedImage(const CompressedTextureUpdateInfo& info)
+void gl::Texture::UpdateCompressedImage(const CompressedTextureUpdateInfo& info)
 {
 	glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
 	subCompressedImageInternal(info);
 }
 //=============================================================================
-void gl4::Texture::subImageInternal(const TextureUpdateInfo& info)
+void gl::Texture::subImageInternal(const TextureUpdateInfo& info)
 {
 	assert(!detail::IsBlockCompressedFormat(m_createInfo.format));
 	GLenum format{};
@@ -282,7 +282,7 @@ void gl4::Texture::subImageInternal(const TextureUpdateInfo& info)
 	}
 }
 //=============================================================================
-void gl4::Texture::subCompressedImageInternal(const CompressedTextureUpdateInfo& info)
+void gl::Texture::subCompressedImageInternal(const CompressedTextureUpdateInfo& info)
 {
 	assert(detail::IsBlockCompressedFormat(m_createInfo.format));
 	const GLenum format = detail::EnumToGL(m_createInfo.format);
@@ -322,7 +322,7 @@ void gl4::Texture::subCompressedImageInternal(const CompressedTextureUpdateInfo&
 	}
 }
 //=============================================================================
-void gl4::Texture::ClearImage(const TextureClearInfo& info)
+void gl::Texture::ClearImage(const TextureClearInfo& info)
 {
 	// Infer format
 	GLenum format{};
@@ -369,12 +369,12 @@ void gl4::Texture::ClearImage(const TextureClearInfo& info)
 		info.data);
 }
 //=============================================================================
-void gl4::Texture::GenMipmaps()
+void gl::Texture::GenMipmaps()
 {
 	glGenerateTextureMipmap(m_id);
 }
 //=============================================================================
-gl4::Texture gl4::CreateTexture2D(Extent2D size, Format format, std::string_view name)
+gl::Texture gl::CreateTexture2D(Extent2D size, Format format, std::string_view name)
 {
 	TextureCreateInfo createInfo{
 	  .imageType = ImageType::Tex2D,
@@ -387,7 +387,7 @@ gl4::Texture gl4::CreateTexture2D(Extent2D size, Format format, std::string_view
 	return Texture(createInfo, name);
 }
 //=============================================================================
-gl4::Texture gl4::CreateTexture2DMip(Extent2D size, Format format, uint32_t mipLevels, std::string_view name)
+gl::Texture gl::CreateTexture2DMip(Extent2D size, Format format, uint32_t mipLevels, std::string_view name)
 {
 	TextureCreateInfo createInfo{
 	  .imageType = ImageType::Tex2D,
@@ -400,9 +400,9 @@ gl4::Texture gl4::CreateTexture2DMip(Extent2D size, Format format, uint32_t mipL
 	return Texture(createInfo, name);
 }
 //=============================================================================
-gl4::TextureView::TextureView() {}
+gl::TextureView::TextureView() {}
 //=============================================================================
-gl4::TextureView::TextureView(const TextureViewCreateInfo& viewInfo, Texture& texture, std::string_view name)
+gl::TextureView::TextureView(const TextureViewCreateInfo& viewInfo, Texture& texture, std::string_view name)
 	: m_viewInfo(viewInfo)
 {
 	m_createInfo = texture.GetCreateInfo();
@@ -429,7 +429,7 @@ gl4::TextureView::TextureView(const TextureViewCreateInfo& viewInfo, Texture& te
 	Print("Created Texture View with handle " + std::to_string(m_id));
 }
 //=============================================================================
-gl4::TextureView::TextureView(const TextureViewCreateInfo& viewInfo, TextureView& textureView, std::string_view name)
+gl::TextureView::TextureView(const TextureViewCreateInfo& viewInfo, TextureView& textureView, std::string_view name)
 	: TextureView(viewInfo, static_cast<Texture&>(textureView), name)
 {
 	m_createInfo = TextureCreateInfo{
@@ -441,7 +441,7 @@ gl4::TextureView::TextureView(const TextureViewCreateInfo& viewInfo, TextureView
 	};
 }
 //=============================================================================
-gl4::TextureView::TextureView(Texture& texture, std::string_view name)
+gl::TextureView::TextureView(Texture& texture, std::string_view name)
 	: TextureView(
 		TextureViewCreateInfo{
 			.viewType = texture.GetCreateInfo().imageType,
@@ -456,9 +456,9 @@ gl4::TextureView::TextureView(Texture& texture, std::string_view name)
 {
 }
 //=============================================================================
-gl4::TextureView::TextureView(TextureView&& old) noexcept : Texture(std::move(old)), m_viewInfo(old.m_viewInfo) {}
+gl::TextureView::TextureView(TextureView&& old) noexcept : Texture(std::move(old)), m_viewInfo(old.m_viewInfo) {}
 //=============================================================================
-gl4::TextureView& gl4::TextureView::operator=(TextureView&& old) noexcept
+gl::TextureView& gl::TextureView::operator=(TextureView&& old) noexcept
 {
 	if (&old == this)
 		return *this;
@@ -466,5 +466,5 @@ gl4::TextureView& gl4::TextureView::operator=(TextureView&& old) noexcept
 	return *new (this) TextureView(std::move(old));
 }
 //=============================================================================
-gl4::TextureView::~TextureView() {}
+gl::TextureView::~TextureView() {}
 //=============================================================================

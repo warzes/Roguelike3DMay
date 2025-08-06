@@ -1,8 +1,8 @@
-#pragma once
+﻿#pragma once
 
 #include "OpenGL4Pipeline.h"
 
-namespace gl4::detail
+namespace gl::detail
 {
 	// owning versions of pipeline info structs so we don't lose references
 	struct VertexInputStateOwning final
@@ -50,4 +50,4 @@ namespace gl4::detail
 	uint64_t CompileComputePipelineInternal(const ComputePipelineInfo& info);
 	std::shared_ptr<const ComputePipelineInfoOwning> GetComputePipelineInternal(uint64_t pipeline);
 	void DestroyComputePipelineInternal(uint64_t pipeline);
-} // namespace gl4::detail
+} // namespace gl::detail

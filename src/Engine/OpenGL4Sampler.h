@@ -1,9 +1,9 @@
-#pragma once
+﻿#pragma once
 
 #include "OpenGL4Core.h"
 #include "Hash.h"
 
-namespace gl4
+namespace gl
 {
 	namespace detail
 	{
@@ -48,15 +48,15 @@ namespace gl4
 
 		GLuint m_id{};
 	};
-} // namespace gl4
+} // namespace gl
 
 template<>
-struct std::hash<gl4::SamplerState>
+struct std::hash<gl::SamplerState>
 {
-	std::size_t operator()(const gl4::SamplerState& k) const noexcept;
+	std::size_t operator()(const gl::SamplerState& k) const noexcept;
 };
 
-inline std::size_t std::hash<gl4::SamplerState>::operator()(const gl4::SamplerState& k) const noexcept
+inline std::size_t std::hash<gl::SamplerState>::operator()(const gl::SamplerState& k) const noexcept
 {
 	auto rtup = std::make_tuple(
 		k.minFilter,

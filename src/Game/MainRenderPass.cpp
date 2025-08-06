@@ -5,7 +5,7 @@
 #define DEFAULT_DIRECTIONAL_LIGHT_SHADOW_MAP_BIAS 0.005f
 #define DEFAULT_POINT_LIGHT_SHADOW_MAP_BIAS 0.0075f
 //=============================================================================
-inline std::optional<gl4::Texture> createPoissonDiscDistribution(size_t numSamples)
+inline std::optional<gl::Texture> createPoissonDiscDistribution(size_t numSamples)
 {
 	auto defaultPRNG = PoissonGenerator::DefaultPRNG();
 	auto points = PoissonGenerator::GeneratePoissonPoints(numSamples * 2, defaultPRNG);
@@ -29,20 +29,20 @@ inline std::optional<gl4::Texture> createPoissonDiscDistribution(size_t numSampl
 		data[j + 1] = point.y;
 	}
 
-	const gl4::TextureCreateInfo createInfo{
-		  .imageType = gl4::ImageType::Tex1D,
-		  .format = gl4::Format::R32G32_FLOAT,
+	const gl::TextureCreateInfo createInfo{
+		  .imageType = gl::ImageType::Tex1D,
+		  .format = gl::Format::R32G32_FLOAT,
 		  .extent = {static_cast<uint32_t>(numSamples), 1, 1},
 		  .mipLevels = 1,
 		  .arrayLayers = 1,
-		  .sampleCount = gl4::SampleCount::Samples1,
+		  .sampleCount = gl::SampleCount::Samples1,
 	};
-	std::optional<gl4::Texture> texture = gl4::Texture(createInfo);
+	std::optional<gl::Texture> texture = gl::Texture(createInfo);
 
 	texture.value().UpdateImage({
 	  .extent = createInfo.extent,
-	  .format = gl4::UploadFormat::RG,
-	  .type = gl4::UploadType::FLOAT,
+	  .format = gl::UploadFormat::RG,
+	  .type = gl::UploadType::FLOAT,
 	  .pixels = &data[0],
 		});
 
@@ -56,35 +56,35 @@ bool MainRenderPass::Init(World* world)
 
 	m_world = world;
 
-	m_globalUbo   = gl4::TypedBuffer<GlobalUniforms>(gl4::BufferStorageFlag::DynamicStorage);
-	m_objectUbo   = gl4::TypedBuffer<ObjectUniforms>(gl4::BufferStorageFlag::DynamicStorage);
-	m_materialUbo = gl4::TypedBuffer<MaterialUniforms>(gl4::BufferStorageFlag::DynamicStorage);
-	m_mainFragUbo = gl4::TypedBuffer<MainFragmentUniforms>(gl4::BufferStorageFlag::DynamicStorage);
+	m_globalUbo   = gl::TypedBuffer<GlobalUniforms>(gl::BufferStorageFlag::DynamicStorage);
+	m_objectUbo   = gl::TypedBuffer<ObjectUniforms>(gl::BufferStorageFlag::DynamicStorage);
+	m_materialUbo = gl::TypedBuffer<MaterialUniforms>(gl::BufferStorageFlag::DynamicStorage);
+	m_mainFragUbo = gl::TypedBuffer<MainFragmentUniforms>(gl::BufferStorageFlag::DynamicStorage);
 
-	gl4::SamplerState sampleDesc;
-	sampleDesc.minFilter    = gl4::MinFilter::Nearest;
-	sampleDesc.magFilter    = gl4::MagFilter::Nearest;
-	sampleDesc.addressModeU = gl4::AddressMode::Repeat;
-	sampleDesc.addressModeV = gl4::AddressMode::Repeat;
-	m_nearestSampler = gl4::Sampler(sampleDesc);
+	gl::SamplerState sampleDesc;
+	sampleDesc.minFilter    = gl::MinFilter::Nearest;
+	sampleDesc.magFilter    = gl::MagFilter::Nearest;
+	sampleDesc.addressModeU = gl::AddressMode::Repeat;
+	sampleDesc.addressModeV = gl::AddressMode::Repeat;
+	m_nearestSampler = gl::Sampler(sampleDesc);
 
-	sampleDesc.anisotropy   = gl4::SampleCount::Samples16;
-	sampleDesc.minFilter    = gl4::MinFilter::LinearMimapLinear;
-	sampleDesc.magFilter    = gl4::MagFilter::Linear;
-	sampleDesc.addressModeU = gl4::AddressMode::Repeat;
-	sampleDesc.addressModeV = gl4::AddressMode::Repeat;
-	m_linearSampler = gl4::Sampler(sampleDesc);
+	sampleDesc.anisotropy   = gl::SampleCount::Samples16;
+	sampleDesc.minFilter    = gl::MinFilter::LinearMimapLinear;
+	sampleDesc.magFilter    = gl::MagFilter::Linear;
+	sampleDesc.addressModeU = gl::AddressMode::Repeat;
+	sampleDesc.addressModeV = gl::AddressMode::Repeat;
+	m_linearSampler = gl::Sampler(sampleDesc);
 
-	m_lightSSBO.emplace(std::span(m_world->GetLights()), gl4::BufferStorageFlag::DynamicStorage);
+	m_lightSSBO.emplace(std::span(m_world->GetLights()), gl::BufferStorageFlag::DynamicStorage);
 
 	m_distributions0 = createPoissonDiscDistribution(m_numBlockerSearchSamples);
 	m_distributions1 = createPoissonDiscDistribution(m_numPCFSamples);
 
-	sampleDesc.minFilter = gl4::MinFilter::Nearest;
-	sampleDesc.magFilter = gl4::MagFilter::Nearest;
-	sampleDesc.addressModeU = gl4::AddressMode::ClampToEdge;
-	sampleDesc.addressModeV = gl4::AddressMode::ClampToEdge;
-	m_distributionsSampler = gl4::Sampler(sampleDesc);
+	sampleDesc.minFilter = gl::MinFilter::Nearest;
+	sampleDesc.magFilter = gl::MagFilter::Nearest;
+	sampleDesc.addressModeU = gl::AddressMode::ClampToEdge;
+	sampleDesc.addressModeV = gl::AddressMode::ClampToEdge;
+	m_distributionsSampler = gl::Sampler(sampleDesc);
 
 	return true;
 }
@@ -113,20 +113,20 @@ void MainRenderPass::Begin(Camera& cam, const glm::mat4& proj)
 	m_globalUboData.eyePosition = cam.Position;
 	m_globalUbo->UpdateData(m_globalUboData);
 
-	gl4::Cmd::BindGraphicsPipeline(m_pipeline.value());
-	gl4::Cmd::BindUniformBuffer(0, m_globalUbo.value());
-	gl4::Cmd::BindStorageBuffer(0, *m_lightSSBO);
+	gl::Cmd::BindGraphicsPipeline(m_pipeline.value());
+	gl::Cmd::BindUniformBuffer(0, m_globalUbo.value());
+	gl::Cmd::BindStorageBuffer(0, *m_lightSSBO);
 }
 //=============================================================================
 void MainRenderPass::DrawModel(GameModelOld& model)
 {
-	const gl4::Sampler& sampler = (model.textureFilter == gl4::MagFilter::Linear) 
+	const gl::Sampler& sampler = (model.textureFilter == gl::MagFilter::Linear) 
 		? m_linearSampler.value() 
 		: m_nearestSampler.value();
 		
 	m_objectUboData.model = model.GetModelMat();
 	m_objectUbo->UpdateData(m_objectUboData);
-	gl4::Cmd::BindUniformBuffer(1, m_objectUbo.value());
+	gl::Cmd::BindUniformBuffer(1, m_objectUbo.value());
 
 	m_materialUboData.diffuse             = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 	m_materialUboData.hasDiffuseTexture   = model.material.diffuseTexture  != nullptr;
@@ -136,7 +136,7 @@ void MainRenderPass::DrawModel(GameModelOld& model)
 	m_materialUboData.hasDepthMapTexture  = model.material.depthTexture    != nullptr;
 	m_materialUboData.noLighing           = model.material.noLighing;
 	m_materialUbo->UpdateData(m_materialUboData);
-	gl4::Cmd::BindUniformBuffer(2, m_materialUbo.value());
+	gl::Cmd::BindUniformBuffer(2, m_materialUbo.value());
 
 	m_mainFragUboData.invView = glm::inverse(m_globalUboData.view);
 	m_mainFragUboData.lightProjection = glm::perspective(glm::radians(90.0f), 1.0f, 1.0f, 10.0f);
@@ -152,21 +152,21 @@ void MainRenderPass::DrawModel(GameModelOld& model)
 
 	m_mainFragUboData.MaxNumLightSources = m_world->GetLights().size();
 	m_mainFragUbo->UpdateData(m_mainFragUboData);
-	gl4::Cmd::BindUniformBuffer(3, m_mainFragUbo.value());
+	gl::Cmd::BindUniformBuffer(3, m_mainFragUbo.value());
 
 	if (model.material.diffuseTexture)
-		gl4::Cmd::BindSampledImage(0, *model.material.diffuseTexture, sampler);
+		gl::Cmd::BindSampledImage(0, *model.material.diffuseTexture, sampler);
 	if (model.material.specularTexture)
-		gl4::Cmd::BindSampledImage(1, *model.material.specularTexture, sampler);
+		gl::Cmd::BindSampledImage(1, *model.material.specularTexture, sampler);
 	if (model.material.emissionTexture)
-		gl4::Cmd::BindSampledImage(2, *model.material.emissionTexture, sampler);
+		gl::Cmd::BindSampledImage(2, *model.material.emissionTexture, sampler);
 	if (model.material.normalTexture)
-		gl4::Cmd::BindSampledImage(3, *model.material.normalTexture, sampler);
+		gl::Cmd::BindSampledImage(3, *model.material.normalTexture, sampler);
 	if (model.material.depthTexture)
-		gl4::Cmd::BindSampledImage(4, *model.material.depthTexture, sampler);
+		gl::Cmd::BindSampledImage(4, *model.material.depthTexture, sampler);
 
-	gl4::Cmd::BindSampledImage(5, *m_distributions0, *m_distributionsSampler);
-	gl4::Cmd::BindSampledImage(6, *m_distributions1, *m_distributionsSampler);
+	gl::Cmd::BindSampledImage(5, *m_distributions0, *m_distributionsSampler);
+	gl::Cmd::BindSampledImage(6, *m_distributions1, *m_distributionsSampler);
 
 	m_world->GetShadowMap()[0].Bind(7, sampler); // TODO: сеплер для тени
 
@@ -175,16 +175,16 @@ void MainRenderPass::DrawModel(GameModelOld& model)
 //=============================================================================
 bool MainRenderPass::createPipeline()
 {
-	auto vertexShader = gl4::Shader(gl4::PipelineStage::VertexShader, io::ReadShaderCode("GameData/shaders/MainShader.vert"), "MainShader VS");
+	auto vertexShader = gl::Shader(gl::PipelineStage::VertexShader, io::ReadShaderCode("GameData/shaders/MainShader.vert"), "MainShader VS");
 	if (!vertexShader.IsValid()) return false;
-	auto fragmentShader = gl4::Shader(gl4::PipelineStage::FragmentShader, io::ReadShaderCode("GameData/shaders/MainShader.frag"), "MainShader FS");
+	auto fragmentShader = gl::Shader(gl::PipelineStage::FragmentShader, io::ReadShaderCode("GameData/shaders/MainShader.frag"), "MainShader FS");
 	if (!fragmentShader.IsValid()) return false;
 
-	m_pipeline = gl4::GraphicsPipeline({
+	m_pipeline = gl::GraphicsPipeline({
 		.name               = "Model Pipeline",
 		.vertexShader       = &vertexShader,
 		.fragmentShader     = &fragmentShader,
-		.inputAssemblyState = {.topology = gl4::PrimitiveTopology::TRIANGLE_LIST},
+		.inputAssemblyState = {.topology = gl::PrimitiveTopology::TRIANGLE_LIST},
 		.vertexInputState   = {MeshVertexInputBindingDescs},
 		.depthState         = {.depthTestEnable = true, .depthWriteEnable = true},
 		});

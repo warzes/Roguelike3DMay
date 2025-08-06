@@ -10,15 +10,15 @@ bool ShadowMap::Create()
 	}
 	else
 	{
-		gl4::TextureCreateInfo createInfo{
-			.imageType = gl4::ImageType::Tex2D,
-			.format = gl4::Format::D32_FLOAT,
+		gl::TextureCreateInfo createInfo{
+			.imageType = gl::ImageType::Tex2D,
+			.format = gl::Format::D32_FLOAT,
 			.extent = { width, height, 1},
 			.mipLevels = 1,
 			.arrayLayers = 1,
-			.sampleCount = gl4::SampleCount::Samples1,
+			.sampleCount = gl::SampleCount::Samples1,
 		};
-		depthTexture = new gl4::Texture(createInfo, "ShadowDepth");
+		depthTexture = new gl::Texture(createInfo, "ShadowDepth");
 	}
 
 	// Shaders
@@ -34,8 +34,8 @@ void ShadowMap::Destroy()
 	delete depthTexture;
 }
 //=============================================================================
-void ShadowMap::Bind(uint32_t index, const gl4::Sampler& sampler) const
+void ShadowMap::Bind(uint32_t index, const gl::Sampler& sampler) const
 {
-	gl4::Cmd::BindSampledImage(index, *depthTexture, sampler);
+	gl::Cmd::BindSampledImage(index, *depthTexture, sampler);
 }
 //=============================================================================

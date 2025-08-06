@@ -127,25 +127,25 @@ void main()
 
 
 
-	gl4::ShaderProgramId program;
+	gl::ShaderProgramId program;
 	int ModelLoc;
 	int ViewLoc;
 	int ProjLoc;
 
-	gl4::ShaderProgramId modelProgram;
+	gl::ShaderProgramId modelProgram;
 	int modelModelLoc;
 	int modelViewLoc;
 	int modelProjLoc;
 
-	gl4::ShaderProgramId cubeProgram;
+	gl::ShaderProgramId cubeProgram;
 	int cubeModelLoc;
 	int cubeViewLoc;
 	int cubeProjLoc;
 
 	GLuint texture;
-	gl4::BufferId vbo;
-	gl4::BufferId ibo;
-	gl4::VertexArrayId vao;
+	gl::BufferId vbo;
+	gl::BufferId ibo;
+	gl::VertexArrayId vao;
 
 	Camera camera;
 
@@ -173,22 +173,22 @@ EngineCreateInfo GameAppOld::GetCreateInfo() const
 //=============================================================================
 bool GameAppOld::OnInit()
 {
-	program = gl4::CreateShaderProgram(shaderCodeVertex, shaderCodeFragment);
-	ModelLoc = gl4::GetUniformLocation(program, "Model");
-	ViewLoc = gl4::GetUniformLocation(program, "View");
-	ProjLoc = gl4::GetUniformLocation(program, "Proj");
+	program = gl::CreateShaderProgram(shaderCodeVertex, shaderCodeFragment);
+	ModelLoc = gl::GetUniformLocation(program, "Model");
+	ViewLoc = gl::GetUniformLocation(program, "View");
+	ProjLoc = gl::GetUniformLocation(program, "Proj");
 
-	modelProgram = gl4::CreateShaderProgram(modelShaderCodeVertex, modelShaderCodeFragment);
-	modelModelLoc = gl4::GetUniformLocation(modelProgram, "model");
-	modelViewLoc = gl4::GetUniformLocation(modelProgram, "view");
-	modelProjLoc = gl4::GetUniformLocation(modelProgram, "projection");
+	modelProgram = gl::CreateShaderProgram(modelShaderCodeVertex, modelShaderCodeFragment);
+	modelModelLoc = gl::GetUniformLocation(modelProgram, "model");
+	modelViewLoc = gl::GetUniformLocation(modelProgram, "view");
+	modelProjLoc = gl::GetUniformLocation(modelProgram, "projection");
 
-	cubeProgram = gl4::CreateShaderProgram(cubeShaderCodVertex, cubeShaderCodeFragment);
-	cubeModelLoc = gl4::GetUniformLocation(cubeProgram, "model");
-	cubeViewLoc = gl4::GetUniformLocation(cubeProgram, "view");
-	cubeProjLoc = gl4::GetUniformLocation(cubeProgram, "projection");
+	cubeProgram = gl::CreateShaderProgram(cubeShaderCodVertex, cubeShaderCodeFragment);
+	cubeModelLoc = gl::GetUniformLocation(cubeProgram, "model");
+	cubeViewLoc = gl::GetUniformLocation(cubeProgram, "view");
+	cubeProjLoc = gl::GetUniformLocation(cubeProgram, "projection");
 
-	texture = gl4::LoadTexture2D("CoreData/textures/colorful.png", true);
+	texture = gl::LoadTexture2D("CoreData/textures/colorful.png", true);
 
 	struct Vertex
 	{
@@ -197,7 +197,7 @@ bool GameAppOld::OnInit()
 		glm::vec2 uv;
 	};
 
-	std::vector<gl4::VertexAttributeRaw> attribs = {
+	std::vector<gl::VertexAttributeRaw> attribs = {
 		{0, 3, GL_FLOAT, false, offsetof(Vertex, pos)},
 		{1, 3, GL_FLOAT, false, offsetof(Vertex, color)},
 		{2, 2, GL_FLOAT, false, offsetof(Vertex, uv)},
@@ -217,9 +217,9 @@ bool GameAppOld::OnInit()
 		0, 3, 2
 	};
 
-	vbo = gl4::CreateBufferStorage(0, sizeof(vertices), vertices);
-	ibo = gl4::CreateBufferStorage(0, sizeof(indices), indices);
-	vao = gl4::CreateVertexArray(vbo, ibo, sizeof(Vertex), attribs);
+	vbo = gl::CreateBufferStorage(0, sizeof(vertices), vertices);
+	ibo = gl::CreateBufferStorage(0, sizeof(indices), indices);
+	vao = gl::CreateVertexArray(vbo, ibo, sizeof(Vertex), attribs);
 
 	camera.SetPosition(glm::vec3(0.0f, 0.0f, -1.0f));
 
@@ -234,10 +234,10 @@ bool GameAppOld::OnInit()
 void GameAppOld::OnClose()
 {
 	glDeleteTextures(1, &texture);
-	gl4::Destroy(program);
-	gl4::Destroy(vbo);
-	gl4::Destroy(ibo);
-	gl4::Destroy(vao);
+	gl::Destroy(program);
+	gl::Destroy(vbo);
+	gl::Destroy(ibo);
+	gl::Destroy(vao);
 }
 //=============================================================================
 void GameAppOld::OnUpdate(float deltaTime)
@@ -265,7 +265,7 @@ void GameAppOld::OnUpdate(float deltaTime)
 //=============================================================================
 void GameAppOld::OnRender()
 {
-	gl4::SetFrameBuffer({ 0 }, GetWindowWidth(), GetWindowHeight(), GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	gl::SetFrameBuffer({ 0 }, GetWindowWidth(), GetWindowHeight(), GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glm::mat4 matmodel = glm::mat4(1.0f);
 	glm::mat4 view = camera.GetViewMatrix();
@@ -274,9 +274,9 @@ void GameAppOld::OnRender()
 	// вывод квада
 	{
 		glUseProgram(program);
-		gl4::SetUniform(program, ModelLoc, matmodel);
-		gl4::SetUniform(program, ViewLoc, view);
-		gl4::SetUniform(program, ProjLoc, proj);
+		gl::SetUniform(program, ModelLoc, matmodel);
+		gl::SetUniform(program, ViewLoc, view);
+		gl::SetUniform(program, ProjLoc, proj);
 
 		glBindTextureUnit(0, texture);
 		glBindVertexArray(vao);
@@ -287,18 +287,18 @@ void GameAppOld::OnRender()
 	// вывод меша
 	{
 		glUseProgram(modelProgram);
-		gl4::SetUniform(modelProgram, modelModelLoc, matmodel);
-		gl4::SetUniform(modelProgram, modelViewLoc, view);
-		gl4::SetUniform(modelProgram, modelProjLoc, proj);
+		gl::SetUniform(modelProgram, modelModelLoc, matmodel);
+		gl::SetUniform(modelProgram, modelViewLoc, view);
+		gl::SetUniform(modelProgram, modelProjLoc, proj);
 		model->Draw(modelProgram);
 	}
 
 	// вывод кубов
 	{
 		glUseProgram(cubeProgram);
-		gl4::SetUniform(cubeProgram, cubeModelLoc, matmodel);
-		gl4::SetUniform(cubeProgram, cubeViewLoc, view);
-		gl4::SetUniform(cubeProgram, cubeProjLoc, proj);
+		gl::SetUniform(cubeProgram, cubeModelLoc, matmodel);
+		gl::SetUniform(cubeProgram, cubeViewLoc, view);
+		gl::SetUniform(cubeProgram, cubeProjLoc, proj);
 
 		glBindTextureUnit(0, texture);
 		// Render boxes
@@ -310,7 +310,7 @@ void GameAppOld::OnRender()
 			const float angle = 20.0f * static_cast<float>(i);
 			model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
 			model = glm::scale(model, glm::vec3(0.5));
-			gl4::SetUniform(cubeProgram, cubeModelLoc, model);
+			gl::SetUniform(cubeProgram, cubeModelLoc, model);
 
 			GetGraphicSystem().DrawCube();
 		}

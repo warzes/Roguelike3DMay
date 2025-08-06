@@ -1,9 +1,9 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "OpenGL4SamplerCache.h"
 #include "OpenGL4ApiToEnum.h"
 #include "Log.h"
 //=============================================================================
-gl4::Sampler gl4::detail::SamplerCache::CreateOrGetCachedTextureSampler(const SamplerState& samplerState)
+gl::Sampler gl::detail::SamplerCache::CreateOrGetCachedTextureSampler(const SamplerState& samplerState)
 {
 	if (auto it = m_samplerCache.find(samplerState); it != m_samplerCache.end())
 	{
@@ -87,12 +87,12 @@ gl4::Sampler gl4::detail::SamplerCache::CreateOrGetCachedTextureSampler(const Sa
 	return m_samplerCache.insert({ samplerState, Sampler(sampler) }).first->second;
 }
 //=============================================================================
-size_t gl4::detail::SamplerCache::Size() const
+size_t gl::detail::SamplerCache::Size() const
 {
 	return m_samplerCache.size();
 }
 //=============================================================================
-void gl4::detail::SamplerCache::Clear()
+void gl::detail::SamplerCache::Clear()
 {
 	for (const auto& [_, sampler] : m_samplerCache)
 	{

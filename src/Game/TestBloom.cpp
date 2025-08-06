@@ -63,7 +63,7 @@ void main()
 }
 )";
 
-	gl4::ShaderProgramId program;
+	gl::ShaderProgramId program;
 	int lightPositionLoc;
 	int radiusLoc;
 	int lightColorLoc;
@@ -86,10 +86,10 @@ EngineCreateInfo TestBloom::GetCreateInfo() const
 //=============================================================================
 bool TestBloom::OnInit()
 {
-	program = gl4::CreateShaderProgram(lightShaderCodeVertex, lightShaderCodeFragment);
-	lightPositionLoc = gl4::GetUniformLocation(program, "lightPosition");
-	radiusLoc = gl4::GetUniformLocation(program, "radius");
-	lightColorLoc = gl4::GetUniformLocation(program, "lightColor");
+	program = gl::CreateShaderProgram(lightShaderCodeVertex, lightShaderCodeFragment);
+	lightPositionLoc = gl::GetUniformLocation(program, "lightPosition");
+	radiusLoc = gl::GetUniformLocation(program, "radius");
+	lightColorLoc = gl::GetUniformLocation(program, "lightColor");
 
 	model = new ModelOLD("ExampleData/mesh/Zaku/scene.gltf");
 
@@ -133,7 +133,7 @@ void TestBloom::OnUpdate(float deltaTime)
 //=============================================================================
 void TestBloom::OnRender()
 {
-	gl4::SetFrameBuffer({ 0 }, GetWindowWidth(), GetWindowHeight(), GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	gl::SetFrameBuffer({ 0 }, GetWindowWidth(), GetWindowHeight(), GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glm::mat4 view = camera.GetViewMatrix();
 	glm::mat4 proj = glm::perspective(glm::radians(60.0f), GetWindowAspect(), 0.01f, 1000.0f);
@@ -152,7 +152,7 @@ void TestBloom::OnRender()
 	modelMat = glm::rotate(modelMat, modelRotation, glm::vec3(0.0f, 1.0f, 0.0f));
 	auto mainShader = pipeline->GetMainShader();
 	glUseProgram(mainShader);
-	gl4::SetUniform(mainShader, "model", modelMat);
+	gl::SetUniform(mainShader, "model", modelMat);
 	model->Draw(mainShader);
 
 	// End first pass
@@ -166,11 +166,11 @@ void TestBloom::OnRender()
 
 	// Light
 	glUseProgram(program);
-	gl4::SetUniform(program, "projection", proj);
-	gl4::SetUniform(program, "view", view);
-	gl4::SetUniform(program, lightPositionLoc, light.Position);
-	gl4::SetUniform(program, radiusLoc, 0.4f);
-	gl4::SetUniform(program, lightColorLoc, light.Color);
+	gl::SetUniform(program, "projection", proj);
+	gl::SetUniform(program, "view", view);
+	gl::SetUniform(program, lightPositionLoc, light.Position);
+	gl::SetUniform(program, radiusLoc, 0.4f);
+	gl::SetUniform(program, lightColorLoc, light.Color);
 	GetGraphicSystem().DrawQuad();
 }
 //=============================================================================

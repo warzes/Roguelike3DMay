@@ -97,14 +97,14 @@ void main()
 )";
 
 
-	gl4::ShaderProgramId modelProgram;
+	gl::ShaderProgramId modelProgram;
 	int modelModelLoc;
 	int modelViewLoc;
 	int modelProjLoc;
 	int lightPosLoc;
 	int viewPosLoc;
 
-	gl4::ShaderProgramId lightProgram;
+	gl::ShaderProgramId lightProgram;
 	int lightModelLoc;
 	int lightViewLoc;
 	int lightProjLoc;
@@ -125,17 +125,17 @@ EngineCreateInfo TestModelLoading::GetCreateInfo() const
 //=============================================================================
 bool TestModelLoading::OnInit()
 {
-	modelProgram = gl4::CreateShaderProgram(modelShaderCodeVertex, modelShaderCodeFragment);
-	modelModelLoc = gl4::GetUniformLocation(modelProgram, "model");
-	modelViewLoc = gl4::GetUniformLocation(modelProgram, "view");
-	modelProjLoc = gl4::GetUniformLocation(modelProgram, "projection");
-	lightPosLoc = gl4::GetUniformLocation(modelProgram, "lightPos");
-	viewPosLoc = gl4::GetUniformLocation(modelProgram, "viewPos");
+	modelProgram = gl::CreateShaderProgram(modelShaderCodeVertex, modelShaderCodeFragment);
+	modelModelLoc = gl::GetUniformLocation(modelProgram, "model");
+	modelViewLoc = gl::GetUniformLocation(modelProgram, "view");
+	modelProjLoc = gl::GetUniformLocation(modelProgram, "projection");
+	lightPosLoc = gl::GetUniformLocation(modelProgram, "lightPos");
+	viewPosLoc = gl::GetUniformLocation(modelProgram, "viewPos");
 
-	lightProgram = gl4::CreateShaderProgram(lightShaderCodeVertex, lightShaderCodeFragment);
-	lightModelLoc = gl4::GetUniformLocation(lightProgram, "model");
-	lightViewLoc = gl4::GetUniformLocation(lightProgram, "view");
-	lightProjLoc = gl4::GetUniformLocation(lightProgram, "projection");
+	lightProgram = gl::CreateShaderProgram(lightShaderCodeVertex, lightShaderCodeFragment);
+	lightModelLoc = gl::GetUniformLocation(lightProgram, "model");
+	lightViewLoc = gl::GetUniformLocation(lightProgram, "view");
+	lightProjLoc = gl::GetUniformLocation(lightProgram, "projection");
 
 
 	model = new ModelOLD("ExampleData/mesh/Tachikoma/Tachikoma.gltf");
@@ -177,7 +177,7 @@ void TestModelLoading::OnUpdate(float deltaTime)
 //=============================================================================
 void TestModelLoading::OnRender()
 {
-	gl4::SetFrameBuffer({ 0 }, GetWindowWidth(), GetWindowHeight(), GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	gl::SetFrameBuffer({ 0 }, GetWindowWidth(), GetWindowHeight(), GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glm::mat4 view = camera.GetViewMatrix();
 	glm::mat4 proj = glm::perspective(glm::radians(60.0f), GetWindowAspect(), 0.01f, 1000.0f);
@@ -185,16 +185,16 @@ void TestModelLoading::OnRender()
 	// вывод модели
 	{
 		glUseProgram(modelProgram);
-		gl4::SetUniform(modelProgram, modelProjLoc, proj);
-		gl4::SetUniform(modelProgram, modelViewLoc, view);
-		gl4::SetUniform(modelProgram, viewPosLoc, camera.Position);
-		gl4::SetUniform(modelProgram, lightPosLoc, lightPos);
+		gl::SetUniform(modelProgram, modelProjLoc, proj);
+		gl::SetUniform(modelProgram, modelViewLoc, view);
+		gl::SetUniform(modelProgram, viewPosLoc, camera.Position);
+		gl::SetUniform(modelProgram, lightPosLoc, lightPos);
 
 		glm::mat4 modelMat = glm::mat4(1.0f);
 		modelMat = glm::scale(modelMat, glm::vec3(1.0f, 1.0f, 1.0f));
 		modelMat = glm::rotate(modelMat, modelRotation, glm::vec3(0.0f, 1.0f, 0.0f));
 		modelRotation += GetDeltaTime();
-		gl4::SetUniform(modelProgram, modelModelLoc, modelMat);
+		gl::SetUniform(modelProgram, modelModelLoc, modelMat);
 
 		model->Draw(modelProgram);
 	}
@@ -202,13 +202,13 @@ void TestModelLoading::OnRender()
 	// рендер источника света
 	{
 		glUseProgram(lightProgram);
-		gl4::SetUniform(lightProgram, lightProjLoc, proj);
-		gl4::SetUniform(lightProgram, lightViewLoc, view);
+		gl::SetUniform(lightProgram, lightProjLoc, proj);
+		gl::SetUniform(lightProgram, lightViewLoc, view);
 
 		glm::mat4 modelMat = glm::mat4(1.0f);
 		modelMat = glm::translate(modelMat, lightPos);
 		modelMat = glm::scale(modelMat, glm::vec3(0.2f));
-		gl4::SetUniform(lightProgram, lightModelLoc, modelMat);
+		gl::SetUniform(lightProgram, lightModelLoc, modelMat);
 
 		GetGraphicSystem().DrawCube();
 	}
