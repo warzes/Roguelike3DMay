@@ -141,9 +141,9 @@ void GameModelManager::DrawInDepth(Camera& cam, ShadowPassManager& shadowPassMgr
 //=============================================================================
 bool GameModelManager::createPipeline()
 {
-	auto vertexShader = gl::Shader(gl::PipelineStage::VertexShader, io::ReadShaderCode("GameData/shaders/GameMesh.vert"), "GameMesh VS");
+	auto vertexShader = gl::Shader(gl::ShaderType::VertexShader, io::ReadShaderCode("GameData/shaders/GameMesh.vert"), "GameMesh VS");
 	if (!vertexShader.IsValid()) return false;
-	auto fragmentShader = gl::Shader(gl::PipelineStage::FragmentShader, io::ReadShaderCode("GameData/shaders/GameMesh.frag"), "GameMesh FS");
+	auto fragmentShader = gl::Shader(gl::ShaderType::FragmentShader, io::ReadShaderCode("GameData/shaders/GameMesh.frag"), "GameMesh FS");
 	if (!fragmentShader.IsValid()) return false;
 
 	m_pipeline = gl::GraphicsPipeline({
@@ -157,9 +157,9 @@ bool GameModelManager::createPipeline()
 
 	if (!m_pipeline.has_value()) return false;
 	
-	auto vertexShader2 = gl::Shader(gl::PipelineStage::VertexShader, io::ReadShaderCode("GameData/shaders/Depth.vert"), "Depth VS");
+	auto vertexShader2 = gl::Shader(gl::ShaderType::VertexShader, io::ReadShaderCode("GameData/shaders/Depth.vert"), "Depth VS");
 	if (!vertexShader2.IsValid()) return false;
-	auto fragmentShader2 = gl::Shader(gl::PipelineStage::FragmentShader, io::ReadShaderCode("GameData/shaders/Depth.frag"), "Depth FS");
+	auto fragmentShader2 = gl::Shader(gl::ShaderType::FragmentShader, io::ReadShaderCode("GameData/shaders/Depth.frag"), "Depth FS");
 	if (!fragmentShader2.IsValid()) return false;
 
 	m_pipelineInDepth = gl::GraphicsPipeline({

@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "OpenGL4Core.h"
+#include "BasicTypes.h"
 
 namespace gl
 {

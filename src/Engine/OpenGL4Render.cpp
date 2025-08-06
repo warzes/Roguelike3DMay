@@ -4,6 +4,7 @@
 #include "OpenGL4Texture.h"
 #include "OpenGL4FramebufferCache.h"
 #include "OpenGL4Context.h"
+#include "OpenGL4Buffer.h"
 //=============================================================================
 namespace
 {

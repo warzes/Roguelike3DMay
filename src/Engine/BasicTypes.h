@@ -1,7 +1,5 @@
 ﻿#pragma once
 
-#include "FlagsUtils.h"
-
 struct Extent2D final
 {
 	bool operator==(const Extent2D&) const noexcept = default;

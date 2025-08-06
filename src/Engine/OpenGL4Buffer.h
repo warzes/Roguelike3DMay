@@ -2,6 +2,7 @@
 
 #include "FlagsUtils.h"
 #include "BasicConstants.h"
+#include "OpenGL4Core.h"
 
 namespace gl
 {
@@ -33,18 +34,6 @@ namespace gl
 		uint64_t size{ WHOLE_BUFFER };
 		uint32_t data{ 0 };
 	};
-
-	enum class BufferStorageFlag : uint32_t
-	{
-		None = 0,
-		// Allows the user to update the buffer's contents with UpdateData
-		DynamicStorage = 1 << 0,
-		// Hints to the implementation to place the buffer storage in host memory
-		ClientStorage = 1 << 1,
-		// Maps the buffer (persistently and coherently) upon creation
-		MapMemory = 1 << 2,
-	};
-	SE_DECLARE_FLAG_TYPE(BufferStorageFlags, BufferStorageFlag, uint32_t)
 
 	/// @brief Encapsulates an OpenGL buffer
 	class Buffer

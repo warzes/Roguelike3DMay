@@ -58,9 +58,9 @@ void ShadowPass::End()
 //=============================================================================
 bool ShadowPass::createPipeline()
 {
-	auto vertexShader = gl::Shader(gl::PipelineStage::VertexShader, io::ReadShaderCode("GameData/shaders/ShadowPass.vert"), "ShadowPass VS");
+	auto vertexShader = gl::Shader(gl::ShaderType::VertexShader, io::ReadShaderCode("GameData/shaders/ShadowPass.vert"), "ShadowPass VS");
 	if (!vertexShader.IsValid()) return false;
-	auto fragmentShader = gl::Shader(gl::PipelineStage::FragmentShader, io::ReadShaderCode("GameData/shaders/ShadowPass.frag"), "ShadowPass FS");
+	auto fragmentShader = gl::Shader(gl::ShaderType::FragmentShader, io::ReadShaderCode("GameData/shaders/ShadowPass.frag"), "ShadowPass FS");
 	if (!fragmentShader.IsValid()) return false;
 
 	m_pipeline = gl::GraphicsPipeline({

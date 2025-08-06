@@ -53,47 +53,35 @@
     <ClCompile Include="OpenGL4Simple.cpp">
       <Filter>OLD\RHI\old</Filter>
     </ClCompile>
-    <ClCompile Include="OpenGL4DebugMarker.cpp">
-      <Filter>RHI</Filter>
-    </ClCompile>
-    <ClCompile Include="OpenGL4Shader.cpp">
-      <Filter>RHI\Resources</Filter>
-    </ClCompile>
     <ClCompile Include="OpenGL4Buffer.cpp">
-      <Filter>RHI\Resources</Filter>
+      <Filter>RHI\NewFilter1\Resources</Filter>
     </ClCompile>
     <ClCompile Include="OpenGL4Texture.cpp">
-      <Filter>RHI\Resources</Filter>
+      <Filter>RHI\NewFilter1\Resources</Filter>
     </ClCompile>
     <ClCompile Include="OpenGL4Sampler.cpp">
-      <Filter>RHI\Resources</Filter>
+      <Filter>RHI\NewFilter1\Resources</Filter>
     </ClCompile>
     <ClCompile Include="OpenGL4DeviceProperties.cpp">
-      <Filter>RHI\Context</Filter>
+      <Filter>RHI\NewFilter1\Context</Filter>
     </ClCompile>
     <ClCompile Include="OpenGL4Context.cpp">
-      <Filter>RHI\Context</Filter>
+      <Filter>RHI\NewFilter1\Context</Filter>
     </ClCompile>
     <ClCompile Include="OpenGL4SamplerCache.cpp">
-      <Filter>RHI\Context</Filter>
+      <Filter>RHI\NewFilter1\Context</Filter>
     </ClCompile>
     <ClCompile Include="OpenGL4VertexArrayCache.cpp">
-      <Filter>RHI\Context</Filter>
+      <Filter>RHI\NewFilter1\Context</Filter>
     </ClCompile>
     <ClCompile Include="OpenGL4Pipeline.cpp">
-      <Filter>RHI\Resources</Filter>
+      <Filter>RHI\NewFilter1\Resources</Filter>
     </ClCompile>
     <ClCompile Include="OpenGL4PipelineManager.cpp">
-      <Filter>RHI\Context</Filter>
+      <Filter>RHI\NewFilter1\Context</Filter>
     </ClCompile>
     <ClCompile Include="OpenGL4FramebufferCache.cpp">
-      <Filter>RHI\Context</Filter>
-    </ClCompile>
-    <ClCompile Include="OpenGL4Render.cpp">
-      <Filter>RHI</Filter>
-    </ClCompile>
-    <ClCompile Include="OpenGL4Cmd.cpp">
-      <Filter>RHI</Filter>
+      <Filter>RHI\NewFilter1\Context</Filter>
     </ClCompile>
     <ClCompile Include="AABB.cpp">
       <Filter>Math</Filter>
@@ -109,9 +97,6 @@
     </ClCompile>
     <ClCompile Include="Model.cpp">
       <Filter>Render</Filter>
-    </ClCompile>
-    <ClCompile Include="OpenGL4Timer.cpp">
-      <Filter>RHI</Filter>
     </ClCompile>
     <ClCompile Include="Frustum.cpp">
       <Filter>Math</Filter>
@@ -130,6 +115,21 @@
     </ClCompile>
     <ClCompile Include="Shadow.cpp">
       <Filter>Render</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenGL4Cmd.cpp">
+      <Filter>RHI\NewFilter1</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenGL4DebugMarker.cpp">
+      <Filter>RHI\NewFilter1</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenGL4Render.cpp">
+      <Filter>RHI\NewFilter1</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenGL4Timer.cpp">
+      <Filter>RHI\NewFilter1</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenGL4Shader.cpp">
+      <Filter>RHI\Resources</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -216,56 +216,38 @@
     <ClInclude Include="OpenGL4Advance.h">
       <Filter>OLD\RHI\old</Filter>
     </ClInclude>
-    <ClInclude Include="OpenGL4Core.h">
-      <Filter>RHI</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGL4ApiToEnum.h">
-      <Filter>RHI</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGL4DebugMarker.h">
-      <Filter>RHI</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGL4Shader.h">
-      <Filter>RHI\Resources</Filter>
-    </ClInclude>
     <ClInclude Include="OpenGL4Buffer.h">
-      <Filter>RHI\Resources</Filter>
+      <Filter>RHI\NewFilter1\Resources</Filter>
     </ClInclude>
     <ClInclude Include="BasicConstants.h">
       <Filter>Core</Filter>
     </ClInclude>
     <ClInclude Include="OpenGL4Texture.h">
-      <Filter>RHI\Resources</Filter>
+      <Filter>RHI\NewFilter1\Resources</Filter>
     </ClInclude>
     <ClInclude Include="OpenGL4Sampler.h">
-      <Filter>RHI\Resources</Filter>
+      <Filter>RHI\NewFilter1\Resources</Filter>
     </ClInclude>
     <ClInclude Include="OpenGL4DeviceProperties.h">
-      <Filter>RHI\Context</Filter>
+      <Filter>RHI\NewFilter1\Context</Filter>
     </ClInclude>
     <ClInclude Include="OpenGL4Context.h">
-      <Filter>RHI\Context</Filter>
+      <Filter>RHI\NewFilter1\Context</Filter>
     </ClInclude>
     <ClInclude Include="OpenGL4SamplerCache.h">
-      <Filter>RHI\Context</Filter>
+      <Filter>RHI\NewFilter1\Context</Filter>
     </ClInclude>
     <ClInclude Include="OpenGL4VertexArrayCache.h">
-      <Filter>RHI\Context</Filter>
+      <Filter>RHI\NewFilter1\Context</Filter>
     </ClInclude>
     <ClInclude Include="OpenGL4Pipeline.h">
-      <Filter>RHI\Resources</Filter>
+      <Filter>RHI\NewFilter1\Resources</Filter>
     </ClInclude>
     <ClInclude Include="OpenGL4PipelineManager.h">
-      <Filter>RHI\Context</Filter>
+      <Filter>RHI\NewFilter1\Context</Filter>
     </ClInclude>
     <ClInclude Include="OpenGL4FramebufferCache.h">
-      <Filter>RHI\Context</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGL4Render.h">
-      <Filter>RHI</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGL4Cmd.h">
-      <Filter>RHI</Filter>
+      <Filter>RHI\NewFilter1\Context</Filter>
     </ClInclude>
     <ClInclude Include="AABB.h">
       <Filter>Math</Filter>
@@ -281,9 +263,6 @@
     </ClInclude>
     <ClInclude Include="Model.h">
       <Filter>Render</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGL4Timer.h">
-      <Filter>RHI</Filter>
     </ClInclude>
     <ClInclude Include="Frustum.h">
       <Filter>Math</Filter>
@@ -302,6 +281,27 @@
     </ClInclude>
     <ClInclude Include="Shadow.h">
       <Filter>Render</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL4ApiToEnum.h">
+      <Filter>RHI\NewFilter1</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL4Cmd.h">
+      <Filter>RHI\NewFilter1</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL4Core.h">
+      <Filter>RHI\NewFilter1</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL4DebugMarker.h">
+      <Filter>RHI\NewFilter1</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL4Render.h">
+      <Filter>RHI\NewFilter1</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL4Timer.h">
+      <Filter>RHI\NewFilter1</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL4Shader.h">
+      <Filter>RHI\Resources</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -322,12 +322,6 @@
     </Filter>
     <Filter Include="Base">
       <UniqueIdentifier>{fa34636f-7a07-4f3e-984b-943a463ecdc9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="RHI\Resources">
-      <UniqueIdentifier>{46763eeb-be64-41ac-af68-2b8663fae12f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="RHI\Context">
-      <UniqueIdentifier>{d76b5ed9-72b7-426b-bcb7-28bc576c9ff0}</UniqueIdentifier>
     </Filter>
     <Filter Include="OLD">
       <UniqueIdentifier>{03d6bf79-bc13-4117-9833-eeccf7a9507d}</UniqueIdentifier>
@@ -352,6 +346,18 @@
     </Filter>
     <Filter Include="Render">
       <UniqueIdentifier>{2aae9673-9a65-476a-bebe-2d7a0b38ebed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="RHI\NewFilter1">
+      <UniqueIdentifier>{5356188e-7773-42d5-9c3e-3453ca0c0cff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="RHI\NewFilter1\Context">
+      <UniqueIdentifier>{d76b5ed9-72b7-426b-bcb7-28bc576c9ff0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="RHI\NewFilter1\Resources">
+      <UniqueIdentifier>{46763eeb-be64-41ac-af68-2b8663fae12f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="RHI\Resources">
+      <UniqueIdentifier>{d65b5f70-f0be-4ee9-b4bb-17bc525ef974}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

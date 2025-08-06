@@ -175,9 +175,9 @@ void MainRenderPass::DrawModel(GameModelOld& model)
 //=============================================================================
 bool MainRenderPass::createPipeline()
 {
-	auto vertexShader = gl::Shader(gl::PipelineStage::VertexShader, io::ReadShaderCode("GameData/shaders/MainShader.vert"), "MainShader VS");
+	auto vertexShader = gl::Shader(gl::ShaderType::VertexShader, io::ReadShaderCode("GameData/shaders/MainShader.vert"), "MainShader VS");
 	if (!vertexShader.IsValid()) return false;
-	auto fragmentShader = gl::Shader(gl::PipelineStage::FragmentShader, io::ReadShaderCode("GameData/shaders/MainShader.frag"), "MainShader FS");
+	auto fragmentShader = gl::Shader(gl::ShaderType::FragmentShader, io::ReadShaderCode("GameData/shaders/MainShader.frag"), "MainShader FS");
 	if (!fragmentShader.IsValid()) return false;
 
 	m_pipeline = gl::GraphicsPipeline({

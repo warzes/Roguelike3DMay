@@ -253,7 +253,7 @@ GLuint gl::CreateShaderSpirv(GLenum type, const ShaderSpirvInfo& spirvInfo, std:
 		values[i] = spirvInfo.specializationConstants[i].value;
 	}
 
-	glSpecializeShader(id, spirvInfo.entryPoint, (GLuint)spirvInfo.specializationConstants.size(), indices.data(), values.data());
+	glSpecializeShader(id, spirvInfo.entryPoint.data(), (GLuint)spirvInfo.specializationConstants.size(), indices.data(), values.data());
 
 	validateShader(id, type, nullptr);
 

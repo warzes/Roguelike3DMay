@@ -36,45 +36,45 @@ static std::string LoadFileWithInclude(std::string_view path)
 
 static gl::ComputePipeline CreateRsmIndirectPipeline()
 {
-	auto cs = gl::Shader(gl::PipelineStage::ComputeShader, io::LoadFile("ExampleData/shaders/rsm/Indirect.comp.glsl"));
+	auto cs = gl::Shader(gl::ShaderType::ComputeShader, io::LoadFile("ExampleData/shaders/rsm/Indirect.comp.glsl"));
 	return gl::ComputePipeline({ .shader = &cs });
 }
 
 static gl::ComputePipeline CreateRsmIndirectFilteredPipeline()
 {
-	auto cs = gl::Shader(gl::PipelineStage::ComputeShader,
+	auto cs = gl::Shader(gl::ShaderType::ComputeShader,
 		io::LoadFile("ExampleData/shaders/rsm/IndirectDitheredFiltered.comp.glsl"));
 	return gl::ComputePipeline({ .shader = &cs });
 }
 
 static gl::ComputePipeline CreateRsmReprojectPipeline()
 {
-	auto cs = gl::Shader(gl::PipelineStage::ComputeShader, LoadFileWithInclude("ExampleData/shaders/rsm/Reproject.comp.glsl"));
+	auto cs = gl::Shader(gl::ShaderType::ComputeShader, LoadFileWithInclude("ExampleData/shaders/rsm/Reproject.comp.glsl"));
 	return gl::ComputePipeline({ .shader = &cs });
 }
 
 static gl::ComputePipeline CreateBilateral5x5Pipeline()
 {
-	auto cs = gl::Shader(gl::PipelineStage::ComputeShader, LoadFileWithInclude("ExampleData/shaders/rsm/Bilateral5x5.comp.glsl"));
+	auto cs = gl::Shader(gl::ShaderType::ComputeShader, LoadFileWithInclude("ExampleData/shaders/rsm/Bilateral5x5.comp.glsl"));
 	return gl::ComputePipeline({ .shader = &cs });
 }
 
 static gl::ComputePipeline CreateModulatePipeline()
 {
-	auto cs = gl::Shader(gl::PipelineStage::ComputeShader, LoadFileWithInclude("ExampleData/shaders/rsm/Modulate.comp.glsl"));
+	auto cs = gl::Shader(gl::ShaderType::ComputeShader, LoadFileWithInclude("ExampleData/shaders/rsm/Modulate.comp.glsl"));
 	return gl::ComputePipeline({ .shader = &cs });
 }
 
 static gl::ComputePipeline CreateModulateUpscalePipeline()
 {
 	auto cs =
-		gl::Shader(gl::PipelineStage::ComputeShader, LoadFileWithInclude("ExampleData/shaders/rsm/ModulateUpscale.comp.glsl"));
+		gl::Shader(gl::ShaderType::ComputeShader, LoadFileWithInclude("ExampleData/shaders/rsm/ModulateUpscale.comp.glsl"));
 	return gl::ComputePipeline({ .shader = &cs });
 }
 
 static gl::ComputePipeline CreateBlitPipeline()
 {
-	auto cs = gl::Shader(gl::PipelineStage::ComputeShader, LoadFileWithInclude("ExampleData/shaders/rsm/BlitTexture.comp.glsl"));
+	auto cs = gl::Shader(gl::ShaderType::ComputeShader, LoadFileWithInclude("ExampleData/shaders/rsm/BlitTexture.comp.glsl"));
 	return gl::ComputePipeline({ .shader = &cs });
 }
 

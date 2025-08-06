@@ -2,6 +2,7 @@
 #include "OpenGL4Cmd.h"
 #include "OpenGL4Context.h"
 #include "OpenGL4ApiToEnum.h"
+#include "OpenGL4Buffer.h"
 //=============================================================================
 namespace
 {

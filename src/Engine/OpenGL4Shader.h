@@ -2,13 +2,13 @@
 
 namespace gl
 {
-	enum class PipelineStage : uint8_t
+	enum class ShaderType : uint8_t
 	{
-		VertexShader,
-		TessellationControlShader,
-		TessellationEvaluationShader,
-		FragmentShader,
-		ComputeShader,
+		VertexShader,                 // GL_VERTEX_SHADER
+		TessellationControlShader,    // GL_TESS_CONTROL_SHADER
+		TessellationEvaluationShader, // GL_TESS_EVALUATION_SHADER
+		FragmentShader,               // GL_FRAGMENT_SHADER
+		ComputeShader,                // GL_COMPUTE_SHADER
 	};
 
 	struct SpecializationConstant final
@@ -19,17 +19,17 @@ namespace gl
 
 	struct ShaderSpirvInfo final
 	{
-		const char* entryPoint{ "main" };
-		std::span<const uint32_t> code;
+		std::string_view                        entryPoint{ "main" };
+		std::span<const uint32_t>               code;
 		std::span<const SpecializationConstant> specializationConstants;
 	};
 
-	/// @brief A shader object to be used in one or more GraphicsPipeline or ComputePipeline objects
+	// A shader object to be used in one or more GraphicsPipeline or ComputePipeline objects
 	class Shader final
 	{
 	public:
-		explicit Shader(PipelineStage stage, std::string_view source, std::string_view name = "");
-		explicit Shader(PipelineStage stage, const ShaderSpirvInfo& spirvInfo, std::string_view name = "");
+		explicit Shader(ShaderType stage, std::string_view source, std::string_view name = "");
+		explicit Shader(ShaderType stage, const ShaderSpirvInfo& spirvInfo, std::string_view name = "");
 
 		Shader(const Shader&) = delete;
 		Shader(Shader&& old) noexcept;

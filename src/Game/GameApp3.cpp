@@ -256,9 +256,9 @@ void GameApp3::drawModel(std::optional<GameModel> model)
 //=============================================================================
 bool GameApp3::createPipeline()
 {
-	auto vertexShader = gl::Shader(gl::PipelineStage::VertexShader, io::ReadShaderCode("GameData/shaders/MainShader3.vert"), "MainShader VS");
+	auto vertexShader = gl::Shader(gl::ShaderType::VertexShader, io::ReadShaderCode("GameData/shaders/MainShader3.vert"), "MainShader VS");
 	if (!vertexShader.IsValid()) return false;
-	auto fragmentShader = gl::Shader(gl::PipelineStage::FragmentShader, io::ReadShaderCode("GameData/shaders/MainShader3.frag"), "MainShader FS");
+	auto fragmentShader = gl::Shader(gl::ShaderType::FragmentShader, io::ReadShaderCode("GameData/shaders/MainShader3.frag"), "MainShader FS");
 	if (!fragmentShader.IsValid()) return false;
 
 	m_pipeline = gl::GraphicsPipeline({
