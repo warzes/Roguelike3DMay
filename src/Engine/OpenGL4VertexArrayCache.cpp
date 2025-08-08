@@ -1,7 +1,7 @@
 ﻿#include "stdafx.h"
 #include "OpenGL4VertexArrayCache.h"
 #include "OpenGL4ApiToEnum.h"
-#include "OpenGL4PipelineManager.h"
+#include "OpenGL4Pipeline.h"
 #include "Hash.h"
 #include "Log.h"
 //=============================================================================

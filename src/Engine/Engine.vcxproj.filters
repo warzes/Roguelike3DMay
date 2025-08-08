@@ -56,9 +56,6 @@
     <ClCompile Include="OpenGL4Context.cpp">
       <Filter>RHI\NewFilter1\Context</Filter>
     </ClCompile>
-    <ClCompile Include="OpenGL4FramebufferCache.cpp">
-      <Filter>RHI\NewFilter1\Context</Filter>
-    </ClCompile>
     <ClCompile Include="AABB.cpp">
       <Filter>Math</Filter>
     </ClCompile>
@@ -95,9 +92,6 @@
     <ClCompile Include="OpenGL4Cmd.cpp">
       <Filter>RHI\NewFilter1</Filter>
     </ClCompile>
-    <ClCompile Include="OpenGL4Render.cpp">
-      <Filter>RHI\NewFilter1</Filter>
-    </ClCompile>
     <ClCompile Include="OpenGL4Shader.cpp">
       <Filter>RHI\Resources</Filter>
     </ClCompile>
@@ -127,6 +121,12 @@
     </ClCompile>
     <ClCompile Include="OpenGL4Pipeline.cpp">
       <Filter>RHI\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenGL4FramebufferCache.cpp">
+      <Filter>RHI\Context</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenGL4Render.cpp">
+      <Filter>RHI\Context</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -219,9 +219,6 @@
     <ClInclude Include="OpenGL4Context.h">
       <Filter>RHI\NewFilter1\Context</Filter>
     </ClInclude>
-    <ClInclude Include="OpenGL4FramebufferCache.h">
-      <Filter>RHI\NewFilter1\Context</Filter>
-    </ClInclude>
     <ClInclude Include="AABB.h">
       <Filter>Math</Filter>
     </ClInclude>
@@ -264,9 +261,6 @@
     <ClInclude Include="OpenGL4Core.h">
       <Filter>RHI\NewFilter1</Filter>
     </ClInclude>
-    <ClInclude Include="OpenGL4Render.h">
-      <Filter>RHI\NewFilter1</Filter>
-    </ClInclude>
     <ClInclude Include="OpenGL4Shader.h">
       <Filter>RHI\Resources</Filter>
     </ClInclude>
@@ -296,6 +290,12 @@
     </ClInclude>
     <ClInclude Include="OpenGL4Pipeline.h">
       <Filter>RHI\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL4FramebufferCache.h">
+      <Filter>RHI\Context</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL4Render.h">
+      <Filter>RHI\Context</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -346,9 +346,6 @@
     </Filter>
     <Filter Include="RHI\NewFilter1\Context">
       <UniqueIdentifier>{d76b5ed9-72b7-426b-bcb7-28bc576c9ff0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="RHI\NewFilter1\Resources">
-      <UniqueIdentifier>{46763eeb-be64-41ac-af68-2b8663fae12f}</UniqueIdentifier>
     </Filter>
     <Filter Include="RHI\Resources">
       <UniqueIdentifier>{d65b5f70-f0be-4ee9-b4bb-17bc525ef974}</UniqueIdentifier>

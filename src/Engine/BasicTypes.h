@@ -21,6 +21,26 @@ public:
 	}
 };
 
+template <class T> requires std::is_object_v<T>
+class ReferenceWrapper final
+{
+public:
+	using type = T;
+
+	template <class U>
+	constexpr ReferenceWrapper(U&& val) noexcept
+	{
+		T& ref = static_cast<U&&>(val);
+		ptr = std::addressof(ref);
+	}
+
+	constexpr operator T& () const noexcept { return *ptr; }
+	[[nodiscard]] constexpr T& get() const noexcept { return *ptr; }
+
+private:
+	T* ptr{};
+};
+
 struct Extent2D final
 {
 	bool operator==(const Extent2D&) const noexcept = default;

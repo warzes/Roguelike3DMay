@@ -4,6 +4,11 @@
 
 namespace gl
 {
+	class Sampler;
+	struct GraphicsPipeline;
+	struct ComputePipeline;
+
+
 	/// @brief Functions that set pipeline state, binds resources, or issues draws or dispatches
 	/// These functions are analogous to Vulkan vkCmd* calls, which can only be made inside of an active command buffer.
 	/// @note Calling functions in this namespace outside of a rendering or compute scope will result in undefined behavior

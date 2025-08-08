@@ -1,43 +1,39 @@
 ﻿#include "stdafx.h"
 #include "OpenGL4FramebufferCache.h"
 #include "OpenGL4Render.h"
-#include "OpenGL4Texture.h"
 #include "Log.h"
 //=============================================================================
-namespace
+inline gl::detail::RenderAttachments getAttachments(const gl::RenderInfo& renderInfo)
 {
-	inline gl::detail::RenderAttachments GetAttachments(const gl::RenderInfo& renderInfo)
+	gl::detail::RenderAttachments attachments;
+	for (const auto& colorAttachment : renderInfo.colorAttachments)
 	{
-		gl::detail::RenderAttachments attachments;
-		for (const auto& colorAttachment : renderInfo.colorAttachments)
-		{
-			attachments.colorAttachments.emplace_back(gl::detail::TextureProxy{
-				colorAttachment.texture.get().GetCreateInfo(),
-				colorAttachment.texture.get().Handle(),
-				});
-		}
-		if (renderInfo.depthAttachment)
-		{
-			attachments.depthAttachment.emplace(gl::detail::TextureProxy{
-				renderInfo.depthAttachment->texture.get().GetCreateInfo(),
-				renderInfo.depthAttachment->texture.get().Handle(),
-				});
-		}
-		if (renderInfo.stencilAttachment)
-		{
-			attachments.stencilAttachment.emplace(gl::detail::TextureProxy{
-				renderInfo.stencilAttachment->texture.get().GetCreateInfo(),
-				renderInfo.stencilAttachment->texture.get().Handle(),
-				});
-		}
-
-		return attachments;
+		attachments.colorAttachments.emplace_back(gl::detail::TextureProxy{
+			colorAttachment.texture.get().GetCreateInfo(),
+			colorAttachment.texture.get().Handle(),
+			});
 	}
+	if (renderInfo.depthAttachment)
+	{
+		attachments.depthAttachment.emplace(gl::detail::TextureProxy{
+			renderInfo.depthAttachment->texture.get().GetCreateInfo(),
+			renderInfo.depthAttachment->texture.get().Handle(),
+			});
+	}
+	if (renderInfo.stencilAttachment)
+	{
+		attachments.stencilAttachment.emplace(gl::detail::TextureProxy{
+			renderInfo.stencilAttachment->texture.get().GetCreateInfo(),
+			renderInfo.stencilAttachment->texture.get().Handle(),
+			});
+	}
+
+	return attachments;
 }
 //=============================================================================
 uint32_t gl::detail::FramebufferCache::CreateOrGetCachedFramebuffer(const gl::RenderInfo& renderInfo)
 {
-	RenderAttachments attachments = GetAttachments(renderInfo);
+	RenderAttachments attachments = getAttachments(renderInfo);
 
 	for (size_t i = 0; i < m_framebufferCacheKey.size(); i++)
 	{
@@ -47,6 +43,8 @@ uint32_t gl::detail::FramebufferCache::CreateOrGetCachedFramebuffer(const gl::Re
 
 	uint32_t fbo{};
 	glCreateFramebuffers(1, &fbo);
+	if (!fbo) return 0;
+
 	std::vector<GLenum> drawBuffers;
 	for (size_t i = 0; i < attachments.colorAttachments.size(); i++)
 	{

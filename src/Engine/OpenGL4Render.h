@@ -2,46 +2,13 @@
 
 #include "BasicTypes.h"
 #include "OpenGL4Core.h"
-#include "OpenGL4Sampler.h"
 #include "BasicConstants.h"
 
 namespace gl
 {
 	class Texture;
-	class Sampler;
 	class Buffer;
-	struct GraphicsPipeline;
-	struct ComputePipeline;
-
-	// Minimal reference wrapper type. Didn't want to pull in <functional> just for this
-	template <class T>
-		requires std::is_object_v<T>
-	class ReferenceWrapper final
-	{
-	public:
-		using type = T;
-
-		template <class U>
-		constexpr ReferenceWrapper(U&& val) noexcept
-		{
-			T& ref = static_cast<U&&>(val);
-			ptr = std::addressof(ref);
-		}
-
-		constexpr operator T& () const noexcept
-		{
-			return *ptr;
-		}
-
-		[[nodiscard]] constexpr T& get() const noexcept
-		{
-			return *ptr;
-		}
-
-	private:
-		T* ptr{};
-	};
-
+	
 	// Tells what to do with a render target at the beginning of a pass
 	enum class AttachmentLoadOp : uint32_t
 	{

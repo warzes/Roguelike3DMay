@@ -11,19 +11,19 @@ namespace gl::detail
 {
 	struct TextureProxy final
 	{
+		bool operator==(const TextureProxy&) const noexcept = default;
+
 		TextureCreateInfo createInfo;
 		uint32_t id;
-
-		bool operator==(const TextureProxy&) const noexcept = default;
 	};
 
 	struct RenderAttachments final
 	{
-		std::vector<TextureProxy> colorAttachments{};
+		bool operator==(const RenderAttachments& rhs) const;
+
+		std::vector<TextureProxy>   colorAttachments{};
 		std::optional<TextureProxy> depthAttachment{};
 		std::optional<TextureProxy> stencilAttachment{};
-
-		bool operator==(const RenderAttachments& rhs) const;
 	};
 
 	class FramebufferCache final
@@ -35,15 +35,9 @@ namespace gl::detail
 		FramebufferCache(FramebufferCache&&) noexcept = default;
 		FramebufferCache& operator=(FramebufferCache&&) noexcept = default;
 
-		uint32_t CreateOrGetCachedFramebuffer(const gl::RenderInfo& renderInfo);
-
-		[[nodiscard]] std::size_t Size() const
-		{
-			return m_framebufferCacheKey.size();
-		}
-
+		[[nodiscard]] uint32_t CreateOrGetCachedFramebuffer(const gl::RenderInfo& renderInfo);
+		[[nodiscard]] std::size_t Size() const { return m_framebufferCacheKey.size(); }
 		void Clear();
-
 		void RemoveTexture(const Texture& texture);
 
 	private:
