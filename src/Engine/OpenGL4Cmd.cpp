@@ -138,29 +138,29 @@ void gl::Cmd::BindGraphicsPipeline(const GraphicsPipeline& pipeline)
 	}
 
 	//////////////////////////////////////////////////////////////// multisample
-	const auto& ms = pipelineState->multisampleState;
-	if (!lastGraphicsPipeline || ms.sampleShadingEnable != lastGraphicsPipeline->multisampleState.sampleShadingEnable)
+	const auto& ms = pipelineState->multisamplingState;
+	if (!lastGraphicsPipeline || ms.sampleShadingEnable != lastGraphicsPipeline->multisamplingState.sampleShadingEnable)
 	{
 		GLEnableOrDisable(GL_SAMPLE_SHADING, ms.sampleShadingEnable);
 	}
 
-	if (!lastGraphicsPipeline || ms.minSampleShading != lastGraphicsPipeline->multisampleState.minSampleShading)
+	if (!lastGraphicsPipeline || ms.minSampleShading != lastGraphicsPipeline->multisamplingState.minSampleShading)
 	{
 		glMinSampleShading(ms.minSampleShading);
 	}
 
-	if (!lastGraphicsPipeline || ms.sampleMask != lastGraphicsPipeline->multisampleState.sampleMask)
+	if (!lastGraphicsPipeline || ms.sampleMask != lastGraphicsPipeline->multisamplingState.sampleMask)
 	{
 		GLEnableOrDisable(GL_SAMPLE_MASK, ms.sampleMask != 0xFFFFFFFF);
 		glSampleMaski(0, ms.sampleMask);
 	}
 
-	if (!lastGraphicsPipeline || ms.alphaToCoverageEnable != lastGraphicsPipeline->multisampleState.alphaToCoverageEnable)
+	if (!lastGraphicsPipeline || ms.alphaToCoverageEnable != lastGraphicsPipeline->multisamplingState.alphaToCoverageEnable)
 	{
 		GLEnableOrDisable(GL_SAMPLE_ALPHA_TO_COVERAGE, ms.alphaToCoverageEnable);
 	}
 
-	if (!lastGraphicsPipeline || ms.alphaToOneEnable != lastGraphicsPipeline->multisampleState.alphaToOneEnable)
+	if (!lastGraphicsPipeline || ms.alphaToOneEnable != lastGraphicsPipeline->multisamplingState.alphaToOneEnable)
 	{
 		GLEnableOrDisable(GL_SAMPLE_ALPHA_TO_ONE, ms.alphaToOneEnable);
 	}

@@ -906,38 +906,38 @@ gl::VertexArrayId gl::CreateVertexArray(gl::BufferId vbo, gl::BufferId ibo, size
 	return vao;
 }
 //=============================================================================
-gl::VertexArrayId gl::CreateVertexArray(const VertexInputState& inputState)
-{
-	auto inputHash = vertexInputStateHash(inputState);
-	if (auto it = vertexArrayCache.find(inputHash); it != vertexArrayCache.end())
-	{
-		return it->second;
-	}
-
-	gl::VertexArrayId id;
-	glCreateVertexArrays(1, &id.id);
-
-	for (uint32_t i = 0; i < inputState.vertexBindingDescriptions.size(); i++)
-	{
-		const auto& desc = inputState.vertexBindingDescriptions[i];
-		glEnableVertexArrayAttrib(id, desc.location);
-		glVertexArrayAttribBinding(id, desc.location, desc.binding);
-
-		auto type = detail::FormatToTypeGL(desc.format);
-		auto size = detail::FormatToSizeGL(desc.format);
-		auto normalized = detail::IsFormatNormalizedGL(desc.format);
-		auto internalType = detail::FormatToFormatClass(desc.format);
-		switch (internalType)
-		{
-		case GlFormatClass::Float: glVertexArrayAttribFormat(id, desc.location, size, type, normalized, desc.offset); break;
-		case GlFormatClass::Int:   glVertexArrayAttribIFormat(id, desc.location, size, type, desc.offset); break;
-		case GlFormatClass::Long:  glVertexArrayAttribLFormat(id, desc.location, size, type, desc.offset); break;
-		default: assert(0);
-		}
-	}
-
-	return vertexArrayCache.insert({ inputHash, id }).first->second;
-}
+//gl::VertexArrayId gl::CreateVertexArray(const VertexInputState& inputState)
+//{
+//	auto inputHash = vertexInputStateHash(inputState);
+//	if (auto it = vertexArrayCache.find(inputHash); it != vertexArrayCache.end())
+//	{
+//		return it->second;
+//	}
+//
+//	gl::VertexArrayId id;
+//	glCreateVertexArrays(1, &id.id);
+//
+//	for (uint32_t i = 0; i < inputState.vertexBindingDescriptions.size(); i++)
+//	{
+//		const auto& desc = inputState.vertexBindingDescriptions[i];
+//		glEnableVertexArrayAttrib(id, desc.location);
+//		glVertexArrayAttribBinding(id, desc.location, desc.binding);
+//
+//		auto type = detail::FormatToTypeGL(desc.format);
+//		auto size = detail::FormatToSizeGL(desc.format);
+//		auto normalized = detail::IsFormatNormalizedGL(desc.format);
+//		auto internalType = detail::FormatToFormatClass(desc.format);
+//		switch (internalType)
+//		{
+//		case GlFormatClass::Float: glVertexArrayAttribFormat(id, desc.location, size, type, normalized, desc.offset); break;
+//		case GlFormatClass::Int:   glVertexArrayAttribIFormat(id, desc.location, size, type, desc.offset); break;
+//		case GlFormatClass::Long:  glVertexArrayAttribLFormat(id, desc.location, size, type, desc.offset); break;
+//		default: assert(0);
+//		}
+//	}
+//
+//	return vertexArrayCache.insert({ inputHash, id }).first->second;
+//}
 //=============================================================================
 void gl::SetVertexBuffer(VertexArrayId id, BufferId vbo, GLuint bindingindex, GLintptr offset, GLsizei stride)
 {

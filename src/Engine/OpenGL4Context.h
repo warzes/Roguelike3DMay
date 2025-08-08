@@ -3,7 +3,7 @@
 #include "OpenGL4Core.h"
 #include "OpenGL4DeviceProperties.h"
 #include "BasicConstants.h"
-#include "OpenGL4PipelineManager.h"
+#include "OpenGL4Pipeline.h"
 #include "OpenGL4FramebufferCache.h"
 #include "OpenGL4VertexArrayCache.h"
 #include "OpenGL4SamplerCache.h"

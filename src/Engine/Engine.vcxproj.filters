@@ -56,12 +56,6 @@
     <ClCompile Include="OpenGL4Context.cpp">
       <Filter>RHI\NewFilter1\Context</Filter>
     </ClCompile>
-    <ClCompile Include="OpenGL4Pipeline.cpp">
-      <Filter>RHI\NewFilter1\Resources</Filter>
-    </ClCompile>
-    <ClCompile Include="OpenGL4PipelineManager.cpp">
-      <Filter>RHI\NewFilter1\Context</Filter>
-    </ClCompile>
     <ClCompile Include="OpenGL4FramebufferCache.cpp">
       <Filter>RHI\NewFilter1\Context</Filter>
     </ClCompile>
@@ -129,6 +123,9 @@
       <Filter>RHI\Context</Filter>
     </ClCompile>
     <ClCompile Include="OpenGL4Texture.cpp">
+      <Filter>RHI\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenGL4Pipeline.cpp">
       <Filter>RHI\Resources</Filter>
     </ClCompile>
   </ItemGroup>
@@ -222,12 +219,6 @@
     <ClInclude Include="OpenGL4Context.h">
       <Filter>RHI\NewFilter1\Context</Filter>
     </ClInclude>
-    <ClInclude Include="OpenGL4Pipeline.h">
-      <Filter>RHI\NewFilter1\Resources</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGL4PipelineManager.h">
-      <Filter>RHI\NewFilter1\Context</Filter>
-    </ClInclude>
     <ClInclude Include="OpenGL4FramebufferCache.h">
       <Filter>RHI\NewFilter1\Context</Filter>
     </ClInclude>
@@ -301,6 +292,9 @@
       <Filter>RHI\Context</Filter>
     </ClInclude>
     <ClInclude Include="OpenGL4Texture.h">
+      <Filter>RHI\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL4Pipeline.h">
       <Filter>RHI\Resources</Filter>
     </ClInclude>
   </ItemGroup>

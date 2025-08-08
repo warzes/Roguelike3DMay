@@ -326,7 +326,7 @@ namespace gl
 	VertexArrayId CreateVertexArray(BufferId vbo, size_t vertexSize, const std::vector<VertexAttributeRaw>& attributes); // TODO: old, delete
 	VertexArrayId CreateVertexArray(BufferId vbo, BufferId ibo, size_t vertexSize, const std::vector<VertexAttributeRaw>& attributes); // TODO: old, delete
 
-	VertexArrayId CreateVertexArray(const VertexInputState& inputState);
+	//VertexArrayId CreateVertexArray(const VertexInputState& inputState);
 
 	void SetVertexBuffer(VertexArrayId id, BufferId vbo, GLuint bindingindex, GLintptr offset, GLsizei stride);
 	void SetIndexBuffer(VertexArrayId id, BufferId ibo);

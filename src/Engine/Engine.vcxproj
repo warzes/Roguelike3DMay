@@ -118,7 +118,6 @@
     <ClCompile Include="OpenGL4DeviceProperties.cpp" />
     <ClCompile Include="OpenGL4FramebufferCache.cpp" />
     <ClCompile Include="OpenGL4Pipeline.cpp" />
-    <ClCompile Include="OpenGL4PipelineManager.cpp" />
     <ClCompile Include="OpenGL4Render.cpp" />
     <ClCompile Include="OpenGL4Sampler.cpp" />
     <ClCompile Include="OpenGL4SamplerCache.cpp" />
@@ -179,7 +178,6 @@
     <ClInclude Include="OpenGL4Core.h" />
     <ClInclude Include="OpenGL4FramebufferCache.h" />
     <ClInclude Include="OpenGL4Pipeline.h" />
-    <ClInclude Include="OpenGL4PipelineManager.h" />
     <ClInclude Include="OpenGL4Render.h" />
     <ClInclude Include="OpenGL4Sampler.h" />
     <ClInclude Include="OpenGL4SamplerCache.h" />

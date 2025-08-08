@@ -19,6 +19,182 @@ inline size_t vertexInputStateHash(const gl::detail::VertexInputStateOwning& k)
 	return hashVal;
 }
 //=============================================================================
+inline GLboolean isFormatNormalizedGL(gl::Format format)
+{
+	switch (format)
+	{
+	case gl::Format::R8_UNORM:
+	case gl::Format::R8_SNORM:
+	case gl::Format::R16_UNORM:
+	case gl::Format::R16_SNORM:
+	case gl::Format::R8G8_UNORM:
+	case gl::Format::R8G8_SNORM:
+	case gl::Format::R16G16_UNORM:
+	case gl::Format::R16G16_SNORM:
+	case gl::Format::R8G8B8_UNORM:
+	case gl::Format::R8G8B8_SNORM:
+	case gl::Format::R16G16B16_SNORM:
+	case gl::Format::R8G8B8A8_UNORM:
+	case gl::Format::R8G8B8A8_SNORM:
+	case gl::Format::R16G16B16A16_UNORM:
+	case gl::Format::R16G16B16A16_SNORM:
+		return GL_TRUE;
+	case gl::Format::R16_FLOAT:
+	case gl::Format::R32_FLOAT:
+	case gl::Format::R8_SINT:
+	case gl::Format::R16_SINT:
+	case gl::Format::R32_SINT:
+	case gl::Format::R8_UINT:
+	case gl::Format::R16_UINT:
+	case gl::Format::R32_UINT:
+	case gl::Format::R16G16_FLOAT:
+	case gl::Format::R32G32_FLOAT:
+	case gl::Format::R8G8_SINT:
+	case gl::Format::R16G16_SINT:
+	case gl::Format::R32G32_SINT:
+	case gl::Format::R8G8_UINT:
+	case gl::Format::R16G16_UINT:
+	case gl::Format::R32G32_UINT:
+	case gl::Format::R16G16B16_FLOAT:
+	case gl::Format::R32G32B32_FLOAT:
+	case gl::Format::R8G8B8_SINT:
+	case gl::Format::R16G16B16_SINT:
+	case gl::Format::R32G32B32_SINT:
+	case gl::Format::R8G8B8_UINT:
+	case gl::Format::R16G16B16_UINT:
+	case gl::Format::R32G32B32_UINT:
+	case gl::Format::R16G16B16A16_FLOAT:
+	case gl::Format::R32G32B32A32_FLOAT:
+	case gl::Format::R8G8B8A8_SINT:
+	case gl::Format::R16G16B16A16_SINT:
+	case gl::Format::R32G32B32A32_SINT:
+	case gl::Format::R10G10B10A2_UINT:
+	case gl::Format::R8G8B8A8_UINT:
+	case gl::Format::R16G16B16A16_UINT:
+	case gl::Format::R32G32B32A32_UINT:
+		return GL_FALSE;
+	default: assert(0); return 0;
+	}
+}
+//=============================================================================
+inline gl::GlFormatClass formatToFormatClass(gl::Format format)
+{
+	switch (format)
+	{
+	case gl::Format::R8_UNORM:
+	case gl::Format::R8_SNORM:
+	case gl::Format::R16_UNORM:
+	case gl::Format::R16_SNORM:
+	case gl::Format::R8G8_UNORM:
+	case gl::Format::R8G8_SNORM:
+	case gl::Format::R16G16_UNORM:
+	case gl::Format::R16G16_SNORM:
+	case gl::Format::R8G8B8_UNORM:
+	case gl::Format::R8G8B8_SNORM:
+	case gl::Format::R16G16B16_SNORM:
+	case gl::Format::R8G8B8A8_UNORM:
+	case gl::Format::R8G8B8A8_SNORM:
+	case gl::Format::R16G16B16A16_UNORM:
+	case gl::Format::R16G16B16A16_SNORM:
+	case gl::Format::R16_FLOAT:
+	case gl::Format::R16G16_FLOAT:
+	case gl::Format::R16G16B16_FLOAT:
+	case gl::Format::R16G16B16A16_FLOAT:
+	case gl::Format::R32_FLOAT:
+	case gl::Format::R32G32_FLOAT:
+	case gl::Format::R32G32B32_FLOAT:
+	case gl::Format::R32G32B32A32_FLOAT:
+		return gl::GlFormatClass::Float;
+	case gl::Format::R8_SINT:
+	case gl::Format::R16_SINT:
+	case gl::Format::R32_SINT:
+	case gl::Format::R8G8_SINT:
+	case gl::Format::R16G16_SINT:
+	case gl::Format::R32G32_SINT:
+	case gl::Format::R8G8B8_SINT:
+	case gl::Format::R16G16B16_SINT:
+	case gl::Format::R32G32B32_SINT:
+	case gl::Format::R8G8B8A8_SINT:
+	case gl::Format::R16G16B16A16_SINT:
+	case gl::Format::R32G32B32A32_SINT:
+	case gl::Format::R10G10B10A2_UINT:
+	case gl::Format::R8_UINT:
+	case gl::Format::R16_UINT:
+	case gl::Format::R32_UINT:
+	case gl::Format::R8G8_UINT:
+	case gl::Format::R16G16_UINT:
+	case gl::Format::R32G32_UINT:
+	case gl::Format::R8G8B8_UINT:
+	case gl::Format::R16G16B16_UINT:
+	case gl::Format::R32G32B32_UINT:
+	case gl::Format::R8G8B8A8_UINT:
+	case gl::Format::R16G16B16A16_UINT:
+	case gl::Format::R32G32B32A32_UINT:
+		return gl::GlFormatClass::Int;
+	default: assert(0); return gl::GlFormatClass::Long;
+	}
+}
+//=============================================================================
+inline GLint formatToSizeGL(gl::Format format)
+{
+	switch (format)
+	{
+	case gl::Format::R8_UNORM:
+	case gl::Format::R8_SNORM:
+	case gl::Format::R16_UNORM:
+	case gl::Format::R16_SNORM:
+	case gl::Format::R16_FLOAT:
+	case gl::Format::R32_FLOAT:
+	case gl::Format::R8_SINT:
+	case gl::Format::R16_SINT:
+	case gl::Format::R32_SINT:
+	case gl::Format::R8_UINT:
+	case gl::Format::R16_UINT:
+	case gl::Format::R32_UINT:
+		return 1;
+	case gl::Format::R8G8_UNORM:
+	case gl::Format::R8G8_SNORM:
+	case gl::Format::R16G16_FLOAT:
+	case gl::Format::R16G16_UNORM:
+	case gl::Format::R16G16_SNORM:
+	case gl::Format::R32G32_FLOAT:
+	case gl::Format::R8G8_SINT:
+	case gl::Format::R16G16_SINT:
+	case gl::Format::R32G32_SINT:
+	case gl::Format::R8G8_UINT:
+	case gl::Format::R16G16_UINT:
+	case gl::Format::R32G32_UINT:
+		return 2;
+	case gl::Format::R8G8B8_UNORM:
+	case gl::Format::R8G8B8_SNORM:
+	case gl::Format::R16G16B16_SNORM:
+	case gl::Format::R16G16B16_FLOAT:
+	case gl::Format::R32G32B32_FLOAT:
+	case gl::Format::R8G8B8_SINT:
+	case gl::Format::R16G16B16_SINT:
+	case gl::Format::R32G32B32_SINT:
+	case gl::Format::R8G8B8_UINT:
+	case gl::Format::R16G16B16_UINT:
+	case gl::Format::R32G32B32_UINT:
+		return 3;
+	case gl::Format::R8G8B8A8_UNORM:
+	case gl::Format::R8G8B8A8_SNORM:
+	case gl::Format::R16G16B16A16_UNORM:
+	case gl::Format::R16G16B16A16_SNORM:
+	case gl::Format::R16G16B16A16_FLOAT:
+	case gl::Format::R32G32B32A32_FLOAT:
+	case gl::Format::R8G8B8A8_SINT:
+	case gl::Format::R16G16B16A16_SINT:
+	case gl::Format::R32G32B32A32_SINT:
+	case gl::Format::R10G10B10A2_UINT:
+	case gl::Format::R8G8B8A8_UINT:
+	case gl::Format::R16G16B16A16_UINT:
+	case gl::Format::R32G32B32A32_UINT:
+		return 4;
+	default: assert(0); return 0;
+	}
+}
+//=============================================================================
 uint32_t gl::detail::VertexArrayCache::CreateOrGetCachedVertexArray(const VertexInputStateOwning& inputState)
 {
 	auto inputHash = vertexInputStateHash(inputState);
@@ -27,6 +203,8 @@ uint32_t gl::detail::VertexArrayCache::CreateOrGetCachedVertexArray(const Vertex
 
 	uint32_t vao{};
 	glCreateVertexArrays(1, &vao);
+	if (!vao) return 0;
+
 	for (uint32_t i = 0; i < inputState.vertexBindingDescriptions.size(); i++)
 	{
 		const auto& desc = inputState.vertexBindingDescriptions[i];
@@ -34,9 +212,9 @@ uint32_t gl::detail::VertexArrayCache::CreateOrGetCachedVertexArray(const Vertex
 		glVertexArrayAttribBinding(vao, desc.location, desc.binding);
 
 		auto type = detail::FormatToTypeGL(desc.format);
-		auto size = detail::FormatToSizeGL(desc.format);
-		auto normalized = detail::IsFormatNormalizedGL(desc.format);
-		auto internalType = detail::FormatToFormatClass(desc.format);
+		auto size = formatToSizeGL(desc.format);
+		auto normalized = isFormatNormalizedGL(desc.format);
+		auto internalType = formatToFormatClass(desc.format);
 		switch (internalType)
 		{
 		case gl::GlFormatClass::Float: glVertexArrayAttribFormat(vao, desc.location, size, type, normalized, desc.offset); break;

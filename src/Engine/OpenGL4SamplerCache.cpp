@@ -79,11 +79,6 @@ gl::Sampler gl::detail::SamplerCache::CreateOrGetCachedTextureSampler(const Samp
 	return m_samplerCache.insert({ samplerState, Sampler(sampler) }).first->second;
 }
 //=============================================================================
-size_t gl::detail::SamplerCache::Size() const
-{
-	return m_samplerCache.size();
-}
-//=============================================================================
 void gl::detail::SamplerCache::Clear()
 {
 	for (const auto& [_, sampler] : m_samplerCache)

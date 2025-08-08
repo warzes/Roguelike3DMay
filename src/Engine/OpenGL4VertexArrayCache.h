@@ -13,11 +13,12 @@ namespace gl::detail
 		VertexArrayCache(VertexArrayCache&&) noexcept = default;
 		VertexArrayCache& operator=(VertexArrayCache&&) noexcept = default;
 
-		uint32_t CreateOrGetCachedVertexArray(const VertexInputStateOwning& inputState);
+		[[nodiscard]] uint32_t CreateOrGetCachedVertexArray(const VertexInputStateOwning& inputState);
 		[[nodiscard]] size_t Size() const { return m_vertexArrayCache.size(); }
 		void Clear();
 
 	private:
 		std::unordered_map<size_t, uint32_t> m_vertexArrayCache;
 	};
+
 } // namespace gl::detail

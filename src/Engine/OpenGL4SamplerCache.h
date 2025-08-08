@@ -13,8 +13,8 @@ namespace gl::detail
 		SamplerCache(SamplerCache&&) noexcept = default;
 		SamplerCache& operator=(SamplerCache&&) noexcept = default;
 
-		gl::Sampler CreateOrGetCachedTextureSampler(const gl::SamplerState& samplerState);
-		[[nodiscard]] size_t Size() const;
+		[[nodiscard]] gl::Sampler CreateOrGetCachedTextureSampler(const gl::SamplerState& samplerState);
+		[[nodiscard]] size_t Size() const { return m_samplerCache.size(); }
 		void Clear();
 
 	private:
