@@ -98,8 +98,10 @@ namespace gl
 
 	struct DeviceFeatures final
 	{
-		bool bindlessTextures{}; // GL_ARB_bindless_texture
-		bool shaderSubgroup{}; // GL_KHR_shader_subgroup
+		bool spirv{ false };            // GL_ARB_gl_spirv
+		bool bindlessTextures{ false }; // GL_ARB_bindless_texture
+		bool shaderSubgroup{ false };   // GL_KHR_shader_subgroup
+
 	};
 
 	struct DeviceProperties final
@@ -114,5 +116,7 @@ namespace gl
 		DeviceFeatures features;
 	};
 	DeviceProperties InitDeviceProperties();
+
+	inline DeviceProperties CurrentDeviceProperties{};
 
 } // namespace gl

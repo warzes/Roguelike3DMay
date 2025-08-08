@@ -19,8 +19,6 @@ namespace gl
 
 		void ResetState();
 
-		DeviceProperties properties;
-
 		// Used for scope error checking
 		bool isComputeActive = false;
 		bool isRendering = false;

@@ -5,8 +5,7 @@
 //=============================================================================
 void gl::ContextState::Init()
 {
-	properties = InitDeviceProperties();
-
+	CurrentDeviceProperties = InitDeviceProperties();
 	ResetState();
 }
 //=============================================================================
@@ -57,7 +56,7 @@ void gl::InvalidatePipelineState()
 //=============================================================================
 void gl::ZeroResourceBindings()
 {
-	const auto& limits = gl::gContext.properties.limits;
+	const auto& limits = CurrentDeviceProperties.limits;
 	for (int i = 0; i < limits.maxImageUnits; i++)
 	{
 		glBindImageTexture(static_cast<GLuint>(i), 0, 0, GL_TRUE, 0, GL_READ_WRITE, GL_RGBA32F);

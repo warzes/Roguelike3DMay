@@ -208,10 +208,10 @@ uint64_t gl::detail::CompileComputePipelineInternal(const ComputePipelineInfo& i
 	GLint workgroupSize[3];
 	glGetProgramiv(program, GL_COMPUTE_WORK_GROUP_SIZE, workgroupSize);
 
-	assert(workgroupSize[0] <= gContext.properties.limits.maxComputeWorkGroupSize[0] &&
-		workgroupSize[1] <= gContext.properties.limits.maxComputeWorkGroupSize[1] &&
-		workgroupSize[2] <= gContext.properties.limits.maxComputeWorkGroupSize[2]);
-	assert(workgroupSize[0] * workgroupSize[1] * workgroupSize[2] <= gContext.properties.limits.maxComputeWorkGroupInvocations);
+	assert(workgroupSize[0] <= CurrentDeviceProperties.limits.maxComputeWorkGroupSize[0] &&
+		workgroupSize[1] <= CurrentDeviceProperties.limits.maxComputeWorkGroupSize[1] &&
+		workgroupSize[2] <= CurrentDeviceProperties.limits.maxComputeWorkGroupSize[2]);
+	assert(workgroupSize[0] * workgroupSize[1] * workgroupSize[2] <= CurrentDeviceProperties.limits.maxComputeWorkGroupInvocations);
 
 	auto owning = ComputePipelineInfoOwning{ .name = std::string(info.name) };
 	owning.uniformBlocks = reflectProgram(program, GL_UNIFORM_BLOCK);

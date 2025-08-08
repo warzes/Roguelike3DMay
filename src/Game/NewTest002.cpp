@@ -179,7 +179,7 @@ void NewTest002::OnImGuiDraw()
 	ImGui::Separator();
 	ImGui::Text("Framerate: %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 	ImGui::Text("Framerate: %.0f Hertz", 1 / GetDeltaTime());
-	ImGui::Text("Max samples: %d", gl::gContext.properties.limits.maxSamples);
+	ImGui::Text("Max samples: %d", gl::CurrentDeviceProperties.limits.maxSamples);
 	ImGui::RadioButton("1 Sample", (int*)&numSamples, 1);
 	ImGui::RadioButton("2 Samples", (int*)&numSamples, 2);
 	ImGui::RadioButton("4 Samples", (int*)&numSamples, 4);

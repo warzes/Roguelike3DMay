@@ -1,8 +1,6 @@
 ﻿#include "stdafx.h"
 #include "OpenGL4Buffer.h"
 #include "Log.h"
-роверить ии
-продолжить избавляться от OpenGL4ApiToEnum и OpenGL4Core
 //=============================================================================
 namespace
 {

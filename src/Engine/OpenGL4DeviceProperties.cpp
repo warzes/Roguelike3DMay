@@ -102,6 +102,11 @@ gl::DeviceProperties gl::InitDeviceProperties()
 			features.bindlessTextures = true;
 		}
 
+		if (extensionString == "GL_ARB_gl_spirv")
+		{
+			features.spirv = true;
+		}
+
 		if (extensionString == "GL_KHR_shader_subgroup")
 		{
 			features.shaderSubgroup = true;

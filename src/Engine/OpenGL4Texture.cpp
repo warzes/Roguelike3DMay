@@ -205,7 +205,7 @@ gl::TextureView gl::Texture::CreateSwizzleView(ComponentMapping components)
 //=============================================================================
 uint64_t gl::Texture::GetBindlessHandle(const Sampler& sampler)
 {
-	assert(gContext.properties.features.bindlessTextures && "GL_ARB_bindless_texture is not supported");
+	assert(CurrentDeviceProperties.features.bindlessTextures && "GL_ARB_bindless_texture is not supported");
 	assert(m_bindlessHandle == 0 && "Texture already has bindless handle resident.");
 	m_bindlessHandle = glGetTextureSamplerHandleARB(m_id, sampler.Handle());
 	assert(m_bindlessHandle != 0 && "Failed to create texture sampler handle.");
