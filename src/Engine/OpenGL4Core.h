@@ -18,6 +18,42 @@ namespace gl
 		Always,
 	};
 
+	enum class MagFilter : uint8_t
+	{
+		Nearest,
+		Linear
+	};
+
+	enum class MinFilter : uint8_t
+	{
+		Nearest,
+		Linear,
+
+		NearestMimapNearest,
+		NearestMimapLinear,
+		LinearMimapNearest,
+		LinearMimapLinear
+	};
+
+	enum class AddressMode : uint8_t
+	{
+		Repeat,
+		MirroredRepeat,
+		ClampToEdge,
+		ClampToBorder,
+		MirrorClampToEdge,
+	};
+
+	enum class BorderColor : uint8_t
+	{
+		FloatTransparentBlack,
+		IntTransparentBlack,
+		FloatOpaqueBlack,
+		IntOpaqueBlack,
+		FloatOpaqueWhite,
+		IntOpaqueWhite,
+	};
+
 	enum class StencilOp : uint8_t
 	{
 		Keep,
@@ -117,41 +153,7 @@ namespace gl
 	};
 	SE_DECLARE_FLAG_TYPE(AspectMask, AspectMaskBit, uint32_t)
 
-	enum class MagFilter : uint8_t
-	{
-		Nearest,
-		Linear
-	};
 
-	enum class MinFilter : uint8_t
-	{
-		Nearest,
-		Linear,
-
-		NearestMimapNearest,
-		NearestMimapLinear,
-		LinearMimapNearest,
-		LinearMimapLinear
-	};
-
-	enum class AddressMode : uint8_t
-	{
-		Repeat,
-		MirroredRepeat,
-		ClampToEdge,
-		ClampToBorder,
-		MirrorClampToEdge,
-	};
-
-	enum class BorderColor : uint8_t
-	{
-		FloatTransparentBlack,
-		IntTransparentBlack,
-		FloatOpaqueBlack,
-		IntOpaqueBlack,
-		FloatOpaqueWhite,
-		IntOpaqueWhite,
-	};
 
 	enum class ColorComponentFlag : uint32_t
 	{

@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include "OpenGL4Core.h"
-#include "OpenGL4Buffer.h"
+#include "OpenGL4Sampler.h"
 
 // TODO: все inline в constexpr? НЕТ, assert(0) в компалтайм - UB
 

@@ -2,41 +2,18 @@
 
 #include "FlagsUtils.h"
 #include "BasicConstants.h"
+#include "BasicTypes.h"
 
 namespace gl
 {
 	enum class BufferStorageFlag : uint32_t
 	{
 		None = 0,
-		// Allows the user to update the buffer's contents with UpdateData
-		DynamicStorage = 1 << 0,
-		// Hints to the implementation to place the buffer storage in host memory
-		ClientStorage = 1 << 1,
-		// Maps the buffer (persistently and coherently) upon creation
-		MapMemory = 1 << 2,
+		DynamicStorage = 1 << 0, // Allows the user to update the buffer's contents with UpdateData
+		ClientStorage = 1 << 1,  // Hints to the implementation to place the buffer storage in host memory
+		MapMemory = 1 << 2,      // Maps the buffer (persistently and coherently) upon creation
 	};
 	SE_DECLARE_FLAG_TYPE(BufferStorageFlags, BufferStorageFlag, uint32_t)
-
-	// Used to constrain the types accepted by Buffer
-	class TriviallyCopyableByteSpan final : public std::span<const std::byte>
-	{
-	public:
-		template<typename T> requires std::is_trivially_copyable_v<T>
-		TriviallyCopyableByteSpan(const T& t)
-			: std::span<const std::byte>(std::as_bytes(std::span{ &t, static_cast<size_t>(1) }))
-		{
-		}
-
-		template<typename T> requires std::is_trivially_copyable_v<T>
-		TriviallyCopyableByteSpan(std::span<const T> t) : std::span<const std::byte>(std::as_bytes(t))
-		{
-		}
-
-		template<typename T> requires std::is_trivially_copyable_v<T>
-		TriviallyCopyableByteSpan(std::span<T> t) : std::span<const std::byte>(std::as_bytes(t))
-		{
-		}
-	};
 
 	// Parameters for Buffer::FillData
 	struct BufferFillInfo final
@@ -87,7 +64,7 @@ namespace gl
 		size_t             m_size{};
 		BufferStorageFlags m_storageFlags{};
 		GLuint             m_id{};
-		void*              m_mappedMemory{};
+		std::byte*         m_mappedMemory{};
 	};
 
 	// A buffer that provides type-safe operations

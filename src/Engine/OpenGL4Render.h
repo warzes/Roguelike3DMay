@@ -2,6 +2,7 @@
 
 #include "BasicTypes.h"
 #include "OpenGL4Core.h"
+#include "OpenGL4Sampler.h"
 #include "BasicConstants.h"
 
 namespace gl

@@ -183,18 +183,6 @@ void cursorEnterCallback(
 void keyCallback(GLFWwindow* window, int key, int scanCode, int action, int mods) noexcept
 {
 	ImGui_ImplGlfw_KeyCallback(window, key, scanCode, action, mods);
-	
-	// TODO: зачем?
-	ImGuiIO& io = ImGui::GetIO();
-	if (action == GLFW_PRESS) io.KeysData[key].Down = true;
-	if (action == GLFW_RELEASE) io.KeysData[key].Down = false;
-
-	io.KeyCtrl = io.KeysData[GLFW_KEY_LEFT_CONTROL].Down || io.KeysData[GLFW_KEY_RIGHT_CONTROL].Down;
-	io.KeyShift = io.KeysData[GLFW_KEY_LEFT_SHIFT].Down || io.KeysData[GLFW_KEY_RIGHT_SHIFT].Down;
-	io.KeyAlt = io.KeysData[GLFW_KEY_LEFT_ALT].Down || io.KeysData[GLFW_KEY_RIGHT_ALT].Down;
-	io.KeySuper = io.KeysData[GLFW_KEY_LEFT_SUPER].Down || io.KeysData[GLFW_KEY_RIGHT_SUPER].Down;
-	// TODO: зачем?
-
 	thisIEngineApp->keypress(key, scanCode, action, mods);
 }
 //=============================================================================

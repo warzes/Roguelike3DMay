@@ -53,22 +53,7 @@
     <ClCompile Include="OpenGL4Simple.cpp">
       <Filter>OLD\RHI\old</Filter>
     </ClCompile>
-    <ClCompile Include="OpenGL4Texture.cpp">
-      <Filter>RHI\NewFilter1\Resources</Filter>
-    </ClCompile>
-    <ClCompile Include="OpenGL4Sampler.cpp">
-      <Filter>RHI\NewFilter1\Resources</Filter>
-    </ClCompile>
-    <ClCompile Include="OpenGL4DeviceProperties.cpp">
-      <Filter>RHI\NewFilter1\Context</Filter>
-    </ClCompile>
     <ClCompile Include="OpenGL4Context.cpp">
-      <Filter>RHI\NewFilter1\Context</Filter>
-    </ClCompile>
-    <ClCompile Include="OpenGL4SamplerCache.cpp">
-      <Filter>RHI\NewFilter1\Context</Filter>
-    </ClCompile>
-    <ClCompile Include="OpenGL4VertexArrayCache.cpp">
       <Filter>RHI\NewFilter1\Context</Filter>
     </ClCompile>
     <ClCompile Include="OpenGL4Pipeline.cpp">
@@ -116,19 +101,34 @@
     <ClCompile Include="OpenGL4Cmd.cpp">
       <Filter>RHI\NewFilter1</Filter>
     </ClCompile>
-    <ClCompile Include="OpenGL4DebugMarker.cpp">
-      <Filter>RHI\NewFilter1</Filter>
-    </ClCompile>
     <ClCompile Include="OpenGL4Render.cpp">
-      <Filter>RHI\NewFilter1</Filter>
-    </ClCompile>
-    <ClCompile Include="OpenGL4Timer.cpp">
       <Filter>RHI\NewFilter1</Filter>
     </ClCompile>
     <ClCompile Include="OpenGL4Shader.cpp">
       <Filter>RHI\Resources</Filter>
     </ClCompile>
     <ClCompile Include="OpenGL4Buffer.cpp">
+      <Filter>RHI\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenGL4DeviceProperties.cpp">
+      <Filter>RHI\Context</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenGL4DebugMarker.cpp">
+      <Filter>RHI\Context</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenGL4Timer.cpp">
+      <Filter>RHI\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenGL4Sampler.cpp">
+      <Filter>RHI\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenGL4SamplerCache.cpp">
+      <Filter>RHI\Context</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenGL4VertexArrayCache.cpp">
+      <Filter>RHI\Context</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenGL4Texture.cpp">
       <Filter>RHI\Resources</Filter>
     </ClCompile>
   </ItemGroup>
@@ -219,22 +219,7 @@
     <ClInclude Include="BasicConstants.h">
       <Filter>Core</Filter>
     </ClInclude>
-    <ClInclude Include="OpenGL4Texture.h">
-      <Filter>RHI\NewFilter1\Resources</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGL4Sampler.h">
-      <Filter>RHI\NewFilter1\Resources</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGL4DeviceProperties.h">
-      <Filter>RHI\NewFilter1\Context</Filter>
-    </ClInclude>
     <ClInclude Include="OpenGL4Context.h">
-      <Filter>RHI\NewFilter1\Context</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGL4SamplerCache.h">
-      <Filter>RHI\NewFilter1\Context</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGL4VertexArrayCache.h">
       <Filter>RHI\NewFilter1\Context</Filter>
     </ClInclude>
     <ClInclude Include="OpenGL4Pipeline.h">
@@ -288,19 +273,34 @@
     <ClInclude Include="OpenGL4Core.h">
       <Filter>RHI\NewFilter1</Filter>
     </ClInclude>
-    <ClInclude Include="OpenGL4DebugMarker.h">
-      <Filter>RHI\NewFilter1</Filter>
-    </ClInclude>
     <ClInclude Include="OpenGL4Render.h">
-      <Filter>RHI\NewFilter1</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGL4Timer.h">
       <Filter>RHI\NewFilter1</Filter>
     </ClInclude>
     <ClInclude Include="OpenGL4Shader.h">
       <Filter>RHI\Resources</Filter>
     </ClInclude>
     <ClInclude Include="OpenGL4Buffer.h">
+      <Filter>RHI\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL4DeviceProperties.h">
+      <Filter>RHI\Context</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL4DebugMarker.h">
+      <Filter>RHI\Context</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL4Timer.h">
+      <Filter>RHI\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL4Sampler.h">
+      <Filter>RHI\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL4SamplerCache.h">
+      <Filter>RHI\Context</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL4VertexArrayCache.h">
+      <Filter>RHI\Context</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL4Texture.h">
       <Filter>RHI\Resources</Filter>
     </ClInclude>
   </ItemGroup>
@@ -358,6 +358,9 @@
     </Filter>
     <Filter Include="RHI\Resources">
       <UniqueIdentifier>{d65b5f70-f0be-4ee9-b4bb-17bc525ef974}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="RHI\Context">
+      <UniqueIdentifier>{5e536629-1037-44fe-bec8-ad5fa3f83f02}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

@@ -14,9 +14,7 @@ namespace gl::detail
 		VertexArrayCache& operator=(VertexArrayCache&&) noexcept = default;
 
 		uint32_t CreateOrGetCachedVertexArray(const VertexInputStateOwning& inputState);
-
 		[[nodiscard]] size_t Size() const { return m_vertexArrayCache.size(); }
-
 		void Clear();
 
 	private:

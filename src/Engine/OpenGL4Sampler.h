@@ -1,7 +1,7 @@
 ﻿#pragma once
 
-#include "OpenGL4Core.h"
 #include "Hash.h"
+#include "OpenGL4Core.h"
 
 namespace gl
 {
@@ -10,7 +10,6 @@ namespace gl
 		class SamplerCache;
 	}
 
-	/// @brief Parameters for the constructor of Sampler
 	struct SamplerState final
 	{
 		bool operator==(const SamplerState&) const noexcept = default;
@@ -30,7 +29,6 @@ namespace gl
 		CompareOp compareOp{ CompareOp::Never };
 	};
 
-	/// @brief Encapsulates an OpenGL sampler
 	class Sampler final
 	{
 	public:
@@ -43,11 +41,12 @@ namespace gl
 
 	private:
 		friend detail::SamplerCache;
-		Sampler() = default; // you cannot create samplers out of thin air
+		Sampler() = default;
 		explicit Sampler(uint32_t id) : m_id(id) {}
 
-		GLuint m_id{};
+		GLuint m_id{ 0 };
 	};
+
 } // namespace gl
 
 template<>

@@ -2,11 +2,9 @@
 
 #include "OpenGL4Sampler.h"
 
-
-
 namespace gl::detail
 {
-	class SamplerCache
+	class SamplerCache final
 	{
 	public:
 		SamplerCache() = default;
@@ -22,4 +20,5 @@ namespace gl::detail
 	private:
 		std::unordered_map<gl::SamplerState, gl::Sampler> m_samplerCache;
 	};
+
 } // namespace gl::detail

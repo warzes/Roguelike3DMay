@@ -5,42 +5,39 @@
 #include "OpenGL4Context.h"
 #include "Log.h"
 //=============================================================================
-namespace
+inline uint64_t getBlockCompressedImageSize(gl::Format format, uint32_t width, uint32_t height, uint32_t depth)
 {
-	inline uint64_t getBlockCompressedImageSize(gl::Format format, uint32_t width, uint32_t height, uint32_t depth)
+	assert(gl::detail::IsBlockCompressedFormat(format));
+
+	// BCn formats store 4x4 blocks of pixels, even if the dimensions aren't a multiple of 4
+	// We round up to the nearest multiple of 4 for width and height, but not depth, since 3D BCn images are just multiple 2D images stacked
+	width = (width + 4 - 1) & -4;
+	height = (height + 4 - 1) & -4;
+
+	switch (format)
 	{
-		assert(gl::detail::IsBlockCompressedFormat(format));
+	// BC1 and BC4 store 4x4 blocks with 64 bits (8 bytes)
+	case gl::Format::BC1_RGB_UNORM:
+	case gl::Format::BC1_RGBA_UNORM:
+	case gl::Format::BC1_RGB_SRGB:
+	case gl::Format::BC1_RGBA_SRGB:
+	case gl::Format::BC4_R_UNORM:
+	case gl::Format::BC4_R_SNORM:
+		return width * height * depth / 2;
 
-		// BCn formats store 4x4 blocks of pixels, even if the dimensions aren't a multiple of 4
-		// We round up to the nearest multiple of 4 for width and height, but not depth, since 3D BCn images are just multiple 2D images stacked
-		width = (width + 4 - 1) & -4;
-		height = (height + 4 - 1) & -4;
-
-		switch (format)
-		{
-		// BC1 and BC4 store 4x4 blocks with 64 bits (8 bytes)
-		case gl::Format::BC1_RGB_UNORM:
-		case gl::Format::BC1_RGBA_UNORM:
-		case gl::Format::BC1_RGB_SRGB:
-		case gl::Format::BC1_RGBA_SRGB:
-		case gl::Format::BC4_R_UNORM:
-		case gl::Format::BC4_R_SNORM:
-			return width * height * depth / 2;
-
-		// BC3, BC5, BC6, and BC7 store 4x4 blocks with 128 bits (16 bytes)
-		case gl::Format::BC2_RGBA_UNORM:
-		case gl::Format::BC2_RGBA_SRGB:
-		case gl::Format::BC3_RGBA_UNORM:
-		case gl::Format::BC3_RGBA_SRGB:
-		case gl::Format::BC5_RG_UNORM:
-		case gl::Format::BC5_RG_SNORM:
-		case gl::Format::BC6H_RGB_UFLOAT:
-		case gl::Format::BC6H_RGB_SFLOAT:
-		case gl::Format::BC7_RGBA_UNORM:
-		case gl::Format::BC7_RGBA_SRGB:
-			return width * height * depth;
-		default: assert(0); return 0;
-		}
+	// BC3, BC5, BC6, and BC7 store 4x4 blocks with 128 bits (16 bytes)
+	case gl::Format::BC2_RGBA_UNORM:
+	case gl::Format::BC2_RGBA_SRGB:
+	case gl::Format::BC3_RGBA_UNORM:
+	case gl::Format::BC3_RGBA_SRGB:
+	case gl::Format::BC5_RG_UNORM:
+	case gl::Format::BC5_RG_SNORM:
+	case gl::Format::BC6H_RGB_UFLOAT:
+	case gl::Format::BC6H_RGB_SFLOAT:
+	case gl::Format::BC7_RGBA_UNORM:
+	case gl::Format::BC7_RGBA_SRGB:
+		return width * height * depth;
+	default: assert(0); return 0;
 	}
 }
 //=============================================================================
@@ -139,15 +136,7 @@ gl::Texture& gl::Texture::operator=(Texture&& old) noexcept
 //=============================================================================
 gl::Texture::~Texture()
 {
-	if (m_id == 0) return;
-
-	if (m_bindlessHandle != 0)
-		glMakeTextureHandleNonResidentARB(m_bindlessHandle);
-
-	Debug("Destroyed Texture with handle " + std::to_string(m_id));
-	glDeleteTextures(1, &m_id);
-	// Ensure that the texture is no longer referenced in the FBO cache
-	gContext.fboCache.RemoveTexture(*this);
+	destroy();
 }
 //=============================================================================
 gl::TextureView gl::Texture::CreateSingleMipView(uint32_t level)
@@ -322,6 +311,19 @@ void gl::Texture::subCompressedImageInternal(const CompressedTextureUpdateInfo& 
 	}
 }
 //=============================================================================
+void gl::Texture::destroy()
+{
+	if (m_id == 0) return;
+
+	if (m_bindlessHandle != 0)
+		glMakeTextureHandleNonResidentARB(m_bindlessHandle);
+
+	Debug("Destroyed Texture with handle " + std::to_string(m_id));
+	glDeleteTextures(1, &m_id);
+	// Ensure that the texture is no longer referenced in the FBO cache
+	gContext.fboCache.RemoveTexture(*this);
+}
+//=============================================================================
 void gl::Texture::ClearImage(const TextureClearInfo& info)
 {
 	// Infer format
@@ -466,5 +468,8 @@ gl::TextureView& gl::TextureView::operator=(TextureView&& old) noexcept
 	return *new (this) TextureView(std::move(old));
 }
 //=============================================================================
-gl::TextureView::~TextureView() {}
+gl::TextureView::~TextureView()
+{
+	destroy();
+}
 //=============================================================================

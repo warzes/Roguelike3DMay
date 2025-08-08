@@ -101,7 +101,6 @@ namespace gl
 		bool spirv{ false };            // GL_ARB_gl_spirv
 		bool bindlessTextures{ false }; // GL_ARB_bindless_texture
 		bool shaderSubgroup{ false };   // GL_KHR_shader_subgroup
-
 	};
 
 	struct DeviceProperties final

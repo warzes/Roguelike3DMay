@@ -5,30 +5,25 @@
 #include "Hash.h"
 #include "Log.h"
 //=============================================================================
-namespace
+inline size_t vertexInputStateHash(const gl::detail::VertexInputStateOwning& k)
 {
-	inline size_t vertexInputStateHash(const gl::detail::VertexInputStateOwning& k)
+	size_t hashVal{};
+
+	for (const auto& desc : k.vertexBindingDescriptions)
 	{
-		size_t hashVal{};
-
-		for (const auto& desc : k.vertexBindingDescriptions)
-		{
-			auto cctup = std::make_tuple(desc.location, desc.binding, desc.format, desc.offset);
-			auto chashVal = detail::hashing::hash<decltype(cctup)>{}(cctup);
-			detail::hashing::hash_combine(hashVal, chashVal);
-		}
-
-		return hashVal;
+		auto cctup = std::make_tuple(desc.location, desc.binding, desc.format, desc.offset);
+		auto chashVal = detail::hashing::hash<decltype(cctup)>{}(cctup);
+		detail::hashing::hash_combine(hashVal, chashVal);
 	}
+
+	return hashVal;
 }
 //=============================================================================
 uint32_t gl::detail::VertexArrayCache::CreateOrGetCachedVertexArray(const VertexInputStateOwning& inputState)
 {
 	auto inputHash = vertexInputStateHash(inputState);
 	if (auto it = m_vertexArrayCache.find(inputHash); it != m_vertexArrayCache.end())
-	{
 		return it->second;
-	}
 
 	uint32_t vao{};
 	glCreateVertexArrays(1, &vao);
@@ -45,8 +40,8 @@ uint32_t gl::detail::VertexArrayCache::CreateOrGetCachedVertexArray(const Vertex
 		switch (internalType)
 		{
 		case gl::GlFormatClass::Float: glVertexArrayAttribFormat(vao, desc.location, size, type, normalized, desc.offset); break;
-		case gl::GlFormatClass::Int: glVertexArrayAttribIFormat(vao, desc.location, size, type, desc.offset); break;
-		case gl::GlFormatClass::Long: glVertexArrayAttribLFormat(vao, desc.location, size, type, desc.offset); break;
+		case gl::GlFormatClass::Int:   glVertexArrayAttribIFormat(vao, desc.location, size, type, desc.offset); break;
+		case gl::GlFormatClass::Long:  glVertexArrayAttribLFormat(vao, desc.location, size, type, desc.offset); break;
 		default: assert(0);
 		}
 	}

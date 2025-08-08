@@ -29,12 +29,12 @@ gl::TimerQueryAsync::TimerQueryAsync(uint32_t N) : m_capacity(N)
 {
 	assert(m_capacity > 0);
 	m_queries = new uint32_t[m_capacity * 2];
-	glGenQueries(m_capacity * 2, m_queries);
+	glGenQueries(static_cast<GLsizei>(m_capacity * 2), m_queries);
 }
 //=============================================================================
 gl::TimerQueryAsync::~TimerQueryAsync()
 {
-	glDeleteQueries(m_capacity * 2, m_queries);
+	glDeleteQueries(static_cast<GLsizei>(m_capacity * 2), m_queries);
 	delete[] m_queries;
 }
 //=============================================================================
@@ -61,10 +61,7 @@ void gl::TimerQueryAsync::EndZone()
 std::optional<uint64_t> gl::TimerQueryAsync::PopTimestamp()
 {
 	// return nothing if there is no active query
-	if (m_count == 0)
-	{
-		return std::nullopt;
-	}
+	if (m_count == 0) return std::nullopt;
 
 	// get the index of the oldest query
 	uint32_t index = (m_start + m_capacity - m_count) % m_capacity;
