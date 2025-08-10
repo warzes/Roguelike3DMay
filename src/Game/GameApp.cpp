@@ -101,7 +101,7 @@ void GameApp::OnRender()
 	}
 	gl::EndRendering();
 
-	gl::BlitTextureToSwapchain(*m_colorBuffer, {}, {}, m_colorBuffer->Extent(), { GetWindowWidth(), GetWindowHeight(), 1 }, gl::MagFilter::Nearest);
+	gl::BlitTextureToSwapChain(*m_colorBuffer, {}, {}, m_colorBuffer->Extent(), { GetWindowWidth(), GetWindowHeight(), 1 }, gl::MagFilter::Nearest);
 }
 //=============================================================================
 void GameApp::OnImGuiDraw()

@@ -102,7 +102,7 @@ void NewTest001::OnUpdate(float deltaTime)
 //=============================================================================
 void NewTest001::OnRender()
 {
-	const gl::SwapchainRenderInfo renderInfo
+	const gl::SwapChainRenderInfo renderInfo
 	{
 		.name = "Render Triangle",
 		.viewport = {.drawRect{.offset = {0, 0}, .extent = {GetWindowWidth(), GetWindowHeight()}}},

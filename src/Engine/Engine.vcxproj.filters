@@ -53,9 +53,6 @@
     <ClCompile Include="OpenGL4Simple.cpp">
       <Filter>OLD\RHI\old</Filter>
     </ClCompile>
-    <ClCompile Include="OpenGL4Context.cpp">
-      <Filter>RHI\NewFilter1\Context</Filter>
-    </ClCompile>
     <ClCompile Include="AABB.cpp">
       <Filter>Math</Filter>
     </ClCompile>
@@ -126,6 +123,9 @@
       <Filter>RHI\Context</Filter>
     </ClCompile>
     <ClCompile Include="OpenGL4Render.cpp">
+      <Filter>RHI\Context</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenGL4Context.cpp">
       <Filter>RHI\Context</Filter>
     </ClCompile>
   </ItemGroup>
@@ -216,9 +216,6 @@
     <ClInclude Include="BasicConstants.h">
       <Filter>Core</Filter>
     </ClInclude>
-    <ClInclude Include="OpenGL4Context.h">
-      <Filter>RHI\NewFilter1\Context</Filter>
-    </ClInclude>
     <ClInclude Include="AABB.h">
       <Filter>Math</Filter>
     </ClInclude>
@@ -295,6 +292,9 @@
       <Filter>RHI\Context</Filter>
     </ClInclude>
     <ClInclude Include="OpenGL4Render.h">
+      <Filter>RHI\Context</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL4Context.h">
       <Filter>RHI\Context</Filter>
     </ClInclude>
   </ItemGroup>

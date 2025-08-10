@@ -6,40 +6,58 @@
 #include "OpenGL4Context.h"
 #include "OpenGL4Buffer.h"
 //=============================================================================
-namespace
+inline GLenum enumToGL(gl::ClipDepthRange depthRange)
 {
-	// helper function
-	// 	
-	uint32_t getHandle(const gl::Texture& texture)
+	if (depthRange == gl::ClipDepthRange::NegativeOneToOne)
+		return GL_NEGATIVE_ONE_TO_ONE;
+	return GL_ZERO_TO_ONE;
+}
+//=============================================================================
+inline uint32_t getHandle(const gl::Texture& texture)
+{
+	return const_cast<gl::Texture&>(texture).Handle();
+}
+//=============================================================================
+inline bool isDepthFormat(gl::Format format)
+{
+	switch (format)
 	{
-		return const_cast<gl::Texture&>(texture).Handle();
+	case gl::Format::D32_FLOAT:
+	case gl::Format::D32_UNORM:
+	case gl::Format::D24_UNORM:
+	case gl::Format::D16_UNORM:
+	case gl::Format::D32_FLOAT_S8_UINT:
+	case gl::Format::D24_UNORM_S8_UINT: return true;
+	default: return false;
 	}
-
-	static uint32_t MakeSingleTextureFbo(const gl::Texture& texture, gl::detail::FramebufferCache& fboCache)
+}
+//=============================================================================
+inline bool isStencilFormat(gl::Format format)
+{
+	switch (format)
 	{
-		auto format = texture.GetCreateInfo().format;
-
-		auto depthStencil = gl::RenderDepthStencilAttachment{ .texture = texture };
-		auto color = gl::RenderColorAttachment{ .texture = texture };
-		gl::RenderInfo renderInfo;
-
-		if (gl::detail::IsDepthFormat(format))
-		{
-			renderInfo.depthAttachment = depthStencil;
-		}
-
-		if (gl::detail::IsStencilFormat(format))
-		{
-			renderInfo.stencilAttachment = depthStencil;
-		}
-
-		if (gl::detail::IsColorFormat(format))
-		{
-			renderInfo.colorAttachments = { &color, 1 };
-		}
-
-		return fboCache.CreateOrGetCachedFramebuffer(renderInfo);
-	}	
+	case gl::Format::D32_FLOAT_S8_UINT:
+	case gl::Format::D24_UNORM_S8_UINT: return true;
+	default: return false;
+	}
+}
+//=============================================================================
+inline bool isColorFormat(gl::Format format)
+{
+	return !isDepthFormat(format) && !isStencilFormat(format);
+}
+//=============================================================================
+inline uint32_t makeSingleTextureFbo(const gl::Texture& texture, gl::detail::FramebufferCache& fboCache)
+{
+	auto format       = texture.GetCreateInfo().format;
+	auto depthStencil = gl::RenderDepthStencilAttachment{ .texture = texture };
+	auto color        = gl::RenderColorAttachment{ .texture = texture };
+	
+	gl::RenderInfo renderInfo;
+	if (isDepthFormat(format))   renderInfo.depthAttachment = depthStencil;
+	if (isStencilFormat(format)) renderInfo.stencilAttachment = depthStencil;
+	if (isColorFormat(format))   renderInfo.colorAttachments = { &color, 1 };
+	return fboCache.CreateOrGetCachedFramebuffer(renderInfo);
 }
 //=============================================================================
 void SetViewportInternal(const gl::Viewport& viewport, const gl::Viewport& lastViewport, bool initViewport)
@@ -57,11 +75,11 @@ void SetViewportInternal(const gl::Viewport& viewport, const gl::Viewport& lastV
 	}
 	if (initViewport || viewport.depthRange != lastViewport.depthRange)
 	{
-		glClipControl(GL_LOWER_LEFT, gl::detail::EnumToGL(viewport.depthRange));
+		glClipControl(GL_LOWER_LEFT, enumToGL(viewport.depthRange));
 	}
 }
 //=============================================================================
-void gl::BeginSwapChainRendering(const SwapchainRenderInfo& renderInfo)
+void gl::BeginSwapChainRendering(const SwapChainRenderInfo& renderInfo)
 {
 	assert(!gContext.isRendering && "Cannot call BeginRendering when rendering");
 	assert(!gContext.isComputeActive && "Cannot nest compute and rendering");
@@ -164,13 +182,11 @@ void gl::BeginRendering(const RenderInfo& renderInfo)
 	assert(!gContext.isRendering && "Cannot call BeginRendering when rendering");
 	assert(!gContext.isComputeActive && "Cannot nest compute and rendering");
 	gContext.isRendering = true;
+	gContext.lastRenderInfo = &renderInfo;
 
 //#if defined(_DEBUG)
 //	ZeroResourceBindings();
 //#endif
-
-	gContext.lastRenderInfo = &renderInfo;
-
 	const auto& ri = renderInfo;
 
 	if (!ri.name.empty())
@@ -284,22 +300,17 @@ void gl::BeginRendering(const RenderInfo& renderInfo)
 		for (const auto& attachment : ri.colorAttachments)
 		{
 			drawRect.extent.width = std::min(drawRect.extent.width, attachment.texture.get().GetCreateInfo().extent.width);
-			drawRect.extent.height =
-				std::min(drawRect.extent.height, attachment.texture.get().GetCreateInfo().extent.height);
+			drawRect.extent.height = std::min(drawRect.extent.height, attachment.texture.get().GetCreateInfo().extent.height);
 		}
 		if (ri.depthAttachment)
 		{
-			drawRect.extent.width =
-				std::min(drawRect.extent.width, ri.depthAttachment->texture.get().GetCreateInfo().extent.width);
-			drawRect.extent.height =
-				std::min(drawRect.extent.height, ri.depthAttachment->texture.get().GetCreateInfo().extent.height);
+			drawRect.extent.width = std::min(drawRect.extent.width, ri.depthAttachment->texture.get().GetCreateInfo().extent.width);
+			drawRect.extent.height = std::min(drawRect.extent.height, ri.depthAttachment->texture.get().GetCreateInfo().extent.height);
 		}
 		if (ri.stencilAttachment)
 		{
-			drawRect.extent.width =
-				std::min(drawRect.extent.width, ri.stencilAttachment->texture.get().GetCreateInfo().extent.width);
-			drawRect.extent.height =
-				std::min(drawRect.extent.height, ri.stencilAttachment->texture.get().GetCreateInfo().extent.height);
+			drawRect.extent.width = std::min(drawRect.extent.width, ri.stencilAttachment->texture.get().GetCreateInfo().extent.width);
+			drawRect.extent.height = std::min(drawRect.extent.height, ri.stencilAttachment->texture.get().GetCreateInfo().extent.height);
 		}
 		viewport.drawRect = drawRect;
 	}
@@ -387,17 +398,10 @@ void gl::EndCompute()
 	}
 }
 //=============================================================================
-void gl::BlitTexture(const Texture& source,
-	const Texture& target,
-	Offset3D sourceOffset,
-	Offset3D targetOffset,
-	Extent3D sourceExtent,
-	Extent3D targetExtent,
-	MagFilter filter,
-	AspectMask aspect)
+void gl::BlitTexture(const Texture& source, const Texture& target, Offset3D sourceOffset, Offset3D targetOffset, Extent3D sourceExtent, Extent3D targetExtent, MagFilter filter, AspectMask aspect)
 {
-	auto fboSource = MakeSingleTextureFbo(source, gContext.fboCache);
-	auto fboTarget = MakeSingleTextureFbo(target, gContext.fboCache);
+	auto fboSource = makeSingleTextureFbo(source, gContext.fboCache);
+	auto fboTarget = makeSingleTextureFbo(target, gContext.fboCache);
 	glBlitNamedFramebuffer(fboSource,
 		fboTarget,
 		sourceOffset.x,
@@ -412,15 +416,9 @@ void gl::BlitTexture(const Texture& source,
 		detail::EnumToGL(filter));
 }
 //=============================================================================
-void gl::BlitTextureToSwapchain(const Texture& source,
-	Offset3D sourceOffset,
-	Offset3D targetOffset,
-	Extent3D sourceExtent,
-	Extent3D targetExtent,
-	MagFilter filter,
-	AspectMask aspect)
+void gl::BlitTextureToSwapChain(const Texture& source, Offset3D sourceOffset, Offset3D targetOffset, Extent3D sourceExtent, Extent3D targetExtent, MagFilter filter, AspectMask aspect)
 {
-	auto fbo = MakeSingleTextureFbo(source, gContext.fboCache);
+	auto fbo = makeSingleTextureFbo(source, gContext.fboCache);
 
 	glBlitNamedFramebuffer(fbo,
 		0,

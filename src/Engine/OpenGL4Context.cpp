@@ -1,7 +1,7 @@
 ﻿#include "stdafx.h"
 #include "OpenGL4Context.h"
 #include "OpenGL4Core.h"
-
+#include "OpenGL4DeviceProperties.h"
 //=============================================================================
 void gl::ContextState::Init()
 {

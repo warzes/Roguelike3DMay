@@ -20,6 +20,7 @@
 
 #include "OpenGL4Core.h"
 #include "OpenGL4DebugMarker.h"
+#include "OpenGL4DeviceProperties.h"
 #include "OpenGL4Shader.h"
 #include "OpenGL4Buffer.h"
 #include "OpenGL4Texture.h"

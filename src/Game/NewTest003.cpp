@@ -189,7 +189,7 @@ void NewTest003::OnRender()
 	}
 	gl::EndRendering();
 
-	gl::BlitTextureToSwapchain(*msColorTex,
+	gl::BlitTextureToSwapChain(*msColorTex,
 		{},
 		{},
 		msColorTex->Extent(),

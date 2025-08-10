@@ -2,8 +2,6 @@
 
 #include "FlagsUtils.h"
 
-#define SE_DEFAULT_CLIP_DEPTH_RANGE_NEGATIVE_ONE_TO_ONE 1
-
 namespace gl
 {
 	enum class CompareOp : uint8_t

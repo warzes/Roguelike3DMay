@@ -162,7 +162,7 @@ void NewTest002::OnRender()
 	gl::BlitTexture(*msColorTex, *resolveColorTex, {}, {}, msColorTex->Extent(), resolveColorTex->Extent(), gl::MagFilter::Linear);
 
 	// Blit resolved texture to screen with nearest neighbor filter to make MSAA resolve more obvious
-	gl::BlitTextureToSwapchain(*resolveColorTex,
+	gl::BlitTextureToSwapChain(*resolveColorTex,
 		{},
 		{},
 		resolveColorTex->Extent(),

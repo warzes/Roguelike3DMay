@@ -3,6 +3,7 @@
 #include "OpenGL4Sampler.h"
 #include "OpenGL4ApiToEnum.h"
 #include "OpenGL4Context.h"
+#include "OpenGL4DeviceProperties.h"
 #include "Log.h"
 //=============================================================================
 inline uint64_t getBlockCompressedImageSize(gl::Format format, uint32_t width, uint32_t height, uint32_t depth)

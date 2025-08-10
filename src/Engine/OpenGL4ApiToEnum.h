@@ -136,13 +136,6 @@ namespace gl::detail
 		}
 	}
 
-	inline GLenum EnumToGL(ClipDepthRange depthRange)
-	{
-		if (depthRange == ClipDepthRange::NegativeOneToOne)
-			return GL_NEGATIVE_ONE_TO_ONE;
-		return GL_ZERO_TO_ONE;
-	}
-
 	inline GLbitfield AspectMaskToGL(AspectMask bits)
 	{
 		GLbitfield ret = 0;
@@ -552,32 +545,6 @@ namespace gl::detail
 		case Format::R8_SNORM: return true;
 		default: return false;
 		}
-	}
-	inline bool IsDepthFormat(Format format)
-	{
-		switch (format)
-		{
-		case Format::D32_FLOAT:
-		case Format::D32_UNORM:
-		case Format::D24_UNORM:
-		case Format::D16_UNORM:
-		case Format::D32_FLOAT_S8_UINT:
-		case Format::D24_UNORM_S8_UINT: return true;
-		default: return false;
-		}
-	}
-	inline bool IsStencilFormat(Format format)
-	{
-		switch (format)
-		{
-		case Format::D32_FLOAT_S8_UINT:
-		case Format::D24_UNORM_S8_UINT: return true;
-		default: return false;
-		}
-	}
-	inline bool IsColorFormat(Format format)
-	{
-		return !IsDepthFormat(format) && !IsStencilFormat(format);
 	}
 
 	inline GLint EnumToGL(UploadFormat uploadFormat)
