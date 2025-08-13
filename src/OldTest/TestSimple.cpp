@@ -1,5 +1,5 @@
 ﻿#include "stdafx.h"
-#include "TestCascadedShadowMaps.h"
+#include "TestSimple.h"
 //=============================================================================
 namespace
 {
@@ -140,12 +140,12 @@ void main()
 	ModelOLD* model;
 }
 //=============================================================================
-EngineCreateInfo TestCascadedShadowMaps::GetCreateInfo() const
+EngineCreateInfo TestSimple::GetCreateInfo() const
 {
 	return {};
 }
 //=============================================================================
-bool TestCascadedShadowMaps::OnInit()
+bool TestSimple::OnInit()
 {
 	program = gl::CreateShaderProgram(shaderCodeVertex, shaderCodeFragment);
 
@@ -195,18 +195,21 @@ bool TestCascadedShadowMaps::OnInit()
 	glEnable(GL_DEPTH_TEST);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+	gr.Create();
+
 	return true;
 }
 //=============================================================================
-void TestCascadedShadowMaps::OnClose()
+void TestSimple::OnClose()
 {
+	gr.Destroy();
 	glDeleteTextures(1, &texture);
 	gl::Destroy(program);
 	gl::Destroy(vbo);
 	gl::Destroy(vao);
 }
 //=============================================================================
-void TestCascadedShadowMaps::OnUpdate(float deltaTime)
+void TestSimple::OnUpdate(float deltaTime)
 {
 	if (glfwGetKey(GetGLFWWindow(), GLFW_KEY_W) == GLFW_PRESS)
 		camera.ProcessKeyboard(CameraForward, deltaTime);
@@ -224,12 +227,11 @@ void TestCascadedShadowMaps::OnUpdate(float deltaTime)
 	}
 	else if (glfwGetMouseButton(GetGLFWWindow(), GLFW_MOUSE_BUTTON_RIGHT) == GLFW_RELEASE)
 	{
-		glfwSetInputMode(GetGLFWWindow(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 		SetCursorVisible(true);
 	}
 }
 //=============================================================================
-void TestCascadedShadowMaps::OnRender()
+void TestSimple::OnRender()
 {
 	gl::SetFrameBuffer({ 0 }, GetWindowWidth(), GetWindowHeight(), GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -254,7 +256,7 @@ void TestCascadedShadowMaps::OnRender()
 		glDrawArrays(GL_TRIANGLES, 0, 6);
 	}
 
-	//вывод модели
+	 //вывод модели
 	{
 		glUseProgram(program);
 		glBindBufferBase(GL_UNIFORM_BUFFER, 0, mvpUbo);
@@ -273,11 +275,11 @@ void TestCascadedShadowMaps::OnRender()
 		modelMat = glm::scale(modelMat, glm::vec3(0.2f));
 		gl::SetUniform(lampDrawProgram, lampModelLoc, modelMat);
 
-		GetGraphicSystem().DrawCube();
+		gr.DrawCube();
 	}
 }
 //=============================================================================
-void TestCascadedShadowMaps::OnImGuiDraw()
+void TestSimple::OnImGuiDraw()
 {
 	ImGui::Begin("Simple");
 
@@ -291,7 +293,7 @@ void TestCascadedShadowMaps::OnImGuiDraw()
 	ImGui::End();
 }
 //=============================================================================
-void TestCascadedShadowMaps::OnResize(uint16_t width, uint16_t height)
+void TestSimple::OnResize(uint16_t width, uint16_t height)
 {
 }
 //=============================================================================

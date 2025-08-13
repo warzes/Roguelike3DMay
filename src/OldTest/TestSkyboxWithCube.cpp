@@ -135,12 +135,14 @@ bool TestSkyboxWithCube::OnInit()
 	glClearColor(0.7f, 0.8f, 0.9f, 1.0f);
 	glEnable(GL_DEPTH_TEST);
 
+	gr.Create();
+
 	return true;
 }
 //=============================================================================
 void TestSkyboxWithCube::OnClose()
 {
-
+	gr.Destroy();
 }
 //=============================================================================
 void TestSkyboxWithCube::OnUpdate(float deltaTime)
@@ -184,7 +186,7 @@ void TestSkyboxWithCube::OnRender()
 		gl::SetUniform(cubeProgram, cubeCameraPosLoc, camera.Position);
 		glBindTextureUnit(0, skyboxTexture);
 		glBindTextureUnit(1, cubeTexture);
-		GetGraphicSystem().DrawCube();
+		gr.DrawCube();
 		glBindVertexArray(0);
 	}
 
@@ -197,7 +199,7 @@ void TestSkyboxWithCube::OnRender()
 		gl::SetUniform(skyboxProgram, skyViewLoc, skyboxView);
 		gl::SetUniform(skyboxProgram, skyProjectionLoc, proj);
 		glBindTextureUnit(0, skyboxTexture);
-		GetGraphicSystem().DrawCube();
+		gr.DrawCube();
 		glBindVertexArray(0);
 		glDepthFunc(GL_LESS); // Set depth function back to default
 	}

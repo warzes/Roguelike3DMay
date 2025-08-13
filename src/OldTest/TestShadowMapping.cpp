@@ -316,11 +316,14 @@ bool TestShadowMapping::OnInit()
 	glClearColor(0.7f, 0.8f, 0.9f, 1.0f);
 	glEnable(GL_DEPTH_TEST);
 
+	gr.Create();
+
 	return true;
 }
 //=============================================================================
 void TestShadowMapping::OnClose()
 {
+	gr.Destroy();
 	delete pipeline;
 }
 //=============================================================================
@@ -395,7 +398,7 @@ void TestShadowMapping::OnRender()
 	gl::SetUniform(lightProgram, lightPositionLoc, light.Position);
 	gl::SetUniform(lightProgram, radiusLoc, 0.4f);
 	gl::SetUniform(lightProgram, lightColorLoc, light.Color);
-	GetGraphicSystem().DrawQuad();
+	gr.DrawQuad();
 
 	// Debug depth
 	//pipeline->DebugDrawDepthMap();

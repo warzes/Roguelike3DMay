@@ -1,7 +1,7 @@
 ﻿#include "stdafx.h"
 #include "PipelineBloom.h"
 #include "OpenGL4Simple.h"
-#include "Log.h"
+#include "Engine/Log.h"
 //=============================================================================
 uint16_t GetWindowWidth();
 uint16_t GetWindowHeight();

@@ -2,7 +2,7 @@
 #include "PipelineDeferredSSAO.h"
 #include "OpenGL4Simple.h"
 #include "PipelineDeferredSSAOShaders.h"
-#include "CoreFunc.h"
+#include "Engine/CoreFunc.h"
 //=============================================================================
 uint16_t GetWindowWidth();
 uint16_t GetWindowHeight();

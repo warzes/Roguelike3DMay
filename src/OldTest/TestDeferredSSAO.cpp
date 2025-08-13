@@ -97,11 +97,14 @@ bool TestDeferredSSAO::OnInit()
 	glClearColor(0.7f, 0.8f, 0.9f, 1.0f);
 	glEnable(GL_DEPTH_TEST);
 
+	gr.Create();
+
 	return true;
 }
 //=============================================================================
 void TestDeferredSSAO::OnClose()
 {
+	gr.Destroy();
 	delete pipeline;
 }
 //=============================================================================
@@ -245,7 +248,7 @@ void TestDeferredSSAO::RenderLights()
 		gl::SetUniform(lightSphereShader, "lightPosition", light.Position);
 		gl::SetUniform(lightSphereShader, "radius", 0.4f);
 		gl::SetUniform(lightSphereShader, "lightColor", light.Color);
-		GetGraphicSystem().DrawQuad();
+		gr.DrawQuad();
 	}
 }
 //=============================================================================

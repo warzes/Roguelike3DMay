@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>17.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{4862674B-2976-4E44-A4D6-FF1F92ADDB28}</ProjectGuid>
+    <RootNamespace>Game</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <OutDir>$(SolutionDir)..\bin\</OutDir>
+    <IntDir>$(SolutionDir)..\_obj\$(Configuration)\$(PlatformTarget)\$(ProjectName)\</IntDir>
+    <TargetName>$(ProjectName)_$(Configuration)</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>$(SolutionDir)..\bin\</OutDir>
+    <IntDir>$(SolutionDir)..\_obj\$(Configuration)\$(PlatformTarget)\$(ProjectName)\</IntDir>
+    <TargetName>$(ProjectName)_$(Configuration)</TargetName>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>EnableAllWarnings</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <LanguageStandard_C>stdclatest</LanguageStandard_C>
+      <AdditionalIncludeDirectories>$(SolutionDir)3rdparty\;$(SolutionDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <TreatAngleIncludeAsExternal>true</TreatAngleIncludeAsExternal>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(SolutionDir)3rdparty\lib\;$(SolutionDir)3rdparty\lib\$(Configuration)\;$(SolutionDir)..\_lib\$(Configuration)\$(PlatformTarget)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>EnableAllWarnings</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <LanguageStandard_C>stdclatest</LanguageStandard_C>
+      <AdditionalIncludeDirectories>$(SolutionDir)3rdparty\;$(SolutionDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <TreatAngleIncludeAsExternal>true</TreatAngleIncludeAsExternal>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(SolutionDir)3rdparty\lib\;$(SolutionDir)3rdparty\lib\$(Configuration)\;$(SolutionDir)..\_lib\$(Configuration)\$(PlatformTarget)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="DepthPrepass.cpp" />
+    <ClCompile Include="GameApp.cpp" />
+    <ClCompile Include="GameApp2.cpp" />
+    <ClCompile Include="GameAppOld.cpp" />
+    <ClCompile Include="GameModel.cpp" />
+    <ClCompile Include="GameModelManager.cpp" />
+    <ClCompile Include="GameSceneManager.cpp" />
+    <ClCompile Include="GraphicSystem.cpp" />
+    <ClCompile Include="LightOLD.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="MainRenderPass.cpp" />
+    <ClCompile Include="MaterialOLD.cpp" />
+    <ClCompile Include="MeshOLD.cpp" />
+    <ClCompile Include="ModelOLD.cpp" />
+    <ClCompile Include="OpenGL4Advance.cpp" />
+    <ClCompile Include="OpenGL4Simple.cpp" />
+    <ClCompile Include="PipelineBloom.cpp" />
+    <ClCompile Include="PipelineDeferredSSAO.cpp" />
+    <ClCompile Include="PipelineShadowMapping.cpp" />
+    <ClCompile Include="RenderData.cpp" />
+    <ClCompile Include="ShadowPass.cpp" />
+    <ClCompile Include="ShadowPassManager.cpp" />
+    <ClCompile Include="stdafx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="TestBlinnPhong.cpp">
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">TurnOffAllWarnings</WarningLevel>
+    </ClCompile>
+    <ClCompile Include="TestBloom.cpp">
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">TurnOffAllWarnings</WarningLevel>
+    </ClCompile>
+    <ClCompile Include="TestComplex.cpp" />
+    <ClCompile Include="TestComplex_Temp.cpp" />
+    <ClCompile Include="TestDeferredSSAO.cpp">
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">TurnOffAllWarnings</WarningLevel>
+    </ClCompile>
+    <ClCompile Include="TestForwardPlus.cpp" />
+    <ClCompile Include="TestModelLoading.cpp">
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">TurnOffAllWarnings</WarningLevel>
+    </ClCompile>
+    <ClCompile Include="TestPBR.cpp">
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">TurnOffAllWarnings</WarningLevel>
+    </ClCompile>
+    <ClCompile Include="TestShadowMapping.cpp">
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">TurnOffAllWarnings</WarningLevel>
+    </ClCompile>
+    <ClCompile Include="TestSimple.cpp" />
+    <ClCompile Include="TestSkyboxWithCube.cpp">
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">TurnOffAllWarnings</WarningLevel>
+    </ClCompile>
+    <ClCompile Include="World.cpp" />
+    <ClCompile Include="WorldRender.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="DepthPrepass.h" />
+    <ClInclude Include="GameApp.h" />
+    <ClInclude Include="GameApp2.h" />
+    <ClInclude Include="GameAppOld.h" />
+    <ClInclude Include="GameConfig.h" />
+    <ClInclude Include="GameModel.h" />
+    <ClInclude Include="GameModelManager.h" />
+    <ClInclude Include="GameSceneManager.h" />
+    <ClInclude Include="GraphicSystem.h" />
+    <ClInclude Include="LightOLD.h" />
+    <ClInclude Include="MainRenderPass.h" />
+    <ClInclude Include="MaterialOLD.h" />
+    <ClInclude Include="MeshOLD.h" />
+    <ClInclude Include="ModelOLD.h" />
+    <ClInclude Include="OpenGL4Advance.h" />
+    <ClInclude Include="OpenGL4Simple.h" />
+    <ClInclude Include="PipelineBloom.h" />
+    <ClInclude Include="PipelineDeferredSSAO.h" />
+    <ClInclude Include="PipelineDeferredSSAOShaders.h" />
+    <ClInclude Include="PipelineShadowMapping.h" />
+    <ClInclude Include="RenderData.h" />
+    <ClInclude Include="ShadowPass.h" />
+    <ClInclude Include="ShadowPassManager.h" />
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="TestBlinnPhong.h" />
+    <ClInclude Include="TestBloom.h" />
+    <ClInclude Include="TestComplex.h" />
+    <ClInclude Include="TestComplex_Temp.h" />
+    <ClInclude Include="TestDeferredSSAO.h" />
+    <ClInclude Include="TestForwardPlus.h" />
+    <ClInclude Include="TestModelLoading.h" />
+    <ClInclude Include="TestPBR.h" />
+    <ClInclude Include="TestShadowMapping.h" />
+    <ClInclude Include="TestSimple.h" />
+    <ClInclude Include="TestSkyboxWithCube.h" />
+    <ClInclude Include="UniformObjects.h" />
+    <ClInclude Include="World.h" />
+    <ClInclude Include="WorldRender.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\bin\ExampleData\shaders\TestComplex\gbuf.fs" />
+    <None Include="..\..\bin\ExampleData\shaders\TestComplex\gbuf.vs" />
+    <None Include="..\..\bin\ExampleData\shaders\TestComplex\lighting.fs" />
+    <None Include="..\..\bin\ExampleData\shaders\TestComplex\lighting.vs" />
+    <None Include="..\..\bin\ExampleData\shaders\TestComplex\post.frag" />
+    <None Include="..\..\bin\ExampleData\shaders\TestComplex\post.vert" />
+    <None Include="..\..\bin\ExampleData\shaders\TestComplex\rsm.fs" />
+    <None Include="..\..\bin\ExampleData\shaders\TestComplex\rsm.vs" />
+    <None Include="..\..\bin\ExampleData\shaders\TestComplex\shadow.fs" />
+    <None Include="..\..\bin\ExampleData\shaders\TestComplex\shadow.vs" />
+    <None Include="..\..\bin\ExampleData\shaders\TestComplex\ssao.frag" />
+    <None Include="..\..\bin\ExampleData\shaders\TestComplex\ssao.vert" />
+    <None Include="..\..\bin\ExampleData\shaders\TestComplex\ssr.fs" />
+    <None Include="..\..\bin\ExampleData\shaders\TestComplex\ssr.vs" />
+    <None Include="..\..\bin\ExampleData\shaders\TestForwardPlus\forwardplus.frag" />
+    <None Include="..\..\bin\ExampleData\shaders\TestForwardPlus\forwardplus.vert" />
+    <None Include="..\..\bin\ExampleData\shaders\TestForwardPlus\lightculling.comp" />
+    <None Include="..\..\bin\GameData\shaders\Depth.frag" />
+    <None Include="..\..\bin\GameData\shaders\Depth.vert" />
+    <None Include="..\..\bin\GameData\shaders\GameMesh.frag" />
+    <None Include="..\..\bin\GameData\shaders\GameMesh.vert" />
+    <None Include="..\..\bin\GameData\shaders\MainShader.frag" />
+    <None Include="..\..\bin\GameData\shaders\MainShader.vert" />
+    <None Include="..\..\bin\GameData\shaders\Minimal.frag" />
+    <None Include="..\..\bin\GameData\shaders\Minimal.vert" />
+    <None Include="..\..\bin\GameData\shaders\OldMainShader.frag" />
+    <None Include="..\..\bin\GameData\shaders\ShadowPass.frag" />
+    <None Include="..\..\bin\GameData\shaders\ShadowPass.vert" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

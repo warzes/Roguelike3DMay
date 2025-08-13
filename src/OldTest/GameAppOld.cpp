@@ -228,11 +228,14 @@ bool GameAppOld::OnInit()
 	glClearColor(0.7f, 0.8f, 0.9f, 1.0f);
 	glEnable(GL_DEPTH_TEST);
 
+	gr.Create();
+
 	return true;
 }
 //=============================================================================
 void GameAppOld::OnClose()
 {
+	gr.Destroy();
 	glDeleteTextures(1, &texture);
 	gl::Destroy(program);
 	gl::Destroy(vbo);
@@ -312,7 +315,7 @@ void GameAppOld::OnRender()
 			model = glm::scale(model, glm::vec3(0.5));
 			gl::SetUniform(cubeProgram, cubeModelLoc, model);
 
-			GetGraphicSystem().DrawCube();
+			gr.DrawCube();
 		}
 	}
 }

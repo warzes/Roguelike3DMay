@@ -94,15 +94,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="GameApp.cpp" />
-    <ClCompile Include="GameApp2.cpp" />
     <ClCompile Include="GameApp3.cpp" />
-    <ClCompile Include="GameAppOld.cpp" />
     <ClCompile Include="GameModel.cpp" />
-    <ClCompile Include="GameModelManager.cpp" />
-    <ClCompile Include="GameSceneManager.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="MainRenderPass.cpp" />
     <ClCompile Include="NewTest001.cpp" />
     <ClCompile Include="NewTest002.cpp" />
     <ClCompile Include="NewTest003.cpp" />
@@ -110,59 +104,15 @@
     <ClCompile Include="NewTest005.cpp" />
     <ClCompile Include="RsmTechnique.cpp" />
     <ClCompile Include="SceneLoader.cpp" />
-    <ClCompile Include="ShadowPass.cpp" />
-    <ClCompile Include="ShadowPassManager.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="TestBlinnPhong.cpp">
-      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">TurnOffAllWarnings</WarningLevel>
-      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">TurnOffAllWarnings</WarningLevel>
-    </ClCompile>
-    <ClCompile Include="TestBloom.cpp">
-      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">TurnOffAllWarnings</WarningLevel>
-      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">TurnOffAllWarnings</WarningLevel>
-    </ClCompile>
-    <ClCompile Include="TestCascadedShadowMaps.cpp" />
-    <ClCompile Include="TestComplex.cpp" />
-    <ClCompile Include="TestComplex_Temp.cpp" />
-    <ClCompile Include="TestDeferredSSAO.cpp">
-      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">TurnOffAllWarnings</WarningLevel>
-      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">TurnOffAllWarnings</WarningLevel>
-    </ClCompile>
-    <ClCompile Include="TestForwardPlus.cpp" />
-    <ClCompile Include="TestModelLoading.cpp">
-      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">TurnOffAllWarnings</WarningLevel>
-      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">TurnOffAllWarnings</WarningLevel>
-    </ClCompile>
-    <ClCompile Include="TestPBR.cpp">
-      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">TurnOffAllWarnings</WarningLevel>
-      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">TurnOffAllWarnings</WarningLevel>
-    </ClCompile>
-    <ClCompile Include="TestShadowMapping.cpp">
-      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">TurnOffAllWarnings</WarningLevel>
-      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">TurnOffAllWarnings</WarningLevel>
-    </ClCompile>
-    <ClCompile Include="TestSimple.cpp" />
-    <ClCompile Include="TestSkyboxWithCube.cpp">
-      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">TurnOffAllWarnings</WarningLevel>
-      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">TurnOffAllWarnings</WarningLevel>
-    </ClCompile>
-    <ClCompile Include="TestTerrain.cpp" />
-    <ClCompile Include="World.cpp" />
-    <ClCompile Include="WorldRender.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="GameApp.h" />
-    <ClInclude Include="GameApp2.h" />
     <ClInclude Include="GameApp3.h" />
-    <ClInclude Include="GameAppOld.h" />
     <ClInclude Include="GameConfig.h" />
     <ClInclude Include="GameModel.h" />
-    <ClInclude Include="GameModelManager.h" />
-    <ClInclude Include="GameSceneManager.h" />
-    <ClInclude Include="MainRenderPass.h" />
     <ClInclude Include="NewTest001.h" />
     <ClInclude Include="NewTest002.h" />
     <ClInclude Include="NewTest003.h" />
@@ -170,57 +120,12 @@
     <ClInclude Include="NewTest005.h" />
     <ClInclude Include="RsmTechnique.h" />
     <ClInclude Include="SceneLoader.h" />
-    <ClInclude Include="ShadowPass.h" />
-    <ClInclude Include="ShadowPassManager.h" />
     <ClInclude Include="stdafx.h" />
-    <ClInclude Include="TestBlinnPhong.h" />
-    <ClInclude Include="TestBloom.h" />
-    <ClInclude Include="TestCascadedShadowMaps.h" />
-    <ClInclude Include="TestComplex.h" />
-    <ClInclude Include="TestComplex_Temp.h" />
-    <ClInclude Include="TestDeferredSSAO.h" />
-    <ClInclude Include="TestForwardPlus.h" />
-    <ClInclude Include="TestModelLoading.h" />
-    <ClInclude Include="TestPBR.h" />
-    <ClInclude Include="TestShadowMapping.h" />
-    <ClInclude Include="TestSimple.h" />
-    <ClInclude Include="TestSkyboxWithCube.h" />
-    <ClInclude Include="TestTerrain.h" />
     <ClInclude Include="UniformObjects.h" />
-    <ClInclude Include="World.h" />
-    <ClInclude Include="WorldRender.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\bin\ExampleData\shaders\TestComplex\gbuf.fs" />
-    <None Include="..\..\bin\ExampleData\shaders\TestComplex\gbuf.vs" />
-    <None Include="..\..\bin\ExampleData\shaders\TestComplex\lighting.fs" />
-    <None Include="..\..\bin\ExampleData\shaders\TestComplex\lighting.vs" />
-    <None Include="..\..\bin\ExampleData\shaders\TestComplex\post.frag" />
-    <None Include="..\..\bin\ExampleData\shaders\TestComplex\post.vert" />
-    <None Include="..\..\bin\ExampleData\shaders\TestComplex\rsm.fs" />
-    <None Include="..\..\bin\ExampleData\shaders\TestComplex\rsm.vs" />
-    <None Include="..\..\bin\ExampleData\shaders\TestComplex\shadow.fs" />
-    <None Include="..\..\bin\ExampleData\shaders\TestComplex\shadow.vs" />
-    <None Include="..\..\bin\ExampleData\shaders\TestComplex\ssao.frag" />
-    <None Include="..\..\bin\ExampleData\shaders\TestComplex\ssao.vert" />
-    <None Include="..\..\bin\ExampleData\shaders\TestComplex\ssr.fs" />
-    <None Include="..\..\bin\ExampleData\shaders\TestComplex\ssr.vs" />
-    <None Include="..\..\bin\ExampleData\shaders\TestForwardPlus\forwardplus.frag" />
-    <None Include="..\..\bin\ExampleData\shaders\TestForwardPlus\forwardplus.vert" />
-    <None Include="..\..\bin\ExampleData\shaders\TestForwardPlus\lightculling.comp" />
-    <None Include="..\..\bin\GameData\shaders\Depth.frag" />
-    <None Include="..\..\bin\GameData\shaders\Depth.vert" />
-    <None Include="..\..\bin\GameData\shaders\GameMesh.frag" />
-    <None Include="..\..\bin\GameData\shaders\GameMesh.vert" />
-    <None Include="..\..\bin\GameData\shaders\MainShader.frag" />
-    <None Include="..\..\bin\GameData\shaders\MainShader.vert" />
     <None Include="..\..\bin\GameData\shaders\MainShader3.frag" />
     <None Include="..\..\bin\GameData\shaders\MainShader3.vert" />
-    <None Include="..\..\bin\GameData\shaders\Minimal.frag" />
-    <None Include="..\..\bin\GameData\shaders\Minimal.vert" />
-    <None Include="..\..\bin\GameData\shaders\OldMainShader.frag" />
-    <None Include="..\..\bin\GameData\shaders\ShadowPass.frag" />
-    <None Include="..\..\bin\GameData\shaders\ShadowPass.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

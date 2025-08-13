@@ -1,8 +1,8 @@
 ﻿#include "stdafx.h"
 #include "OpenGL4Simple.h"
-#include "Log.h"
-#include "OpenGL4DeviceProperties.h"
-#include "Hash.h"
+#include "Engine/Log.h"
+#include "Engine/OpenGL4DeviceProperties.h"
+#include "Engine/Hash.h"
 //=============================================================================
 #pragma region [ Hash ]
 //=============================================================================

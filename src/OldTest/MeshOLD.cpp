@@ -1,7 +1,7 @@
 ﻿#include "stdafx.h"
 #include "MeshOLD.h"
 #include "OpenGL4Simple.h"
-#include "Log.h"
+#include "Engine/Log.h"
 //=============================================================================
 MeshOLD::MeshOLD(std::vector<MeshVertexOLD>&& vertices, std::vector<unsigned int>&& indices, std::unordered_map<TextureType, TextureFile>&& textures)
 	: m_vertices(std::move(vertices))

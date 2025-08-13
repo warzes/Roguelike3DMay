@@ -1,6 +1,5 @@
 ﻿#pragma once
 
-#include "GraphicSystem.h"
 #include "Input.h"
 
 void ExitApp();
@@ -53,9 +52,6 @@ public:
 	void DrawFPS();
 
 	double GetTimeInSec() const;
-
-	GraphicSystem& GetGraphicSystem() { return m_graphics; }
-
 
 	auto GetDeltaTime() const { return m_deltaTime; }
 	auto GetFPS() const { return m_currentFPS; }
@@ -126,7 +122,6 @@ private:
 	void mouseButton(int button, int action, int mods);
 
 	// system
-	GraphicSystem m_graphics;
 
 	// window config
 	GLFWwindow* m_window{ nullptr };

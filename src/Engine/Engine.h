@@ -15,9 +15,6 @@
 #include "Transformable.h"
 
 // RHI
-#include "OpenGL4Simple.h"
-#include "OpenGL4Advance.h"
-
 #include "OpenGL4Core.h"
 #include "OpenGL4DebugMarker.h"
 #include "OpenGL4DeviceProperties.h"
@@ -40,16 +37,8 @@
 #include "Model.h"
 #include "Light.h"
 #include "Shadow.h"
-#include "ModelOLD.h"
-#include "LightOLD.h"
-
-#include "DepthPrepass.h"
-#include "PipelineBloom.h"
-#include "PipelineShadowMapping.h"
-#include "PipelineDeferredSSAO.h"
 
 // Graphics
-#include "GraphicSystem.h"
 
 // Scene
 #include "Transform.h"

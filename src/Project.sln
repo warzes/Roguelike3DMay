@@ -22,6 +22,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DOC", "DOC", "{36D591C7-65C
 		TODO.md = TODO.md
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "old", "old", "{DFC1025F-3E98-47E2-94AA-ABE9001A7B55}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OldTest", "OldTest\OldTest.vcxproj", "{4862674B-2976-4E44-A4D6-FF1F92ADDB28}"
+	ProjectSection(ProjectDependencies) = postProject
+		{349C7579-70E5-4769-93F8-1CF63C9358DE} = {349C7579-70E5-4769-93F8-1CF63C9358DE}
+		{9A6B816F-E018-4EF9-81AB-788F27B2DA96} = {9A6B816F-E018-4EF9-81AB-788F27B2DA96}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -40,9 +48,16 @@ Global
 		{349C7579-70E5-4769-93F8-1CF63C9358DE}.Debug|x64.Build.0 = Debug|x64
 		{349C7579-70E5-4769-93F8-1CF63C9358DE}.Release|x64.ActiveCfg = Release|x64
 		{349C7579-70E5-4769-93F8-1CF63C9358DE}.Release|x64.Build.0 = Release|x64
+		{4862674B-2976-4E44-A4D6-FF1F92ADDB28}.Debug|x64.ActiveCfg = Debug|x64
+		{4862674B-2976-4E44-A4D6-FF1F92ADDB28}.Debug|x64.Build.0 = Debug|x64
+		{4862674B-2976-4E44-A4D6-FF1F92ADDB28}.Release|x64.ActiveCfg = Release|x64
+		{4862674B-2976-4E44-A4D6-FF1F92ADDB28}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{4862674B-2976-4E44-A4D6-FF1F92ADDB28} = {DFC1025F-3E98-47E2-94AA-ABE9001A7B55}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0BBCD73C-031C-4274-BB3D-49CDB0CE6B30}

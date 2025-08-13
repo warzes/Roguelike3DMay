@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include "GraphicSystem.h"
+
 class GameAppOld final : public IEngineApp
 {
 public:
@@ -21,4 +23,6 @@ public:
 	void OnMousePos(double x, double y) final;
 	void OnScroll(double dx, double dy) final;
 	void OnKey(int key, int scanCode, int action, int mods) final;
+
+	GraphicSystem gr;
 };

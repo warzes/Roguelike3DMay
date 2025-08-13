@@ -23,4 +23,11 @@ public:
 	void InitLights();
 	void RenderLights();
 	void RenderScene(gl::ShaderProgramId shader) const;
+
+	void OnMouseButton(int button, int action, int mods) final {}
+	void OnMousePos(double x, double y) final {}
+	void OnScroll(double dx, double dy) final {}
+	void OnKey(int key, int scanCode, int action, int mods) final {}
+
+	GraphicSystem gr;
 };

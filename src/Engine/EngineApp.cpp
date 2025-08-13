@@ -354,16 +354,10 @@ bool IEngineApp::init()
 {
 	auto engineConfig = GetCreateInfo();
 
-	void ClearOpenGLState();
-	ClearOpenGLState();
-
 	if (!initWindow(engineConfig))
 		return false;
 	initOpenGL();
 	initImGui();
-
-	if (!m_graphics.Create())
-		return false;
 
 	if (!TextureManager::Init())
 		return false;
@@ -523,14 +517,9 @@ void IEngineApp::close()
 
 	TextureManager::Close();
 
-	void ClearResourceCache();
-	ClearResourceCache();
-
 	gl::gContext.Close();
 
 	profiler::Close();
-
-	m_graphics.Destroy();
 
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplGlfw_Shutdown();

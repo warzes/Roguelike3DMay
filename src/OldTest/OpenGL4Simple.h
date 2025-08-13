@@ -1,12 +1,12 @@
 ﻿#pragma once
 
-#include "OpenGL4ApiToEnum.h"
-#include "OpenGL4Shader.h"
-#include "OpenGL4Buffer.h"
-#include "OpenGL4Texture.h"
-#include "OpenGL4Sampler.h"
-#include "OpenGL4Pipeline.h"
-#include "OpenGL4Render.h"
+#include "Engine/OpenGL4ApiToEnum.h"
+#include "Engine/OpenGL4Shader.h"
+#include "Engine/OpenGL4Buffer.h"
+#include "Engine/OpenGL4Texture.h"
+#include "Engine/OpenGL4Sampler.h"
+#include "Engine/OpenGL4Pipeline.h"
+#include "Engine/OpenGL4Render.h"
 
 // Остается чистой и минимальной оберткой над OpenGL
 // TODO: почистить

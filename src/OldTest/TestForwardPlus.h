@@ -1,13 +1,13 @@
 ﻿#pragma once
 
-class TestShadowMapping final : public IEngineApp
+class TestForwardPlus final : public IEngineApp
 {
 public:
-	TestShadowMapping() = default;
-	TestShadowMapping(const TestShadowMapping&) = delete;
-	TestShadowMapping(TestShadowMapping&&) = delete;
-	void operator=(const TestShadowMapping&) = delete;
-	void operator=(TestShadowMapping&&) = delete;
+	TestForwardPlus() = default;
+	TestForwardPlus(const TestForwardPlus&) = delete;
+	TestForwardPlus(TestForwardPlus&&) = delete;
+	void operator=(const TestForwardPlus&) = delete;
+	void operator=(TestForwardPlus&&) = delete;
 
 	EngineCreateInfo GetCreateInfo() const final;
 
@@ -17,9 +17,6 @@ public:
 	void OnRender() final;
 	void OnImGuiDraw() final;
 	void OnResize(uint16_t width, uint16_t height) final;
-
-	void RenderScene(gl::ShaderProgramId shader, int modelMatLoc);
-
 
 	void OnMouseButton(int button, int action, int mods) final {}
 	void OnMousePos(double x, double y) final {}

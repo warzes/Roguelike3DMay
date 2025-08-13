@@ -13,3 +13,6 @@ Thumbs.db
 #exe
 /bin/Game_Debug.*
 /bin/Game_Release.*
+/bin/OldTest_Debug.*
+/bin/OldTest_Release.*
+

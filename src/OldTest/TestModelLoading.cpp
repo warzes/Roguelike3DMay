@@ -145,11 +145,14 @@ bool TestModelLoading::OnInit()
 	glClearColor(0.7f, 0.8f, 0.9f, 1.0f);
 	glEnable(GL_DEPTH_TEST);
 
+	gr.Create();
+
 	return true;
 }
 //=============================================================================
 void TestModelLoading::OnClose()
 {
+	gr.Destroy();
 }
 //=============================================================================
 void TestModelLoading::OnUpdate(float deltaTime)
@@ -210,7 +213,7 @@ void TestModelLoading::OnRender()
 		modelMat = glm::scale(modelMat, glm::vec3(0.2f));
 		gl::SetUniform(lightProgram, lightModelLoc, modelMat);
 
-		GetGraphicSystem().DrawCube();
+		gr.DrawCube();
 	}
 }
 //=============================================================================

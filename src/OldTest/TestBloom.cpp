@@ -98,11 +98,15 @@ bool TestBloom::OnInit()
 	glClearColor(0.7f, 0.8f, 0.9f, 1.0f);
 	glEnable(GL_DEPTH_TEST);
 
+	gr.Create();
+
 	return true;
 }
 //=============================================================================
 void TestBloom::OnClose()
 {
+	gr.Destroy();
+
 	delete model;
 	delete pipeline;
 	glDeleteProgram(program);
@@ -171,7 +175,7 @@ void TestBloom::OnRender()
 	gl::SetUniform(program, lightPositionLoc, light.Position);
 	gl::SetUniform(program, radiusLoc, 0.4f);
 	gl::SetUniform(program, lightColorLoc, light.Color);
-	GetGraphicSystem().DrawQuad();
+	gr.DrawQuad();
 }
 //=============================================================================
 void TestBloom::OnImGuiDraw()

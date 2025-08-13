@@ -302,12 +302,14 @@ bool TestPBR::OnInit()
 	glClearColor(0.7f, 0.8f, 0.9f, 1.0f);
 	glEnable(GL_DEPTH_TEST);
 
+	gr.Create();
 
 	return true;
 }
 //=============================================================================
 void TestPBR::OnClose()
 {
+	gr.Destroy();
 }
 //=============================================================================
 void TestPBR::OnUpdate(float deltaTime)
@@ -363,7 +365,7 @@ void TestPBR::OnRender()
 			gl::SetUniform(lightSphereShader, "lightPosition", l.Position);
 			gl::SetUniform(lightSphereShader, "radius", 0.4f);
 			gl::SetUniform(lightSphereShader, "lightColor", l.Color);
-			GetGraphicSystem().DrawQuad();
+			gr.DrawQuad();
 		}
 
 		glDrawArrays(GL_TRIANGLES, 0, 6);
