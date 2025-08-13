@@ -84,7 +84,6 @@ void gl::BeginSwapChainRendering(const SwapChainRenderInfo& renderInfo)
 	assert(!gContext.isRendering && "Cannot call BeginRendering when rendering");
 	assert(!gContext.isComputeActive && "Cannot nest compute and rendering");
 	gContext.isRendering = true;
-	gContext.isRenderingToSwapChain = true;
 	gContext.lastRenderInfo = nullptr;
 
 	const auto& ri = renderInfo;
@@ -337,7 +336,6 @@ void gl::EndRendering()
 	assert(gContext.isRendering && "Cannot call EndRendering when not rendering");
 	gContext.isRendering = false;
 	gContext.isIndexBufferBound = false;
-	gContext.isRenderingToSwapChain = false;
 
 	if (gContext.isScopedDebugGroupPushed)
 	{

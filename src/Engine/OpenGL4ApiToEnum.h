@@ -3,8 +3,6 @@
 #include "OpenGL4Core.h"
 #include "OpenGL4Sampler.h"
 
-// TODO: все inline в constexpr? НЕТ, assert(0) в компалтайм - UB
-
 namespace gl::detail
 {
 	inline GLenum EnumToGL(CompareOp op)

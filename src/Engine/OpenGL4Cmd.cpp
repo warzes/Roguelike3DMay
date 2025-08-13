@@ -4,13 +4,10 @@
 #include "OpenGL4ApiToEnum.h"
 #include "OpenGL4Buffer.h"
 //=============================================================================
-namespace
+inline void GLEnableOrDisable(GLenum state, GLboolean value)
 {
-	static void GLEnableOrDisable(GLenum state, GLboolean value)
-	{
-		if (value) glEnable(state);
-		else glDisable(state);
-	}
+	if (value) glEnable(state);
+	else glDisable(state);
 }
 //=============================================================================
 void SetViewportInternal(const gl::Viewport& viewport, const gl::Viewport& lastViewport, bool initViewport); // ==> OpenGL4Render.cpp
@@ -62,8 +59,7 @@ void gl::Cmd::BindGraphicsPipeline(const GraphicsPipeline& pipeline)
 
 	//////////////////////////////////////////////////////////////// input assembly
 	const auto& ias = pipelineState->inputAssemblyState;
-	if (!lastGraphicsPipeline ||
-		ias.primitiveRestartEnable != lastGraphicsPipeline->inputAssemblyState.primitiveRestartEnable)
+	if (!lastGraphicsPipeline || ias.primitiveRestartEnable != lastGraphicsPipeline->inputAssemblyState.primitiveRestartEnable)
 	{
 		GLEnableOrDisable(GL_PRIMITIVE_RESTART_FIXED_INDEX, ias.primitiveRestartEnable);
 	}

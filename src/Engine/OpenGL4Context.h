@@ -16,17 +16,12 @@ namespace gl
 		void Init();
 		void Close();
 
-		void ResetState();
-
 		// Used for scope error checking
 		bool isComputeActive = false;
 		bool isRendering = false;
 
 		// Used for error checking for indexed draws
 		bool isIndexBufferBound = false;
-
-		// Currently unused
-		bool isRenderingToSwapChain = false;
 
 		// True during a render or compute scope that has a name.
 		bool isScopedDebugGroupPushed = false;
@@ -71,8 +66,8 @@ namespace gl
 		detail::SamplerCache samplerCache;
 	} inline gContext;
 
-	/// @brief Invalidates assumptions Engine has made about the OpenGL context state
-	/// Call when OpenGL context state has been changed outside of Engine (e.g., when using raw OpenGL or using an external library that calls OpenGL). This invalidates assumptions Engine has made about the pipeline state for the purpose of state deduplication.
+	// Invalidates assumptions Engine has made about the OpenGL context state
+	// Call when OpenGL context state has been changed outside of Engine (e.g., when using raw OpenGL or using an external library that calls OpenGL). This invalidates assumptions Engine has made about the pipeline state for the purpose of state deduplication.
 	void InvalidatePipelineState();
 
 	// Clears all resource bindings.

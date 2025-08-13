@@ -6,7 +6,6 @@
 void gl::ContextState::Init()
 {
 	CurrentDeviceProperties = InitDeviceProperties();
-	ResetState();
 }
 //=============================================================================
 void gl::ContextState::Close()
@@ -14,11 +13,6 @@ void gl::ContextState::Close()
 	fboCache.Clear();
 	vaoCache.Clear();
 	samplerCache.Clear();
-}
-//=============================================================================
-void gl::ContextState::ResetState()
-{
-// TODO: сброс текущего стейта?
 }
 //=============================================================================
 void gl::InvalidatePipelineState()
