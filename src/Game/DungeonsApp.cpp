@@ -1,11 +1,38 @@
 ﻿#include "stdafx.h"
-#include "GameApp3.h"
+#include "DungeonsApp.h"
+//
+//https://www.youtube.com/watch?v=yk0psth053I - такой пс1 стиль
+//https://github.com/feresr/renderer/blob/master/engine/assets/fragment.glsl  - простое освещение
+// https://github.com/QwePek/LightingOpenGL - простое освещение
+//https://github.com/damdoy/opengl_examples/tree/master/volumetric_light
+//https://github.com/stanislawfortonski/3D-Engine-OpenGL-4/tree/master/shaders
+//https://github.com/carbonsunsu/CarbonRender - рендер пассы
+//https://github.com/potato3d/azdo
+//https://github.com/houmain/gpupad
+//https://github.com/Rabbid76/graphics-snippets
+//https://github.com/cadaver/turso3d/tree/master
+//
+//
+//https://github.com/moonwho101/DungeonStompDirectX12
+//https://github.com/pmborg/WoMA3Dengine/tree/main/CoreEngine_Tutorials/DXENGINE_054
+
+//
+//переделать загрузку меша на основе кода SceneLoader.h через fastgltf: нужна поддержка мультимеша, материалов, свойств модели.
+//также возможно нужно чтобы оно брало fastgltf для gltf, тиниобж для обж, и асимп для остального
+//
+//обновить сторонние либы
+//
+//возможно отключить левостороннюю систему координат
+//
+//StratusGFX
+//
+//https://github.com/QwePek/LightingOpenGL
 //=============================================================================
-GameApp3::GameApp3()
+DungeonsApp::DungeonsApp()
 {
 }
 //=============================================================================
-EngineCreateInfo GameApp3::GetCreateInfo() const
+EngineCreateInfo DungeonsApp::GetCreateInfo() const
 {
 	EngineCreateInfo createInfo{};
 	createInfo.render.vsync = true;
@@ -13,10 +40,10 @@ EngineCreateInfo GameApp3::GetCreateInfo() const
 	return createInfo;
 }
 //=============================================================================
-bool GameApp3::OnInit()
+bool DungeonsApp::OnInit()
 {
 	OnResize(GetWindowWidth(), GetWindowHeight());
-		
+
 	m_camera.SetPosition(glm::vec3(0.0f, 0.0f, -1.0f));
 
 	std::vector<MeshVertex> vertices = {
@@ -39,7 +66,7 @@ bool GameApp3::OnInit()
 	m_model2.scale = glm::vec3(3.0f);
 
 	m_model3 = LoadAssimpModel("ExampleData/mesh/school/school.obj");
-//	m_model3 = LoadAssimpModel("ExampleData/mesh/metro/metro.obj");
+	//	m_model3 = LoadAssimpModel("ExampleData/mesh/metro/metro.obj");
 
 
 	if (!createPipeline())
@@ -66,7 +93,7 @@ bool GameApp3::OnInit()
 	return true;
 }
 //=============================================================================
-void GameApp3::OnClose()
+void DungeonsApp::OnClose()
 {
 	delete m_model1.mesh;
 	delete m_model2.mesh;
@@ -82,7 +109,7 @@ void GameApp3::OnClose()
 	m_finalDepthBuffer = {};
 }
 //=============================================================================
-void GameApp3::OnUpdate(float deltaTime)
+void DungeonsApp::OnUpdate(float deltaTime)
 {
 	if (Input::IsKeyDown(GLFW_KEY_W)) m_camera.ProcessKeyboard(CameraForward, deltaTime);
 	if (Input::IsKeyDown(GLFW_KEY_S)) m_camera.ProcessKeyboard(CameraBackward, deltaTime);
@@ -100,7 +127,7 @@ void GameApp3::OnUpdate(float deltaTime)
 	}
 }
 //=============================================================================
-void GameApp3::OnRender()
+void DungeonsApp::OnRender()
 {
 	{
 		auto finalColorAttachment = gl::RenderColorAttachment{
@@ -131,19 +158,19 @@ void GameApp3::OnRender()
 		}
 		gl::EndRendering();
 	}
-		
+
 	//-------------------------------------------------------------------------
 	// FINAL PASS
 	//-------------------------------------------------------------------------
 	gl::BlitTextureToSwapChain(*m_finalColorBuffer, {}, {}, m_finalColorBuffer->Extent(), { GetWindowWidth(), GetWindowHeight(), 1 }, gl::MagFilter::Nearest);
 }
 //=============================================================================
-void GameApp3::OnImGuiDraw()
+void DungeonsApp::OnImGuiDraw()
 {
 	DrawFPS();
 }
 //=============================================================================
-void GameApp3::OnResize(uint16_t width, uint16_t height)
+void DungeonsApp::OnResize(uint16_t width, uint16_t height)
 {
 	m_finalColorBuffer = gl::CreateTexture2D({ width, height }, gl::Format::R8G8B8A8_SRGB, "FinalColorBuffer");
 	m_finalDepthBuffer = gl::CreateTexture2D({ width, height }, gl::Format::D32_FLOAT, "FinalDepthBuffer");
@@ -151,23 +178,23 @@ void GameApp3::OnResize(uint16_t width, uint16_t height)
 	m_projection = glm::perspective(glm::radians(65.0f), GetWindowAspect(), 0.01f, 1000.0f);
 }
 //=============================================================================
-void GameApp3::OnMouseButton(int button, int action, int mods)
+void DungeonsApp::OnMouseButton(int button, int action, int mods)
 {
 }
 //=============================================================================
-void GameApp3::OnMousePos(double x, double y)
+void DungeonsApp::OnMousePos(double x, double y)
 {
 }
 //=============================================================================
-void GameApp3::OnScroll(double dx, double dy)
+void DungeonsApp::OnScroll(double dx, double dy)
 {
 }
 //=============================================================================
-void GameApp3::OnKey(int key, int scanCode, int action, int mods)
+void DungeonsApp::OnKey(int key, int scanCode, int action, int mods)
 {
 }
 //=============================================================================
-void GameApp3::drawModel(GameModelOld& model)
+void DungeonsApp::drawModel(GameModelOld& model)
 {
 	const gl::Sampler& sampler = (model.textureFilter == gl::MagFilter::Linear)
 		? m_linearSampler.value()
@@ -186,7 +213,7 @@ void GameApp3::drawModel(GameModelOld& model)
 	m_materialUboData.noLighing = model.material.noLighing;
 	m_materialUbo->UpdateData(m_materialUboData);
 	gl::Cmd::BindUniformBuffer(2, m_materialUbo.value());
-		
+
 	if (model.material.diffuseTexture)
 		gl::Cmd::BindSampledImage(0, *model.material.diffuseTexture, sampler);
 	if (model.material.specularTexture)
@@ -201,7 +228,7 @@ void GameApp3::drawModel(GameModelOld& model)
 	model.mesh->Bind();
 }
 //=============================================================================
-void GameApp3::drawModel(std::optional<GameModel> model)
+void DungeonsApp::drawModel(std::optional<GameModel> model)
 {
 	const gl::Sampler& sampler = (model.value().textureFilter == gl::MagFilter::Linear)
 		? m_linearSampler.value()
@@ -241,7 +268,7 @@ void GameApp3::drawModel(std::optional<GameModel> model)
 	}
 }
 //=============================================================================
-bool GameApp3::createPipeline()
+bool DungeonsApp::createPipeline()
 {
 	auto vertexShader = gl::Shader(gl::ShaderType::VertexShader, io::ReadShaderCode("GameData/shaders/MainShader3.vert"), "MainShader VS");
 	if (!vertexShader.IsValid()) return false;

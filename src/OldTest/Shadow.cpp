@@ -1,6 +1,5 @@
 ﻿#include "stdafx.h"
 #include "Shadow.h"
-#include "OpenGL4Cmd.h"
 //=============================================================================
 bool ShadowMap::Create()
 {

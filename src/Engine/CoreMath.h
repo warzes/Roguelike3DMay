@@ -35,22 +35,7 @@ namespace math
 	{
 		return (value != 0) && ((value & (value - 1)) == 0);
 	}
-
-	inline int UpperPowerOfTwo(int const value)
-	{
-		return static_cast<int>(std::pow(2.0f, std::ceil(std::log(static_cast<float>(value)) / LN2)));
-	}
-
-	inline int LowerPowerOfTwo(int const value)
-	{
-		return static_cast<int>(std::pow(2.0f, std::floor(std::log(static_cast<float>(value)) / LN2)));
-	}
-
-	inline int NearestPowerOfTwo(int const value)
-	{
-		return static_cast<int>(std::pow(2.0f, std::round(std::log(static_cast<float>(value)) / LN2)));
-	}
-
+	
 	inline void GetFrustumPlanes(glm::mat4 viewProj, glm::vec4* planes)
 	{
 		viewProj = glm::transpose(viewProj);

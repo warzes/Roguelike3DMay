@@ -289,7 +289,7 @@ namespace gl
 		return CreateStorageBuffer(sizeof(T) * count, storageFlags, name);
 	}
 
-	void UpdateData(BufferStorageId id, TriviallyCopyableByteSpan data, size_t destOffsetBytes = 0);
+	void UpdateData(BufferStorageId id, ByteView data, size_t destOffsetBytes = 0);
 	void UpdateData(BufferStorageId id, const void* data, size_t size, size_t offset = 0);
 	void FillData(BufferStorageId id, const BufferFillInfo& clear = {});
 

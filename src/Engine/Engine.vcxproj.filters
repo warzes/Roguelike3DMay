@@ -3,256 +3,244 @@
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="Log.cpp">
-      <Filter>Core</Filter>
+      <Filter>02_Core</Filter>
     </ClCompile>
     <ClCompile Include="EngineApp.cpp">
-      <Filter>App</Filter>
+      <Filter>99_App</Filter>
     </ClCompile>
     <ClCompile Include="Profiler.cpp">
-      <Filter>App</Filter>
+      <Filter>99_App</Filter>
     </ClCompile>
     <ClCompile Include="FileUtils.cpp">
-      <Filter>Core</Filter>
+      <Filter>02_Core</Filter>
     </ClCompile>
     <ClCompile Include="CoreMath.cpp">
-      <Filter>Math</Filter>
+      <Filter>03_Math</Filter>
     </ClCompile>
     <ClCompile Include="AABB.cpp">
-      <Filter>Math</Filter>
+      <Filter>03_Math</Filter>
     </ClCompile>
     <ClCompile Include="Camera.cpp">
-      <Filter>Render</Filter>
+      <Filter>05_Render</Filter>
     </ClCompile>
     <ClCompile Include="Mesh.cpp">
-      <Filter>Render</Filter>
+      <Filter>05_Render</Filter>
     </ClCompile>
     <ClCompile Include="Material.cpp">
-      <Filter>Render</Filter>
+      <Filter>05_Render</Filter>
     </ClCompile>
     <ClCompile Include="Model.cpp">
-      <Filter>Render</Filter>
+      <Filter>05_Render</Filter>
     </ClCompile>
     <ClCompile Include="Frustum.cpp">
-      <Filter>Math</Filter>
-    </ClCompile>
-    <ClCompile Include="Light.cpp">
-      <Filter>Render</Filter>
+      <Filter>03_Math</Filter>
     </ClCompile>
     <ClCompile Include="Transform.cpp">
-      <Filter>Scene</Filter>
+      <Filter>06_Scene</Filter>
     </ClCompile>
     <ClCompile Include="Input.cpp">
-      <Filter>App</Filter>
+      <Filter>99_App</Filter>
     </ClCompile>
     <ClCompile Include="TextureManager.cpp">
-      <Filter>Render</Filter>
-    </ClCompile>
-    <ClCompile Include="Shadow.cpp">
-      <Filter>Render</Filter>
+      <Filter>05_Render</Filter>
     </ClCompile>
     <ClCompile Include="OpenGL4Shader.cpp">
-      <Filter>RHI\Resources</Filter>
+      <Filter>04_RHI\Resources</Filter>
     </ClCompile>
     <ClCompile Include="OpenGL4Buffer.cpp">
-      <Filter>RHI\Resources</Filter>
+      <Filter>04_RHI\Resources</Filter>
     </ClCompile>
     <ClCompile Include="OpenGL4DeviceProperties.cpp">
-      <Filter>RHI\Context</Filter>
+      <Filter>04_RHI\Context</Filter>
     </ClCompile>
     <ClCompile Include="OpenGL4DebugMarker.cpp">
-      <Filter>RHI\Context</Filter>
+      <Filter>04_RHI\Context</Filter>
     </ClCompile>
     <ClCompile Include="OpenGL4Timer.cpp">
-      <Filter>RHI\Resources</Filter>
+      <Filter>04_RHI\Resources</Filter>
     </ClCompile>
     <ClCompile Include="OpenGL4Sampler.cpp">
-      <Filter>RHI\Resources</Filter>
+      <Filter>04_RHI\Resources</Filter>
     </ClCompile>
     <ClCompile Include="OpenGL4SamplerCache.cpp">
-      <Filter>RHI\Context</Filter>
+      <Filter>04_RHI\Context</Filter>
     </ClCompile>
     <ClCompile Include="OpenGL4VertexArrayCache.cpp">
-      <Filter>RHI\Context</Filter>
+      <Filter>04_RHI\Context</Filter>
     </ClCompile>
     <ClCompile Include="OpenGL4Texture.cpp">
-      <Filter>RHI\Resources</Filter>
+      <Filter>04_RHI\Resources</Filter>
     </ClCompile>
     <ClCompile Include="OpenGL4Pipeline.cpp">
-      <Filter>RHI\Resources</Filter>
+      <Filter>04_RHI\Resources</Filter>
     </ClCompile>
     <ClCompile Include="OpenGL4FramebufferCache.cpp">
-      <Filter>RHI\Context</Filter>
+      <Filter>04_RHI\Context</Filter>
     </ClCompile>
     <ClCompile Include="OpenGL4Render.cpp">
-      <Filter>RHI\Context</Filter>
+      <Filter>04_RHI\Context</Filter>
     </ClCompile>
     <ClCompile Include="OpenGL4Context.cpp">
-      <Filter>RHI\Context</Filter>
+      <Filter>04_RHI\Context</Filter>
     </ClCompile>
     <ClCompile Include="OpenGL4Cmd.cpp">
-      <Filter>RHI\Context</Filter>
+      <Filter>04_RHI\Context</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="Log.h">
-      <Filter>Core</Filter>
+      <Filter>02_Core</Filter>
     </ClInclude>
     <ClInclude Include="EngineApp.h">
-      <Filter>App</Filter>
+      <Filter>99_App</Filter>
     </ClInclude>
     <ClInclude Include="Engine.h" />
     <ClInclude Include="Profiler.h">
-      <Filter>App</Filter>
+      <Filter>99_App</Filter>
     </ClInclude>
     <ClInclude Include="CoreFunc.h">
-      <Filter>Core</Filter>
+      <Filter>02_Core</Filter>
     </ClInclude>
     <ClInclude Include="BaseHeader.h">
-      <Filter>Base</Filter>
+      <Filter>01_Base</Filter>
     </ClInclude>
     <ClInclude Include="BasePlatform.h">
-      <Filter>Base</Filter>
+      <Filter>01_Base</Filter>
     </ClInclude>
     <ClInclude Include="EngineConfig.h">
-      <Filter>Base</Filter>
+      <Filter>01_Base</Filter>
     </ClInclude>
     <ClInclude Include="StrUtils.h">
-      <Filter>Core</Filter>
+      <Filter>02_Core</Filter>
     </ClInclude>
     <ClInclude Include="FileUtils.h">
-      <Filter>Core</Filter>
+      <Filter>02_Core</Filter>
     </ClInclude>
     <ClInclude Include="Input.h">
-      <Filter>App</Filter>
+      <Filter>99_App</Filter>
     </ClInclude>
     <ClInclude Include="CoreMath.h">
-      <Filter>Math</Filter>
+      <Filter>03_Math</Filter>
     </ClInclude>
     <ClInclude Include="FlagsUtils.h">
-      <Filter>Core</Filter>
+      <Filter>02_Core</Filter>
     </ClInclude>
     <ClInclude Include="BasicTypes.h">
-      <Filter>Core</Filter>
+      <Filter>02_Core</Filter>
     </ClInclude>
     <ClInclude Include="Hash.h">
-      <Filter>Core</Filter>
+      <Filter>02_Core</Filter>
     </ClInclude>
     <ClInclude Include="BasicConstants.h">
-      <Filter>Core</Filter>
+      <Filter>02_Core</Filter>
     </ClInclude>
     <ClInclude Include="AABB.h">
-      <Filter>Math</Filter>
+      <Filter>03_Math</Filter>
     </ClInclude>
     <ClInclude Include="Camera.h">
-      <Filter>Render</Filter>
+      <Filter>05_Render</Filter>
     </ClInclude>
     <ClInclude Include="Mesh.h">
-      <Filter>Render</Filter>
+      <Filter>05_Render</Filter>
     </ClInclude>
     <ClInclude Include="Material.h">
-      <Filter>Render</Filter>
+      <Filter>05_Render</Filter>
     </ClInclude>
     <ClInclude Include="Model.h">
-      <Filter>Render</Filter>
+      <Filter>05_Render</Filter>
     </ClInclude>
     <ClInclude Include="Frustum.h">
-      <Filter>Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Light.h">
-      <Filter>Render</Filter>
+      <Filter>03_Math</Filter>
     </ClInclude>
     <ClInclude Include="Transform.h">
-      <Filter>Scene</Filter>
+      <Filter>06_Scene</Filter>
     </ClInclude>
     <ClInclude Include="KeyCode.h">
-      <Filter>App</Filter>
+      <Filter>99_App</Filter>
     </ClInclude>
     <ClInclude Include="TextureManager.h">
-      <Filter>Render</Filter>
-    </ClInclude>
-    <ClInclude Include="Shadow.h">
-      <Filter>Render</Filter>
+      <Filter>05_Render</Filter>
     </ClInclude>
     <ClInclude Include="OpenGL4Shader.h">
-      <Filter>RHI\Resources</Filter>
+      <Filter>04_RHI\Resources</Filter>
     </ClInclude>
     <ClInclude Include="OpenGL4Buffer.h">
-      <Filter>RHI\Resources</Filter>
+      <Filter>04_RHI\Resources</Filter>
     </ClInclude>
     <ClInclude Include="OpenGL4DeviceProperties.h">
-      <Filter>RHI\Context</Filter>
+      <Filter>04_RHI\Context</Filter>
     </ClInclude>
     <ClInclude Include="OpenGL4DebugMarker.h">
-      <Filter>RHI\Context</Filter>
+      <Filter>04_RHI\Context</Filter>
     </ClInclude>
     <ClInclude Include="OpenGL4Timer.h">
-      <Filter>RHI\Resources</Filter>
+      <Filter>04_RHI\Resources</Filter>
     </ClInclude>
     <ClInclude Include="OpenGL4Sampler.h">
-      <Filter>RHI\Resources</Filter>
+      <Filter>04_RHI\Resources</Filter>
     </ClInclude>
     <ClInclude Include="OpenGL4SamplerCache.h">
-      <Filter>RHI\Context</Filter>
+      <Filter>04_RHI\Context</Filter>
     </ClInclude>
     <ClInclude Include="OpenGL4VertexArrayCache.h">
-      <Filter>RHI\Context</Filter>
+      <Filter>04_RHI\Context</Filter>
     </ClInclude>
     <ClInclude Include="OpenGL4Texture.h">
-      <Filter>RHI\Resources</Filter>
+      <Filter>04_RHI\Resources</Filter>
     </ClInclude>
     <ClInclude Include="OpenGL4Pipeline.h">
-      <Filter>RHI\Resources</Filter>
+      <Filter>04_RHI\Resources</Filter>
     </ClInclude>
     <ClInclude Include="OpenGL4FramebufferCache.h">
-      <Filter>RHI\Context</Filter>
+      <Filter>04_RHI\Context</Filter>
     </ClInclude>
     <ClInclude Include="OpenGL4Render.h">
-      <Filter>RHI\Context</Filter>
+      <Filter>04_RHI\Context</Filter>
     </ClInclude>
     <ClInclude Include="OpenGL4Context.h">
-      <Filter>RHI\Context</Filter>
+      <Filter>04_RHI\Context</Filter>
     </ClInclude>
     <ClInclude Include="OpenGL4Cmd.h">
-      <Filter>RHI\Context</Filter>
+      <Filter>04_RHI\Context</Filter>
     </ClInclude>
     <ClInclude Include="OpenGL4Core.h">
-      <Filter>RHI</Filter>
+      <Filter>04_RHI</Filter>
     </ClInclude>
     <ClInclude Include="OpenGL4ApiToEnum.h">
-      <Filter>RHI</Filter>
+      <Filter>04_RHI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Filter Include="App">
-      <UniqueIdentifier>{784c67a7-c103-49ce-a835-233c3aa502c2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="RHI">
-      <UniqueIdentifier>{a7d95fed-4ab8-4e07-bec9-948d744163d9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Math">
-      <UniqueIdentifier>{a606259f-5eed-44b4-a4d8-23c2f55e9e50}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Scene">
-      <UniqueIdentifier>{7c3bc350-aa8a-420d-b6db-71b56f1171f2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Core">
-      <UniqueIdentifier>{dd46222f-db0a-4949-8c3b-dfa5952befcf}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Base">
+    <Filter Include="01_Base">
       <UniqueIdentifier>{fa34636f-7a07-4f3e-984b-943a463ecdc9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Render">
+    <Filter Include="02_Core">
+      <UniqueIdentifier>{dd46222f-db0a-4949-8c3b-dfa5952befcf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03_Math">
+      <UniqueIdentifier>{a606259f-5eed-44b4-a4d8-23c2f55e9e50}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05_Render">
       <UniqueIdentifier>{2aae9673-9a65-476a-bebe-2d7a0b38ebed}</UniqueIdentifier>
     </Filter>
-    <Filter Include="RHI\NewFilter1">
+    <Filter Include="04_RHI">
+      <UniqueIdentifier>{a7d95fed-4ab8-4e07-bec9-948d744163d9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04_RHI\NewFilter1">
       <UniqueIdentifier>{5356188e-7773-42d5-9c3e-3453ca0c0cff}</UniqueIdentifier>
     </Filter>
-    <Filter Include="RHI\Resources">
+    <Filter Include="04_RHI\Resources">
       <UniqueIdentifier>{d65b5f70-f0be-4ee9-b4bb-17bc525ef974}</UniqueIdentifier>
     </Filter>
-    <Filter Include="RHI\Context">
+    <Filter Include="04_RHI\Context">
       <UniqueIdentifier>{5e536629-1037-44fe-bec8-ad5fa3f83f02}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06_Scene">
+      <UniqueIdentifier>{7c3bc350-aa8a-420d-b6db-71b56f1171f2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="99_App">
+      <UniqueIdentifier>{784c67a7-c103-49ce-a835-233c3aa502c2}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

@@ -7,6 +7,7 @@
 #include "NewTest005.h"
 
 #include "GameApp3.h"
+#include "DungeonsApp.h"
 //=============================================================================
 #if defined(_MSC_VER)
 #	pragma comment( lib, "3rdparty.lib" )
@@ -17,7 +18,6 @@ int main(
 	[[maybe_unused]] int   argc,
 	[[maybe_unused]] char* argv[])
 {
-	//создать прогу куда перенести старый код и старые тесты 
 	//создать для туториалов
 
 	//NewTest001 game;
@@ -26,11 +26,8 @@ int main(
 	//NewTest004 game;
 	//NewTest005 game;
 
-	//TempApp game;
-
-	//GameApp game;
-	//GameApp2 game;
-	GameApp3 game;
+	//GameApp3 game;
+	DungeonsApp game;
 	game.Run();
 }
 //=============================================================================

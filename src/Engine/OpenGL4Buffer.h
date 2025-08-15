@@ -28,7 +28,7 @@ namespace gl
 	{
 	public:
 		explicit Buffer(size_t size, BufferStorageFlags storageFlags = BufferStorageFlag::None, std::string_view name = "");
-		explicit Buffer(TriviallyCopyableByteSpan data, BufferStorageFlags storageFlags = BufferStorageFlag::None, std::string_view name = "");
+		explicit Buffer(ByteView data, BufferStorageFlags storageFlags = BufferStorageFlag::None, std::string_view name = "");
 
 		Buffer(Buffer&& old) noexcept;
 		Buffer& operator=(Buffer&& old) noexcept;
@@ -49,7 +49,7 @@ namespace gl
 		[[nodiscard]] void* GetMappedPointer() noexcept { return m_mappedMemory; }
 		[[nodiscard]] const void* GetMappedPointer() const noexcept { return m_mappedMemory; }
 
-		void UpdateData(TriviallyCopyableByteSpan data, size_t destOffsetBytes = 0);
+		void UpdateData(ByteView data, size_t destOffsetBytes = 0);
 		void FillData(const BufferFillInfo& clear = {});	
 
 		// Invalidates the content of the buffer's data store
@@ -106,7 +106,7 @@ namespace gl
 			Buffer::UpdateData(data, sizeof(T) * startIndex);
 		}
 
-		void UpdateData(TriviallyCopyableByteSpan data, size_t destOffsetBytes = 0) = delete;
+		void UpdateData(ByteView data, size_t destOffsetBytes = 0) = delete;
 
 		[[nodiscard]] T* GetMappedPointer() noexcept { return static_cast<T*>(m_mappedMemory); }
 		[[nodiscard]] const T* GetMappedPointer() const noexcept { return static_cast<T*>(m_mappedMemory); }

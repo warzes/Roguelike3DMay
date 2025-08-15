@@ -818,7 +818,7 @@ constexpr size_t roundUp(size_t numberToRoundUp, size_t multipleOf)
 //	return id;
 //}
 //=============================================================================
-void gl::UpdateData(BufferStorageId id, TriviallyCopyableByteSpan data, size_t destOffsetBytes)
+void gl::UpdateData(BufferStorageId id, ByteView data, size_t destOffsetBytes)
 {
 	UpdateData(id, data.data(), data.size_bytes(), destOffsetBytes);
 }

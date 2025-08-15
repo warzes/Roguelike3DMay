@@ -1,7 +1,5 @@
 ﻿#pragma once
 
-#include "OpenGL4Texture.h"
-
 // TODO: переделать чтобы создание прописывало свойства, а не наоборот как сейчас
 
 struct ShadowMap final

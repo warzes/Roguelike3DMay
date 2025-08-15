@@ -105,6 +105,21 @@
     <ClCompile Include="MeshOLD.cpp">
       <Filter>engine\Graphics</Filter>
     </ClCompile>
+    <ClCompile Include="Model.cpp">
+      <Filter>engine\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="Shadow.cpp">
+      <Filter>engine\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="Light.cpp">
+      <Filter>engine\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="Material.cpp">
+      <Filter>engine\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh.cpp">
+      <Filter>engine\Render</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -216,6 +231,21 @@
     </ClInclude>
     <ClInclude Include="MeshOLD.h">
       <Filter>engine\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Model.h">
+      <Filter>engine\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="Shadow.h">
+      <Filter>engine\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="Light.h">
+      <Filter>engine\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>engine\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="Material.h">
+      <Filter>engine\Render</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

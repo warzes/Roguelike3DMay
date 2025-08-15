@@ -49,7 +49,7 @@ gl::Buffer::Buffer(size_t size, BufferStorageFlags storageFlags, std::string_vie
 {
 }
 //=============================================================================
-gl::Buffer::Buffer(TriviallyCopyableByteSpan data, BufferStorageFlags storageFlags, std::string_view name)
+gl::Buffer::Buffer(ByteView data, BufferStorageFlags storageFlags, std::string_view name)
 	: Buffer(data.data(), data.size_bytes(), storageFlags, name)
 {
 }
@@ -89,7 +89,7 @@ gl::Buffer::~Buffer()
 	}
 }
 //=============================================================================
-void gl::Buffer::UpdateData(TriviallyCopyableByteSpan data, size_t destOffsetBytes)
+void gl::Buffer::UpdateData(ByteView data, size_t destOffsetBytes)
 {
 	updateData(data.data(), data.size_bytes(), destOffsetBytes);
 }

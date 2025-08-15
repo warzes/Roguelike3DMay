@@ -30,6 +30,9 @@
     <ClCompile Include="SceneLoader.cpp">
       <Filter>_test</Filter>
     </ClCompile>
+    <ClCompile Include="DungeonsApp.cpp">
+      <Filter>Dungeons</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -64,6 +67,9 @@
     <ClInclude Include="UniformObjects.h">
       <Filter>NewGame\graphics</Filter>
     </ClInclude>
+    <ClInclude Include="DungeonsApp.h">
+      <Filter>Dungeons</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="_test">
@@ -77,6 +83,9 @@
     </Filter>
     <Filter Include="NewGame\graphics">
       <UniqueIdentifier>{019ce0b2-9388-44c4-82f3-dca0975d837e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dungeons">
+      <UniqueIdentifier>{64dd8bad-dbc0-49d7-bb4e-0b7f81a54de8}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

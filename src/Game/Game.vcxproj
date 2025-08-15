@@ -94,6 +94,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="DungeonsApp.cpp" />
     <ClCompile Include="GameApp3.cpp" />
     <ClCompile Include="GameModel.cpp" />
     <ClCompile Include="main.cpp" />
@@ -110,6 +111,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DungeonsApp.h" />
     <ClInclude Include="GameApp3.h" />
     <ClInclude Include="GameConfig.h" />
     <ClInclude Include="GameModel.h" />

@@ -2,6 +2,7 @@
 
 #include "GameModelManager.h"
 #include "ShadowPassManager.h"
+#include "Light.h"
 
 namespace sceneUBO
 {

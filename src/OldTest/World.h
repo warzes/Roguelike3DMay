@@ -1,6 +1,8 @@
 ﻿#pragma once
 
 #include "GameModel.h"
+#include "Shadow.h"
+#include "Light.h"
 
 class World final
 {

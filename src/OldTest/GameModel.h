@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include "Mesh.h"
+
 Mesh* LoadDataMesh(const std::vector<MeshVertex>& vertex, const std::vector<uint32_t>& indices, PhongMaterial* material = nullptr);
 Mesh* LoadAssimpMesh(const std::string& filename);
 

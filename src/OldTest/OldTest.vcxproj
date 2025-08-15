@@ -55,8 +55,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <WarningLevel>EnableAllWarnings</WarningLevel>
-      <SDLCheck>true</SDLCheck>
+      <WarningLevel>TurnOffAllWarnings</WarningLevel>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
@@ -74,10 +73,9 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <WarningLevel>EnableAllWarnings</WarningLevel>
+      <WarningLevel>TurnOffAllWarnings</WarningLevel>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
@@ -102,11 +100,15 @@
     <ClCompile Include="GameModelManager.cpp" />
     <ClCompile Include="GameSceneManager.cpp" />
     <ClCompile Include="GraphicSystem.cpp" />
+    <ClCompile Include="Light.cpp" />
     <ClCompile Include="LightOLD.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainRenderPass.cpp" />
+    <ClCompile Include="Material.cpp" />
     <ClCompile Include="MaterialOLD.cpp" />
+    <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="MeshOLD.cpp" />
+    <ClCompile Include="Model.cpp" />
     <ClCompile Include="ModelOLD.cpp" />
     <ClCompile Include="OpenGL4Advance.cpp" />
     <ClCompile Include="OpenGL4Simple.cpp" />
@@ -114,6 +116,7 @@
     <ClCompile Include="PipelineDeferredSSAO.cpp" />
     <ClCompile Include="PipelineShadowMapping.cpp" />
     <ClCompile Include="RenderData.cpp" />
+    <ClCompile Include="Shadow.cpp" />
     <ClCompile Include="ShadowPass.cpp" />
     <ClCompile Include="ShadowPassManager.cpp" />
     <ClCompile Include="stdafx.cpp">
@@ -165,10 +168,14 @@
     <ClInclude Include="GameModelManager.h" />
     <ClInclude Include="GameSceneManager.h" />
     <ClInclude Include="GraphicSystem.h" />
+    <ClInclude Include="Light.h" />
     <ClInclude Include="LightOLD.h" />
     <ClInclude Include="MainRenderPass.h" />
+    <ClInclude Include="Material.h" />
     <ClInclude Include="MaterialOLD.h" />
+    <ClInclude Include="Mesh.h" />
     <ClInclude Include="MeshOLD.h" />
+    <ClInclude Include="Model.h" />
     <ClInclude Include="ModelOLD.h" />
     <ClInclude Include="OpenGL4Advance.h" />
     <ClInclude Include="OpenGL4Simple.h" />
@@ -177,6 +184,7 @@
     <ClInclude Include="PipelineDeferredSSAOShaders.h" />
     <ClInclude Include="PipelineShadowMapping.h" />
     <ClInclude Include="RenderData.h" />
+    <ClInclude Include="Shadow.h" />
     <ClInclude Include="ShadowPass.h" />
     <ClInclude Include="ShadowPassManager.h" />
     <ClInclude Include="stdafx.h" />
