@@ -93,11 +93,11 @@ bool dung::DungeonsApp::OnInit()
 
 	//adding lights
 	m_pointLights.push_back(PointLight({ 0,3, 2 }, { 1,1,1 }, 3, 7, 0.8));//white middle light
-	m_pointLights.push_back(PointLight({ 15,5 * 2 + 1, -12 }, { 0.9F,0.5F,0.2F }, 3, 12, 1.0F));//orange fire light
+	m_pointLights.push_back(PointLight({ 15,20 * 2 + 1, -12 }, { 0.9F,0.5F,0.2F }, 3, 12, 1.0F));//orange fire light
 	m_pointLights.push_back(PointLight({ 14,3, 14 }, { 0.25F,0.22F,0.15F }, 16, 32, 1.0F));//warmish white corner room light
 	m_pointLights.push_back(PointLight({ -14,3, -14 }, { 0.152F, 0.211F, 0.368F }, 20, 64, 0.9F));//blue corner room light
 	m_pointLights.push_back(PointLight({ 14, 0.5F, 0 }, { 0.152F, 0.611F, 0.568F }, 4, 6, 0.7F));//rotating brush area light bottom green ish
-	m_pointLights.push_back(PointLight({ 12, 5 * 2 + 1, 0 }, { 0.949, 0.780, 0.352 }, 2, 3, 0.9F));//rotating brush area candle light top 
+	m_pointLights.push_back(PointLight({ 12, 20 * 2 + 1, 0 }, { 0.949, 0.780, 0.352 }, 2, 3, 0.9F));//rotating brush area candle light top 
 	m_pointLights.push_back(PointLight({ 11, 2, 5 }, { 0.949, 0.780, 0.352 }, 1, 4, 0.9F));//rotating brush area candle light top 
 	m_pointLights.push_back(PointLight({ 2, 2.5, -11 }, { 0.849, 0.54, 0.36 }, 4, 9, 0.8F));//dragon light
 
@@ -161,7 +161,7 @@ void dung::DungeonsApp::OnRender()
 			m_sceneUboData.eyePosition = m_camera.Position;
 			m_sceneUboData.fogStart = 20;
 			m_sceneUboData.fogEnd = 52;
-			m_sceneUboData.fogColor = glm::vec3(1.0, 0.8, 0.8);
+			m_sceneUboData.fogColor = glm::vec3(1.0);
 			m_sceneUbo->UpdateData(m_sceneUboData);
 			gl::Cmd::BindUniformBuffer(0, m_sceneUbo.value());
 
@@ -170,13 +170,11 @@ void dung::DungeonsApp::OnRender()
 				m_lightUboData.pointLights[i] = m_pointLights[i].getMatrix();
 			}
 			m_lightUboData.activeLights = glm::min((int)m_pointLights.size(), 8);
-			m_lightUboData.positionResolution = 128;
 
 			m_lightUbo->UpdateData(m_lightUboData);
-			gl::Cmd::BindUniformBuffer(2, m_lightUbo.value());
+			gl::Cmd::BindUniformBuffer(1, m_lightUbo.value());
 
-
-			//drawModel(m_model1);
+			drawModel(m_model1);
 			drawModel(m_model2);
 			drawModel(m_model3);
 
@@ -228,7 +226,7 @@ void dung::DungeonsApp::drawModel(GameModelOld& model)
 	m_objectUboData.modelMatrix = model.GetModelMat();
 	m_objectUboData.normalMatrix = glm::mat3(glm::transpose(glm::inverse(m_objectUboData.modelMatrix)));
 	m_objectUbo->UpdateData(m_objectUboData);
-	gl::Cmd::BindUniformBuffer(1, m_objectUbo.value());
+	gl::Cmd::BindUniformBuffer(2, m_objectUbo.value());
 
 	m_materialUboData.diffuse = glm::vec4(1.0f, 0.0f, 1.0f, 1.0f);
 	m_materialUboData.hasDiffuseTexture = model.material.diffuseTexture != nullptr;
@@ -263,12 +261,11 @@ void dung::DungeonsApp::drawModel(std::optional<GameModel> model)
 	m_objectUboData.modelMatrix = model.value().GetModelMat();
 	m_objectUboData.normalMatrix = glm::mat3(glm::transpose(glm::inverse(m_objectUboData.modelMatrix)));
 	m_objectUbo->UpdateData(m_objectUboData);
-	gl::Cmd::BindUniformBuffer(1, m_objectUbo.value());
+	gl::Cmd::BindUniformBuffer(2, m_objectUbo.value());
 
 	for (size_t i = 0; i < model.value().meshes.size(); i++)
 	{
 		auto& meshes = model.value().meshes[i];
-
 
 		m_materialUboData.diffuse = glm::vec4(1.0f, 0.0f, 1.0f, 1.0f);
 		m_materialUboData.hasDiffuseTexture = meshes->GetMaterial()->diffuseTexture != nullptr;

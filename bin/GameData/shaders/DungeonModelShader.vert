@@ -1,4 +1,4 @@
-п»ї#version 460 core
+#version 460 core
 
 layout (location = 0) in vec3 aPosition;
 layout (location = 1) in vec3 aColor;
@@ -7,52 +7,47 @@ layout (location = 3) in vec2 aTexCoords;
 layout (location = 4) in vec3 aTangent;
 
 layout(location = 0) out vec2 vTexCoords;
-layout(location = 1) out vec3 vColor;
+layout(location = 1) out vec4 vColor;
 layout(location = 2) out vec3 vNormal;
-layout(location = 3) out vec3 vViewDir;
-layout(location = 4) out vec3 vWorldPosition;
-layout(location = 5) out vec3 vCameraPosition;
-layout(location = 6) out vec4 lightVertexColor;
-layout(location = 7) out float visibility;
+layout(location = 3) out vec3 vWorldPosition;
+layout(location = 4) out float visibility;
 
-layout(binding = 0, std140) uniform SceneUniforms { 
-	mat4 viewMatrix;
+layout(binding = 0, std140) uniform SceneUniforms {
 	mat4 projectionMatrix;
+	mat4 viewMatrix;
 	vec3 eyePosition;
 	float fogStart;
 	float fogEnd;
 	vec3 fogColor;
 };
 
-layout(binding = 1, std140) uniform ModelObjUniforms { 
+layout(binding = 1, std140) uniform LightUniforms {
+	mat4 pointLights[8];
+	int activeLights;
+};
+
+struct LightSource
+{
+	vec3  diffuseColor;
+	float diffusePower;
+	vec3  specularColor;
+	float specularPower;
+	vec3  position;
+	int   type;
+	float size;
+};
+
+layout(binding = 2, std140) uniform ModelObjUniforms {
 	mat4 modelMatrix;
 	mat3 normalMatrix;
 };
 
-layout(binding = 2, std140) uniform LightUniforms { 
-	mat4 pointLights[8];
-	int activeLights;
-	float positionResolution;
-};
-
 void main()
 {
-	vTexCoords = aTexCoords;
-	vColor     = aColor;
-	//vNormal  = mat3(transpose(inverse(model))) * aNormal;
-	//vNormal    = (modelMatrix * vec4(aNormal, 0)).xyz;
-	vNormal = normalize(normalMatrix * aNormal);
-
 	vec4 worldPosition = modelMatrix * vec4(aPosition, 1.0f);
 	vWorldPosition = worldPosition.xyz;
 
-	vec4 cameraPosition = viewMatrix * worldPosition;
-	vCameraPosition = cameraPosition.xyz;
-
-	vViewDir = normalize(eyePosition - vWorldPosition);
-
-	gl_Position = projectionMatrix * cameraPosition;
-
+	gl_Position = projectionMatrix * viewMatrix * worldPosition;
 
 	//Calculate visibility for vertex based on distance from camera
 	float distanceFromCam = length(gl_Position.xyz);
@@ -61,14 +56,11 @@ void main()
 	visibility = 1.0 - visibility;
 	visibility *= visibility;
 
-	//recalculate distance for vertex for vertex jitter 
-	distanceFromCam = clamp(gl_Position.w, -0.1, 1000.0);
-
-	//apply nostalgic vertex jitter
-	gl_Position.xy = round(gl_Position.xy * (positionResolution / distanceFromCam)) / (positionResolution / distanceFromCam);
+	vNormal = normalize(normalMatrix * aNormal);
+	vTexCoords = aTexCoords;
 
 	//Apply vertex lighting
-	lightVertexColor = vec4(0);
+	vColor = vec4(0);
 	vec3 vertToLight;
 	float dotToLight;
 	float distToLight;
@@ -82,7 +74,7 @@ void main()
 		power = 1.0 - power;
 		power *= power;
 		dotToLight = clamp(dot(normalize(vertToLight), vNormal), 0.0, 1.0);
-		lightVertexColor += vec4(aColor, 1.0) * pointLights[i][1] * dotToLight * pointLights[i][2][2] * power;
+		vColor += vec4(aColor, 1.0) * pointLights[i][1] * dotToLight * pointLights[i][2][2] * power;
 	}
-	lightVertexColor.a = 1.0; // TODO: 
+	vColor.a = 1.0; // TODO: альфу тоже можно передавать здесь
 }

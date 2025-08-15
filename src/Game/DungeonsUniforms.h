@@ -4,8 +4,8 @@ namespace dung
 {
 	struct alignas(16) SceneUniforms final
 	{
-		glm::mat4 viewMatrix;
 		glm::mat4 projectionMatrix;
+		glm::mat4 viewMatrix;
 		glm::vec3 eyePosition;
 		float fogStart;
 		float fogEnd;
@@ -22,7 +22,6 @@ namespace dung
 	{
 		glm::mat4 pointLights[8];
 		int activeLights;
-		float positionResolution;
 	};
 
 } // namespace dung
