@@ -28,11 +28,11 @@
 //
 //https://github.com/QwePek/LightingOpenGL
 //=============================================================================
-DungeonsApp::DungeonsApp()
+dung::DungeonsApp::DungeonsApp()
 {
 }
 //=============================================================================
-EngineCreateInfo DungeonsApp::GetCreateInfo() const
+EngineCreateInfo dung::DungeonsApp::GetCreateInfo() const
 {
 	EngineCreateInfo createInfo{};
 	createInfo.render.vsync = true;
@@ -40,7 +40,7 @@ EngineCreateInfo DungeonsApp::GetCreateInfo() const
 	return createInfo;
 }
 //=============================================================================
-bool DungeonsApp::OnInit()
+bool dung::DungeonsApp::OnInit()
 {
 	OnResize(GetWindowWidth(), GetWindowHeight());
 
@@ -72,9 +72,10 @@ bool DungeonsApp::OnInit()
 	if (!createPipeline())
 		return false;
 
-	m_globalUbo = gl::TypedBuffer<GlobalUniforms>(gl::BufferStorageFlag::DynamicStorage);
-	m_objectUbo = gl::TypedBuffer<ObjectUniforms>(gl::BufferStorageFlag::DynamicStorage);
+	m_sceneUbo = gl::TypedBuffer<SceneUniforms>(gl::BufferStorageFlag::DynamicStorage);
+	m_objectUbo = gl::TypedBuffer<ModelObjUniforms>(gl::BufferStorageFlag::DynamicStorage);
 	m_materialUbo = gl::TypedBuffer<MaterialUniforms>(gl::BufferStorageFlag::DynamicStorage);
+	m_lightUbo = gl::TypedBuffer<LightUniforms>(gl::BufferStorageFlag::DynamicStorage);
 
 	gl::SamplerState sampleDesc;
 	sampleDesc.minFilter = gl::MinFilter::Nearest;
@@ -90,10 +91,20 @@ bool DungeonsApp::OnInit()
 	sampleDesc.addressModeV = gl::AddressMode::Repeat;
 	m_linearSampler = gl::Sampler(sampleDesc);
 
+	//adding lights
+	m_pointLights.push_back(PointLight({ 0,3, 2 }, { 1,1,1 }, 3, 7, 0.8));//white middle light
+	m_pointLights.push_back(PointLight({ 15,5 * 2 + 1, -12 }, { 0.9F,0.5F,0.2F }, 3, 12, 1.0F));//orange fire light
+	m_pointLights.push_back(PointLight({ 14,3, 14 }, { 0.25F,0.22F,0.15F }, 16, 32, 1.0F));//warmish white corner room light
+	m_pointLights.push_back(PointLight({ -14,3, -14 }, { 0.152F, 0.211F, 0.368F }, 20, 64, 0.9F));//blue corner room light
+	m_pointLights.push_back(PointLight({ 14, 0.5F, 0 }, { 0.152F, 0.611F, 0.568F }, 4, 6, 0.7F));//rotating brush area light bottom green ish
+	m_pointLights.push_back(PointLight({ 12, 5 * 2 + 1, 0 }, { 0.949, 0.780, 0.352 }, 2, 3, 0.9F));//rotating brush area candle light top 
+	m_pointLights.push_back(PointLight({ 11, 2, 5 }, { 0.949, 0.780, 0.352 }, 1, 4, 0.9F));//rotating brush area candle light top 
+	m_pointLights.push_back(PointLight({ 2, 2.5, -11 }, { 0.849, 0.54, 0.36 }, 4, 9, 0.8F));//dragon light
+
 	return true;
 }
 //=============================================================================
-void DungeonsApp::OnClose()
+void dung::DungeonsApp::OnClose()
 {
 	delete m_model1.mesh;
 	delete m_model2.mesh;
@@ -101,15 +112,15 @@ void DungeonsApp::OnClose()
 	m_nearestSampler = {};
 	m_linearSampler = {};
 
-	m_globalUbo = {};
+	m_sceneUbo = {};
 	m_objectUbo = {};
 	m_materialUbo = {};
-
+	m_lightUbo = {};
 	m_finalColorBuffer = {};
 	m_finalDepthBuffer = {};
 }
 //=============================================================================
-void DungeonsApp::OnUpdate(float deltaTime)
+void dung::DungeonsApp::OnUpdate(float deltaTime)
 {
 	if (Input::IsKeyDown(GLFW_KEY_W)) m_camera.ProcessKeyboard(CameraForward, deltaTime);
 	if (Input::IsKeyDown(GLFW_KEY_S)) m_camera.ProcessKeyboard(CameraBackward, deltaTime);
@@ -127,7 +138,7 @@ void DungeonsApp::OnUpdate(float deltaTime)
 	}
 }
 //=============================================================================
-void DungeonsApp::OnRender()
+void dung::DungeonsApp::OnRender()
 {
 	{
 		auto finalColorAttachment = gl::RenderColorAttachment{
@@ -143,15 +154,29 @@ void DungeonsApp::OnRender()
 
 		gl::BeginRendering({ .colorAttachments = {&finalColorAttachment, 1}, .depthAttachment = finalDepthAttachment });
 		{
-			m_globalUboData.view = m_camera.GetViewMatrix();
-			m_globalUboData.proj = m_projection;
-			m_globalUboData.eyePosition = m_camera.Position;
-			m_globalUbo->UpdateData(m_globalUboData);
-
 			gl::Cmd::BindGraphicsPipeline(m_pipeline.value());
-			gl::Cmd::BindUniformBuffer(0, m_globalUbo.value());
 
-			drawModel(m_model1);
+			m_sceneUboData.viewMatrix = m_camera.GetViewMatrix();
+			m_sceneUboData.projectionMatrix = m_projection;
+			m_sceneUboData.eyePosition = m_camera.Position;
+			m_sceneUboData.fogStart = 20;
+			m_sceneUboData.fogEnd = 52;
+			m_sceneUboData.fogColor = glm::vec3(1.0, 0.8, 0.8);
+			m_sceneUbo->UpdateData(m_sceneUboData);
+			gl::Cmd::BindUniformBuffer(0, m_sceneUbo.value());
+
+			for (size_t i = 0; i < m_pointLights.size(); i++)
+			{
+				m_lightUboData.pointLights[i] = m_pointLights[i].getMatrix();
+			}
+			m_lightUboData.activeLights = glm::min((int)m_pointLights.size(), 8);
+			m_lightUboData.positionResolution = 128;
+
+			m_lightUbo->UpdateData(m_lightUboData);
+			gl::Cmd::BindUniformBuffer(2, m_lightUbo.value());
+
+
+			//drawModel(m_model1);
 			drawModel(m_model2);
 			drawModel(m_model3);
 
@@ -165,12 +190,12 @@ void DungeonsApp::OnRender()
 	gl::BlitTextureToSwapChain(*m_finalColorBuffer, {}, {}, m_finalColorBuffer->Extent(), { GetWindowWidth(), GetWindowHeight(), 1 }, gl::MagFilter::Nearest);
 }
 //=============================================================================
-void DungeonsApp::OnImGuiDraw()
+void dung::DungeonsApp::OnImGuiDraw()
 {
 	DrawFPS();
 }
 //=============================================================================
-void DungeonsApp::OnResize(uint16_t width, uint16_t height)
+void dung::DungeonsApp::OnResize(uint16_t width, uint16_t height)
 {
 	m_finalColorBuffer = gl::CreateTexture2D({ width, height }, gl::Format::R8G8B8A8_SRGB, "FinalColorBuffer");
 	m_finalDepthBuffer = gl::CreateTexture2D({ width, height }, gl::Format::D32_FLOAT, "FinalDepthBuffer");
@@ -178,29 +203,30 @@ void DungeonsApp::OnResize(uint16_t width, uint16_t height)
 	m_projection = glm::perspective(glm::radians(65.0f), GetWindowAspect(), 0.01f, 1000.0f);
 }
 //=============================================================================
-void DungeonsApp::OnMouseButton(int button, int action, int mods)
+void dung::DungeonsApp::OnMouseButton(int button, int action, int mods)
 {
 }
 //=============================================================================
-void DungeonsApp::OnMousePos(double x, double y)
+void dung::DungeonsApp::OnMousePos(double x, double y)
 {
 }
 //=============================================================================
-void DungeonsApp::OnScroll(double dx, double dy)
+void dung::DungeonsApp::OnScroll(double dx, double dy)
 {
 }
 //=============================================================================
-void DungeonsApp::OnKey(int key, int scanCode, int action, int mods)
+void dung::DungeonsApp::OnKey(int key, int scanCode, int action, int mods)
 {
 }
 //=============================================================================
-void DungeonsApp::drawModel(GameModelOld& model)
+void dung::DungeonsApp::drawModel(GameModelOld& model)
 {
 	const gl::Sampler& sampler = (model.textureFilter == gl::MagFilter::Linear)
 		? m_linearSampler.value()
 		: m_nearestSampler.value();
 
-	m_objectUboData.model = model.GetModelMat();
+	m_objectUboData.modelMatrix = model.GetModelMat();
+	m_objectUboData.normalMatrix = glm::mat3(glm::transpose(glm::inverse(m_objectUboData.modelMatrix)));
 	m_objectUbo->UpdateData(m_objectUboData);
 	gl::Cmd::BindUniformBuffer(1, m_objectUbo.value());
 
@@ -212,7 +238,7 @@ void DungeonsApp::drawModel(GameModelOld& model)
 	m_materialUboData.hasDepthMapTexture = model.material.depthTexture != nullptr;
 	m_materialUboData.noLighing = model.material.noLighing;
 	m_materialUbo->UpdateData(m_materialUboData);
-	gl::Cmd::BindUniformBuffer(2, m_materialUbo.value());
+	gl::Cmd::BindUniformBuffer(3, m_materialUbo.value());
 
 	if (model.material.diffuseTexture)
 		gl::Cmd::BindSampledImage(0, *model.material.diffuseTexture, sampler);
@@ -228,13 +254,14 @@ void DungeonsApp::drawModel(GameModelOld& model)
 	model.mesh->Bind();
 }
 //=============================================================================
-void DungeonsApp::drawModel(std::optional<GameModel> model)
+void dung::DungeonsApp::drawModel(std::optional<GameModel> model)
 {
 	const gl::Sampler& sampler = (model.value().textureFilter == gl::MagFilter::Linear)
 		? m_linearSampler.value()
 		: m_nearestSampler.value();
 
-	m_objectUboData.model = model.value().GetModelMat();
+	m_objectUboData.modelMatrix = model.value().GetModelMat();
+	m_objectUboData.normalMatrix = glm::mat3(glm::transpose(glm::inverse(m_objectUboData.modelMatrix)));
 	m_objectUbo->UpdateData(m_objectUboData);
 	gl::Cmd::BindUniformBuffer(1, m_objectUbo.value());
 
@@ -251,7 +278,7 @@ void DungeonsApp::drawModel(std::optional<GameModel> model)
 		m_materialUboData.hasDepthMapTexture = meshes->GetMaterial()->depthTexture != nullptr;
 		m_materialUboData.noLighing = meshes->GetMaterial()->noLighing;
 		m_materialUbo->UpdateData(m_materialUboData);
-		gl::Cmd::BindUniformBuffer(2, m_materialUbo.value());
+		gl::Cmd::BindUniformBuffer(3, m_materialUbo.value());
 
 		if (meshes->GetMaterial()->diffuseTexture)
 			gl::Cmd::BindSampledImage(0, *meshes->GetMaterial()->diffuseTexture, sampler);
@@ -268,11 +295,11 @@ void DungeonsApp::drawModel(std::optional<GameModel> model)
 	}
 }
 //=============================================================================
-bool DungeonsApp::createPipeline()
+bool dung::DungeonsApp::createPipeline()
 {
-	auto vertexShader = gl::Shader(gl::ShaderType::VertexShader, io::ReadShaderCode("GameData/shaders/MainShader3.vert"), "MainShader VS");
+	auto vertexShader = gl::Shader(gl::ShaderType::VertexShader, io::ReadShaderCode("GameData/shaders/DungeonModelShader.vert"), "MainShader VS");
 	if (!vertexShader.IsValid()) return false;
-	auto fragmentShader = gl::Shader(gl::ShaderType::FragmentShader, io::ReadShaderCode("GameData/shaders/MainShader3.frag"), "MainShader FS");
+	auto fragmentShader = gl::Shader(gl::ShaderType::FragmentShader, io::ReadShaderCode("GameData/shaders/DungeonModelShader.frag"), "MainShader FS");
 	if (!fragmentShader.IsValid()) return false;
 
 	m_pipeline = gl::GraphicsPipeline({

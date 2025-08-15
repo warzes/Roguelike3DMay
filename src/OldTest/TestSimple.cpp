@@ -222,12 +222,12 @@ void TestSimple::OnUpdate(float deltaTime)
 
 	if (glfwGetMouseButton(GetGLFWWindow(), GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
 	{
-		SetCursorVisible(false);
-		camera.ProcessMouseMovement(-GetMouseDeltaX(), -GetMouseDeltaY());
+		Input::SetCursorVisible(false);
+		camera.ProcessMouseMovement(-Input::GetScreenOffset().x, -Input::GetScreenOffset().y);
 	}
 	else if (glfwGetMouseButton(GetGLFWWindow(), GLFW_MOUSE_BUTTON_RIGHT) == GLFW_RELEASE)
 	{
-		SetCursorVisible(true);
+		Input::SetCursorVisible(true);
 	}
 }
 //=============================================================================

@@ -4,31 +4,31 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="GameApp3.cpp">
-      <Filter>NewGame</Filter>
+      <Filter>_old\NewGame</Filter>
     </ClCompile>
     <ClCompile Include="GameModel.cpp">
-      <Filter>NewGame\graphics</Filter>
+      <Filter>_old\NewGame\graphics</Filter>
     </ClCompile>
     <ClCompile Include="NewTest001.cpp">
-      <Filter>_test</Filter>
+      <Filter>_old\_test</Filter>
     </ClCompile>
     <ClCompile Include="NewTest002.cpp">
-      <Filter>_test</Filter>
+      <Filter>_old\_test</Filter>
     </ClCompile>
     <ClCompile Include="NewTest003.cpp">
-      <Filter>_test</Filter>
+      <Filter>_old\_test</Filter>
     </ClCompile>
     <ClCompile Include="NewTest004.cpp">
-      <Filter>_test</Filter>
+      <Filter>_old\_test</Filter>
     </ClCompile>
     <ClCompile Include="NewTest005.cpp">
-      <Filter>_test</Filter>
+      <Filter>_old\_test</Filter>
     </ClCompile>
     <ClCompile Include="RsmTechnique.cpp">
-      <Filter>_test</Filter>
+      <Filter>_old\_test</Filter>
     </ClCompile>
     <ClCompile Include="SceneLoader.cpp">
-      <Filter>_test</Filter>
+      <Filter>_old\_test</Filter>
     </ClCompile>
     <ClCompile Include="DungeonsApp.cpp">
       <Filter>Dungeons</Filter>
@@ -38,62 +38,80 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="GameConfig.h" />
     <ClInclude Include="GameApp3.h">
-      <Filter>NewGame</Filter>
+      <Filter>_old\NewGame</Filter>
     </ClInclude>
     <ClInclude Include="GameModel.h">
-      <Filter>NewGame\graphics</Filter>
+      <Filter>_old\NewGame\graphics</Filter>
     </ClInclude>
     <ClInclude Include="NewTest001.h">
-      <Filter>_test</Filter>
+      <Filter>_old\_test</Filter>
     </ClInclude>
     <ClInclude Include="NewTest002.h">
-      <Filter>_test</Filter>
+      <Filter>_old\_test</Filter>
     </ClInclude>
     <ClInclude Include="NewTest003.h">
-      <Filter>_test</Filter>
+      <Filter>_old\_test</Filter>
     </ClInclude>
     <ClInclude Include="NewTest004.h">
-      <Filter>_test</Filter>
+      <Filter>_old\_test</Filter>
     </ClInclude>
     <ClInclude Include="NewTest005.h">
-      <Filter>_test</Filter>
+      <Filter>_old\_test</Filter>
     </ClInclude>
     <ClInclude Include="RsmTechnique.h">
-      <Filter>_test</Filter>
+      <Filter>_old\_test</Filter>
     </ClInclude>
     <ClInclude Include="SceneLoader.h">
-      <Filter>_test</Filter>
+      <Filter>_old\_test</Filter>
     </ClInclude>
     <ClInclude Include="UniformObjects.h">
-      <Filter>NewGame\graphics</Filter>
+      <Filter>_old\NewGame\graphics</Filter>
     </ClInclude>
     <ClInclude Include="DungeonsApp.h">
       <Filter>Dungeons</Filter>
     </ClInclude>
+    <ClInclude Include="DungeonsUniforms.h">
+      <Filter>Dungeons\graphics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Filter Include="_test">
-      <UniqueIdentifier>{f1436d02-0db8-489e-89c8-01a32ac5f029}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="NewGame">
-      <UniqueIdentifier>{1c79adf7-aecb-48ee-ad9d-77f0db3933dd}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="NewGame\shaders">
-      <UniqueIdentifier>{45955d96-7c7b-4d8b-862e-78a3215ce1bd}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="NewGame\graphics">
-      <UniqueIdentifier>{019ce0b2-9388-44c4-82f3-dca0975d837e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Dungeons">
       <UniqueIdentifier>{64dd8bad-dbc0-49d7-bb4e-0b7f81a54de8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="_old">
+      <UniqueIdentifier>{d0dba339-d06d-434b-88a9-36d8d8e3be08}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="_old\_test">
+      <UniqueIdentifier>{f1436d02-0db8-489e-89c8-01a32ac5f029}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="_old\NewGame">
+      <UniqueIdentifier>{1c79adf7-aecb-48ee-ad9d-77f0db3933dd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="_old\NewGame\shaders">
+      <UniqueIdentifier>{45955d96-7c7b-4d8b-862e-78a3215ce1bd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="_old\NewGame\graphics">
+      <UniqueIdentifier>{019ce0b2-9388-44c4-82f3-dca0975d837e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dungeons\shaders">
+      <UniqueIdentifier>{a73fd4b3-9d69-46e0-8414-ece93ef6089a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dungeons\graphics">
+      <UniqueIdentifier>{ce8cc389-e889-4123-90aa-b0af8aa0c375}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\bin\GameData\shaders\MainShader3.frag">
-      <Filter>NewGame\shaders</Filter>
+      <Filter>_old\NewGame\shaders</Filter>
     </None>
     <None Include="..\..\bin\GameData\shaders\MainShader3.vert">
-      <Filter>NewGame\shaders</Filter>
+      <Filter>_old\NewGame\shaders</Filter>
+    </None>
+    <None Include="..\..\bin\GameData\shaders\DungeonModelShader.vert">
+      <Filter>Dungeons\shaders</Filter>
+    </None>
+    <None Include="..\..\bin\GameData\shaders\DungeonModelShader.frag">
+      <Filter>Dungeons\shaders</Filter>
     </None>
   </ItemGroup>
 </Project>

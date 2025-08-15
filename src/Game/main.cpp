@@ -27,7 +27,7 @@ int main(
 	//NewTest005 game;
 
 	//GameApp3 game;
-	DungeonsApp game;
+	dung::DungeonsApp game;
 	game.Run();
 }
 //=============================================================================

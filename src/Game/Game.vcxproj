@@ -112,6 +112,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DungeonsApp.h" />
+    <ClInclude Include="DungeonsUniforms.h" />
     <ClInclude Include="GameApp3.h" />
     <ClInclude Include="GameConfig.h" />
     <ClInclude Include="GameModel.h" />
@@ -126,6 +127,8 @@
     <ClInclude Include="UniformObjects.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\bin\GameData\shaders\DungeonModelShader.frag" />
+    <None Include="..\..\bin\GameData\shaders\DungeonModelShader.vert" />
     <None Include="..\..\bin\GameData\shaders\MainShader3.frag" />
     <None Include="..\..\bin\GameData\shaders\MainShader3.vert" />
   </ItemGroup>

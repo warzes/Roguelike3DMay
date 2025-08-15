@@ -40,26 +40,6 @@ float GetWindowAspect()
 	return thisIEngineApp->GetWindowAspect();
 }
 //=============================================================================
-//bool GetKeyDown(int key)
-//{
-//	return thisIEngineApp->GetKeyDown(key);
-//}
-//=============================================================================
-bool GetMouseButton(int button)
-{
-	return thisIEngineApp->GetMouseButton(button);
-}
-//=============================================================================
-int GetMousePositionX()
-{
-	return thisIEngineApp->GetMousePositionX();
-}
-//=============================================================================
-int GetMousePositionY()
-{
-	return thisIEngineApp->GetMousePositionY();
-}
-//=============================================================================
 #if defined(_DEBUG)
 namespace
 {
@@ -228,11 +208,6 @@ void IEngineApp::Run()
 				// calc fps
 				fpsTick(m_deltaTime);
 
-				m_mouseDeltaX = m_currentMousePositionX - m_mouseLastX;
-				m_mouseDeltaY = m_currentMousePositionY - m_mouseLastY;
-				m_mouseLastX = m_currentMousePositionX;
-				m_mouseLastY = m_currentMousePositionY;
-
 				OnUpdate(m_deltaTime);
 			}
 
@@ -268,10 +243,6 @@ void IEngineApp::Run()
 				}
 			}
 
-			if (!m_cursorVisible)
-			{
-				SetCursorPosition({ m_width / 2, m_height / 2 });
-			}
 			glfwSwapBuffers(m_window);
 
 			Input::Update();
@@ -287,35 +258,9 @@ void IEngineApp::Exit()
 	glfwSetWindowShouldClose(m_window, GLFW_TRUE);
 }
 //=============================================================================
-//bool IEngineApp::GetKeyDown(int key)
-//{
-//	if (key < 0 || key >= (int)MaxKeys) return false;
-//	return m_keys[static_cast<size_t>(key)];
-//}
-////=============================================================================
-//bool IEngineApp::GetKeyPressed(int key)
-//{
-//	if (key < 0 || key >= (int)MaxKeys) return false;
-//	return m_repeatKeys[static_cast<size_t>(key)];
-//}
-//=============================================================================
-bool IEngineApp::GetMouseButton(int button)
-{
-	if (button < 0 || button >= (int)MaxMouseButtons) return false;
-	return m_mouseButtons[static_cast<size_t>(button)];
-}
-//=============================================================================
 double IEngineApp::GetTimeInSec() const
 {
 	return glfwGetTime();
-}
-//=============================================================================
-void IEngineApp::SetCursorPosition(const glm::uvec2& position)
-{
-	glfwSetCursorPos(m_window, static_cast<double>(position.x), static_cast<double>(position.y));
-	m_mouseLastX = m_currentMousePositionX = position.x;
-	m_mouseLastY = m_currentMousePositionY = position.y;
-	m_mouseDeltaX = m_mouseDeltaY = 0.0f;
 }
 //=============================================================================
 void IEngineApp::DrawProfilerInfo()
@@ -338,15 +283,6 @@ void IEngineApp::DrawFPS()
 		ImGui::Text("Ms  : %.1f", m_currentFPS > 0 ? 1000.0 / m_currentFPS : 0);
 	}
 	ImGui::End();
-}
-//=============================================================================
-void IEngineApp::SetCursorVisible(bool visible)
-{
-	if (m_cursorVisible != visible)
-	{
-		m_cursorVisible = visible;
-		glfwSetInputMode(m_window, GLFW_CURSOR, visible ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_HIDDEN);
-	}
 }
 //=============================================================================
 bool IEngineApp::init()
@@ -445,11 +381,6 @@ bool IEngineApp::initWindow(const EngineCreateInfo& config)
 	glfwSetWindowPos(m_window,
 		videoMode->width / 2 - m_width / 2 + monitorLeft,
 		videoMode->height / 2 - m_height / 2 + monitorTop);
-
-	double xpos, ypos;
-	glfwGetCursorPos(m_window, &xpos, &ypos);
-	m_mouseLastX = xpos;
-	m_mouseLastY = ypos;
 
 	glfwMakeContextCurrent(m_window);
 
@@ -560,15 +491,13 @@ void IEngineApp::fpsTick(float deltaSeconds, bool frameRendered)
 //=============================================================================
 void IEngineApp::keypress(int key, int scanCode, int action, int mods)
 {
-	//std::string keyName = glfwGetKeyName(key, 0);	
+	//std::string keyName = glfwGetKeyName(key, 0);
 	Input::keypress(key, action);
 	OnKey(key, scanCode, action, mods);
 }
 //=============================================================================
 void IEngineApp::mousePos(double xpos, double ypos)
 {
-	m_currentMousePositionX = xpos;
-	m_currentMousePositionY = ypos;
 	Input::mousePos(xpos, ypos);
 	OnMousePos(xpos, ypos);
 }
@@ -581,17 +510,6 @@ void IEngineApp::mouseScroll(double xoffset, double yoffset)
 //=============================================================================
 void IEngineApp::mouseButton(int button, int action, int mods)
 {
-	if (button >= 0 && button < (int)MaxMouseButtons)
-	{
-		if (action == GLFW_PRESS)
-		{
-			m_mouseButtons[static_cast<size_t>(button)] = true;
-		}
-		else if (action == GLFW_RELEASE)
-		{
-			m_mouseButtons[static_cast<size_t>(button)] = false;
-		}
-	}
 	Input::mouseButton(button, action);
 	OnMouseButton(button, action, mods);
 }

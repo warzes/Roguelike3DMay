@@ -338,13 +338,13 @@ void NewTest004::OnUpdate(float deltaTime)
 
 	if (glfwGetMouseButton(GetGLFWWindow(), GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
 	{
-		SetCursorVisible(false);
-		mainCamera.ProcessMouseMovement(-GetMouseDeltaX(), -GetMouseDeltaY());
+		Input::SetCursorVisible(false);
+		mainCamera.ProcessMouseMovement(-Input::GetScreenOffset().x, -Input::GetScreenOffset().y);
 	}
 	else if (glfwGetMouseButton(GetGLFWWindow(), GLFW_MOUSE_BUTTON_RIGHT) == GLFW_RELEASE)
 	{
 		glfwSetInputMode(GetGLFWWindow(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-		SetCursorVisible(true);
+		Input::SetCursorVisible(true);
 	}
 }
 //=============================================================================
