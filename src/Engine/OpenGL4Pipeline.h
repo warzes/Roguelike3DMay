@@ -136,10 +136,10 @@ namespace gl
 		GraphicsPipeline(const GraphicsPipeline&) = delete;
 		GraphicsPipeline& operator=(const GraphicsPipeline&) = delete;
 
-		[[nodiscard]] uint64_t Handle() const { return m_id; }
+		[[nodiscard]] unsigned Handle() const { return m_id; }
 
 	private:
-		uint64_t m_id{ 0 };
+		unsigned m_id{ 0 };
 	};
 
 	struct ComputePipeline final
@@ -153,10 +153,10 @@ namespace gl
 
 
 		[[nodiscard]] Extent3D WorkgroupSize() const;
-		[[nodiscard]] uint64_t Handle() const { return m_id; }
+		[[nodiscard]] unsigned Handle() const { return m_id; }
 
 	private:
-		uint64_t m_id{ 0 };
+		unsigned m_id{ 0 };
 	};
 
 } // namespace gl

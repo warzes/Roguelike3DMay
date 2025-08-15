@@ -196,7 +196,7 @@ void gl::Cmd::BindGraphicsPipeline(const GraphicsPipeline& pipeline)
 			detail::EnumToGL(ss.front.failOp),
 			detail::EnumToGL(ss.front.depthFailOp),
 			detail::EnumToGL(ss.front.passOp));
-		glStencilFuncSeparate(GL_FRONT, detail::EnumToGL(ss.front.compareOp), ss.front.reference, ss.front.compareMask);
+		glStencilFuncSeparate(GL_FRONT, detail::EnumToGL(ss.front.compareOp), static_cast<GLint>(ss.front.reference), ss.front.compareMask);
 		if (gContext.lastStencilMask[0] != ss.front.writeMask)
 		{
 			glStencilMaskSeparate(GL_FRONT, ss.front.writeMask);
@@ -212,7 +212,7 @@ void gl::Cmd::BindGraphicsPipeline(const GraphicsPipeline& pipeline)
 			detail::EnumToGL(ss.back.failOp),
 			detail::EnumToGL(ss.back.depthFailOp),
 			detail::EnumToGL(ss.back.passOp));
-		glStencilFuncSeparate(GL_BACK, detail::EnumToGL(ss.back.compareOp), ss.back.reference, ss.back.compareMask);
+		glStencilFuncSeparate(GL_BACK, detail::EnumToGL(ss.back.compareOp), static_cast<GLint>(ss.back.reference), ss.back.compareMask);
 		if (gContext.lastStencilMask[1] != ss.back.writeMask)
 		{
 			glStencilMaskSeparate(GL_BACK, ss.back.writeMask);
@@ -333,7 +333,7 @@ void gl::Cmd::SetScissor(const Rect2D& scissor)
 		return;
 	}
 
-	glScissor(scissor.offset.x, scissor.offset.y, scissor.extent.width, scissor.extent.height);
+	glScissor(static_cast<GLint>(scissor.offset.x), static_cast<GLint>(scissor.offset.y), static_cast<GLsizei>(scissor.extent.width), static_cast<GLsizei>(scissor.extent.height));
 
 	gContext.lastScissor = scissor;
 }
@@ -363,9 +363,9 @@ void gl::Cmd::Draw(uint32_t vertexCount, uint32_t instanceCount, uint32_t firstV
 	assert(gContext.isRendering);
 
 	glDrawArraysInstancedBaseInstance(detail::EnumToGL(gContext.currentTopology),
-		firstVertex,
-		vertexCount,
-		instanceCount,
+		static_cast<GLint>(firstVertex),
+		static_cast<GLsizei>(vertexCount),
+		static_cast<GLsizei>(instanceCount),
 		firstInstance);
 }
 //=============================================================================
@@ -377,10 +377,10 @@ void gl::Cmd::DrawIndexed(uint32_t indexCount, uint32_t instanceCount, uint32_t 
 	// double cast is needed to prevent compiler from complaining about 32->64 bit pointer cast
 	glDrawElementsInstancedBaseVertexBaseInstance(
 		detail::EnumToGL(gContext.currentTopology),
-		indexCount,
+		static_cast<GLsizei>(indexCount),
 		detail::EnumToGL(gContext.currentIndexType),
 		reinterpret_cast<void*>(static_cast<uintptr_t>(firstIndex * detail::GetIndexSize(gContext.currentIndexType))),
-		instanceCount,
+		static_cast<GLsizei>(instanceCount),
 		vertexOffset,
 		firstInstance);
 }
@@ -392,8 +392,8 @@ void gl::Cmd::DrawIndirect(const Buffer& commandBuffer, uint64_t commandBufferOf
 	glBindBuffer(GL_DRAW_INDIRECT_BUFFER, commandBuffer.Handle());
 	glMultiDrawArraysIndirect(detail::EnumToGL(gContext.currentTopology),
 		reinterpret_cast<void*>(static_cast<uintptr_t>(commandBufferOffset)),
-		drawCount,
-		stride);
+		static_cast<GLsizei>(drawCount),
+		static_cast<GLsizei>(stride));
 }
 //=============================================================================
 void gl::Cmd::DrawIndirectCount(const Buffer& commandBuffer,
@@ -410,8 +410,8 @@ void gl::Cmd::DrawIndirectCount(const Buffer& commandBuffer,
 	glMultiDrawArraysIndirectCount(detail::EnumToGL(gContext.currentTopology),
 		reinterpret_cast<void*>(static_cast<uintptr_t>(commandBufferOffset)),
 		static_cast<GLintptr>(countBufferOffset),
-		maxDrawCount,
-		stride);
+		static_cast<GLsizei>(maxDrawCount),
+		static_cast<GLsizei>(stride));
 }
 //=============================================================================
 void gl::Cmd::DrawIndexedIndirect(const Buffer& commandBuffer, uint64_t commandBufferOffset, uint32_t drawCount, uint32_t stride)
@@ -423,8 +423,8 @@ void gl::Cmd::DrawIndexedIndirect(const Buffer& commandBuffer, uint64_t commandB
 	glMultiDrawElementsIndirect(detail::EnumToGL(gContext.currentTopology),
 		detail::EnumToGL(gContext.currentIndexType),
 		reinterpret_cast<void*>(static_cast<uintptr_t>(commandBufferOffset)),
-		drawCount,
-		stride);
+		static_cast<GLsizei>(drawCount),
+		static_cast<GLsizei>(stride));
 }
 //=============================================================================
 void gl::Cmd::DrawIndexedIndirectCount(const Buffer& commandBuffer,
@@ -443,8 +443,8 @@ void gl::Cmd::DrawIndexedIndirectCount(const Buffer& commandBuffer,
 		detail::EnumToGL(gContext.currentIndexType),
 		reinterpret_cast<void*>(static_cast<uintptr_t>(commandBufferOffset)),
 		static_cast<GLintptr>(countBufferOffset),
-		maxDrawCount,
-		stride);
+		static_cast<GLsizei>(maxDrawCount),
+		static_cast<GLsizei>(stride));
 }
 //=============================================================================
 void gl::Cmd::BindUniformBuffer(uint32_t index, const Buffer& buffer, uint64_t offset, uint64_t size)
@@ -456,7 +456,7 @@ void gl::Cmd::BindUniformBuffer(uint32_t index, const Buffer& buffer, uint64_t o
 		size = buffer.Size() - offset;
 	}
 
-	glBindBufferRange(GL_UNIFORM_BUFFER, index, buffer.Handle(), offset, size);
+	glBindBufferRange(GL_UNIFORM_BUFFER, index, buffer.Handle(), static_cast<GLintptr>(offset), static_cast<GLsizeiptr>(size));
 }
 //=============================================================================
 void gl::Cmd::BindUniformBuffer(std::string_view block, const Buffer& buffer, uint64_t offset, uint64_t size)
@@ -480,7 +480,7 @@ void gl::Cmd::BindStorageBuffer(uint32_t index, const Buffer& buffer, uint64_t o
 		size = buffer.Size() - offset;
 	}
 
-	glBindBufferRange(GL_SHADER_STORAGE_BUFFER, index, buffer.Handle(), offset, size);
+	glBindBufferRange(GL_SHADER_STORAGE_BUFFER, index, buffer.Handle(), static_cast<GLintptr>(offset), static_cast<GLsizeiptr>(size));
 }
 //=============================================================================
 void gl::Cmd::BindStorageBuffer(std::string_view block, const Buffer& buffer, uint64_t offset, uint64_t size)
@@ -523,7 +523,7 @@ void gl::Cmd::BindImage(uint32_t index, const Texture& texture, uint32_t level)
 
 	glBindImageTexture(index,
 		const_cast<Texture&>(texture).Handle(),
-		level,
+		static_cast<GLint>(level),
 		GL_TRUE,
 		0,
 		GL_READ_WRITE,

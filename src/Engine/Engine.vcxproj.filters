@@ -129,9 +129,6 @@
     <ClInclude Include="BasicTypes.h">
       <Filter>02_Core</Filter>
     </ClInclude>
-    <ClInclude Include="Hash.h">
-      <Filter>02_Core</Filter>
-    </ClInclude>
     <ClInclude Include="BasicConstants.h">
       <Filter>02_Core</Filter>
     </ClInclude>
@@ -210,6 +207,9 @@
     <ClInclude Include="OpenGL4ApiToEnum.h">
       <Filter>04_RHI</Filter>
     </ClInclude>
+    <ClInclude Include="Hash.h">
+      <Filter>02_Core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="01_Base">
@@ -226,9 +226,6 @@
     </Filter>
     <Filter Include="04_RHI">
       <UniqueIdentifier>{a7d95fed-4ab8-4e07-bec9-948d744163d9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="04_RHI\NewFilter1">
-      <UniqueIdentifier>{5356188e-7773-42d5-9c3e-3453ca0c0cff}</UniqueIdentifier>
     </Filter>
     <Filter Include="04_RHI\Resources">
       <UniqueIdentifier>{d65b5f70-f0be-4ee9-b4bb-17bc525ef974}</UniqueIdentifier>

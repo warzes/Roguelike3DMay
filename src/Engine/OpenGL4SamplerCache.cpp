@@ -66,7 +66,7 @@ gl::Sampler gl::detail::SamplerCache::CreateOrGetCachedTextureSampler(const Samp
 		glSamplerParameteriv(sampler, GL_TEXTURE_BORDER_COLOR, color);
 		break;
 	}
-	default: assert(0); break;
+	default: std::unreachable(); break;
 	}
 
 	glSamplerParameterf(sampler, GL_TEXTURE_MAX_ANISOTROPY, static_cast<GLfloat>(gl::detail::EnumToGL(samplerState.anisotropy)));
@@ -81,12 +81,6 @@ gl::Sampler gl::detail::SamplerCache::CreateOrGetCachedTextureSampler(const Samp
 //=============================================================================
 void gl::detail::SamplerCache::Clear()
 {
-	for (const auto& [_, sampler] : m_samplerCache)
-	{
-		Debug("Destroyed Sampler with handle " + std::to_string(sampler.m_id));
-		glDeleteSamplers(1, &sampler.m_id);
-	}
 
-	m_samplerCache.clear();
 }
 //=============================================================================

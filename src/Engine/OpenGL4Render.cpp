@@ -64,10 +64,11 @@ void SetViewportInternal(const gl::Viewport& viewport, const gl::Viewport& lastV
 {
 	if (initViewport || viewport.drawRect != lastViewport.drawRect)
 	{
-		glViewport(viewport.drawRect.offset.x,
-			viewport.drawRect.offset.y,
-			viewport.drawRect.extent.width,
-			viewport.drawRect.extent.height);
+		glViewport(
+			static_cast<GLint>(viewport.drawRect.offset.x),
+			static_cast<GLint>(viewport.drawRect.offset.y),
+			static_cast<GLsizei>(viewport.drawRect.extent.width),
+			static_cast<GLsizei>(viewport.drawRect.extent.height));
 	}
 	if (initViewport || viewport.minDepth != lastViewport.minDepth || viewport.maxDepth != lastViewport.maxDepth)
 	{
@@ -115,7 +116,7 @@ void gl::BeginSwapChainRendering(const SwapChainRenderInfo& renderInfo)
 		glInvalidateNamedFramebufferData(0, 1, &attachment);
 		break;
 	}
-	default: assert(0);
+	default: std::unreachable();
 	}
 
 	switch (ri.depthLoadOp)
@@ -137,7 +138,7 @@ void gl::BeginSwapChainRendering(const SwapChainRenderInfo& renderInfo)
 		glInvalidateNamedFramebufferData(0, 1, &attachment);
 		break;
 	}
-	default: assert(0);
+	default: std::unreachable();
 	}
 
 	switch (ri.stencilLoadOp)
@@ -160,7 +161,7 @@ void gl::BeginSwapChainRendering(const SwapChainRenderInfo& renderInfo)
 		glInvalidateNamedFramebufferData(0, 1, &attachment);
 		break;
 	}
-	default: assert(0);
+	default: std::unreachable();
 	}
 
 	// Framebuffer sRGB can only be disabled in this exact function
@@ -197,7 +198,7 @@ void gl::BeginRendering(const RenderInfo& renderInfo)
 	gContext.currentFbo = gContext.fboCache.CreateOrGetCachedFramebuffer(ri);
 	glBindFramebuffer(GL_FRAMEBUFFER, gContext.currentFbo);
 
-	for (GLint i = 0; i < static_cast<GLint>(ri.colorAttachments.size()); i++)
+	for (size_t i = 0; i < ri.colorAttachments.size(); i++)
 	{
 		const auto& attachment = ri.colorAttachments[i];
 		switch (attachment.loadOp)
@@ -207,22 +208,21 @@ void gl::BeginRendering(const RenderInfo& renderInfo)
 		{
 			if (gContext.lastColorMask[i] != ColorComponentFlag::RGBABits)
 			{
-				glColorMaski(i, true, true, true, true);
+				glColorMaski(static_cast<GLuint>(i), true, true, true, true);
 				gContext.lastColorMask[i] = ColorComponentFlag::RGBABits;
 			}
 
-			auto format = attachment.texture.get().GetCreateInfo().format;
 			auto& ccv = attachment.clearValue;
-			glClearNamedFramebufferfv(gContext.currentFbo, GL_COLOR, i, &ccv[0]);
+			glClearNamedFramebufferfv(gContext.currentFbo, GL_COLOR, static_cast<GLint>(i), &ccv[0]);
 			break;
 		}
 		case AttachmentLoadOp::DontCare:
 		{
-			GLenum colorAttachment = GL_COLOR_ATTACHMENT0 + i;
+			GLenum colorAttachment = GL_COLOR_ATTACHMENT0 + static_cast<GLenum>(i);
 			glInvalidateNamedFramebufferData(gContext.currentFbo, 1, &colorAttachment);
 			break;
 		}
-		default: assert(0);
+		default: std::unreachable();
 		}
 	}
 
@@ -249,7 +249,7 @@ void gl::BeginRendering(const RenderInfo& renderInfo)
 			glInvalidateNamedFramebufferData(gContext.currentFbo, 1, &attachment);
 			break;
 		}
-		default: assert(0);
+		default: std::unreachable();
 		}
 	}
 
@@ -277,7 +277,7 @@ void gl::BeginRendering(const RenderInfo& renderInfo)
 			glInvalidateNamedFramebufferData(gContext.currentFbo, 1, &attachment);
 			break;
 		}
-		default: assert(0);
+		default: std::unreachable();
 		}
 	}
 
@@ -324,9 +324,9 @@ void gl::BeginRenderingNoAttachments(const RenderNoAttachmentsInfo& info)
 {
 	RenderInfo renderInfo{ .name = info.name, .viewport = info.viewport };
 	BeginRendering(renderInfo);
-	glNamedFramebufferParameteri(gContext.currentFbo, GL_FRAMEBUFFER_DEFAULT_WIDTH, info.framebufferSize.width);
-	glNamedFramebufferParameteri(gContext.currentFbo, GL_FRAMEBUFFER_DEFAULT_HEIGHT, info.framebufferSize.height);
-	glNamedFramebufferParameteri(gContext.currentFbo, GL_FRAMEBUFFER_DEFAULT_LAYERS, info.framebufferSize.depth);
+	glNamedFramebufferParameteri(gContext.currentFbo, GL_FRAMEBUFFER_DEFAULT_WIDTH, static_cast<GLint>(info.framebufferSize.width));
+	glNamedFramebufferParameteri(gContext.currentFbo, GL_FRAMEBUFFER_DEFAULT_HEIGHT, static_cast<GLint>(info.framebufferSize.height));
+	glNamedFramebufferParameteri(gContext.currentFbo, GL_FRAMEBUFFER_DEFAULT_LAYERS, static_cast<GLint>(info.framebufferSize.depth));
 	glNamedFramebufferParameteri(gContext.currentFbo, GL_FRAMEBUFFER_DEFAULT_SAMPLES, detail::EnumToGL(info.framebufferSamples));
 	glNamedFramebufferParameteri(gContext.currentFbo, GL_FRAMEBUFFER_DEFAULT_FIXED_SAMPLE_LOCATIONS, GL_TRUE);
 }
@@ -402,14 +402,14 @@ void gl::BlitTexture(const Texture& source, const Texture& target, Offset3D sour
 	auto fboTarget = makeSingleTextureFbo(target, gContext.fboCache);
 	glBlitNamedFramebuffer(fboSource,
 		fboTarget,
-		sourceOffset.x,
-		sourceOffset.y,
-		sourceExtent.width,
-		sourceExtent.height,
-		targetOffset.x,
-		targetOffset.y,
-		targetExtent.width,
-		targetExtent.height,
+		static_cast<GLint>(sourceOffset.x),
+		static_cast<GLint>(sourceOffset.y),
+		static_cast<GLint>(sourceExtent.width),
+		static_cast<GLint>(sourceExtent.height),
+		static_cast<GLint>(targetOffset.x),
+		static_cast<GLint>(targetOffset.y),
+		static_cast<GLint>(targetExtent.width),
+		static_cast<GLint>(targetExtent.height),
 		detail::AspectMaskToGL(aspect),
 		detail::EnumToGL(filter));
 }
@@ -420,14 +420,14 @@ void gl::BlitTextureToSwapChain(const Texture& source, Offset3D sourceOffset, Of
 
 	glBlitNamedFramebuffer(fbo,
 		0,
-		sourceOffset.x,
-		sourceOffset.y,
-		sourceExtent.width,
-		sourceExtent.height,
-		targetOffset.x,
-		targetOffset.y,
-		targetExtent.width,
-		targetExtent.height,
+		static_cast<GLint>(sourceOffset.x),
+		static_cast<GLint>(sourceOffset.y),
+		static_cast<GLint>(sourceExtent.width),
+		static_cast<GLint>(sourceExtent.height),
+		static_cast<GLint>(targetOffset.x),
+		static_cast<GLint>(targetOffset.y),
+		static_cast<GLint>(targetExtent.width),
+		static_cast<GLint>(targetExtent.height),
 		detail::AspectMaskToGL(aspect),
 		detail::EnumToGL(filter));
 }
@@ -436,19 +436,19 @@ void gl::CopyTexture(const CopyTextureInfo& copy)
 {
 	glCopyImageSubData(getHandle(copy.source),
 		detail::EnumToGL(copy.source.GetCreateInfo().imageType),
-		copy.sourceLevel,
-		copy.sourceOffset.x,
-		copy.sourceOffset.y,
-		copy.sourceOffset.z,
+		static_cast<GLint>(copy.sourceLevel),
+		static_cast<GLint>(copy.sourceOffset.x),
+		static_cast<GLint>(copy.sourceOffset.y),
+		static_cast<GLint>(copy.sourceOffset.z),
 		copy.target.Handle(),
 		detail::EnumToGL(copy.target.GetCreateInfo().imageType),
-		copy.targetLevel,
-		copy.targetOffset.x,
-		copy.targetOffset.y,
-		copy.targetOffset.z,
-		copy.extent.width,
-		copy.extent.height,
-		copy.extent.depth);
+		static_cast<GLint>(copy.targetLevel),
+		static_cast<GLint>(copy.targetOffset.x),
+		static_cast<GLint>(copy.targetOffset.y),
+		static_cast<GLint>(copy.targetOffset.z),
+		static_cast<GLsizei>(copy.extent.width),
+		static_cast<GLsizei>(copy.extent.height),
+		static_cast<GLsizei>(copy.extent.depth));
 }
 //=============================================================================
 void gl::MemoryBarrier(MemoryBarrierBits accessBits)
@@ -478,8 +478,8 @@ void gl::CopyBuffer(const CopyBufferInfo& copy)
 //=============================================================================
 void gl::CopyTextureToBuffer(const CopyTextureToBufferInfo& copy)
 {
-	glPixelStorei(GL_PACK_ROW_LENGTH, copy.bufferRowLength);
-	glPixelStorei(GL_PACK_IMAGE_HEIGHT, copy.bufferImageHeight);
+	glPixelStorei(GL_PACK_ROW_LENGTH, static_cast<GLint>(copy.bufferRowLength));
+	glPixelStorei(GL_PACK_IMAGE_HEIGHT, static_cast<GLint>(copy.bufferImageHeight));
 
 	glBindBuffer(GL_PIXEL_PACK_BUFFER, copy.targetBuffer.Handle());
 
@@ -504,13 +504,13 @@ void gl::CopyTextureToBuffer(const CopyTextureToBufferInfo& copy)
 	}
 
 	glGetTextureSubImage(const_cast<Texture&>(copy.sourceTexture).Handle(),
-		copy.level,
-		copy.sourceOffset.x,
-		copy.sourceOffset.z,
-		copy.sourceOffset.z,
-		copy.extent.width,
-		copy.extent.height,
-		copy.extent.depth,
+		static_cast<GLint>(copy.level),
+		static_cast<GLint>(copy.sourceOffset.x),
+		static_cast<GLint>(copy.sourceOffset.z),
+		static_cast<GLint>(copy.sourceOffset.z),
+		static_cast<GLsizei>(copy.extent.width),
+		static_cast<GLsizei>(copy.extent.height),
+		static_cast<GLsizei>(copy.extent.depth),
 		format,
 		type,
 		static_cast<GLsizei>(copy.targetBuffer.Size()),
@@ -519,8 +519,8 @@ void gl::CopyTextureToBuffer(const CopyTextureToBufferInfo& copy)
 //=============================================================================
 void gl::CopyBufferToTexture(const CopyBufferToTextureInfo& copy)
 {
-	glPixelStorei(GL_UNPACK_ROW_LENGTH, copy.bufferRowLength);
-	glPixelStorei(GL_UNPACK_IMAGE_HEIGHT, copy.bufferImageHeight);
+	glPixelStorei(GL_UNPACK_ROW_LENGTH, static_cast<GLint>(copy.bufferRowLength));
+	glPixelStorei(GL_UNPACK_IMAGE_HEIGHT, static_cast<GLint>(copy.bufferImageHeight));
 
 	glBindBuffer(GL_PIXEL_UNPACK_BUFFER, copy.sourceBuffer.Handle());
 
@@ -534,121 +534,121 @@ void gl::CopyBufferToTexture(const CopyBufferToTextureInfo& copy)
 		copy.bufferImageHeight });
 }
 //=============================================================================
-void gl::SetUniform(uint64_t id, const std::string& label, bool value)
+void gl::SetUniform(unsigned id, const std::string& label, bool value)
 {
 	assert(id != 0);
 	glProgramUniform1i(id, glGetUniformLocation(id, label.c_str()), static_cast<int>(value));
 }
 //=============================================================================
-void gl::SetUniform(uint64_t id, const std::string& label, int value)
+void gl::SetUniform(unsigned id, const std::string& label, int value)
 {
 	assert(id != 0);
 	glProgramUniform1i(id, glGetUniformLocation(id, label.c_str()), value);
 }
 //=============================================================================
-void gl::SetUniform(uint64_t id, const std::string& label, unsigned value)
+void gl::SetUniform(unsigned id, const std::string& label, unsigned value)
 {
 	assert(id != 0);
 	glProgramUniform1ui(id, glGetUniformLocation(id, label.c_str()), value);
 }
 //=============================================================================
-void gl::SetUniform(uint64_t id, const std::string& label, float value)
+void gl::SetUniform(unsigned id, const std::string& label, float value)
 {
 	assert(id != 0);
 	glProgramUniform1f(id, glGetUniformLocation(id, label.c_str()), value);
 }
 //=============================================================================
-void gl::SetUniform(uint64_t id, const std::string& label, std::span<const float> value)
+void gl::SetUniform(unsigned id, const std::string& label, std::span<const float> value)
 {
 	assert(id != 0);
 	glProgramUniform1fv(id, glGetUniformLocation(id, label.c_str()), static_cast<GLsizei>(value.size()), value.data());
 }
 //=============================================================================
-void gl::SetUniform(uint64_t id, const std::string& label, const float* value, int count)
+void gl::SetUniform(unsigned id, const std::string& label, const float* value, int count)
 {
 	assert(id != 0);
 	glProgramUniform1fv(id, glGetUniformLocation(id, label.c_str()), count, value);
 }
 //=============================================================================
-void gl::SetUniform(uint64_t id, const std::string& label, std::span<const glm::vec2> value)
+void gl::SetUniform(unsigned id, const std::string& label, std::span<const glm::vec2> value)
 {
 	assert(id != 0);
 	glProgramUniform2fv(id, glGetUniformLocation(id, label.c_str()), static_cast<GLsizei>(value.size()), glm::value_ptr(value.front()));
 }
 //=============================================================================
-void gl::SetUniform(uint64_t id, const std::string& label, std::span<const glm::vec3> value)
+void gl::SetUniform(unsigned id, const std::string& label, std::span<const glm::vec3> value)
 {
 	assert(id != 0);
 	glProgramUniform3fv(id, glGetUniformLocation(id, label.c_str()), static_cast<GLsizei>(value.size()), glm::value_ptr(value.front()));
 }
 //=============================================================================
-void gl::SetUniform(uint64_t id, const std::string& label, std::span<const glm::vec4> value)
+void gl::SetUniform(unsigned id, const std::string& label, std::span<const glm::vec4> value)
 {
 	assert(id != 0);
 	glProgramUniform4fv(id, glGetUniformLocation(id, label.c_str()), static_cast<GLsizei>(value.size()), glm::value_ptr(value.front()));
 }
 //=============================================================================
-void gl::SetUniform(uint64_t id, const std::string& label, std::span<const int> value)
+void gl::SetUniform(unsigned id, const std::string& label, std::span<const int> value)
 {
 	assert(id != 0);
 	glProgramUniform1iv(id, glGetUniformLocation(id, label.c_str()), static_cast<GLsizei>(value.size()), value.data());
 }
 //=============================================================================
-void gl::SetUniform(uint64_t id, const std::string& label, const glm::vec2& value)
+void gl::SetUniform(unsigned id, const std::string& label, const glm::vec2& value)
 {
 	assert(id != 0);
 	glProgramUniform2fv(id, glGetUniformLocation(id, label.c_str()), 1, glm::value_ptr(value));
 }
 //=============================================================================
-void gl::SetUniform(uint64_t id, const std::string& label, float x, float y)
+void gl::SetUniform(unsigned id, const std::string& label, float x, float y)
 {
 	assert(id != 0);
 	glProgramUniform2f(id, glGetUniformLocation(id, label.c_str()), x, y);
 }
 //=============================================================================
-void gl::SetUniform(uint64_t id, const std::string& label, const glm::ivec2& value)
+void gl::SetUniform(unsigned id, const std::string& label, const glm::ivec2& value)
 {
 	assert(id != 0);
 	glProgramUniform2iv(id, glGetUniformLocation(id, label.c_str()), 1, glm::value_ptr(value));
 }
 //=============================================================================
-void gl::SetUniform(uint64_t id, const std::string& label, int x, int y)
+void gl::SetUniform(unsigned id, const std::string& label, int x, int y)
 {
 	assert(id != 0);
 	glProgramUniform2i(id, glGetUniformLocation(id, label.c_str()), x, y);
 }
 //=============================================================================
-void gl::SetUniform(uint64_t id, const std::string& label, const glm::vec3& value)
+void gl::SetUniform(unsigned id, const std::string& label, const glm::vec3& value)
 {
 	assert(id != 0);
 	glProgramUniform3fv(id, glGetUniformLocation(id, label.c_str()), 1, glm::value_ptr(value));
 }
 //=============================================================================
-void gl::SetUniform(uint64_t id, const std::string& label, float x, float y, float z)
+void gl::SetUniform(unsigned id, const std::string& label, float x, float y, float z)
 {
 	assert(id != 0);
 	glProgramUniform3f(id, glGetUniformLocation(id, label.c_str()), x, y, z);
 }
 //=============================================================================
-void gl::SetUniform(uint64_t id, const std::string& label, const glm::vec4& value)
+void gl::SetUniform(unsigned id, const std::string& label, const glm::vec4& value)
 {
 	assert(id != 0);
 	glProgramUniform4fv(id, glGetUniformLocation(id, label.c_str()), 1, glm::value_ptr(value));
 }
 //=============================================================================
-void gl::SetUniform(uint64_t id, const std::string& label, float x, float y, float z, float w)
+void gl::SetUniform(unsigned id, const std::string& label, float x, float y, float z, float w)
 {
 	assert(id != 0);
 	glProgramUniform4f(id, glGetUniformLocation(id, label.c_str()), x, y, z, w);
 }
 //=============================================================================
-void gl::SetUniform(uint64_t id, const std::string& label, const glm::mat3& mat)
+void gl::SetUniform(unsigned id, const std::string& label, const glm::mat3& mat)
 {
 	assert(id != 0);
 	glProgramUniformMatrix3fv(id, glGetUniformLocation(id, label.c_str()), 1, GL_FALSE, glm::value_ptr(mat));
 }
 //=============================================================================
-void gl::SetUniform(uint64_t id, const std::string& label, const glm::mat4& mat)
+void gl::SetUniform(unsigned id, const std::string& label, const glm::mat4& mat)
 {
 	assert(id != 0);
 	glProgramUniformMatrix4fv(id, glGetUniformLocation(id, label.c_str()), 1, GL_FALSE, glm::value_ptr(mat));

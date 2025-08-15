@@ -122,7 +122,7 @@ inline std::vector<std::pair<std::string, uint32_t>> reflectProgram(GLuint progr
 		}
 		else
 		{
-			assert(0);
+			std::unreachable();
 		}
 	}
 
@@ -182,7 +182,7 @@ gl::GraphicsPipeline::~GraphicsPipeline()
 		auto it = gGraphicsPipelines.find(static_cast<GLuint>(m_id));
 		if (it == gGraphicsPipelines.end())
 		{
-			assert(0);
+			std::unreachable();
 			return;
 		}
 
@@ -254,7 +254,7 @@ gl::ComputePipeline::~ComputePipeline()
 		auto it = gComputePipelines.find(static_cast<GLuint>(m_id));
 		if (it == gComputePipelines.end())
 		{
-			assert(0);
+			std::unreachable();
 			return;
 		}
 

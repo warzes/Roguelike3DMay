@@ -1,11 +1,10 @@
 ﻿#pragma once
 
 #include "OpenGL4Core.h"
-#include "OpenGL4Sampler.h"
 
 namespace gl::detail
 {
-	inline GLenum EnumToGL(CompareOp op)
+	inline GLenum EnumToGL(CompareOp op) noexcept
 	{
 		switch (op)
 		{
@@ -17,11 +16,11 @@ namespace gl::detail
 		case CompareOp::NotEqual:       return GL_NOTEQUAL;
 		case CompareOp::GreaterOrEqual: return GL_GEQUAL;
 		case CompareOp::Always:         return GL_ALWAYS;
-		default: assert(0);             return 0;
+		default: std::unreachable();
 		}
 	}
 
-	inline GLenum EnumToGL(StencilOp op)
+	inline GLenum EnumToGL(StencilOp op) noexcept
 	{
 		switch (op)
 		{
@@ -33,22 +32,22 @@ namespace gl::detail
 		case StencilOp::Invert:            return GL_INVERT;
 		case StencilOp::IncrementAndWrap:  return GL_INCR_WRAP;
 		case StencilOp::DecrementAndWrap:  return GL_DECR_WRAP;
-		default: assert(0);                return 0;
+		default: std::unreachable();
 		}
 	}
 
-	inline GLenum EnumToGL(PolygonMode mode)
+	inline GLenum EnumToGL(PolygonMode mode) noexcept
 	{
 		switch (mode)
 		{
 		case PolygonMode::Fill:  return GL_FILL;
 		case PolygonMode::Line:  return GL_LINE;
 		case PolygonMode::Point: return GL_POINT;
-		default: assert(0);      return 0;
+		default: std::unreachable();
 		}
 	}
 
-	inline GLenum EnumToGL(CullMode mode)
+	inline GLenum EnumToGL(CullMode mode) noexcept
 	{
 		switch (mode)
 		{
@@ -56,21 +55,21 @@ namespace gl::detail
 		case CullMode::Front:        return GL_FRONT;
 		case CullMode::Back:         return GL_BACK;
 		case CullMode::FrontAndBack: return GL_FRONT_AND_BACK;
-		default: assert(0);          return 0;
+		default: std::unreachable();
 		}
 	}
 
-	inline GLenum EnumToGL(FrontFace face)
+	inline GLenum EnumToGL(FrontFace face) noexcept
 	{
 		switch (face)
 		{
 		case FrontFace::Clockwise:        return GL_CW;
 		case FrontFace::CounterClockwise: return GL_CCW;
-		default: assert(0);               return 0;
+		default: std::unreachable();
 		}
 	}
 
-	inline GLenum EnumToGL(BlendFactor factor)
+	inline GLenum EnumToGL(BlendFactor factor) noexcept
 	{
 		switch (factor)
 		{
@@ -93,11 +92,11 @@ namespace gl::detail
 		case BlendFactor::OneMinusSrc1Color:     return GL_ONE_MINUS_SRC1_COLOR;
 		case BlendFactor::Src1Alpha:             return GL_SRC1_ALPHA;
 		case BlendFactor::OneMinusSrc1Alpha:     return GL_ONE_MINUS_SRC1_ALPHA;
-		default: assert(0);                      return 0;
+		default: std::unreachable();
 		}
 	}
 
-	inline GLenum EnumToGL(BlendOp op)
+	inline GLenum EnumToGL(BlendOp op) noexcept
 	{
 		switch (op)
 		{
@@ -106,11 +105,11 @@ namespace gl::detail
 		case BlendOp::ReverseSubtract: return GL_FUNC_REVERSE_SUBTRACT;
 		case BlendOp::Min:             return GL_MIN;
 		case BlendOp::Max:             return GL_MAX;
-		default: assert(0);            return 0;
+		default: std::unreachable();
 		}
 	}
 
-	inline GLenum EnumToGL(LogicOp op)
+	inline GLenum EnumToGL(LogicOp op) noexcept
 	{
 		switch (op)
 		{
@@ -130,11 +129,11 @@ namespace gl::detail
 		case LogicOp::OrReverse:    return GL_OR_REVERSE;
 		case LogicOp::AndInverted:  return GL_AND_INVERTED;
 		case LogicOp::OrInverted:   return GL_OR_INVERTED;
-		default: assert(0);         return 0;
+		default: std::unreachable();
 		}
 	}
 
-	inline GLbitfield AspectMaskToGL(AspectMask bits)
+	inline GLbitfield AspectMaskToGL(AspectMask bits) noexcept
 	{
 		GLbitfield ret = 0;
 		ret |= bits & AspectMaskBit::ColorBufferBit ? GL_COLOR_BUFFER_BIT : 0;
@@ -143,17 +142,17 @@ namespace gl::detail
 		return ret;
 	}
 
-	inline GLenum EnumToGL(MagFilter filter)
+	inline GLenum EnumToGL(MagFilter filter) noexcept
 	{
 		switch (filter)
 		{
 		case MagFilter::Nearest: return GL_NEAREST;
 		case MagFilter::Linear:  return GL_LINEAR;
-		default: assert(0);      return 0;
+		default: std::unreachable();
 		}
 	}
 
-	inline GLenum EnumToGL(MinFilter filter)
+	inline GLenum EnumToGL(MinFilter filter) noexcept
 	{
 		switch (filter)
 		{
@@ -163,11 +162,11 @@ namespace gl::detail
 		case MinFilter::NearestMimapLinear:  return GL_NEAREST_MIPMAP_LINEAR;
 		case MinFilter::LinearMimapNearest:  return GL_LINEAR_MIPMAP_NEAREST;
 		case MinFilter::LinearMimapLinear:   return GL_LINEAR_MIPMAP_LINEAR;
-		default: assert(0);                  return 0;
+		default: std::unreachable();
 		}
 	}
 
-	inline GLint EnumToGL(AddressMode addressMode)
+	inline GLint EnumToGL(AddressMode addressMode) noexcept
 	{
 		switch (addressMode)
 		{
@@ -176,11 +175,11 @@ namespace gl::detail
 		case AddressMode::ClampToEdge:       return GL_CLAMP_TO_EDGE;
 		case AddressMode::ClampToBorder:     return GL_CLAMP_TO_BORDER;
 		case AddressMode::MirrorClampToEdge: return GL_MIRROR_CLAMP_TO_EDGE;
-		default: assert(0);                  return 0;
+		default: std::unreachable();
 		}
 	}
 
-	inline GLint EnumToGL(ComponentSwizzle swizzle)
+	inline GLint EnumToGL(ComponentSwizzle swizzle) noexcept
 	{
 		switch (swizzle)
 		{
@@ -190,11 +189,11 @@ namespace gl::detail
 		case ComponentSwizzle::G:    return GL_GREEN;
 		case ComponentSwizzle::B:    return GL_BLUE;
 		case ComponentSwizzle::A:    return GL_ALPHA;
-		default: assert(0);          return 0;
+		default: std::unreachable();
 		}
 	}
 
-	inline GLsizei EnumToGL(SampleCount sampleCount)
+	inline GLsizei EnumToGL(SampleCount sampleCount) noexcept
 	{
 		switch (sampleCount)
 		{
@@ -204,11 +203,11 @@ namespace gl::detail
 		case SampleCount::Samples8:  return 8;
 		case SampleCount::Samples16: return 16;
 		case SampleCount::Samples32: return 32;
-		default: assert(0);          return 0;
+		default: std::unreachable();
 		}
 	}
 
-	inline GLint EnumToGL(ImageType imageType)
+	inline GLenum EnumToGL(ImageType imageType) noexcept
 	{
 		switch (imageType)
 		{
@@ -221,10 +220,11 @@ namespace gl::detail
 		case ImageType::TexCubemapArray:       return GL_TEXTURE_CUBE_MAP_ARRAY;
 		case ImageType::Tex2DMultisample:      return GL_TEXTURE_2D_MULTISAMPLE;
 		case ImageType::Tex2DMultisampleArray: return GL_TEXTURE_2D_MULTISAMPLE_ARRAY;
-		default: assert(0);                    return 0;
+		default: std::unreachable();
 		}
 	}
-	inline int ImageTypeToDimension(ImageType imageType)
+
+	inline int ImageTypeToDimension(ImageType imageType) noexcept
 	{
 		switch (imageType)
 		{
@@ -240,11 +240,11 @@ namespace gl::detail
 		case ImageType::TexCubemapArray:
 		case ImageType::Tex2DMultisampleArray:
 			return 3;
-		default: assert(0); return 0;
+		default: std::unreachable();
 		}
 	}
 
-	inline GLint EnumToGL(Format format)
+	inline GLenum EnumToGL(Format format) noexcept
 	{
 		switch (format)
 		{
@@ -334,10 +334,10 @@ namespace gl::detail
 		case Format::BC6H_RGB_SFLOAT:    return GL_COMPRESSED_RGB_BPTC_SIGNED_FLOAT;
 		case Format::BC7_RGBA_UNORM:     return GL_COMPRESSED_RGBA_BPTC_UNORM;
 		case Format::BC7_RGBA_SRGB:      return GL_COMPRESSED_SRGB_ALPHA_BPTC_UNORM;
-		default: assert(0);              return 0;
+		default: std::unreachable();
 		}
 	}
-	inline bool IsBlockCompressedFormat(Format format)
+	inline bool IsBlockCompressedFormat(Format format) noexcept
 	{
 		switch (format)
 		{
@@ -361,7 +361,8 @@ namespace gl::detail
 		default: return false;
 		}
 	}
-	inline GLenum FormatToTypeGL(Format format)
+
+	inline GLenum FormatToTypeGL(Format format) noexcept
 	{
 		switch (format)
 		{
@@ -422,11 +423,11 @@ namespace gl::detail
 		case Format::R32G32B32_UINT:
 		case Format::R32G32B32A32_UINT:
 			return GL_UNSIGNED_INT;
-		default: assert(0); return 0;
+		default: std::unreachable();
 		}
 	}
 	
-	inline GlBaseTypeClass FormatToBaseTypeClass(Format format)
+	inline GlBaseTypeClass FormatToBaseTypeClass(Format format) noexcept
 	{
 		switch (format)
 		{
@@ -495,10 +496,11 @@ namespace gl::detail
 		case Format::R16G16B16A16_UINT:
 		case Format::R32G32B32A32_UINT:
 			return GlBaseTypeClass::UInt;
-		default: assert(0); return GlBaseTypeClass::Float;
+		default: std::unreachable();
 		}
 	}
-	inline bool IsValidImageFormat(Format format)
+
+	inline bool IsValidImageFormat(Format format) noexcept
 	{
 		switch (format)
 		{
@@ -545,7 +547,7 @@ namespace gl::detail
 		}
 	}
 
-	inline GLint EnumToGL(UploadFormat uploadFormat)
+	inline GLenum EnumToGL(UploadFormat uploadFormat) noexcept
 	{
 		switch (uploadFormat)
 		{
@@ -564,10 +566,11 @@ namespace gl::detail
 		case UploadFormat::DEPTH_COMPONENT: return GL_DEPTH_COMPONENT;
 		case UploadFormat::STENCIL_INDEX:   return GL_STENCIL_INDEX;
 		case UploadFormat::DEPTH_STENCIL:   return GL_DEPTH_STENCIL;
-		default: assert(0);                 return 0;
+		default: std::unreachable();
 		}
 	}
-	inline UploadFormat FormatToUploadFormat(Format format)
+
+	inline UploadFormat FormatToUploadFormat(Format format) noexcept
 	{
 		switch (format)
 		{
@@ -651,11 +654,11 @@ namespace gl::detail
 			return UploadFormat::DEPTH_STENCIL;
 		case Format::S8_UINT:
 			return UploadFormat::STENCIL_INDEX;
-		default: assert(0); return {};
+		default: std::unreachable();
 		}
 	}
 
-	inline GLint EnumToGL(UploadType uploadType)
+	inline GLenum EnumToGL(UploadType uploadType) noexcept
 	{
 		switch (uploadType)
 		{
@@ -678,11 +681,11 @@ namespace gl::detail
 		case UploadType::UINT_8_8_8_8_REV:    return GL_UNSIGNED_INT_8_8_8_8_REV;
 		case UploadType::UINT_10_10_10_2:     return GL_UNSIGNED_INT_10_10_10_2;
 		case UploadType::UINT_2_10_10_10_REV: return GL_UNSIGNED_INT_2_10_10_10_REV;
-		default: assert(0);                   return 0;		
+		default: std::unreachable();
 		}
 	}
 
-	inline GLenum EnumToGL(PrimitiveTopology topology)
+	inline GLenum EnumToGL(PrimitiveTopology topology) noexcept
 	{
 		switch (topology)
 		{
@@ -693,32 +696,32 @@ namespace gl::detail
 		case PrimitiveTopology::TriangleStrip: return GL_TRIANGLE_STRIP;
 		case PrimitiveTopology::TriangleFan:   return GL_TRIANGLE_FAN;
 		case PrimitiveTopology::PatchList:     return GL_PATCHES;
-		default: assert(0);                     return 0;
+		default: std::unreachable();
 		}
 	}
 
-	inline GLenum EnumToGL(IndexType type)
+	inline GLenum EnumToGL(IndexType type) noexcept
 	{
 		switch (type)
 		{
 		case IndexType::UByte:  return GL_UNSIGNED_BYTE;
 		case IndexType::UShort: return GL_UNSIGNED_SHORT;
 		case IndexType::UInt:   return GL_UNSIGNED_INT;
-		default: assert(0);             return 0;
+		default: std::unreachable();
 		}
 	}
-	inline size_t GetIndexSize(IndexType indexType)
+	inline size_t GetIndexSize(IndexType indexType) noexcept
 	{
 		switch (indexType)
 		{
 		case IndexType::UByte:  return 1;
 		case IndexType::UShort: return 2;
 		case IndexType::UInt:   return 4;
-		default: assert(0);             return 0;
+		default: std::unreachable();
 		}
 	}
 
-	inline GLbitfield BarrierBitsToGL(MemoryBarrierBits bits)
+	inline GLbitfield BarrierBitsToGL(MemoryBarrierBits bits) noexcept
 	{
 		GLbitfield ret = 0;
 		ret |= bits & MemoryBarrierBit::VertexBufferBit ? GL_VERTEX_ATTRIB_ARRAY_BARRIER_BIT : 0;

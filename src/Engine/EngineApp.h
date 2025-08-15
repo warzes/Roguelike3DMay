@@ -8,7 +8,6 @@ uint16_t GetWindowWidth();
 uint16_t GetWindowHeight();
 float GetWindowAspect();
 
-bool GetKeyDown(int key);
 bool GetMouseButton(int button);
 int GetMousePositionX();
 int GetMousePositionY();
@@ -80,12 +79,6 @@ public:
 
 #pragma endregion
 
-#pragma region Keyboard
-	bool GetKeyDown(int key); // TODO: OLD, delete
-	bool GetKeyPressed(int key); // TODO: OLD, delete
-
-#pragma endregion
-
 protected:
 	virtual EngineCreateInfo GetCreateInfo() const = 0;
 	virtual bool OnInit() = 0;
@@ -147,8 +140,6 @@ private:
 	double      m_mouseDeltaX{ 0.0 };
 	double      m_mouseDeltaY{ 0.0 };
 	bool        m_cursorVisible{ true };
-	std::array<bool, MaxKeys> m_keys{ { false } }; // TODO: OLD, delete
-	std::array<bool, MaxKeys> m_repeatKeys{ { false } }; // TODO: OLD, delete
 	std::array<bool, MaxMouseButtons> m_mouseButtons{ { false } }; // TODO: OLD, delete
 
 	// state

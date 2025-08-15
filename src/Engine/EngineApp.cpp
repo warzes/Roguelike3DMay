@@ -40,10 +40,10 @@ float GetWindowAspect()
 	return thisIEngineApp->GetWindowAspect();
 }
 //=============================================================================
-bool GetKeyDown(int key)
-{
-	return thisIEngineApp->GetKeyDown(key);
-}
+//bool GetKeyDown(int key)
+//{
+//	return thisIEngineApp->GetKeyDown(key);
+//}
 //=============================================================================
 bool GetMouseButton(int button)
 {
@@ -268,7 +268,6 @@ void IEngineApp::Run()
 				}
 			}
 
-			memset(m_repeatKeys.data(), false, m_repeatKeys.size());
 			if (!m_cursorVisible)
 			{
 				SetCursorPosition({ m_width / 2, m_height / 2 });
@@ -288,17 +287,17 @@ void IEngineApp::Exit()
 	glfwSetWindowShouldClose(m_window, GLFW_TRUE);
 }
 //=============================================================================
-bool IEngineApp::GetKeyDown(int key)
-{
-	if (key < 0 || key >= (int)MaxKeys) return false;
-	return m_keys[static_cast<size_t>(key)];
-}
-//=============================================================================
-bool IEngineApp::GetKeyPressed(int key)
-{
-	if (key < 0 || key >= (int)MaxKeys) return false;
-	return m_repeatKeys[static_cast<size_t>(key)];
-}
+//bool IEngineApp::GetKeyDown(int key)
+//{
+//	if (key < 0 || key >= (int)MaxKeys) return false;
+//	return m_keys[static_cast<size_t>(key)];
+//}
+////=============================================================================
+//bool IEngineApp::GetKeyPressed(int key)
+//{
+//	if (key < 0 || key >= (int)MaxKeys) return false;
+//	return m_repeatKeys[static_cast<size_t>(key)];
+//}
 //=============================================================================
 bool IEngineApp::GetMouseButton(int button)
 {
@@ -561,25 +560,8 @@ void IEngineApp::fpsTick(float deltaSeconds, bool frameRendered)
 //=============================================================================
 void IEngineApp::keypress(int key, int scanCode, int action, int mods)
 {
-	if (key >= 0 && key < (int)MaxKeys)
-	{
-		if (action == GLFW_PRESS)
-		{
-			m_keys[static_cast<size_t>(key)] = true;
-		}
-		else if (action == GLFW_RELEASE)
-		{
-			m_keys[static_cast<size_t>(key)] = false;
-		}
-		else if (action == GLFW_REPEAT)
-		{
-			m_repeatKeys[static_cast<size_t>(key)] = true;
-		}
-	}
-	//std::string keyName = glfwGetKeyName(key, 0);
-	
-	Input::keypress(key, action);	
-	
+	//std::string keyName = glfwGetKeyName(key, 0);	
+	Input::keypress(key, action);
 	OnKey(key, scanCode, action, mods);
 }
 //=============================================================================

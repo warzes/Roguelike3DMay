@@ -38,82 +38,85 @@ inline uint64_t getBlockCompressedImageSize(gl::Format format, uint32_t width, u
 	case gl::Format::BC7_RGBA_UNORM:
 	case gl::Format::BC7_RGBA_SRGB:
 		return width * height * depth;
-	default: assert(0); return 0;
+	default: std::unreachable();
 	}
 }
 //=============================================================================
-gl::Texture::Texture(const TextureCreateInfo& createInfo, std::string_view name) : m_createInfo(createInfo)
+gl::Texture::Texture(const TextureCreateInfo& ci, std::string_view name) : m_createInfo(ci)
 {
-	glCreateTextures(detail::EnumToGL(createInfo.imageType), 1, &m_id);
+	glCreateTextures(detail::EnumToGL(ci.imageType), 1, &m_id);
 
-	switch (createInfo.imageType)
+	switch (ci.imageType)
 	{
 	case ImageType::Tex1D:
-		glTextureStorage1D(m_id, createInfo.mipLevels, detail::EnumToGL(createInfo.format), createInfo.extent.width);
+		glTextureStorage1D(m_id,
+			static_cast<GLsizei>(ci.mipLevels),
+			detail::EnumToGL(ci.format),
+			static_cast<GLsizei>(ci.extent.width));
 		break;
 	case ImageType::Tex2D:
 		glTextureStorage2D(m_id,
-			createInfo.mipLevels,
-			detail::EnumToGL(createInfo.format),
-			createInfo.extent.width,
-			createInfo.extent.height);
+			static_cast<GLsizei>(ci.mipLevels),
+			detail::EnumToGL(ci.format),
+			static_cast<GLsizei>(ci.extent.width),
+			static_cast<GLsizei>(ci.extent.height));
 		break;
 	case ImageType::Tex3D:
 		glTextureStorage3D(m_id,
-			createInfo.mipLevels,
-			detail::EnumToGL(createInfo.format),
-			createInfo.extent.width,
-			createInfo.extent.height,
-			createInfo.extent.depth);
+			static_cast<GLsizei>(ci.mipLevels),
+			detail::EnumToGL(ci.format),
+			static_cast<GLsizei>(ci.extent.width),
+			static_cast<GLsizei>(ci.extent.height),
+			static_cast<GLsizei>(ci.extent.depth));
 		break;
 	case ImageType::Tex1DArray:
 		glTextureStorage2D(m_id,
-			createInfo.mipLevels,
-			detail::EnumToGL(createInfo.format),
-			createInfo.extent.width,
-			createInfo.arrayLayers);
+			static_cast<GLsizei>(ci.mipLevels),
+			detail::EnumToGL(ci.format),
+			static_cast<GLsizei>(ci.extent.width),
+			static_cast<GLsizei>(ci.arrayLayers));
 		break;
 	case ImageType::Tex2DArray:
 		glTextureStorage3D(m_id,
-			createInfo.mipLevels,
-			detail::EnumToGL(createInfo.format),
-			createInfo.extent.width,
-			createInfo.extent.height,
-			createInfo.arrayLayers);
+			static_cast<GLsizei>(ci.mipLevels),
+			detail::EnumToGL(ci.format),
+			static_cast<GLsizei>(ci.extent.width),
+			static_cast<GLsizei>(ci.extent.height),
+			static_cast<GLsizei>(ci.arrayLayers));
 		break;
 	case ImageType::TexCubemap:
 		glTextureStorage2D(m_id,
-			createInfo.mipLevels,
-			detail::EnumToGL(createInfo.format),
-			createInfo.extent.width,
-			createInfo.extent.height);
+			static_cast<GLsizei>(ci.mipLevels),
+			detail::EnumToGL(ci.format),
+			static_cast<GLsizei>(ci.extent.width),
+			static_cast<GLsizei>(ci.extent.height));
 		break;
 	case ImageType::TexCubemapArray:
 		glTextureStorage3D(m_id,
-			createInfo.mipLevels,
-			detail::EnumToGL(createInfo.format),
-			createInfo.extent.width,
-			createInfo.extent.height,
-			createInfo.arrayLayers);
+			static_cast<GLsizei>(ci.mipLevels),
+			detail::EnumToGL(ci.format),
+			static_cast<GLsizei>(ci.extent.width),
+			static_cast<GLsizei>(ci.extent.height),
+			static_cast<GLsizei>(ci.arrayLayers));
 		break;
 	case ImageType::Tex2DMultisample:
 		glTextureStorage2DMultisample(m_id,
-			detail::EnumToGL(createInfo.sampleCount),
-			detail::EnumToGL(createInfo.format),
-			createInfo.extent.width,
-			createInfo.extent.height,
+			detail::EnumToGL(ci.sampleCount),
+			detail::EnumToGL(ci.format),
+			static_cast<GLsizei>(ci.extent.width),
+			static_cast<GLsizei>(ci.extent.height),
 			GL_TRUE);
 		break;
 	case ImageType::Tex2DMultisampleArray:
 		glTextureStorage3DMultisample(m_id,
-			detail::EnumToGL(createInfo.sampleCount),
-			detail::EnumToGL(createInfo.format),
-			createInfo.extent.width,
-			createInfo.extent.height,
-			createInfo.arrayLayers,
+			detail::EnumToGL(ci.sampleCount),
+			detail::EnumToGL(ci.format),
+			static_cast<GLsizei>(ci.extent.width),
+			static_cast<GLsizei>(ci.extent.height),
+			static_cast<GLsizei>(ci.arrayLayers),
 			GL_TRUE);
 		break;
-	default: assert(0); break;
+	default: std::unreachable(); break;
 	}
 
 	if (!name.empty())
@@ -238,33 +241,40 @@ void gl::Texture::subImageInternal(const TextureUpdateInfo& info)
 		type = detail::EnumToGL(info.type);
 	}
 
-	glPixelStorei(GL_UNPACK_ROW_LENGTH, info.rowLength);
-	glPixelStorei(GL_UNPACK_IMAGE_HEIGHT, info.imageHeight);
+	glPixelStorei(GL_UNPACK_ROW_LENGTH, static_cast<GLint>(info.rowLength));
+	glPixelStorei(GL_UNPACK_IMAGE_HEIGHT, static_cast<GLint>(info.imageHeight));
 
 	switch (detail::ImageTypeToDimension(m_createInfo.imageType))
 	{
 	case 1:
-		glTextureSubImage1D(m_id, info.level, info.offset.x, info.extent.width, format, type, info.pixels); break;
+		glTextureSubImage1D(m_id,
+			static_cast<GLint>(info.level),
+			static_cast<GLint>(info.offset.x),
+			static_cast<GLsizei>(info.extent.width),
+			format,
+			type,
+			info.pixels);
+		break;
 	case 2:
 		glTextureSubImage2D(m_id,
-			info.level,
-			info.offset.x,
-			info.offset.y,
-			info.extent.width,
-			info.extent.height,
+			static_cast<GLint>(info.level),
+			static_cast<GLint>(info.offset.x),
+			static_cast<GLint>(info.offset.y),
+			static_cast<GLsizei>(info.extent.width),
+			static_cast<GLsizei>(info.extent.height),
 			format,
 			type,
 			info.pixels);
 		break;
 	case 3:
 		glTextureSubImage3D(m_id,
-			info.level,
-			info.offset.x,
-			info.offset.y,
-			info.offset.z,
-			info.extent.width,
-			info.extent.height,
-			info.extent.depth,
+			static_cast<GLint>(info.level),
+			static_cast<GLint>(info.offset.x),
+			static_cast<GLint>(info.offset.y),
+			static_cast<GLint>(info.offset.z),
+			static_cast<GLsizei>(info.extent.width),
+			static_cast<GLsizei>(info.extent.height),
+			static_cast<GLsizei>(info.extent.depth),
 			format,
 			type,
 			info.pixels);
@@ -285,30 +295,30 @@ void gl::Texture::subCompressedImageInternal(const CompressedTextureUpdateInfo& 
 	case 2:
 		glCompressedTextureSubImage2D(
 			m_id,
-			info.level,
-			info.offset.x,
-			info.offset.y,
-			info.extent.width,
-			info.extent.height,
+			static_cast<GLint>(info.level),
+			static_cast<GLint>(info.offset.x),
+			static_cast<GLint>(info.offset.y),
+			static_cast<GLsizei>(info.extent.width),
+			static_cast<GLsizei>(info.extent.height),
 			format,
-			static_cast<uint32_t>(getBlockCompressedImageSize(m_createInfo.format, info.extent.width, info.extent.height, 1)),
+			static_cast<GLsizei>(getBlockCompressedImageSize(m_createInfo.format, info.extent.width, info.extent.height, 1)),
 			info.data);
 		break;
 	case 3:
 		glCompressedTextureSubImage3D(
 			m_id,
-			info.level,
-			info.offset.x,
-			info.offset.y,
-			info.offset.z,
-			info.extent.width,
-			info.extent.height,
-			info.extent.depth,
+			static_cast<GLint>(info.level),
+			static_cast<GLint>(info.offset.x),
+			static_cast<GLint>(info.offset.y),
+			static_cast<GLint>(info.offset.z),
+			static_cast<GLsizei>(info.extent.width),
+			static_cast<GLsizei>(info.extent.height),
+			static_cast<GLsizei>(info.extent.depth),
 			format,
-			static_cast<uint32_t>(getBlockCompressedImageSize(m_createInfo.format, info.extent.width, info.extent.height, info.extent.depth)),
+			static_cast<GLsizei>(getBlockCompressedImageSize(m_createInfo.format, info.extent.width, info.extent.height, info.extent.depth)),
 			info.data);
 		break;
-	default: assert(0);
+	default: std::unreachable();
 	}
 }
 //=============================================================================
@@ -360,13 +370,13 @@ void gl::Texture::ClearImage(const TextureClearInfo& info)
 	}
 
 	glClearTexSubImage(m_id,
-		info.level,
-		info.offset.x,
-		info.offset.y,
-		info.offset.z,
-		extent.width,
-		extent.height,
-		extent.depth,
+		static_cast<GLint>(info.level),
+		static_cast<GLint>(info.offset.x),
+		static_cast<GLint>(info.offset.y),
+		static_cast<GLint>(info.offset.z),
+		static_cast<GLsizei>(extent.width),
+		static_cast<GLsizei>(extent.height),
+		static_cast<GLsizei>(extent.depth),
 		format,
 		type,
 		info.data);

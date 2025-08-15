@@ -111,7 +111,7 @@ PipelineDeferredSSAO::PipelineDeferredSSAO(int kernelSize, int noiseSize)
 		float scale = static_cast<float>(i) / kernelSizeF;
 
 		// Scale samples s.t. they're more aligned to center of kernel
-		scale = Lerp<float>(0.1f, 1.0f, scale * scale);
+		scale = Lerp(0.1f, 1.0f, scale * scale);
 		sample *= scale;
 		m_ssaoKernel.push_back(sample);
 	}

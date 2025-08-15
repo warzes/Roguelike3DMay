@@ -12,7 +12,7 @@
 	case gl::ShaderType::TessellationControlShader:    return "GL_TESS_CONTROL_SHADER";
 	case gl::ShaderType::TessellationEvaluationShader: return "GL_TESS_EVALUATION_SHADER";
 	case gl::ShaderType::ComputeShader:                return "GL_COMPUTE_SHADER";
-	default: assert(0);                                return "UNKNOWN_SHADER_TYPE";
+	default: std::unreachable();
 	}
 }
 //=============================================================================
@@ -25,7 +25,7 @@
 	case gl::ShaderType::TessellationEvaluationShader: return GL_TESS_EVALUATION_SHADER;
 	case gl::ShaderType::FragmentShader:               return GL_FRAGMENT_SHADER;
 	case gl::ShaderType::ComputeShader:                return GL_COMPUTE_SHADER;
-	default: assert(0);                                return 0;
+	default: std::unreachable();
 	}
 }
 //=============================================================================

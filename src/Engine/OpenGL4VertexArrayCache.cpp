@@ -73,7 +73,7 @@ inline GLboolean isFormatNormalizedGL(gl::Format format)
 	case gl::Format::R16G16B16A16_UINT:
 	case gl::Format::R32G32B32A32_UINT:
 		return GL_FALSE;
-	default: assert(0); return 0;
+	default: std::unreachable();
 	}
 }
 //=============================================================================
@@ -131,7 +131,7 @@ inline gl::GlFormatClass formatToFormatClass(gl::Format format)
 	case gl::Format::R16G16B16A16_UINT:
 	case gl::Format::R32G32B32A32_UINT:
 		return gl::GlFormatClass::Int;
-	default: assert(0); return gl::GlFormatClass::Long;
+	default: std::unreachable();
 	}
 }
 //=============================================================================
@@ -191,7 +191,7 @@ inline GLint formatToSizeGL(gl::Format format)
 	case gl::Format::R16G16B16A16_UINT:
 	case gl::Format::R32G32B32A32_UINT:
 		return 4;
-	default: assert(0); return 0;
+	default: std::unreachable();
 	}
 }
 //=============================================================================
@@ -220,7 +220,7 @@ uint32_t gl::detail::VertexArrayCache::CreateOrGetCachedVertexArray(const Vertex
 		case gl::GlFormatClass::Float: glVertexArrayAttribFormat(vao, desc.location, size, type, normalized, desc.offset); break;
 		case gl::GlFormatClass::Int:   glVertexArrayAttribIFormat(vao, desc.location, size, type, desc.offset); break;
 		case gl::GlFormatClass::Long:  glVertexArrayAttribLFormat(vao, desc.location, size, type, desc.offset); break;
-		default: assert(0);
+		default: std::unreachable();
 		}
 	}
 

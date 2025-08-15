@@ -69,7 +69,7 @@ void CameraControl::onEvents()
     GLfloat cam_pan_speed = 0.005f;
     GLfloat cam_rotate_speed = 0.2f;
 
-    if (GetKeyDown(GLFW_KEY_LEFT_ALT) && GetMouseButton(GLFW_MOUSE_BUTTON_LEFT))
+    if (Input::IsKeyDown(GLFW_KEY_LEFT_ALT) && GetMouseButton(GLFW_MOUSE_BUTTON_LEFT))
     {
         pitch += -89.0f * delta_cursor_y * cam_rotate_speed / 512;
         yaw += 1080.0f * delta_cursor_x * cam_rotate_speed / 512;
@@ -89,31 +89,31 @@ void CameraControl::onEvents()
     cam_up = glm::normalize(cam_up);
     cam_hand = glm::cross(cam_dir, cam_up);
 
-    if (GetKeyDown(GLFW_KEY_LEFT_CONTROL) && GetMouseButton(GLFW_MOUSE_BUTTON_LEFT))
+    if (Input::IsKeyDown(GLFW_KEY_LEFT_CONTROL) && GetMouseButton(GLFW_MOUSE_BUTTON_LEFT))
     {
         cam_pos += cam_hand * delta_cursor_x * cam_pan_speed;
         cam_pos -= cam_up * delta_cursor_y * cam_pan_speed;
     }
 
-    if (GetKeyDown(GLFW_KEY_LEFT_SHIFT) && GetMouseButton(GLFW_MOUSE_BUTTON_LEFT))
+    if (Input::IsKeyDown(GLFW_KEY_LEFT_SHIFT) && GetMouseButton(GLFW_MOUSE_BUTTON_LEFT))
     {
         cam_pos += cam_hand * delta_cursor_x * cam_pan_speed;
         cam_pos -= cam_dir * delta_cursor_y * cam_pan_speed;
     }
 
-    if (GetKeyDown(GLFW_KEY_UP))
+    if (Input::IsKeyDown(GLFW_KEY_UP))
     {
         cam_pos += cam_dir * cam_speed * (current_time - last_frame_time);
     }
-    if (GetKeyDown(GLFW_KEY_DOWN))
+    if (Input::IsKeyDown(GLFW_KEY_DOWN))
     {
         cam_pos -= cam_dir * cam_speed * (current_time - last_frame_time);
     }
-    if (GetKeyDown(GLFW_KEY_LEFT))
+    if (Input::IsKeyDown(GLFW_KEY_LEFT))
     {
         cam_pos -= cam_hand * cam_speed * (current_time - last_frame_time);
     }
-    if (GetKeyDown(GLFW_KEY_RIGHT))
+    if (Input::IsKeyDown(GLFW_KEY_RIGHT))
     {
         cam_pos += cam_hand * cam_speed * (current_time - last_frame_time);
     }

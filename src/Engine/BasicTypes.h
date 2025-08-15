@@ -20,131 +20,146 @@ public:
 	constexpr ReferenceWrapper(U&& val) noexcept
 	{
 		T& ref = static_cast<U&&>(val);
-		ptr = std::addressof(ref);
+		m_ptr = std::addressof(ref);
 	}
 
-	constexpr operator T& () const noexcept { return *ptr; }
-	[[nodiscard]] constexpr T& get() const noexcept { return *ptr; }
+	[[nodiscard]] constexpr operator T& () const noexcept { return *m_ptr; }
+	[[nodiscard]] constexpr T& get() const noexcept { return *m_ptr; }
 
 private:
-	T* ptr{};
+	T* m_ptr{};
 };
 
 struct Extent2D final
 {
-	bool operator==(const Extent2D&) const noexcept = default;
-	Extent2D operator+(const Extent2D& other) const { return { width + other.width, height + other.height }; }
-	Extent2D operator-(const Extent2D& other) const { return { width - other.width, height - other.height }; }
-	Extent2D operator*(const Extent2D& other) const { return { width * other.width, height * other.height }; }
-	Extent2D operator/(const Extent2D& other) const { return { width / other.width, height / other.height }; }
-	Extent2D operator>>(const Extent2D& other) const { return { width >> other.width, height >> other.height }; }
-	Extent2D operator<<(const Extent2D& other) const { return { width << other.width, height << other.height }; }
-	Extent2D operator+(uint32_t val) const { return *this + Extent2D{ val, val }; }
-	Extent2D operator-(uint32_t val) const { return *this - Extent2D{ val, val }; }
-	Extent2D operator*(uint32_t val) const { return *this * Extent2D{ val, val }; }
-	Extent2D operator/(uint32_t val) const { return *this / Extent2D{ val, val }; }
-	Extent2D operator>>(uint32_t val) const { return *this >> Extent2D{ val, val }; }
-	Extent2D operator<<(uint32_t val) const { return *this << Extent2D{ val, val }; }
+	constexpr bool operator==(const Extent2D&) const noexcept = default;
+	constexpr Extent2D operator+(const Extent2D& other) const noexcept { return { width + other.width, height + other.height }; }
+	constexpr Extent2D operator-(const Extent2D& other) const noexcept { return { width - other.width, height - other.height }; }
+	constexpr Extent2D operator*(const Extent2D& other) const noexcept { return { width * other.width, height * other.height }; }
+	constexpr Extent2D operator/(const Extent2D& other) const noexcept { return { width / other.width, height / other.height }; }
+	constexpr Extent2D operator>>(const Extent2D& other) const noexcept { return { width >> other.width, height >> other.height }; }
+	constexpr Extent2D operator<<(const Extent2D& other) const noexcept { return { width << other.width, height << other.height }; }
+	constexpr Extent2D operator+(uint32_t val) const noexcept { return *this + Extent2D{ val, val }; }
+	constexpr Extent2D operator-(uint32_t val) const noexcept { return *this - Extent2D{ val, val }; }
+	constexpr Extent2D operator*(uint32_t val) const noexcept { return *this * Extent2D{ val, val }; }
+	constexpr Extent2D operator/(uint32_t val) const noexcept { return *this / Extent2D{ val, val }; }
+	constexpr Extent2D operator>>(uint32_t val) const noexcept { return *this >> Extent2D{ val, val }; }
+	constexpr Extent2D operator<<(uint32_t val) const noexcept { return *this << Extent2D{ val, val }; }
 
 	uint32_t width{ 0 };
 	uint32_t height{ 0 };
 };
 
-inline Extent2D operator+(uint32_t val, Extent2D ext) { return ext + val; }
-inline Extent2D operator-(uint32_t val, Extent2D ext) { return ext - val; }
-inline Extent2D operator*(uint32_t val, Extent2D ext) { return ext * val; }
-inline Extent2D operator/(uint32_t val, Extent2D ext) { return ext / val; }
-inline Extent2D operator>>(uint32_t val, Extent2D ext) { return ext >> val; }
-inline Extent2D operator<<(uint32_t val, Extent2D ext) { return ext << val; }
+constexpr inline Extent2D operator+(uint32_t val, Extent2D ext) noexcept { return ext + val; }
+constexpr inline Extent2D operator-(uint32_t val, Extent2D ext) noexcept { return ext - val; }
+constexpr inline Extent2D operator*(uint32_t val, Extent2D ext) noexcept { return ext * val; }
+constexpr inline Extent2D operator/(uint32_t val, Extent2D ext) noexcept { return ext / val; }
+constexpr inline Extent2D operator>>(uint32_t val, Extent2D ext) noexcept { return ext >> val; }
+constexpr inline Extent2D operator<<(uint32_t val, Extent2D ext) noexcept { return ext << val; }
 
 struct Extent3D final
 {
-	operator Extent2D() const { return { width, height }; }
-	bool operator==(const Extent3D&) const noexcept = default;
-	Extent3D operator+(const Extent3D& other) const { return { width + other.width, height + other.height, depth + other.depth }; }
-	Extent3D operator-(const Extent3D& other) const { return { width - other.width, height - other.height, depth - other.depth }; }
-	Extent3D operator*(const Extent3D& other) const { return { width * other.width, height * other.height, depth * other.depth }; }
-	Extent3D operator/(const Extent3D& other) const { return { width / other.width, height / other.height, depth / other.depth }; }
-	Extent3D operator>>(const Extent3D& other) const { return { width >> other.width, height >> other.height, depth >> other.depth }; }
-	Extent3D operator<<(const Extent3D& other) const { return { width << other.width, height << other.height, depth << other.depth }; }
-	Extent3D operator+(uint32_t val) const { return *this + Extent3D{ val, val, val }; }
-	Extent3D operator-(uint32_t val) const { return *this - Extent3D{ val, val, val }; }
-	Extent3D operator*(uint32_t val) const { return *this * Extent3D{ val, val, val }; }
-	Extent3D operator/(uint32_t val) const { return *this / Extent3D{ val, val, val }; }
-	Extent3D operator>>(uint32_t val) const { return *this >> Extent3D{ val, val, val }; }
-	Extent3D operator<<(uint32_t val) const { return *this << Extent3D{ val, val, val }; }
+	constexpr explicit operator Extent2D() const noexcept { return { width, height }; }
+	constexpr bool operator==(const Extent3D&) const noexcept = default;
+	constexpr Extent3D operator+(const Extent3D& other) const noexcept { return { width + other.width, height + other.height, depth + other.depth }; }
+	constexpr Extent3D operator-(const Extent3D& other) const noexcept { return { width - other.width, height - other.height, depth - other.depth }; }
+	constexpr Extent3D operator*(const Extent3D& other) const noexcept { return { width * other.width, height * other.height, depth * other.depth }; }
+	constexpr Extent3D operator/(const Extent3D& other) const noexcept { return { width / other.width, height / other.height, depth / other.depth }; }
+	constexpr Extent3D operator>>(const Extent3D& other) const noexcept { return { width >> other.width, height >> other.height, depth >> other.depth }; }
+	constexpr Extent3D operator<<(const Extent3D& other) const noexcept { return { width << other.width, height << other.height, depth << other.depth }; }
+	constexpr Extent3D operator+(uint32_t val) const noexcept { return *this + Extent3D{ val, val, val }; }
+	constexpr Extent3D operator-(uint32_t val) const noexcept { return *this - Extent3D{ val, val, val }; }
+	constexpr Extent3D operator*(uint32_t val) const noexcept { return *this * Extent3D{ val, val, val }; }
+	constexpr Extent3D operator/(uint32_t val) const noexcept { return *this / Extent3D{ val, val, val }; }
+	constexpr Extent3D operator>>(uint32_t val) const noexcept { return *this >> Extent3D{ val, val, val }; }
+	constexpr Extent3D operator<<(uint32_t val) const noexcept { return *this << Extent3D{ val, val, val }; }
 
 	uint32_t width{ 0 };
 	uint32_t height{ 0 };
 	uint32_t depth{ 0 };
 };
 
-inline Extent3D operator+(uint32_t val, Extent3D ext) { return ext + val; }
-inline Extent3D operator-(uint32_t val, Extent3D ext) { return ext - val; }
-inline Extent3D operator*(uint32_t val, Extent3D ext) { return ext * val; }
-inline Extent3D operator/(uint32_t val, Extent3D ext) { return ext / val; }
-inline Extent3D operator>>(uint32_t val, Extent3D ext) { return ext >> val; }
-inline Extent3D operator<<(uint32_t val, Extent3D ext) { return ext << val; }
+constexpr inline Extent3D operator+(uint32_t val, Extent3D ext) noexcept { return ext + val; }
+constexpr inline Extent3D operator-(uint32_t val, Extent3D ext) noexcept { return ext - val; }
+constexpr inline Extent3D operator*(uint32_t val, Extent3D ext) noexcept { return ext * val; }
+constexpr inline Extent3D operator/(uint32_t val, Extent3D ext) noexcept { return ext / val; }
+constexpr inline Extent3D operator>>(uint32_t val, Extent3D ext) noexcept { return ext >> val; }
+constexpr inline Extent3D operator<<(uint32_t val, Extent3D ext) noexcept { return ext << val; }
 
 struct Offset2D final
 {
-	bool operator==(const Offset2D&) const noexcept = default;
-	Offset2D operator+(const Offset2D& other) const { return { x + other.x, y + other.y }; }
-	Offset2D operator-(const Offset2D& other) const { return { x - other.x, y - other.y }; }
-	Offset2D operator*(const Offset2D& other) const { return { x * other.x, y * other.y }; }
-	Offset2D operator/(const Offset2D& other) const { return { x / other.x, y / other.y }; }
-	Offset2D operator>>(const Offset2D& other) const { return { x >> other.x, y >> other.y }; }
-	Offset2D operator<<(const Offset2D& other) const { return { x << other.x, y << other.y }; }
-	Offset2D operator+(uint32_t val) const { return *this + Offset2D{ val, val }; }
-	Offset2D operator-(uint32_t val) const { return *this - Offset2D{ val, val }; }
-	Offset2D operator*(uint32_t val) const { return *this * Offset2D{ val, val }; }
-	Offset2D operator/(uint32_t val) const { return *this / Offset2D{ val, val }; }
-	Offset2D operator>>(uint32_t val) const { return *this >> Offset2D{ val, val }; }
-	Offset2D operator<<(uint32_t val) const { return *this << Offset2D{ val, val }; }
+	constexpr bool operator==(const Offset2D&) const noexcept = default;
+	constexpr Offset2D operator+(const Offset2D& other) const noexcept { return { x + other.x, y + other.y }; }
+	constexpr Offset2D operator-(const Offset2D& other) const noexcept { return { x - other.x, y - other.y }; }
+	constexpr Offset2D operator*(const Offset2D& other) const noexcept { return { x * other.x, y * other.y }; }
+	constexpr Offset2D operator/(const Offset2D& other) const noexcept { return { x / other.x, y / other.y }; }
+	constexpr Offset2D operator>>(const Offset2D& other) const noexcept { return { x >> other.x, y >> other.y }; }
+	constexpr Offset2D operator<<(const Offset2D& other) const noexcept { return { x << other.x, y << other.y }; }
+	constexpr Offset2D operator+(uint32_t val) const noexcept { return *this + Offset2D{ val, val }; }
+	constexpr Offset2D operator-(uint32_t val) const noexcept { return *this - Offset2D{ val, val }; }
+	constexpr Offset2D operator*(uint32_t val) const noexcept { return *this * Offset2D{ val, val }; }
+	constexpr Offset2D operator/(uint32_t val) const noexcept { return *this / Offset2D{ val, val }; }
+	constexpr Offset2D operator>>(uint32_t val) const noexcept { return *this >> Offset2D{ val, val }; }
+	constexpr Offset2D operator<<(uint32_t val) const noexcept { return *this << Offset2D{ val, val }; }
 
 	uint32_t x{ 0 };
 	uint32_t y{ 0 };
 };
 
-inline Offset2D operator+(uint32_t val, Offset2D ext) { return ext + val; }
-inline Offset2D operator-(uint32_t val, Offset2D ext) { return ext - val; }
-inline Offset2D operator*(uint32_t val, Offset2D ext) { return ext * val; }
-inline Offset2D operator/(uint32_t val, Offset2D ext) { return ext / val; }
-inline Offset2D operator>>(uint32_t val, Offset2D ext) { return ext >> val; }
-inline Offset2D operator<<(uint32_t val, Offset2D ext) { return ext << val; }
+constexpr inline Offset2D operator+(uint32_t val, Offset2D ext) noexcept { return ext + val; }
+constexpr inline Offset2D operator-(uint32_t val, Offset2D ext) noexcept { return ext - val; }
+constexpr inline Offset2D operator*(uint32_t val, Offset2D ext) noexcept { return ext * val; }
+constexpr inline Offset2D operator/(uint32_t val, Offset2D ext) noexcept { return ext / val; }
+constexpr inline Offset2D operator>>(uint32_t val, Offset2D ext) noexcept { return ext >> val; }
+constexpr inline Offset2D operator<<(uint32_t val, Offset2D ext) noexcept { return ext << val; }
 
 struct Offset3D final
 {
-	operator Offset2D() const { return { x, y }; }
-	bool operator==(const Offset3D&) const noexcept = default;
-	Offset3D operator+(const Offset3D& other) const { return { x + other.x, y + other.y, z + other.z }; }
-	Offset3D operator-(const Offset3D& other) const { return { x - other.x, y - other.y, z - other.z }; }
-	Offset3D operator*(const Offset3D& other) const { return { x * other.x, y * other.y, z * other.z }; }
-	Offset3D operator/(const Offset3D& other) const { return { x / other.x, y / other.y, z / other.z }; }
-	Offset3D operator>>(const Offset3D& other) const { return { x >> other.x, y >> other.y, z >> other.z }; }
-	Offset3D operator<<(const Offset3D& other) const { return { x << other.x, y << other.y, z << other.z }; }
-	Offset3D operator+(uint32_t val) const { return *this + Offset3D{ val, val, val }; }
-	Offset3D operator-(uint32_t val) const { return *this - Offset3D{ val, val, val }; }
-	Offset3D operator*(uint32_t val) const { return *this * Offset3D{ val, val, val }; }
-	Offset3D operator/(uint32_t val) const { return *this / Offset3D{ val, val, val }; }
-	Offset3D operator>>(uint32_t val) const { return *this >> Offset3D{ val, val, val }; }
-	Offset3D operator<<(uint32_t val) const { return *this << Offset3D{ val, val, val }; }
+	constexpr explicit operator Offset2D() const noexcept { return { x, y }; }
+	constexpr bool operator==(const Offset3D&) const noexcept = default;
+	constexpr Offset3D operator+(const Offset3D& other) const noexcept { return { x + other.x, y + other.y, z + other.z }; }
+	constexpr Offset3D operator-(const Offset3D& other) const noexcept { return { x - other.x, y - other.y, z - other.z }; }
+	constexpr Offset3D operator*(const Offset3D& other) const noexcept { return { x * other.x, y * other.y, z * other.z }; }
+	constexpr Offset3D operator/(const Offset3D& other) const noexcept { return { x / other.x, y / other.y, z / other.z }; }
+	constexpr Offset3D operator>>(const Offset3D& other) const noexcept { return { x >> other.x, y >> other.y, z >> other.z }; }
+	constexpr Offset3D operator<<(const Offset3D& other) const noexcept { return { x << other.x, y << other.y, z << other.z }; }
+	constexpr Offset3D operator+(uint32_t val) const noexcept { return *this + Offset3D{ val, val, val }; }
+	constexpr Offset3D operator-(uint32_t val) const noexcept { return *this - Offset3D{ val, val, val }; }
+	constexpr Offset3D operator*(uint32_t val) const noexcept { return *this * Offset3D{ val, val, val }; }
+	constexpr Offset3D operator/(uint32_t val) const noexcept { return *this / Offset3D{ val, val, val }; }
+	constexpr Offset3D operator>>(uint32_t val) const noexcept { return *this >> Offset3D{ val, val, val }; }
+	constexpr Offset3D operator<<(uint32_t val) const noexcept { return *this << Offset3D{ val, val, val }; }
 
 	uint32_t x{ 0 };
 	uint32_t y{ 0 };
 	uint32_t z{ 0 };
 };
 
-inline Offset3D operator+(uint32_t val, Offset3D ext) { return ext + val; }
-inline Offset3D operator-(uint32_t val, Offset3D ext) { return ext - val; }
-inline Offset3D operator*(uint32_t val, Offset3D ext) { return ext * val; }
-inline Offset3D operator/(uint32_t val, Offset3D ext) { return ext / val; }
-inline Offset3D operator>>(uint32_t val, Offset3D ext) { return ext >> val; }
-inline Offset3D operator<<(uint32_t val, Offset3D ext) { return ext << val; }
+constexpr inline Offset3D operator+(uint32_t val, Offset3D ext) noexcept { return ext + val; }
+constexpr inline Offset3D operator-(uint32_t val, Offset3D ext) noexcept { return ext - val; }
+constexpr inline Offset3D operator*(uint32_t val, Offset3D ext) noexcept { return ext * val; }
+constexpr inline Offset3D operator/(uint32_t val, Offset3D ext) noexcept { return ext / val; }
+constexpr inline Offset3D operator>>(uint32_t val, Offset3D ext) noexcept { return ext >> val; }
+constexpr inline Offset3D operator<<(uint32_t val, Offset3D ext) noexcept { return ext << val; }
 
 struct Rect2D final
 {
-	bool operator==(const Rect2D&) const noexcept = default;
+	constexpr bool operator==(const Rect2D&) const noexcept = default;
+
+	constexpr bool Contains(Offset2D point) const noexcept
+	{
+		return point.x >= offset.x && point.y >= offset.y
+			&& point.x < offset.x + extent.width
+			&& point.y < offset.y + extent.height;
+	}
+
+	constexpr bool Intersects(const Rect2D& other) const noexcept
+	{
+		return offset.x < other.offset.x + other.extent.width
+			&& other.offset.x < offset.x + extent.width
+			&& offset.y < other.offset.y + other.extent.height
+			&& other.offset.y < offset.y + extent.height;
+	}
 
 	Offset2D offset{};
 	Extent2D extent{};

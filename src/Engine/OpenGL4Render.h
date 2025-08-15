@@ -190,25 +190,25 @@ namespace gl
 	// id = GraphicsPipeline->Handle() or ComputePipeline->Handle()
 	// TODO: найти место в интерфейсе для этого
 	// TODO: аналогичные методы с целочисленой меткой вместо string
-	void SetUniform(uint64_t id, const std::string& label, bool value);
-	void SetUniform(uint64_t id, const std::string& label, int value);
-	void SetUniform(uint64_t id, const std::string& label, unsigned value);
-	void SetUniform(uint64_t id, const std::string& label, float value);
-	void SetUniform(uint64_t id, const std::string& label, std::span<const float> value);
-	void SetUniform(uint64_t id, const std::string& label, const float* value, int count);
-	void SetUniform(uint64_t id, const std::string& label, std::span<const glm::vec2> value);
-	void SetUniform(uint64_t id, const std::string& label, std::span<const glm::vec3> value);
-	void SetUniform(uint64_t id, const std::string& label, std::span<const glm::vec4> value);
-	void SetUniform(uint64_t id, const std::string& label, std::span<const int> value);
-	void SetUniform(uint64_t id, const std::string& label, const glm::vec2& value);
-	void SetUniform(uint64_t id, const std::string& label, float x, float y);
-	void SetUniform(uint64_t id, const std::string& label, const glm::ivec2& value);
-	void SetUniform(uint64_t id, const std::string& label, int x, int y);
-	void SetUniform(uint64_t id, const std::string& label, const glm::vec3& value);
-	void SetUniform(uint64_t id, const std::string& label, float x, float y, float z);
-	void SetUniform(uint64_t id, const std::string& label, const glm::vec4& value);
-	void SetUniform(uint64_t id, const std::string& label, float x, float y, float z, float w);
-	void SetUniform(uint64_t id, const std::string& label, const glm::mat3& mat);
-	void SetUniform(uint64_t id, const std::string& label, const glm::mat4& mat);
+	void SetUniform(unsigned id, const std::string& label, bool value);
+	void SetUniform(unsigned id, const std::string& label, int value);
+	void SetUniform(unsigned id, const std::string& label, unsigned value);
+	void SetUniform(unsigned id, const std::string& label, float value);
+	void SetUniform(unsigned id, const std::string& label, std::span<const float> value);
+	void SetUniform(unsigned id, const std::string& label, const float* value, int count);
+	void SetUniform(unsigned id, const std::string& label, std::span<const glm::vec2> value);
+	void SetUniform(unsigned id, const std::string& label, std::span<const glm::vec3> value);
+	void SetUniform(unsigned id, const std::string& label, std::span<const glm::vec4> value);
+	void SetUniform(unsigned id, const std::string& label, std::span<const int> value);
+	void SetUniform(unsigned id, const std::string& label, const glm::vec2& value);
+	void SetUniform(unsigned id, const std::string& label, float x, float y);
+	void SetUniform(unsigned id, const std::string& label, const glm::ivec2& value);
+	void SetUniform(unsigned id, const std::string& label, int x, int y);
+	void SetUniform(unsigned id, const std::string& label, const glm::vec3& value);
+	void SetUniform(unsigned id, const std::string& label, float x, float y, float z);
+	void SetUniform(unsigned id, const std::string& label, const glm::vec4& value);
+	void SetUniform(unsigned id, const std::string& label, float x, float y, float z, float w);
+	void SetUniform(unsigned id, const std::string& label, const glm::mat3& mat);
+	void SetUniform(unsigned id, const std::string& label, const glm::mat4& mat);
 
 } // namespace gl
