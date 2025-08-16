@@ -14,7 +14,7 @@
 #	pragma comment( lib, "Engine.lib" )
 #endif
 //=============================================================================
-int main(
+int main22(
 	[[maybe_unused]] int   argc,
 	[[maybe_unused]] char* argv[])
 {
@@ -29,5 +29,7 @@ int main(
 	//GameApp3 game;
 	dung::DungeonsApp game;
 	game.Run();
+
+	return 0;
 }
 //=============================================================================

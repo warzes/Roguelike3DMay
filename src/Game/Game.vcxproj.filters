@@ -33,6 +33,12 @@
     <ClCompile Include="DungeonsApp.cpp">
       <Filter>Dungeons</Filter>
     </ClCompile>
+    <ClCompile Include="temp1.cpp">
+      <Filter>_temp</Filter>
+    </ClCompile>
+    <ClCompile Include="temp2.cpp">
+      <Filter>_temp</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -99,6 +105,9 @@
     <Filter Include="Dungeons\graphics">
       <UniqueIdentifier>{ce8cc389-e889-4123-90aa-b0af8aa0c375}</UniqueIdentifier>
     </Filter>
+    <Filter Include="_temp">
+      <UniqueIdentifier>{e503301e-8fa8-4ce5-aa15-a327fd0e6d60}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\bin\GameData\shaders\MainShader3.frag">
@@ -112,6 +121,9 @@
     </None>
     <None Include="..\..\bin\GameData\shaders\DungeonModelShader.frag">
       <Filter>Dungeons\shaders</Filter>
+    </None>
+    <None Include="glProc.inl">
+      <Filter>_temp</Filter>
     </None>
   </ItemGroup>
 </Project>
