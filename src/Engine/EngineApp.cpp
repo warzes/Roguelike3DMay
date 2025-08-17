@@ -163,7 +163,7 @@ void cursorEnterCallback(
 void keyCallback(GLFWwindow* window, int key, int scanCode, int action, int mods) noexcept
 {
 	ImGui_ImplGlfw_KeyCallback(window, key, scanCode, action, mods);
-	thisIEngineApp->keypress(key, scanCode, action, mods);
+	thisIEngineApp->keyPress(key, scanCode, action, mods);
 }
 //=============================================================================
 void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods) noexcept
@@ -489,7 +489,7 @@ void IEngineApp::fpsTick(float deltaSeconds, bool frameRendered)
 	}
 }
 //=============================================================================
-void IEngineApp::keypress(int key, int scanCode, int action, int mods)
+void IEngineApp::keyPress(int key, int scanCode, int action, int mods)
 {
 	//std::string keyName = glfwGetKeyName(key, 0);
 	Input::keypress(key, action);

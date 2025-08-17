@@ -86,7 +86,7 @@ private:
 	void windowResize(int width, int height);
 	void fpsTick(float deltaSeconds, bool frameRendered = true);
 
-	void keypress(int key, int scanCode, int action, int mods);
+	void keyPress(int key, int scanCode, int action, int mods);
 	void mousePos(double xpos, double ypos);
 	void mouseScroll(double xoffset, double yoffset);
 	void mouseButton(int button, int action, int mods);

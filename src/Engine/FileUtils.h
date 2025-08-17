@@ -15,4 +15,4 @@ namespace io
 	// - ReadTextFile_Old - устаревшее. использовать LoadFile или LoadBinaryFile
 	std::string ReadTextFile_Old(const std::string& filename);
 	std::string ReadShaderCode(const std::string& filename, const std::vector<std::string>& defines = {});
-} // namespace FileUtils
+} // namespace io
