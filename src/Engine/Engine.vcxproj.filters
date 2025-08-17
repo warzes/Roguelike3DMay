@@ -129,9 +129,6 @@
     <ClInclude Include="BasicTypes.h">
       <Filter>02_Core</Filter>
     </ClInclude>
-    <ClInclude Include="BasicConstants.h">
-      <Filter>02_Core</Filter>
-    </ClInclude>
     <ClInclude Include="AABB.h">
       <Filter>03_Math</Filter>
     </ClInclude>
@@ -209,6 +206,9 @@
     </ClInclude>
     <ClInclude Include="Hash.h">
       <Filter>02_Core</Filter>
+    </ClInclude>
+    <ClInclude Include="BasicConstants.h">
+      <Filter>01_Base</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
