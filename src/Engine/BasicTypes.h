@@ -7,6 +7,8 @@ public:
 	template<typename T> requires std::is_trivially_copyable_v<T>
 	constexpr ByteView(const T& t) : std::span<const std::byte>(std::as_bytes(std::span{ &t, static_cast<size_t>(1) })) {}
 	template<typename T> requires std::is_trivially_copyable_v<T>
+	constexpr ByteView(std::span<T> t) : std::span<const std::byte>(std::as_bytes(t)) {}
+	template<typename T> requires std::is_trivially_copyable_v<T>
 	constexpr ByteView(std::span<const T> t) : std::span<const std::byte>(std::as_bytes(t)) {}
 };
 

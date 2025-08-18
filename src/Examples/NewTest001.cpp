@@ -1,11 +1,11 @@
 ﻿#include "stdafx.h"
 #include "NewTest001.h"
+
 //=============================================================================
-// Вывод треугольника
-// - разделенные вершинные буферы - один для позиции, другой для цвета.
-// - буфер цвета целочисленный из трех uint8_t
-// - простой GraphicsPipeline
-// - вывод сразу на экран (SwapChain)
+// Вывод треугольника на основную поверхность
+// - вершинный буфер из позиции и цвета
+// - индексный буфер
+// - создание GraphicsPipeline
 //=============================================================================
 namespace
 {
@@ -19,8 +19,8 @@ layout(location = 0) out vec3 v_color;
 
 void main()
 {
-  v_color = a_color;
-  gl_Position = vec4(a_pos, 0.0, 1.0);
+	v_color = a_color;
+	gl_Position = vec4(a_pos.xy, 0.0, 1.0);
 }
 )";
 
@@ -37,26 +37,33 @@ void main()
 }
 )";
 
-	std::optional<gl::Buffer> vertexPosBuffer;
-	std::optional<gl::Buffer> vertexColorBuffer;
+	struct Vertex final
+	{
+		glm::vec2 pos;
+		glm::vec3 color;
+	};
+
+	constexpr std::array<gl::VertexInputBindingDescription, 2> inputBindingDescs{
+		gl::VertexInputBindingDescription{
+			.location = 0,
+			.binding = 0,
+			.format = gl::Format::R32G32_FLOAT,
+			.offset = offsetof(Vertex, pos),
+		},
+		gl::VertexInputBindingDescription{
+			.location = 1,
+			.binding = 0,
+			.format = gl::Format::R32G32B32_FLOAT,
+			.offset = offsetof(Vertex, color),
+		},
+	};
+
+	std::optional<gl::Buffer> vertexBuffer;
+	std::optional<gl::Buffer> indexBuffer;
 	std::optional<gl::GraphicsPipeline> pipeline;
 
 	gl::GraphicsPipeline CreatePipeline()
 	{
-		auto descPos = gl::VertexInputBindingDescription{
-		  .location = 0,
-		  .binding = 0,
-		  .format = gl::Format::R32G32_FLOAT,
-		  .offset = 0,
-		};
-		auto descColor = gl::VertexInputBindingDescription{
-		  .location = 1,
-		  .binding = 1,
-		  .format = gl::Format::R8G8B8_UNORM,
-		  .offset = 0,
-		};
-		auto inputDescs = { descPos, descColor };
-
 		auto vertexShader = gl::Shader(gl::ShaderType::VertexShader, shaderCodeVertex, "Triangle VS");
 		auto fragmentShader = gl::Shader(gl::ShaderType::FragmentShader, shaderCodeFragment, "Triangle FS");
 
@@ -65,8 +72,12 @@ void main()
 			.vertexShader = &vertexShader,
 			.fragmentShader = &fragmentShader,
 			.inputAssemblyState = {.topology = gl::PrimitiveTopology::TriangleList},
-			.vertexInputState = {inputDescs},
-		});
+			.vertexInputState = {inputBindingDescs},
+			});
+	}
+
+	void resize(uint16_t width, uint16_t height)
+	{
 	}
 }
 //=============================================================================
@@ -77,22 +88,26 @@ EngineCreateInfo NewTest001::GetCreateInfo() const
 //=============================================================================
 bool NewTest001::OnInit()
 {
-	static constexpr std::array<float, 6> triPositions = { 
-		 0.0f,  0.4f, 
-		-1.0f, -1.0f, 
-		 1.0f, -1.0f };
-	static constexpr std::array<uint8_t, 9> triColors = { 255, 0, 0, 0, 255, 0, 0, 0, 255 };
-	vertexPosBuffer = gl::Buffer(triPositions);
-	vertexColorBuffer = gl::Buffer(triColors);
+	std::vector<Vertex> v = {
+		{{  0.0f,  0.4f}, {1, 0, 0}},
+		{{ -1.0f, -1.0f}, {0, 1, 0}},
+		{{  1.0f, -1.0f}, {0, 0, 1}},
+	};
+	vertexBuffer = gl::Buffer(v);
+
+	std::vector<unsigned> ind = { 0, 1, 2 };
+	indexBuffer = gl::Buffer(ind);
+
 	pipeline = CreatePipeline();
+
+	resize(GetWindowWidth(), GetWindowHeight());
 
 	return true;
 }
 //=============================================================================
 void NewTest001::OnClose()
 {
-	vertexPosBuffer = {};
-	vertexColorBuffer = {};
+	vertexBuffer = {};
 	pipeline = {};
 }
 //=============================================================================
@@ -109,13 +124,12 @@ void NewTest001::OnRender()
 		.colorLoadOp = gl::AttachmentLoadOp::Clear,
 		.clearColorValue = {.1f, .5f, .8f, 1.0f},
 	};
-
 	gl::BeginSwapChainRendering(renderInfo);
 	{
 		gl::Cmd::BindGraphicsPipeline(pipeline.value());
-		gl::Cmd::BindVertexBuffer(0, vertexPosBuffer.value(), 0, 2 * sizeof(float));
-		gl::Cmd::BindVertexBuffer(1, vertexColorBuffer.value(), 0, 3 * sizeof(uint8_t));
-		gl::Cmd::Draw(3, 1, 0, 0);
+		gl::Cmd::BindVertexBuffer(0, vertexBuffer.value(), 0, sizeof(Vertex));
+		gl::Cmd::BindIndexBuffer(indexBuffer.value(), gl::IndexType::UInt);
+		gl::Cmd::DrawIndexed(3, 1, 0, 0, 0);
 	}
 	gl::EndRendering();
 }
@@ -132,10 +146,13 @@ void NewTest001::OnImGuiDraw()
 	ImGui::Text("Framerate: %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 
 	ImGui::End();
+
+	DrawFPS();
 }
 //=============================================================================
 void NewTest001::OnResize(uint16_t width, uint16_t height)
 {
+	resize(width, height);
 }
 //=============================================================================
 void NewTest001::OnMouseButton(int button, int action, int mods)

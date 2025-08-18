@@ -23,7 +23,7 @@ layout(binding = 0) uniform Uniforms { float posZ; };
 void main()
 {
 	v_color = a_color;
-	gl_Position = vec4(a_pos, posZ, 1.0);
+	gl_Position = vec4(a_pos.xy, posZ, 1.0);
 }
 )";
 
@@ -50,7 +50,7 @@ void main()
   gl::VertexInputBindingDescription{
 	.location = 0,
 	.binding = 0,
-	.format = gl::Format::R32G32B32_FLOAT,
+	.format = gl::Format::R32G32_FLOAT,
 	.offset = offsetof(Vertex, pos),
   },
   gl::VertexInputBindingDescription{
@@ -72,20 +72,6 @@ void main()
 
 	gl::GraphicsPipeline CreatePipeline()
 	{
-		auto descPos = gl::VertexInputBindingDescription{
-		  .location = 0,
-		  .binding = 0,
-		  .format = gl::Format::R32G32_FLOAT,
-		  .offset = offsetof(Vertex, pos),
-		};
-		auto descColor = gl::VertexInputBindingDescription{
-		  .location = 1,
-		  .binding = 0,
-		  .format = gl::Format::R32G32B32_FLOAT,
-		  .offset = offsetof(Vertex, color),
-		};
-		auto inputDescs = { descPos, descColor };
-
 		auto vertexShader = gl::Shader(gl::ShaderType::VertexShader, shaderCodeVertex, "Triangle VS");
 		auto fragmentShader = gl::Shader(gl::ShaderType::FragmentShader, shaderCodeFragment, "Triangle FS");
 

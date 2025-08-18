@@ -29,6 +29,10 @@ namespace gl
 	public:
 		explicit Buffer(size_t size, BufferStorageFlags storageFlags = BufferStorageFlag::None, std::string_view name = "");
 		explicit Buffer(ByteView data, BufferStorageFlags storageFlags = BufferStorageFlag::None, std::string_view name = "");
+		
+		template<typename T>
+		explicit Buffer(const std::vector<T>& data, BufferStorageFlags storageFlags = BufferStorageFlag::None, std::string_view name = "") 
+			: Buffer(std::span(data), storageFlags, name) {}
 
 		Buffer(Buffer&& old) noexcept;
 		Buffer& operator=(Buffer&& old) noexcept;
