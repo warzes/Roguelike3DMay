@@ -92,15 +92,21 @@ bool dung::DungeonsApp::OnInit()
 	m_linearSampler = gl::Sampler(sampleDesc);
 
 	//adding lights
-	m_pointLights.push_back(PointLight({ 0,3, 2 }, { 1,1,1 }, 3, 7, 0.8));//white middle light
-	m_pointLights.push_back(PointLight({ 15,20 * 2 + 1, -12 }, { 0.9F,0.5F,0.2F }, 3, 12, 1.0F));//orange fire light
-	m_pointLights.push_back(PointLight({ 14,3, 14 }, { 0.25F,0.22F,0.15F }, 16, 32, 1.0F));//warmish white corner room light
-	m_pointLights.push_back(PointLight({ -14,3, -14 }, { 0.152F, 0.211F, 0.368F }, 20, 64, 0.9F));//blue corner room light
-	m_pointLights.push_back(PointLight({ 14, 0.5F, 0 }, { 0.152F, 0.611F, 0.568F }, 4, 6, 0.7F));//rotating brush area light bottom green ish
-	m_pointLights.push_back(PointLight({ 12, 20 * 2 + 1, 0 }, { 0.949, 0.780, 0.352 }, 2, 3, 0.9F));//rotating brush area candle light top 
-	m_pointLights.push_back(PointLight({ 11, 2, 5 }, { 0.949, 0.780, 0.352 }, 1, 4, 0.9F));//rotating brush area candle light top 
-	m_pointLights.push_back(PointLight({ 2, 2.5, -11 }, { 0.849, 0.54, 0.36 }, 4, 9, 0.8F));//dragon light
+	//m_pointLights.push_back(PointLight({ 0,3, 2 }, { 1,1,1 }, 3, 7, 0.8));//white middle light
+	//m_pointLights.push_back(PointLight({ 15,20 * 2 + 1, -12 }, { 0.9F,0.5F,0.2F }, 3, 12, 1.0F));//orange fire light
+	//m_pointLights.push_back(PointLight({ 14,3, 14 }, { 0.25F,0.22F,0.15F }, 16, 32, 1.0F));//warmish white corner room light
+	//m_pointLights.push_back(PointLight({ -14,3, -14 }, { 0.152F, 0.211F, 0.368F }, 20, 64, 0.9F));//blue corner room light
+	//m_pointLights.push_back(PointLight({ 14, 0.5F, 0 }, { 0.152F, 0.611F, 0.568F }, 4, 6, 0.7F));//rotating brush area light bottom green ish
+	//m_pointLights.push_back(PointLight({ 12, 20 * 2 + 1, 0 }, { 0.949, 0.780, 0.352 }, 2, 3, 0.9F));//rotating brush area candle light top 
+	//m_pointLights.push_back(PointLight({ 11, 2, 5 }, { 0.949, 0.780, 0.352 }, 1, 4, 0.9F));//rotating brush area candle light top 
+	//m_pointLights.push_back(PointLight({ 2, 2.5, -11 }, { 0.849, 0.54, 0.36 }, 4, 9, 0.8F));//dragon light
+	
+	m_pointLights.push_back(PointLight({ 0, 1, 0 }, { 1,1,0 }, 10, 30, 5.0));
 
+	m_pointLights.push_back(PointLight({  3, 1,  3 }, { 1,0,0 }, 3, 10, 3.0));
+	m_pointLights.push_back(PointLight({ -3, 1,  3 }, { 0,1,0 }, 3, 10, 3.0));
+	m_pointLights.push_back(PointLight({  3, 1, -3 }, { 0,0,1 }, 3, 10, 3.0));
+	m_pointLights.push_back(PointLight({ -3, 1, -3 }, { 0,1,1 }, 3, 10, 3.0));
 	return true;
 }
 //=============================================================================
@@ -130,7 +136,7 @@ void dung::DungeonsApp::OnUpdate(float deltaTime)
 	if (Input::IsMouseDown(GLFW_MOUSE_BUTTON_RIGHT))
 	{
 		Input::SetCursorVisible(false);
-		m_camera.ProcessMouseMovement(-Input::GetScreenOffset().x, Input::GetScreenOffset().y);
+		m_camera.ProcessMouseMovement(Input::GetScreenOffset().x, Input::GetScreenOffset().y);
 	}
 	else if (Input::IsMouseReleased(GLFW_MOUSE_BUTTON_RIGHT))
 	{

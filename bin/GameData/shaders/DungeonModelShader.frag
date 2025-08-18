@@ -1,4 +1,4 @@
-#version 460 core
+﻿#version 460 core
 
 layout(location = 0) in vec2 vTexCoords;
 layout(location = 1) in vec4 vColor;
@@ -54,6 +54,6 @@ void main()
 	}
 
 	OutFragColor.rgb = mix(fogColor, DiffuseColor.rgb, visibility);
-	//OutFragColor.rgb = round(OutFragColor.rgb * 64.0) / 64.0;
+	//OutFragColor.rgb = round(OutFragColor.rgb * 64.0) / 64.0; // эффект как в варлоке
 	OutFragColor.a = DiffuseColor.a;
 }

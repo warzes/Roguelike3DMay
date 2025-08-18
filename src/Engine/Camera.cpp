@@ -34,11 +34,19 @@ void Camera::ProcessKeyboard(CameraMovement direction, float deltaTime)
 	}
 	else if (direction == CameraLeft)
 	{
+#ifdef GLM_FORCE_LEFT_HANDED
 		Position -= Right * velocity;
+#else
+		Position += Right * velocity;
+#endif
 	}
 	else if (direction == CameraRight)
 	{
+#ifdef GLM_FORCE_LEFT_HANDED
 		Position += Right * velocity;
+#else
+		Position -= Right * velocity;
+#endif
 	}
 
 	updateInternal();
@@ -46,6 +54,10 @@ void Camera::ProcessKeyboard(CameraMovement direction, float deltaTime)
 //=============================================================================
 void Camera::ProcessMouseMovement(float xOffset, float yOffset, bool constrainPitch)
 {
+#ifdef GLM_FORCE_LEFT_HANDED
+	xOffset = -xOffset;
+#endif
+
 	xOffset *= MouseSensitivity;
 	yOffset *= MouseSensitivity;
 

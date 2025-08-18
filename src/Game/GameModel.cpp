@@ -34,7 +34,7 @@ void Mesh::Bind()
                            aiProcess_FindDegenerates |          \
                            aiProcess_FindInvalidData |          \
                            aiProcess_GenUVCoords |              \
-                           aiProcess_FlipUVs |                  \
+                           /*aiProcess_FlipUVs |*/              \
                            aiProcess_MakeLeftHanded |           \
                            aiProcess_CalcTangentSpace)
 
@@ -290,20 +290,7 @@ std::optional<GameModel> LoadAssimpModel(const std::string& filename)
 {
 	Assimp::Importer importer;
 
-	const aiScene* scene = importer.ReadFile(filename.c_str(), 
-		aiProcess_JoinIdenticalVertices |
-		aiProcess_Triangulate |
-		aiProcess_GenSmoothNormals |
-		aiProcess_LimitBoneWeights |
-		aiProcess_SplitLargeMeshes |
-		aiProcess_ImproveCacheLocality |
-		aiProcess_RemoveRedundantMaterials |
-		aiProcess_FindDegenerates |
-		aiProcess_FindInvalidData |
-		aiProcess_GenUVCoords |
-		//aiProcess_FlipUVs |
-		//aiProcess_MakeLeftHanded |
-		aiProcess_CalcTangentSpace);
+	const aiScene* scene = importer.ReadFile(filename.c_str(), ASSIMP_LOAD_FLAGS);
 	if (!scene || !scene->HasMeshes())
 	{
 		Fatal("Not load mesh: " + filename + "\n\tError: " + importer.GetErrorString());

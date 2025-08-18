@@ -1,4 +1,4 @@
-#version 460 core
+п»ї#version 460 core
 
 layout (location = 0) in vec3 aPosition;
 layout (location = 1) in vec3 aColor;
@@ -60,7 +60,7 @@ void main()
 	vTexCoords = aTexCoords;
 
 	//Apply vertex lighting
-	vColor = vec4(0);
+	vColor = vec4(0.0);
 	vec3 vertToLight;
 	float dotToLight;
 	float distToLight;
@@ -76,5 +76,5 @@ void main()
 		dotToLight = clamp(dot(normalize(vertToLight), vNormal), 0.0, 1.0);
 		vColor += vec4(aColor, 1.0) * pointLights[i][1] * dotToLight * pointLights[i][2][2] * power;
 	}
-	vColor.a = 1.0; // TODO: альфу тоже можно передавать здесь
+	vColor.a = 1.0; // TODO: Р°Р»СЊС„Сѓ С‚РѕР¶Рµ РјРѕР¶РЅРѕ РїРµСЂРµРґР°РІР°С‚СЊ Р·РґРµСЃСЊ
 }
