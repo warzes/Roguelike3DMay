@@ -1,5 +1,5 @@
 ﻿#include "stdafx.h"
-#include "NewTest001.h"
+#include "Example001.h"
 //=============================================================================
 #if defined(_MSC_VER)
 #	pragma comment( lib, "3rdparty.lib" )
@@ -10,9 +10,14 @@ int main(
 	[[maybe_unused]] int   argc,
 	[[maybe_unused]] char* argv[])
 {
-	NewTest001 game;
-	game.Run();
+	// Вывод треугольника на основную поверхность
+	// - вершинный буфер из позиции и цвета
+	// - индексный буфер
+	// - создание GraphicsPipeline
+	Example001 game;
 
-	return 0;
+
+
+	game.Run();
 }
 //=============================================================================

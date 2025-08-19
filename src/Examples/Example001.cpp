@@ -1,5 +1,5 @@
 ﻿#include "stdafx.h"
-#include "NewTest001.h"
+#include "Example001.h"
 
 //=============================================================================
 // Вывод треугольника на основную поверхность
@@ -81,12 +81,12 @@ void main()
 	}
 }
 //=============================================================================
-EngineCreateInfo NewTest001::GetCreateInfo() const
+EngineCreateInfo Example001::GetCreateInfo() const
 {
 	return {};
 }
 //=============================================================================
-bool NewTest001::OnInit()
+bool Example001::OnInit()
 {
 	std::vector<Vertex> v = {
 		{{  0.0f,  0.4f}, {1, 0, 0}},
@@ -105,17 +105,17 @@ bool NewTest001::OnInit()
 	return true;
 }
 //=============================================================================
-void NewTest001::OnClose()
+void Example001::OnClose()
 {
 	vertexBuffer = {};
 	pipeline = {};
 }
 //=============================================================================
-void NewTest001::OnUpdate(float deltaTime)
+void Example001::OnUpdate(float deltaTime)
 {
 }
 //=============================================================================
-void NewTest001::OnRender()
+void Example001::OnRender()
 {
 	const gl::SwapChainRenderInfo renderInfo
 	{
@@ -134,40 +134,37 @@ void NewTest001::OnRender()
 	gl::EndRendering();
 }
 //=============================================================================
-void NewTest001::OnImGuiDraw()
+void Example001::OnImGuiDraw()
 {
 	ImGui::Begin("Simple");
 
 	ImGui::TextColored(ImVec4(0.4f, 0.4f, 1.0f, 1.00f), "Vendor: %s", (char*)glGetString(GL_VENDOR));
 	ImGui::TextColored(ImVec4(0.4f, 0.4f, 1.0f, 1.00f), "Version: %s", (char*)glGetString(GL_VERSION));
 	ImGui::TextColored(ImVec4(0.4f, 0.4f, 1.0f, 1.00f), "Renderer: %s", (char*)glGetString(GL_RENDERER));
-	ImGui::Separator();
-
-	ImGui::Text("Framerate: %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 
 	ImGui::End();
 
 	DrawFPS();
 }
 //=============================================================================
-void NewTest001::OnResize(uint16_t width, uint16_t height)
+void Example001::OnResize(uint16_t width, uint16_t height)
 {
 	resize(width, height);
 }
 //=============================================================================
-void NewTest001::OnMouseButton(int button, int action, int mods)
+void Example001::OnMouseButton(int button, int action, int mods)
 {
 }
 //=============================================================================
-void NewTest001::OnMousePos(double x, double y)
+void Example001::OnMousePos(double x, double y)
 {
 }
 //=============================================================================
-void NewTest001::OnScroll(double dx, double dy)
+void Example001::OnScroll(double dx, double dy)
 {
 }
 //=============================================================================
-void NewTest001::OnKey(int key, int scanCode, int action, int mods)
+void Example001::OnKey(int key, int scanCode, int action, int mods)
 {
 }
 //=============================================================================
