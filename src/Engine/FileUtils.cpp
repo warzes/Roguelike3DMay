@@ -53,54 +53,6 @@ std::pair<std::unique_ptr<std::byte[]>, std::size_t> io::LoadBinaryFile(const st
 	return { std::move(memory), fileSize };
 }
 //=============================================================================
-std::string io::ReadTextFile_Old(const std::string& filename)
-{
-	struct FileRaw
-	{
-		~FileRaw() { if (file) fclose(file); }
-		FILE* file{ nullptr };
-	} file;
-
-	errno_t err = fopen_s(&file.file, filename.c_str(), "rb");
-	if (err != 0 || file.file == nullptr)
-	{
-		Error("Unable to open file '" + filename + "'.");
-		return "";
-	}
-
-	if (fseek(file.file, 0, SEEK_END) != 0)
-	{
-		Error("Unable to move pointer to the end of file '" + filename + "'.");
-		return "";
-	}
-
-	const long fileSize = ftell(file.file);
-	if (fileSize < 0)
-	{
-		Error("Unable to get the size of file  '" + filename + "'.");
-		return "";
-	}
-
-	if (fseek(file.file, 0, SEEK_SET) != 0)
-	{
-		Error("Unable to return pointer to the beginning of file '" + filename + "'.");
-		return "";
-	}
-
-	std::string content(static_cast<size_t>(fileSize), '\0');
-
-	const size_t bytesRead = fread_s(content.data(), static_cast<size_t>(fileSize), 1, static_cast<size_t>(fileSize), file.file);
-	if (bytesRead != static_cast<size_t>(fileSize))
-	{
-		Error("Unable to read all data from file '" + filename + "'.");
-		return "";
-	}
-
-	fclose(file.file);
-
-	return content;
-}
-//=============================================================================
 std::string headerGuardFromPath(const std::string& path)
 {
 	std::string out = io::GetFileNameWithoutExtension(path);
@@ -130,7 +82,7 @@ bool preprocessShader(const std::string& path, const std::string& src, std::stri
 
 			std::string includeSource;
 
-			std::string source = io::ReadTextFile_Old(pathToShader + includePath);
+			std::string source = io::LoadFile(pathToShader + includePath);
 			if (source.empty()) return false;
 
 			if (!preprocessShader(pathToShader + includePath, source, includeSource))
@@ -164,8 +116,19 @@ bool preprocessShader(const std::string& path, const std::string& src, std::stri
 //=============================================================================
 std::string io::ReadShaderCode(const std::string& filename, const std::vector<std::string>& defines)
 {
-	std::string source = ReadTextFile_Old(filename);
+	std::string source = LoadFile(filename);
 	if (source.empty()) return "";
+
+	size_t posOglVersion = source.find("#version");
+	if (posOglVersion != std::string::npos)
+	{
+		// DOC: на некоторых платформах при загрузке кода шейдера в Utf в начале строки есть лишние системные символы, они вызывают ошибку компиляции
+		source.erase(0, posOglVersion);
+	}
+	else
+	{
+		// TODO: ситуацию, если в коде шейдера нет #version
+	}
 
 	std::string finalSource;
 
