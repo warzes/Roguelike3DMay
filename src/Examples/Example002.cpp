@@ -1,39 +1,50 @@
-п»ї#include "stdafx.h"
-#include "Example001.h"
-
+#include "stdafx.h"
+#include "Example002.h"
 //=============================================================================
-// Р’С‹РІРѕРґ С‚СЂРµСѓРіРѕР»СЊРЅРёРєР° РЅР° РѕСЃРЅРѕРІРЅСѓСЋ РїРѕРІРµСЂС…РЅРѕСЃС‚СЊ
-// - РІРµСЂС€РёРЅРЅС‹Р№ Р±СѓС„РµСЂ РёР· РїРѕР·РёС†РёРё Рё С†РІРµС‚Р°
-// - РёРЅРґРµРєСЃРЅС‹Р№ Р±СѓС„РµСЂ
-// - СЃРѕР·РґР°РЅРёРµ GraphicsPipeline
+// Вывод прямоугольника на основную поверхность
+// - текстура
 //=============================================================================
 namespace
 {
 	const char* shaderCodeVertex = R"(
 #version 460 core
 
-layout(location = 0) in vec2 aPosition;
-layout(location = 1) in vec3 aColor;
+layout(location = 0) in vec3 aPosition;
+layout(location = 1) in vec3 a_color;
+layout(location = 1) in vec3 a_color;
 
-layout(location = 0) out vec3 vColor;
+layout(location = 0) out vec3 v_color;
 
 void main()
 {
-	vColor = aColor;
-	gl_Position = vec4(aPosition.xy, 0.0, 1.0);
+	v_color = a_color;
+	gl_Position = vec4(a_pos.xy, 0.0, 1.0);
+}
+
+in vec3 position;
+in vec3 aColor;
+in vec2 aTexCoord;
+  
+out vec3 ourColor;
+out vec2 TexCoord;
+
+void main() {
+    gl_Position = vec4(position, 1.0);
+    ourColor = aColor;
+    TexCoord = aTexCoord;
 }
 )";
 
 	const char* shaderCodeFragment = R"(
 #version 460 core
 
-layout(location = 0) in vec3 vColor;
+layout(location = 0) out vec4 o_color;
 
-layout(location = 0) out vec4 fragColor;
+layout(location = 0) in vec3 v_color;
 
 void main()
 {
-	fragColor = vec4(vColor, 1.0);
+  o_color = vec4(v_color, 1.0);
 }
 )";
 
@@ -81,21 +92,22 @@ void main()
 	}
 }
 //=============================================================================
-EngineCreateInfo Example001::GetCreateInfo() const
+EngineCreateInfo Example002::GetCreateInfo() const
 {
 	return {};
 }
 //=============================================================================
-bool Example001::OnInit()
+bool Example002::OnInit()
 {
 	std::vector<Vertex> v = {
-		{{  0.0f,  0.4f}, {1, 0, 0}},
-		{{ -1.0f, -1.0f}, {0, 1, 0}},
-		{{  1.0f, -1.0f}, {0, 0, 1}},
+		{{ -0.8f,  0.8f}, {1, 0, 0}},
+		{{ -0.8f, -0.8f}, {0, 1, 0}},
+		{{  0.8f, -0.8f}, {0, 0, 1}},
+		{{  0.8f,  0.8f}, {1, 1, 0}},
 	};
 	vertexBuffer = gl::Buffer(v);
 
-	std::vector<unsigned> ind = { 0, 1, 2 };
+	std::vector<unsigned> ind = { 0, 1, 2, 2, 3, 0};
 	indexBuffer = gl::Buffer(ind);
 
 	pipeline = CreatePipeline();
@@ -105,17 +117,17 @@ bool Example001::OnInit()
 	return true;
 }
 //=============================================================================
-void Example001::OnClose()
+void Example002::OnClose()
 {
 	vertexBuffer = {};
 	pipeline = {};
 }
 //=============================================================================
-void Example001::OnUpdate(float deltaTime)
+void Example002::OnUpdate(float deltaTime)
 {
 }
 //=============================================================================
-void Example001::OnRender()
+void Example002::OnRender()
 {
 	const gl::SwapChainRenderInfo renderInfo
 	{
@@ -129,42 +141,34 @@ void Example001::OnRender()
 		gl::Cmd::BindGraphicsPipeline(pipeline.value());
 		gl::Cmd::BindVertexBuffer(0, vertexBuffer.value(), 0, sizeof(Vertex));
 		gl::Cmd::BindIndexBuffer(indexBuffer.value(), gl::IndexType::UInt);
-		gl::Cmd::DrawIndexed(3, 1, 0, 0, 0);
+		gl::Cmd::DrawIndexed(6, 1, 0, 0, 0);
 	}
 	gl::EndRendering();
 }
 //=============================================================================
-void Example001::OnImGuiDraw()
+void Example002::OnImGuiDraw()
 {
-	ImGui::Begin("Simple");
-
-	ImGui::TextColored(ImVec4(0.4f, 0.4f, 1.0f, 1.00f), "Vendor: %s", (char*)glGetString(GL_VENDOR));
-	ImGui::TextColored(ImVec4(0.4f, 0.4f, 1.0f, 1.00f), "Version: %s", (char*)glGetString(GL_VERSION));
-	ImGui::TextColored(ImVec4(0.4f, 0.4f, 1.0f, 1.00f), "Renderer: %s", (char*)glGetString(GL_RENDERER));
-
-	ImGui::End();
-
 	DrawFPS();
 }
 //=============================================================================
-void Example001::OnResize(uint16_t width, uint16_t height)
+void Example002::OnResize(uint16_t width, uint16_t height)
 {
 	resize(width, height);
 }
 //=============================================================================
-void Example001::OnMouseButton(int button, int action, int mods)
+void Example002::OnMouseButton(int button, int action, int mods)
 {
 }
 //=============================================================================
-void Example001::OnMousePos(double x, double y)
+void Example002::OnMousePos(double x, double y)
 {
 }
 //=============================================================================
-void Example001::OnScroll(double dx, double dy)
+void Example002::OnScroll(double dx, double dy)
 {
 }
 //=============================================================================
-void Example001::OnKey(int key, int scanCode, int action, int mods)
+void Example002::OnKey(int key, int scanCode, int action, int mods)
 {
 }
 //=============================================================================
