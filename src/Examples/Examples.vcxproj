@@ -97,19 +97,23 @@
     <ClCompile Include="Example002.cpp" />
     <ClCompile Include="Example003.cpp" />
     <ClCompile Include="Example004.cpp" />
+    <ClCompile Include="Example005.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Example001.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Temp.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Example001.h" />
     <ClInclude Include="Example002.h" />
     <ClInclude Include="Example003.h" />
     <ClInclude Include="Example004.h" />
+    <ClInclude Include="Example005.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="Temp.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
