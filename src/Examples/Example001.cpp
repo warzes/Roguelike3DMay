@@ -75,10 +75,6 @@ void main()
 			.vertexInputState = {inputBindingDescs},
 			});
 	}
-
-	void resize(uint16_t width, uint16_t height)
-	{
-	}
 }
 //=============================================================================
 EngineCreateInfo Example001::GetCreateInfo() const
@@ -100,18 +96,17 @@ bool Example001::OnInit()
 
 	pipeline = CreatePipeline();
 
-	resize(GetWindowWidth(), GetWindowHeight());
-
 	return true;
 }
 //=============================================================================
 void Example001::OnClose()
 {
 	vertexBuffer = {};
+	indexBuffer = {};
 	pipeline = {};
 }
 //=============================================================================
-void Example001::OnUpdate(float deltaTime)
+void Example001::OnUpdate([[maybe_unused]] float deltaTime)
 {
 }
 //=============================================================================
@@ -147,24 +142,23 @@ void Example001::OnImGuiDraw()
 	DrawFPS();
 }
 //=============================================================================
-void Example001::OnResize(uint16_t width, uint16_t height)
-{
-	resize(width, height);
-}
-//=============================================================================
-void Example001::OnMouseButton(int button, int action, int mods)
+void Example001::OnResize([[maybe_unused]] uint16_t width, [[maybe_unused]] uint16_t height)
 {
 }
 //=============================================================================
-void Example001::OnMousePos(double x, double y)
+void Example001::OnMouseButton([[maybe_unused]] int button, [[maybe_unused]] int action, [[maybe_unused]] int mods)
 {
 }
 //=============================================================================
-void Example001::OnScroll(double dx, double dy)
+void Example001::OnMousePos([[maybe_unused]] double x, [[maybe_unused]] double y)
 {
 }
 //=============================================================================
-void Example001::OnKey(int key, int scanCode, int action, int mods)
+void Example001::OnScroll([[maybe_unused]] double dx, [[maybe_unused]] double dy)
+{
+}
+//=============================================================================
+void Example001::OnKey([[maybe_unused]] int key, [[maybe_unused]] int scanCode, [[maybe_unused]] int action, [[maybe_unused]] int mods)
 {
 }
 //=============================================================================

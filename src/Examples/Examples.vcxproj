@@ -95,6 +95,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Example002.cpp" />
+    <ClCompile Include="Example003.cpp" />
+    <ClCompile Include="Example004.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Example001.cpp" />
     <ClCompile Include="stdafx.cpp">
@@ -105,6 +107,8 @@
   <ItemGroup>
     <ClInclude Include="Example001.h" />
     <ClInclude Include="Example002.h" />
+    <ClInclude Include="Example003.h" />
+    <ClInclude Include="Example004.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

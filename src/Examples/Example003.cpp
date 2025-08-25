@@ -1,9 +1,8 @@
 ﻿#include "stdafx.h"
-#include "Example002.h"
+#include "Example003.h"
 //=============================================================================
-// Вывод прямоугольника с текстурой на основную поверхность
-// - текстура
-// - семплер
+// Вывод прямоугольника с текстурой на основную поверхность с матрицами трансформации
+// - юниформ буфер и MVP матрицы
 //=============================================================================
 namespace
 {
@@ -11,25 +10,27 @@ namespace
 #version 460 core
 
 layout(location = 0) in vec3 aPosition;
-layout(location = 1) in vec3 aColor;
-layout(location = 2) in vec2 aTexCoord;
+layout(location = 1) in vec2 aTexCoord;
 
-layout(location = 0) out vec3 vColor;
-layout(location = 1) out vec2 vTexCoord;
+layout(binding = 0, std140) uniform vsUniforms {
+	mat4 modelMatrix;
+	mat4 viewMatrix;
+	mat4 projectionMatrix;
+};
+
+layout(location = 0) out vec2 vTexCoord;
 
 void main()
 {
-	vColor = aColor;
 	vTexCoord = aTexCoord;
-	gl_Position = vec4(aPosition, 1.0);
+	gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(aPosition, 1.0);
 }
 )";
 
 	const char* shaderCodeFragment = R"(
 #version 460 core
 
-layout(location = 0) in vec3 vColor;
-layout(location = 1) in vec2 vTexCoord;
+layout(location = 0) in vec2 vTexCoord;
 
 layout(binding = 0) uniform sampler2D diffuseTex;
 
@@ -37,18 +38,25 @@ layout(location = 0) out vec4 fragColor;
 
 void main()
 {
-	fragColor = texture(diffuseTex, vTexCoord) * vec4(vColor, 1.0);
+	fragColor = texture(diffuseTex, vTexCoord);
 }
 )";
+
+	struct vsUniforms final
+	{
+		glm::mat4 modelMatrix;
+		glm::mat4 viewMatrix;
+		glm::mat4 projectionMatrix;
+	};
+	vsUniforms uniforms;
 
 	struct Vertex final
 	{
 		glm::vec3 pos;
-		glm::vec3 color;
 		glm::vec2 uv;
 	};
 
-	constexpr std::array<gl::VertexInputBindingDescription, 3> inputBindingDescs{
+	constexpr std::array<gl::VertexInputBindingDescription, 2> inputBindingDescs{
 		gl::VertexInputBindingDescription{
 			.location = 0,
 			.binding = 0,
@@ -58,19 +66,14 @@ void main()
 		gl::VertexInputBindingDescription{
 			.location = 1,
 			.binding = 0,
-			.format = gl::Format::R32G32B32_FLOAT,
-			.offset = offsetof(Vertex, color),
-		},
-		gl::VertexInputBindingDescription{
-			.location = 2,
-			.binding = 0,
 			.format = gl::Format::R32G32_FLOAT,
 			.offset = offsetof(Vertex, uv),
-		},
+		}
 	};
 
 	std::optional<gl::Buffer> vertexBuffer;
 	std::optional<gl::Buffer> indexBuffer;
+	std::optional<gl::Buffer> uniformBuffer;
 	std::optional<gl::GraphicsPipeline> pipeline;
 	std::optional<gl::Texture> texture;
 	std::optional<gl::Sampler> sampler;
@@ -90,23 +93,25 @@ void main()
 	}
 }
 //=============================================================================
-EngineCreateInfo Example002::GetCreateInfo() const
+EngineCreateInfo Example003::GetCreateInfo() const
 {
 	return {};
 }
 //=============================================================================
-bool Example002::OnInit()
+bool Example003::OnInit()
 {
 	std::vector<Vertex> v = {
-		{{ -0.8f,  0.8f, 0.0f}, {1, 0, 0}, {0.0f, 0.0f}},
-		{{ -0.8f, -0.8f, 0.0f}, {0, 1, 0}, {0.0f, 1.0f}},
-		{{  0.8f, -0.8f, 0.0f}, {0, 0, 1}, {1.0f, 1.0f}},
-		{{  0.8f,  0.8f, 0.0f}, {1, 1, 0}, {1.0f, 0.0f}},
+		{{ -0.8f,  0.8f, 0.0f}, {0.0f, 0.0f}},
+		{{ -0.8f, -0.8f, 0.0f}, {0.0f, 1.0f}},
+		{{  0.8f, -0.8f, 0.0f}, {1.0f, 1.0f}},
+		{{  0.8f,  0.8f, 0.0f}, {1.0f, 0.0f}},
 	};
 	vertexBuffer = gl::Buffer(v);
 
-	std::vector<unsigned> ind = { 0, 1, 2, 2, 3, 0};
+	std::vector<unsigned> ind = { 0, 1, 2, 2, 3, 0 };
 	indexBuffer = gl::Buffer(ind);
+
+	uniformBuffer = gl::Buffer(sizeof(vsUniforms), gl::BufferStorageFlag::DynamicStorage);
 
 	pipeline = CreatePipeline();
 
@@ -143,20 +148,25 @@ bool Example002::OnInit()
 	return true;
 }
 //=============================================================================
-void Example002::OnClose()
+void Example003::OnClose()
 {
 	vertexBuffer = {};
 	indexBuffer = {};
+	uniformBuffer = {};
 	pipeline = {};
 	sampler = {};
 	texture = {};
 }
 //=============================================================================
-void Example002::OnUpdate([[maybe_unused]] float deltaTime)
+void Example003::OnUpdate([[maybe_unused]] float deltaTime)
 {
+	uniforms.modelMatrix = glm::rotate(glm::mat4(1.0f), glm::radians(55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+	uniforms.viewMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 3.0f));
+	uniforms.projectionMatrix = glm::perspective(glm::radians(65.0f), GetWindowAspect(), 0.1f, 100.0f);
+	uniformBuffer->UpdateData(uniforms);
 }
 //=============================================================================
-void Example002::OnRender()
+void Example003::OnRender()
 {
 	const gl::SwapChainRenderInfo renderInfo
 	{
@@ -170,34 +180,35 @@ void Example002::OnRender()
 		gl::Cmd::BindGraphicsPipeline(pipeline.value());
 		gl::Cmd::BindVertexBuffer(0, vertexBuffer.value(), 0, sizeof(Vertex));
 		gl::Cmd::BindIndexBuffer(indexBuffer.value(), gl::IndexType::UInt);
+		gl::Cmd::BindUniformBuffer(0, uniformBuffer.value());
 		gl::Cmd::BindSampledImage(0, texture.value(), sampler.value());
 		gl::Cmd::DrawIndexed(6, 1, 0, 0, 0);
 	}
 	gl::EndRendering();
 }
 //=============================================================================
-void Example002::OnImGuiDraw()
+void Example003::OnImGuiDraw()
 {
 	DrawFPS();
 }
 //=============================================================================
-void Example002::OnResize([[maybe_unused]] uint16_t width, [[maybe_unused]] uint16_t height)
+void Example003::OnResize([[maybe_unused]] uint16_t width, [[maybe_unused]] uint16_t height)
 {
 }
 //=============================================================================
-void Example002::OnMouseButton([[maybe_unused]] int button, [[maybe_unused]] int action, [[maybe_unused]] int mods)
+void Example003::OnMouseButton([[maybe_unused]] int button, [[maybe_unused]] int action, [[maybe_unused]] int mods)
 {
 }
 //=============================================================================
-void Example002::OnMousePos([[maybe_unused]] double x, [[maybe_unused]] double y)
+void Example003::OnMousePos([[maybe_unused]] double x, [[maybe_unused]] double y)
 {
 }
 //=============================================================================
-void Example002::OnScroll([[maybe_unused]] double dx, [[maybe_unused]] double dy)
+void Example003::OnScroll([[maybe_unused]] double dx, [[maybe_unused]] double dy)
 {
 }
 //=============================================================================
-void Example002::OnKey([[maybe_unused]] int key, [[maybe_unused]] int scanCode, [[maybe_unused]] int action, [[maybe_unused]] int mods)
+void Example003::OnKey([[maybe_unused]] int key, [[maybe_unused]] int scanCode, [[maybe_unused]] int action, [[maybe_unused]] int mods)
 {
 }
 //=============================================================================

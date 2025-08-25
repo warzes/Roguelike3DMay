@@ -9,6 +9,12 @@
     <ClCompile Include="Example002.cpp">
       <Filter>01_BaseExamples</Filter>
     </ClCompile>
+    <ClCompile Include="Example003.cpp">
+      <Filter>01_BaseExamples</Filter>
+    </ClCompile>
+    <ClCompile Include="Example004.cpp">
+      <Filter>01_BaseExamples</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -16,6 +22,12 @@
       <Filter>01_BaseExamples</Filter>
     </ClInclude>
     <ClInclude Include="Example002.h">
+      <Filter>01_BaseExamples</Filter>
+    </ClInclude>
+    <ClInclude Include="Example003.h">
+      <Filter>01_BaseExamples</Filter>
+    </ClInclude>
+    <ClInclude Include="Example004.h">
       <Filter>01_BaseExamples</Filter>
     </ClInclude>
   </ItemGroup>
