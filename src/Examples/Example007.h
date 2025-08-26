@@ -1,13 +1,13 @@
 ﻿#pragma once
 
-class Temp final : public IEngineApp
+class Example007 final : public IEngineApp
 {
 public:
-	Temp() = default;
-	Temp(const Temp&) = delete;
-	Temp(Temp&&) = delete;
-	void operator=(const Temp&) = delete;
-	void operator=(Temp&&) = delete;
+	Example007() = default;
+	Example007(const Example007&) = delete;
+	Example007(Example007&&) = delete;
+	void operator=(const Example007&) = delete;
+	void operator=(Example007&&) = delete;
 
 	EngineCreateInfo GetCreateInfo() const final;
 
