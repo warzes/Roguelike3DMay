@@ -267,7 +267,7 @@ void Example004::OnUpdate([[maybe_unused]] float deltaTime)
 	uniforms[9].modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(-1.3f, 1.0f, 1.5f));
 	for (size_t i = 0; i < 10; i++)
 	{
-		float angle = 20.0f * i;
+		float angle = 20.0f * (float)i;
 		uniforms[i].modelMatrix *= glm::rotate(glm::mat4(1.0f), glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
 
 		uniforms[i].viewMatrix = camera.GetViewMatrix();

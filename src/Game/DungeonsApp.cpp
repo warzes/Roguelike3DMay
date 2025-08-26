@@ -2,7 +2,6 @@
 #include "DungeonsApp.h"
 //
 //https://www.youtube.com/watch?v=yk0psth053I - такой пс1 стиль
-//https://github.com/feresr/renderer/blob/master/engine/assets/fragment.glsl  - простое освещение
 // https://github.com/QwePek/LightingOpenGL - простое освещение
 //https://github.com/damdoy/opengl_examples/tree/master/volumetric_light
 //https://github.com/stanislawfortonski/3D-Engine-OpenGL-4/tree/master/shaders

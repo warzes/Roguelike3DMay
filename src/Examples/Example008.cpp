@@ -78,10 +78,15 @@ void main()
 	std::optional<gl::Buffer> planeVB;
 	std::optional<gl::Buffer> planeIB;
 
+	std::optional<gl::Buffer> windowVB;
+	std::optional<gl::Buffer> windowIB;
+
 	std::optional<gl::Buffer> uniformBuffer;
 
 	std::optional<gl::GraphicsPipeline> pipeline;
-	std::optional<gl::Texture> texture;
+	std::optional<gl::Texture> texture1;
+	std::optional<gl::Texture> texture2;
+	std::optional<gl::Texture> texture3;
 	std::optional<gl::Sampler> sampler;
 
 	gl::GraphicsPipeline CreatePipeline()
@@ -89,14 +94,25 @@ void main()
 		auto vertexShader = gl::Shader(gl::ShaderType::VertexShader, shaderCodeVertex, "VS");
 		auto fragmentShader = gl::Shader(gl::ShaderType::FragmentShader, shaderCodeFragment, "FS");
 
+		gl::ColorBlendState blendState;
+		blendState.attachments.push_back({});
+		blendState.attachments[0].blendEnable = true;
+		blendState.attachments[0].srcColorBlendFactor = gl::BlendFactor::SrcAlpha;
+		blendState.attachments[0].dstColorBlendFactor = gl::BlendFactor::OneMinusSrcAlpha;
+		blendState.attachments[0].colorBlendOp = gl::BlendOp::Add;
+		blendState.attachments[0].srcAlphaBlendFactor = gl::BlendFactor::SrcAlpha;
+		blendState.attachments[0].dstAlphaBlendFactor = gl::BlendFactor::OneMinusSrcAlpha;
+		blendState.attachments[0].alphaBlendOp = gl::BlendOp::Add;
+
 		return gl::GraphicsPipeline({
 			 .name = "Pipeline",
 			.vertexShader = &vertexShader,
 			.fragmentShader = &fragmentShader,
 			.inputAssemblyState = {.topology = gl::PrimitiveTopology::TriangleList },
 			.vertexInputState = { inputBindingDescs },
+			.rasterizationState = { .cullMode = gl::CullMode::None },
 			.depthState = {.depthTestEnable = true },
-
+			.colorBlendState = blendState
 			});
 	}
 
@@ -193,13 +209,27 @@ bool Example008::OnInit()
 	};
 	planeIB = gl::Buffer(planeIndices);
 
+	std::vector<Vertex> windowVerts = {
+		{{-0.5f, -0.5f,  0.0f}, {0.0f, 0.0f}},
+		{{ 0.5f, -0.5f,  0.0f}, {1.0f, 0.0f}},
+		{{ 0.5f,  0.5f,  0.0f}, {1.0f, 1.0f}},
+		{{-0.5f,  0.5f,  0.0f}, {0.0f, 1.0f}},
+	};
+	windowVB = gl::Buffer(windowVerts);
+
+	std::vector<unsigned> windowIndices = {
+		0, 2, 1,
+		0, 3, 2,
+	};
+	windowIB = gl::Buffer(windowIndices);
+
 	uniformBuffer = gl::Buffer(sizeof(vsUniforms), gl::BufferStorageFlag::DynamicStorage);
 
 	pipeline = CreatePipeline();
 
 	{
 		int imgW, imgH, nrChannels;
-		auto pixels = stbi_load("ExampleData/textures/container2.png", &imgW, &imgH, &nrChannels, 4);
+		auto pixels = stbi_load("ExampleData/textures/metal.png", &imgW, &imgH, &nrChannels, 4);
 
 		const gl::TextureCreateInfo createInfo{
 		  .imageType = gl::ImageType::Tex2D,
@@ -209,9 +239,55 @@ bool Example008::OnInit()
 		  .arrayLayers = 1,
 		  .sampleCount = gl::SampleCount::Samples1,
 		};
-		texture = gl::Texture(createInfo);
+		texture1 = gl::Texture(createInfo);
 
-		texture->UpdateImage({
+		texture1->UpdateImage({
+		  .extent = createInfo.extent,
+		  .format = gl::UploadFormat::RGBA,
+		  .type = gl::UploadType::UBYTE,
+		  .pixels = pixels,
+			});
+		stbi_image_free(pixels);
+	}
+
+	{
+		int imgW, imgH, nrChannels;
+		auto pixels = stbi_load("ExampleData/textures/marble.jpg", &imgW, &imgH, &nrChannels, 4);
+
+		const gl::TextureCreateInfo createInfo{
+		  .imageType = gl::ImageType::Tex2D,
+		  .format = gl::Format::R8G8B8A8_UNORM,
+		  .extent = {static_cast<uint32_t>(imgW), static_cast<uint32_t>(imgH), 1},
+		  .mipLevels = 1,
+		  .arrayLayers = 1,
+		  .sampleCount = gl::SampleCount::Samples1,
+		};
+		texture2 = gl::Texture(createInfo);
+
+		texture2->UpdateImage({
+		  .extent = createInfo.extent,
+		  .format = gl::UploadFormat::RGBA,
+		  .type = gl::UploadType::UBYTE,
+		  .pixels = pixels,
+			});
+		stbi_image_free(pixels);
+	}
+
+	{
+		int imgW, imgH, nrChannels;
+		auto pixels = stbi_load("ExampleData/textures/transparent_window.png", &imgW, &imgH, &nrChannels, 4);
+
+		const gl::TextureCreateInfo createInfo{
+		  .imageType = gl::ImageType::Tex2D,
+		  .format = gl::Format::R8G8B8A8_UNORM,
+		  .extent = {static_cast<uint32_t>(imgW), static_cast<uint32_t>(imgH), 1},
+		  .mipLevels = 1,
+		  .arrayLayers = 1,
+		  .sampleCount = gl::SampleCount::Samples1,
+		};
+		texture3 = gl::Texture(createInfo);
+
+		texture3->UpdateImage({
 		  .extent = createInfo.extent,
 		  .format = gl::UploadFormat::RGBA,
 		  .type = gl::UploadType::UBYTE,
@@ -240,11 +316,14 @@ void Example008::OnClose()
 	cubeIB = {};
 	planeVB = {};
 	planeIB = {};
-
+	windowVB = {};
+	windowIB = {};
 	uniformBuffer = {};
 	pipeline = {};
 	sampler = {};
-	texture = {};
+	texture1 = {};
+	texture2 = {};
+	texture3 = {};
 }
 //=============================================================================
 void Example008::OnUpdate([[maybe_unused]] float deltaTime)
@@ -283,18 +362,79 @@ void Example008::OnRender()
 	gl::BeginSwapChainRendering(renderInfo);
 	{
 		gl::Cmd::BindGraphicsPipeline(pipeline.value());
-		gl::Cmd::BindSampledImage(0, texture.value(), sampler.value());
 
 		// плоскость
 		{
-			uniforms.modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+			uniforms.modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -0.5f, 0.0f));
 			uniformBuffer->UpdateData(uniforms);
+			gl::Cmd::BindSampledImage(0, texture1.value(), sampler.value());
 			gl::Cmd::BindUniformBuffer(0, uniformBuffer.value());
 			gl::Cmd::BindVertexBuffer(0, planeVB.value(), 0, sizeof(Vertex));
 			gl::Cmd::BindIndexBuffer(planeIB.value(), gl::IndexType::UInt);
 			gl::Cmd::DrawIndexed(6, 1, 0, 0, 0);
 		}
-		
+
+		// куб 1
+		{
+			uniforms.modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(-1.0f, 0.0f, 1.0f));
+			uniformBuffer->UpdateData(uniforms);
+			gl::Cmd::BindSampledImage(0, texture2.value(), sampler.value());
+			gl::Cmd::BindUniformBuffer(0, uniformBuffer.value());
+			gl::Cmd::BindVertexBuffer(0, cubeVB.value(), 0, sizeof(Vertex));
+			gl::Cmd::BindIndexBuffer(cubeIB.value(), gl::IndexType::UInt);
+			gl::Cmd::DrawIndexed(36, 1, 0, 0, 0);
+		}
+		// куб 2
+		{
+			uniforms.modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(2.0f, 0.0f, 0.0f));
+			uniformBuffer->UpdateData(uniforms);
+			gl::Cmd::BindSampledImage(0, texture2.value(), sampler.value());
+			gl::Cmd::BindUniformBuffer(0, uniformBuffer.value());
+			gl::Cmd::BindVertexBuffer(0, cubeVB.value(), 0, sizeof(Vertex));
+			gl::Cmd::BindIndexBuffer(cubeIB.value(), gl::IndexType::UInt);
+			gl::Cmd::DrawIndexed(36, 1, 0, 0, 0);
+		}
+
+		// окна
+		{
+			glm::vec3 vegetation[5];
+			vegetation[0] = glm::vec3(-1.5f, 0.0f, 0.48f);
+			vegetation[1] = glm::vec3(1.5f, 0.0f, -0.51f);
+			vegetation[2] = glm::vec3(0.0f, 0.0f, -0.7f);
+			vegetation[3] = glm::vec3(-0.3f, 0.0f, 2.3f);
+			vegetation[4] = glm::vec3(0.5f, 0.0f, 0.6f);
+
+			glm::vec3 position = camera.Position;
+
+			// simple bubble sort algorithm to sort vegetation from furthest to nearest
+			for (int i = 1; i < 5; ++i)
+			{
+				for (int j = i - 1; j >= 0; --j)
+				{
+					glm::vec3 translate0 = vegetation[j] - position;
+					glm::vec3 translate1 = vegetation[j + 1] - position;
+
+					if (glm::length(translate0) < glm::length(translate1))
+					{
+						glm::vec3  temp = vegetation[j];
+						vegetation[j] = vegetation[j + 1];
+						vegetation[j + 1] = temp;
+						break;
+					}
+				}
+			}
+
+			for (size_t i = 0; i < 5; i++)
+			{
+				uniforms.modelMatrix = glm::translate(glm::mat4(1.0f), vegetation[i]);
+				uniformBuffer->UpdateData(uniforms);
+				gl::Cmd::BindSampledImage(0, texture3.value(), sampler.value());
+				gl::Cmd::BindUniformBuffer(0, uniformBuffer.value());
+				gl::Cmd::BindVertexBuffer(0, windowVB.value(), 0, sizeof(Vertex));
+				gl::Cmd::BindIndexBuffer(windowIB.value(), gl::IndexType::UInt);
+				gl::Cmd::DrawIndexed(6, 1, 0, 0, 0);
+			}
+		}
 	}
 	gl::EndRendering();
 }
