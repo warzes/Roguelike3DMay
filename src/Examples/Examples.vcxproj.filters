@@ -19,6 +19,9 @@
       <Filter>01_BaseExamples</Filter>
     </ClCompile>
     <ClCompile Include="Temp.cpp" />
+    <ClCompile Include="Example006.cpp">
+      <Filter>01_BaseExamples</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -38,6 +41,9 @@
       <Filter>01_BaseExamples</Filter>
     </ClInclude>
     <ClInclude Include="Temp.h" />
+    <ClInclude Include="Example006.h">
+      <Filter>01_BaseExamples</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="01_BaseExamples">

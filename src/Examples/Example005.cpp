@@ -1,7 +1,7 @@
 ﻿#include "stdafx.h"
 #include "Example005.h"
 //=============================================================================
-// Вывод кубов на сцену с освещением
+// Вывод кубов на сцену с освещением (блин-фонг)
 //=============================================================================
 namespace
 {
@@ -10,7 +10,6 @@ namespace
 
 layout(location = 0) in vec3 aPosition;
 layout(location = 1) in vec3 aNormal;
-layout(location = 2) in vec2 aTexCoord;
 
 layout(binding = 0, std140) uniform vsUniforms {
 	mat4 modelMatrix;
@@ -20,7 +19,6 @@ layout(binding = 0, std140) uniform vsUniforms {
 
 layout(location = 0) out vec3 vFragPos;
 layout(location = 1) out vec3 vNormal;
-layout(location = 2) out vec2 vTexCoord;
 
 void main()
 {
@@ -28,7 +26,6 @@ void main()
 
 	vFragPos = vec3(modelMatrix * vec4(aPosition, 1.0));
 	vNormal = mat3(transpose(inverse(modelMatrix))) * aNormal;
-	vTexCoord = aTexCoord;
 }
 )";
 
@@ -37,9 +34,6 @@ void main()
 
 layout(location = 0) in vec3 vFragPos;
 layout(location = 1) in vec3 vNormal;
-layout(location = 2) in vec2 vTexCoord;
-
-layout(binding = 0) uniform sampler2D diffuseTex;
 
 struct Material {
 	vec4 ambient;
@@ -71,8 +65,6 @@ layout(location = 0) out vec4 fragColor;
 
 void main()
 {
-	//fragColor = texture(diffuseTex, vTexCoord);
-
 	// ambient
 	vec3 ambient = light.ambient.xyz * material.ambient.xyz;
 
@@ -129,12 +121,11 @@ void main()
 	{
 		glm::vec3 pos;
 		glm::vec3 normal;
-		glm::vec2 uv;
 	};
 
 	Camera camera;
 
-	constexpr std::array<gl::VertexInputBindingDescription, 3> inputBindingDescs{
+	constexpr std::array<gl::VertexInputBindingDescription, 2> inputBindingDescs{
 		gl::VertexInputBindingDescription{
 			.location = 0,
 			.binding = 0,
@@ -146,12 +137,6 @@ void main()
 			.binding = 0,
 			.format = gl::Format::R32G32B32_FLOAT,
 			.offset = offsetof(Vertex, normal),
-		},
-		gl::VertexInputBindingDescription{
-			.location = 2,
-			.binding = 0,
-			.format = gl::Format::R32G32_FLOAT,
-			.offset = offsetof(Vertex, uv),
 		}
 	};
 
@@ -163,8 +148,6 @@ void main()
 	std::optional<gl::Buffer> uniformBuffer4;
 
 	std::optional<gl::GraphicsPipeline> pipeline;
-	std::optional<gl::Texture> texture;
-	std::optional<gl::Sampler> sampler;
 
 	gl::GraphicsPipeline CreatePipeline()
 	{
@@ -196,40 +179,40 @@ bool Example005::OnInit()
 {
 	std::vector<Vertex> v = {
 		// Передняя грань (Z = 0.5) — нормаль: (0, 0, 1)
-		{{-0.5f, -0.5f,  0.5f}, { 0.0f,  0.0f,  1.0f}, {0.0f, 0.0f}},
-		{{ 0.5f, -0.5f,  0.5f}, { 0.0f,  0.0f,  1.0f}, {1.0f, 0.0f}},
-		{{ 0.5f,  0.5f,  0.5f}, { 0.0f,  0.0f,  1.0f}, {1.0f, 1.0f}},
-		{{-0.5f,  0.5f,  0.5f}, { 0.0f,  0.0f,  1.0f}, {0.0f, 1.0f}},
+		{{-0.5f, -0.5f,  0.5f}, { 0.0f,  0.0f,  1.0f}},
+		{{ 0.5f, -0.5f,  0.5f}, { 0.0f,  0.0f,  1.0f}},
+		{{ 0.5f,  0.5f,  0.5f}, { 0.0f,  0.0f,  1.0f}},
+		{{-0.5f,  0.5f,  0.5f}, { 0.0f,  0.0f,  1.0f}},
 
 		// Правая грань (X = 0.5) — нормаль: (1, 0, 0)
-		{{ 0.5f, -0.5f,  0.5f}, { 1.0f,  0.0f,  0.0f}, {0.0f, 0.0f}},
-		{{ 0.5f, -0.5f, -0.5f}, { 1.0f,  0.0f,  0.0f}, {1.0f, 0.0f}},
-		{{ 0.5f,  0.5f, -0.5f}, { 1.0f,  0.0f,  0.0f}, {1.0f, 1.0f}},
-		{{ 0.5f,  0.5f,  0.5f}, { 1.0f,  0.0f,  0.0f}, {0.0f, 1.0f}},
+		{{ 0.5f, -0.5f,  0.5f}, { 1.0f,  0.0f,  0.0f}},
+		{{ 0.5f, -0.5f, -0.5f}, { 1.0f,  0.0f,  0.0f}},
+		{{ 0.5f,  0.5f, -0.5f}, { 1.0f,  0.0f,  0.0f}},
+		{{ 0.5f,  0.5f,  0.5f}, { 1.0f,  0.0f,  0.0f}},
 
 		// Задняя грань (Z = -0.5) — нормаль: (0, 0, -1)
-		{{ 0.5f, -0.5f, -0.5f}, { 0.0f,  0.0f, -1.0f}, {0.0f, 0.0f}},
-		{{-0.5f, -0.5f, -0.5f}, { 0.0f,  0.0f, -1.0f}, {1.0f, 0.0f}},
-		{{-0.5f,  0.5f, -0.5f}, { 0.0f,  0.0f, -1.0f}, {1.0f, 1.0f}},
-		{{ 0.5f,  0.5f, -0.5f}, { 0.0f,  0.0f, -1.0f}, {0.0f, 1.0f}},
+		{{ 0.5f, -0.5f, -0.5f}, { 0.0f,  0.0f, -1.0f}},
+		{{-0.5f, -0.5f, -0.5f}, { 0.0f,  0.0f, -1.0f}},
+		{{-0.5f,  0.5f, -0.5f}, { 0.0f,  0.0f, -1.0f}},
+		{{ 0.5f,  0.5f, -0.5f}, { 0.0f,  0.0f, -1.0f}},
 
 		// Левая грань (X = -0.5) — нормаль: (-1, 0, 0)
-		{{-0.5f, -0.5f, -0.5f}, {-1.0f,  0.0f,  0.0f}, {0.0f, 0.0f}},
-		{{-0.5f, -0.5f,  0.5f}, {-1.0f,  0.0f,  0.0f}, {1.0f, 0.0f}},
-		{{-0.5f,  0.5f,  0.5f}, {-1.0f,  0.0f,  0.0f}, {1.0f, 1.0f}},
-		{{-0.5f,  0.5f, -0.5f}, {-1.0f,  0.0f,  0.0f}, {0.0f, 1.0f}},
+		{{-0.5f, -0.5f, -0.5f}, {-1.0f,  0.0f,  0.0f}},
+		{{-0.5f, -0.5f,  0.5f}, {-1.0f,  0.0f,  0.0f}},
+		{{-0.5f,  0.5f,  0.5f}, {-1.0f,  0.0f,  0.0f}},
+		{{-0.5f,  0.5f, -0.5f}, {-1.0f,  0.0f,  0.0f}},
 
 		// Верхняя грань (Y = 0.5) — нормаль: (0, 1, 0)
-		{{-0.5f,  0.5f,  0.5f}, { 0.0f,  1.0f,  0.0f}, {0.0f, 0.0f}},
-		{{ 0.5f,  0.5f,  0.5f}, { 0.0f,  1.0f,  0.0f}, {1.0f, 0.0f}},
-		{{ 0.5f,  0.5f, -0.5f}, { 0.0f,  1.0f,  0.0f}, {1.0f, 1.0f}},
-		{{-0.5f,  0.5f, -0.5f}, { 0.0f,  1.0f,  0.0f}, {0.0f, 1.0f}},
+		{{-0.5f,  0.5f,  0.5f}, { 0.0f,  1.0f,  0.0f}},
+		{{ 0.5f,  0.5f,  0.5f}, { 0.0f,  1.0f,  0.0f}},
+		{{ 0.5f,  0.5f, -0.5f}, { 0.0f,  1.0f,  0.0f}},
+		{{-0.5f,  0.5f, -0.5f}, { 0.0f,  1.0f,  0.0f}},
 
 		// Нижняя грань (Y = -0.5) — нормаль: (0, -1, 0)
-		{{-0.5f, -0.5f, -0.5f}, { 0.0f, -1.0f,  0.0f}, {0.0f, 0.0f}},
-		{{ 0.5f, -0.5f, -0.5f}, { 0.0f, -1.0f,  0.0f}, {1.0f, 0.0f}},
-		{{ 0.5f, -0.5f,  0.5f}, { 0.0f, -1.0f,  0.0f}, {1.0f, 1.0f}},
-		{{-0.5f, -0.5f,  0.5f}, { 0.0f, -1.0f,  0.0f}, {0.0f, 1.0f}},
+		{{-0.5f, -0.5f, -0.5f}, { 0.0f, -1.0f,  0.0f}},
+		{{ 0.5f, -0.5f, -0.5f}, { 0.0f, -1.0f,  0.0f}},
+		{{ 0.5f, -0.5f,  0.5f}, { 0.0f, -1.0f,  0.0f}},
+		{{-0.5f, -0.5f,  0.5f}, { 0.0f, -1.0f,  0.0f}},
 	};
 	vertexBuffer = gl::Buffer(v);
 
@@ -268,36 +251,6 @@ bool Example005::OnInit()
 
 	pipeline = CreatePipeline();
 
-	{
-		int imgW, imgH, nrChannels;
-		auto pixels = stbi_load("CoreData/textures/temp.png", &imgW, &imgH, &nrChannels, 4);
-
-		const gl::TextureCreateInfo createInfo{
-		  .imageType = gl::ImageType::Tex2D,
-		  .format = gl::Format::R8G8B8A8_UNORM,
-		  .extent = {static_cast<uint32_t>(imgW), static_cast<uint32_t>(imgH), 1},
-		  .mipLevels = 1,
-		  .arrayLayers = 1,
-		  .sampleCount = gl::SampleCount::Samples1,
-		};
-		texture = gl::Texture(createInfo);
-
-		texture->UpdateImage({
-		  .extent = createInfo.extent,
-		  .format = gl::UploadFormat::RGBA,
-		  .type = gl::UploadType::UBYTE,
-		  .pixels = pixels,
-			});
-		stbi_image_free(pixels);
-	}
-
-	gl::SamplerState sampleDesc;
-	sampleDesc.minFilter = gl::MinFilter::Nearest;
-	sampleDesc.magFilter = gl::MagFilter::Nearest;
-	sampleDesc.addressModeU = gl::AddressMode::Repeat;
-	sampleDesc.addressModeV = gl::AddressMode::Repeat;
-	sampler = gl::Sampler(sampleDesc);
-
 	camera.SetPosition(glm::vec3(0.0f, 0.0f, -1.0f));
 
 	resize(GetWindowWidth(), GetWindowHeight());
@@ -314,8 +267,6 @@ void Example005::OnClose()
 	uniformBuffer3 = {};
 	uniformBuffer4 = {};
 	pipeline = {};
-	sampler = {};
-	texture = {};
 }
 //=============================================================================
 void Example005::OnUpdate([[maybe_unused]] float deltaTime)
@@ -379,7 +330,7 @@ void Example005::OnRender()
 {
 	const gl::SwapChainRenderInfo renderInfo
 	{
-		.name = "Render Triangle",
+		.name = "Render",
 		.viewport = {.drawRect{.offset = {0, 0}, .extent = {GetWindowWidth(), GetWindowHeight()}}},
 		.colorLoadOp = gl::AttachmentLoadOp::Clear,
 		.clearColorValue = {.1f, .5f, .8f, 1.0f},
@@ -391,7 +342,6 @@ void Example005::OnRender()
 		gl::Cmd::BindGraphicsPipeline(pipeline.value());
 		gl::Cmd::BindVertexBuffer(0, vertexBuffer.value(), 0, sizeof(Vertex));
 		gl::Cmd::BindIndexBuffer(indexBuffer.value(), gl::IndexType::UInt);
-		gl::Cmd::BindSampledImage(0, texture.value(), sampler.value());
 		
 		gl::Cmd::BindUniformBuffer(1, uniformBuffer2.value());
 		gl::Cmd::BindUniformBuffer(2, uniformBuffer3.value());

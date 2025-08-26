@@ -170,7 +170,7 @@ void Example003::OnRender()
 {
 	const gl::SwapChainRenderInfo renderInfo
 	{
-		.name = "Render Triangle",
+		.name = "Render",
 		.viewport = {.drawRect{.offset = {0, 0}, .extent = {GetWindowWidth(), GetWindowHeight()}}},
 		.colorLoadOp = gl::AttachmentLoadOp::Clear,
 		.clearColorValue = {.1f, .5f, .8f, 1.0f},
