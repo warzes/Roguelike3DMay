@@ -100,6 +100,7 @@
     <ClCompile Include="Example005.cpp" />
     <ClCompile Include="Example006.cpp" />
     <ClCompile Include="Example007.cpp" />
+    <ClCompile Include="Example008.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Example001.cpp" />
     <ClCompile Include="stdafx.cpp">
@@ -115,6 +116,7 @@
     <ClInclude Include="Example005.h" />
     <ClInclude Include="Example006.h" />
     <ClInclude Include="Example007.h" />
+    <ClInclude Include="Example008.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
