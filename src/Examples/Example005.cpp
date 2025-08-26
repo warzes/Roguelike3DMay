@@ -42,18 +42,17 @@ layout(location = 2) in vec2 vTexCoord;
 layout(binding = 0) uniform sampler2D diffuseTex;
 
 struct Material {
-	vec3 ambient;
-	vec3 diffuse;
-	vec3 specular;
+	vec4 ambient;
+	vec4 diffuse;
+	vec4 specular;
 	float shininess;
 }; 
 
 struct Light {
-	vec3 position;
-
-	vec3 ambient;
-	vec3 diffuse;
-	vec3 specular;
+	vec4 position;
+	vec4 ambient;
+	vec4 diffuse;
+	vec4 specular;
 };
 
 layout(binding = 1, std140) uniform fs_params {
@@ -75,19 +74,19 @@ void main()
 	//fragColor = texture(diffuseTex, vTexCoord);
 
 	// ambient
-	vec3 ambient = light.ambient * material.ambient;
+	vec3 ambient = light.ambient.xyz * material.ambient.xyz;
 
 	// diffuse
 	vec3 norm = normalize(vNormal);
-	vec3 lightDir = normalize(light.position - vFragPos);
+	vec3 lightDir = normalize(light.position.xyz - vFragPos);
 	float diff = max(dot(norm, lightDir), 0.0);
-	vec3 diffuse = light.diffuse * (diff * material.diffuse);
+	vec3 diffuse = light.diffuse.xyz * (diff * material.diffuse.xyz);
 
 	// specular
 	vec3 viewDir = normalize(viewPos - vFragPos);
 	vec3 reflectDir = reflect(-lightDir, norm);
 	float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
-	vec3 specular = light.specular * (spec * material.specular);
+	vec3 specular = light.specular.xyz * (spec * material.specular.xyz);
 
 	vec3 result = ambient + diffuse + specular;
 	fragColor = vec4(result, 1.0);
@@ -110,19 +109,19 @@ void main()
 
 	struct Material final
 	{
-		glm::vec3 ambient;
-		glm::vec3 diffuse;
-		glm::vec3 specular;
+		glm::vec4 ambient;
+		glm::vec4 diffuse;
+		glm::vec4 specular;
 		float shininess;
 	};
 	Material materialUniform;
 
 	struct Light final
 	{
-		glm::vec3 position;
-		glm::vec3 ambient;
-		glm::vec3 diffuse;
-		glm::vec3 specular;
+		glm::vec4 position;
+		glm::vec4 ambient;
+		glm::vec4 diffuse;
+		glm::vec4 specular;
 	};
 	Light lightUniform;
 
@@ -178,7 +177,8 @@ void main()
 			.fragmentShader = &fragmentShader,
 			.inputAssemblyState = {.topology = gl::PrimitiveTopology::TriangleList },
 			.vertexInputState = { inputBindingDescs },
-			.depthState = {.depthTestEnable = true }
+			.depthState = {.depthTestEnable = true },
+	
 			});
 	}
 
@@ -336,7 +336,7 @@ void Example005::OnUpdate([[maybe_unused]] float deltaTime)
 	}
 
 	uniforms[0].modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-	uniforms[1].modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(2.0f, 5.0f, 8.0f));
+	uniforms[1].modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(1.2f, 1.0f, -2.0f));
 	uniforms[2].modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(-1.5f, -2.2f, 2.5f));
 	uniforms[3].modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(-3.8f, -2.0f, 6.3f));
 	uniforms[4].modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(2.4f, -0.4f, 3.5f));
@@ -357,20 +357,21 @@ void Example005::OnUpdate([[maybe_unused]] float deltaTime)
 	fragUniform.viewPos = camera.Position;
 	uniformBuffer2->UpdateData(fragUniform);
 
-	materialUniform.ambient = glm::vec3(1.0f, 0.5f, 0.31f);
-	materialUniform.diffuse = glm::vec3(1.0f, 0.5f, 0.31f);
-	materialUniform.specular = glm::vec3(0.5f, 0.5f, 0.5f);
+	materialUniform.ambient = glm::vec4(1.0f, 0.5f, 0.31f, 1.0f);
+	materialUniform.diffuse = glm::vec4(1.0f, 0.5f, 0.31f, 1.0f);
+	materialUniform.specular = glm::vec4(0.5f, 0.5f, 0.5f, 1.0f);
 	materialUniform.shininess = 32.0f;
 	uniformBuffer3->UpdateData(materialUniform);
 
-	glm::vec3 lightColor;
+	glm::vec4 lightColor;
 	lightColor.x = static_cast<float>(sin(glfwGetTime() * 2.0));
 	lightColor.y = static_cast<float>(sin(glfwGetTime() * 0.7));
 	lightColor.z = static_cast<float>(sin(glfwGetTime() * 1.3));
-	lightUniform.position = glm::vec3(1.2f, 1.0f, -2.0f);
-	lightUniform.diffuse = lightColor * glm::vec3(0.5f);
-	lightUniform.ambient = lightUniform.diffuse * glm::vec3(0.2f);
-	lightUniform.specular = glm::vec3(1.0f);
+	lightColor.w = 1.0f;
+	lightUniform.position = glm::vec4(1.2f, 1.0f, -2.0f, 1.0f);
+	lightUniform.ambient = lightColor * glm::vec4(0.2f);
+	lightUniform.diffuse = lightColor * glm::vec4(0.5f);
+	lightUniform.specular = glm::vec4(1.0f);
 	uniformBuffer4->UpdateData(lightUniform);
 }
 //=============================================================================
