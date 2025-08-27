@@ -64,8 +64,8 @@ bool dung::DungeonsApp::OnInit()
 	m_model2.mesh = LoadAssimpMesh("ExampleData/mesh/bunny.obj");
 	m_model2.scale = glm::vec3(3.0f);
 
-	m_model3 = LoadAssimpModel("ExampleData/mesh/school/school.obj");
-	//	m_model3 = LoadAssimpModel("ExampleData/mesh/metro/metro.obj");
+	m_model3.model.Load("ExampleData/mesh/school/school.obj");
+	//m_model3.model.Load("ExampleData/mesh/metro/metro.obj");
 
 
 	if (!createPipeline())
@@ -257,20 +257,20 @@ void dung::DungeonsApp::drawModel(GameModelOld& model)
 	model.mesh->Bind();
 }
 //=============================================================================
-void dung::DungeonsApp::drawModel(std::optional<GameModel> model)
+void dung::DungeonsApp::drawModel(const GameModel& model)
 {
-	const gl::Sampler& sampler = (model.value().textureFilter == gl::MagFilter::Linear)
+	const gl::Sampler& sampler = (model.textureFilter == gl::MagFilter::Linear)
 		? m_linearSampler.value()
 		: m_nearestSampler.value();
 
-	m_objectUboData.modelMatrix = model.value().GetModelMat();
+	m_objectUboData.modelMatrix = model.GetModelMat();
 	m_objectUboData.normalMatrix = glm::mat3(glm::transpose(glm::inverse(m_objectUboData.modelMatrix)));
 	m_objectUbo->UpdateData(m_objectUboData);
 	gl::Cmd::BindUniformBuffer(2, m_objectUbo.value());
 
-	for (size_t i = 0; i < model.value().meshes.size(); i++)
+	for (size_t i = 0; i < model.model.GetNumMeshes(); i++)
 	{
-		auto& meshes = model.value().meshes[i];
+		const auto& meshes = model.model.GetMeshes()[i];
 
 		m_materialUboData.diffuse = glm::vec4(1.0f, 0.0f, 1.0f, 1.0f);
 		m_materialUboData.hasDiffuseTexture = meshes->GetMaterial()->diffuseTexture != nullptr;

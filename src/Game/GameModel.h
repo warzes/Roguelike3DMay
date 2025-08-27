@@ -19,17 +19,13 @@ struct GameModelOld final
 
 struct GameModel final
 {
-	void Free();
+	Model model;
 
-	std::vector<Mesh*> meshes;
 	gl::MagFilter textureFilter{};
 
-	AABB      aabb;
 	glm::vec3 position{ 0.0f };
 	glm::vec3 rotation{ 0.0f }; // в градусах // TODO: заменить на кватернион?
 	glm::vec3 scale{ 1.0f };
 
 	glm::mat4 GetModelMat() const;
 };
-
-std::optional<GameModel> LoadAssimpModel(const std::string& filename);
