@@ -12,6 +12,8 @@ public:
 
 	size_t GetNumMeshes() const { return m_meshes.size(); }
 	const std::vector<Mesh*>& GetMeshes() const { return m_meshes; }
+	Mesh* GetMesh(size_t id) { return m_meshes[id]; }
+	Mesh* GetMesh(size_t id) const { return m_meshes[id]; }
 	const AABB& GetAABB() const { return m_aabb; }
 
 private:

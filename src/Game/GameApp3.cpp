@@ -213,8 +213,7 @@ void GameApp3::drawModel(const GameModel& model)
 
 	for (size_t i = 0; i < model.model.GetNumMeshes(); i++)
 	{
-		const auto& meshes = model.model.GetMeshes()[i];
-
+		auto meshes = model.model.GetMesh(i);
 
 		m_materialUboData.diffuse = glm::vec4(1.0f, 0.0f, 1.0f, 1.0f);
 		m_materialUboData.hasDiffuseTexture = meshes->GetMaterial()->diffuseTexture != nullptr;
