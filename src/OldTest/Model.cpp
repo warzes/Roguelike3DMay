@@ -200,11 +200,3 @@ std::vector<Mesh> LoadObjMesh(const std::string& path, MaterialManager& material
 
 	return meshes;
 }
-//=============================================================================
-bool Model::Load(const std::string& path, MaterialManager& materialManager)
-{
-	m_meshes = LoadObjMesh(path, materialManager);
-	if (m_meshes.empty()) return false;
-	return true;
-}
-//=============================================================================

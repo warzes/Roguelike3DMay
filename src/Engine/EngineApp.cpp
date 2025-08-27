@@ -192,7 +192,7 @@ void IEngineApp::Run()
 {
 	if (init())
 	{
-		double lastTime = glfwGetTime();
+		double lastFrameTime = glfwGetTime();
 		while (!shouldWindowClose())
 		{
 			profiler::BeginFrame();
@@ -201,12 +201,12 @@ void IEngineApp::Run()
 			{
 				SE_SCOPED_SAMPLE("Update");
 
-				// calc deltatime
-				const double currentTime = glfwGetTime();
-				m_deltaTime = static_cast<float>(currentTime - lastTime);
-				lastTime = currentTime;
+				// calc deltaTime
+				m_currentTime = glfwGetTime();
+				m_deltaTime = static_cast<float>(m_currentTime - lastFrameTime);
+				lastFrameTime = m_currentTime;
 				// calc fps
-				fpsTick(m_deltaTime);
+				fpsTick(m_deltaTime, true);
 
 				OnUpdate(m_deltaTime);
 			}
@@ -279,8 +279,8 @@ void IEngineApp::DrawFPS()
 		nullptr,
 		ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings |
 		ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoMove)) {
-		ImGui::Text("FPS : %i", (int)m_currentFPS);
-		ImGui::Text("Ms  : %.1f", m_currentFPS > 0 ? 1000.0 / m_currentFPS : 0);
+		ImGui::Text("FPS : %i", (int)m_framesPerSecond);
+		ImGui::Text("Ms  : %.1f", m_framesPerSecond > 0 ? 1000.0 / m_framesPerSecond : 0);
 	}
 	ImGui::End();
 }
@@ -477,35 +477,35 @@ void IEngineApp::windowResize(int width, int height)
 void IEngineApp::fpsTick(float deltaSeconds, bool frameRendered)
 {
 	if (frameRendered)
-		m_numFrames++;
+		m_frameCounter++;
 
-	m_accumulatedTime += deltaSeconds;
+	m_timeCounter += deltaSeconds;
 
-	if (m_accumulatedTime > m_avgInterval)
+	if (m_timeCounter > m_avgInterval)
 	{
-		m_currentFPS = static_cast<float>(m_numFrames / m_accumulatedTime);
-		m_numFrames = 0;
-		m_accumulatedTime = 0;
+		m_framesPerSecond = static_cast<float>(m_frameCounter / m_avgInterval);
+		m_frameCounter = 0;
+		m_timeCounter = 0.0;
 	}
 }
 //=============================================================================
 void IEngineApp::keyPress(int key, int scanCode, int action, int mods)
 {
 	//std::string keyName = glfwGetKeyName(key, 0);
-	Input::keypress(key, action);
+	Input::keyPress(key, action);
 	OnKey(key, scanCode, action, mods);
 }
 //=============================================================================
-void IEngineApp::mousePos(double xpos, double ypos)
+void IEngineApp::mousePos(double xPos, double yPos)
 {
-	Input::mousePos(xpos, ypos);
-	OnMousePos(xpos, ypos);
+	Input::mousePos(xPos, yPos);
+	OnMousePos(xPos, yPos);
 }
 //=============================================================================
-void IEngineApp::mouseScroll(double xoffset, double yoffset)
+void IEngineApp::mouseScroll(double xOffset, double yOffset)
 {
-	Input::mouseScroll(xoffset, yoffset);
-	OnScroll(xoffset, yoffset);
+	Input::mouseScroll(xOffset, yOffset);
+	OnScroll(xOffset, yOffset);
 }
 //=============================================================================
 void IEngineApp::mouseButton(int button, int action, int mods)

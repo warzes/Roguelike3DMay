@@ -66,7 +66,7 @@ void GameApp::OnUpdate(float deltaTime)
 	if (Input::IsMouseDown(GLFW_MOUSE_BUTTON_RIGHT))
 	{
 		Input::SetCursorVisible(false);
-		m_camera.ProcessMouseMovement(Input::GetScreenOffset().x, Input::GetScreenOffset().y);
+		m_camera.ProcessMouseMovement(Input::GetCursorOffset().x, Input::GetCursorOffset().y);
 	}
 	else if (Input::IsMouseReleased(GLFW_MOUSE_BUTTON_RIGHT))
 	{

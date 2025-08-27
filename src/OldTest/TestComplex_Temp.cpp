@@ -55,15 +55,15 @@ void CameraControl::onEvents()
     float yaw = camera->yaw;
 
     static GLfloat last_frame_time = glfwGetTime();
-    static GLfloat last_cursor_x = Input::GetScreenPos().x, last_cursor_y = Input::GetScreenPos().y;
+    static GLfloat last_cursor_x = Input::GetCursorPos().x, last_cursor_y = Input::GetCursorPos().y;
 
     GLfloat current_time = glfwGetTime();
 
-    GLfloat delta_cursor_x = Input::GetScreenPos().x - last_cursor_x;
-    GLfloat delta_cursor_y = Input::GetScreenPos().y - last_cursor_y;
+    GLfloat delta_cursor_x = Input::GetCursorPos().x - last_cursor_x;
+    GLfloat delta_cursor_y = Input::GetCursorPos().y - last_cursor_y;
 
-    last_cursor_x = Input::GetScreenPos().x;
-    last_cursor_y = Input::GetScreenPos().y;
+    last_cursor_x = Input::GetCursorPos().x;
+    last_cursor_y = Input::GetCursorPos().y;
 
     GLfloat cam_speed = 1.0f;
     GLfloat cam_pan_speed = 0.005f;

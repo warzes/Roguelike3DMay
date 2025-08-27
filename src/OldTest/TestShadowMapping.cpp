@@ -341,7 +341,7 @@ void TestShadowMapping::OnUpdate(float deltaTime)
 	if (glfwGetMouseButton(GetGLFWWindow(), GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
 	{
 		Input::SetCursorVisible(false);
-		camera.ProcessMouseMovement(Input::GetScreenOffset().x, Input::GetScreenOffset().y);
+		camera.ProcessMouseMovement(Input::GetCursorOffset().x, Input::GetCursorOffset().y);
 	}
 	else if (glfwGetMouseButton(GetGLFWWindow(), GLFW_MOUSE_BUTTON_RIGHT) == GLFW_RELEASE)
 	{
@@ -423,7 +423,7 @@ void TestShadowMapping::OnImGuiDraw()
 
 	ImGui::SetNextWindowSize(ImVec2(60, 50));
 	ImGui::Begin("FPS");
-	ImGui::Text(std::to_string(GetFPS()).c_str());
+	ImGui::Text(std::to_string(GetFramesPerSecond()).c_str());
 	ImGui::End();
 }
 //=============================================================================

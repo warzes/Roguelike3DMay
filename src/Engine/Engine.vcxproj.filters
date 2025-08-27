@@ -210,6 +210,9 @@
     <ClInclude Include="BasicConstants.h">
       <Filter>01_Base</Filter>
     </ClInclude>
+    <ClInclude Include="MeshVertex.h">
+      <Filter>05_Render</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="01_Base">

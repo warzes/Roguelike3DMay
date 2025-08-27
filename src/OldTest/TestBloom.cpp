@@ -126,7 +126,7 @@ void TestBloom::OnUpdate(float deltaTime)
 	if (glfwGetMouseButton(GetGLFWWindow(), GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
 	{
 		Input::SetCursorVisible(false);
-		camera.ProcessMouseMovement(Input::GetScreenOffset().x, Input::GetScreenOffset().y);
+		camera.ProcessMouseMovement(Input::GetCursorOffset().x, Input::GetCursorOffset().y);
 	}
 	else if (glfwGetMouseButton(GetGLFWWindow(), GLFW_MOUSE_BUTTON_RIGHT) == GLFW_RELEASE)
 	{

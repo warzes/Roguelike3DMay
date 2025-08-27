@@ -388,7 +388,7 @@ void NewTest005::OnUpdate(float deltaTime)
 	if (glfwGetMouseButton(GetGLFWWindow(), GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
 	{
 		Input::SetCursorVisible(false);
-		mainCamera.ProcessMouseMovement(Input::GetScreenOffset().x, Input::GetScreenOffset().y);
+		mainCamera.ProcessMouseMovement(Input::GetCursorOffset().x, Input::GetCursorOffset().y);
 	}
 	else if (glfwGetMouseButton(GetGLFWWindow(), GLFW_MOUSE_BUTTON_RIGHT) == GLFW_RELEASE)
 	{

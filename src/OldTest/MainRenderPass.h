@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include "UniformObjects.h"
-#include "Mesh.h"
+#include "Material.h"
 
 class GameModelOld;
 class World;

@@ -349,7 +349,7 @@ void Example006::OnUpdate([[maybe_unused]] float deltaTime)
 	if (Input::IsMouseDown(GLFW_MOUSE_BUTTON_RIGHT))
 	{
 		Input::SetCursorVisible(false);
-		camera.ProcessMouseMovement(Input::GetScreenOffset().x, Input::GetScreenOffset().y);
+		camera.ProcessMouseMovement(Input::GetCursorOffset().x, Input::GetCursorOffset().y);
 	}
 	else if (Input::IsMouseReleased(GLFW_MOUSE_BUTTON_RIGHT))
 	{

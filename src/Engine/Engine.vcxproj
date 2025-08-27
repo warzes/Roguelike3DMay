@@ -146,6 +146,7 @@
     <ClInclude Include="Material.h" />
     <ClInclude Include="BasicTypes.h" />
     <ClInclude Include="Mesh.h" />
+    <ClInclude Include="MeshVertex.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="OpenGL4ApiToEnum.h" />
     <ClInclude Include="OpenGL4Buffer.h" />

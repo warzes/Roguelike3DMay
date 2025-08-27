@@ -49,7 +49,8 @@ public:
 	double GetTimeInSec() const;
 
 	auto GetDeltaTime() const { return m_deltaTime; }
-	auto GetFPS() const { return m_currentFPS; }
+	auto GetCurrentTime() const { return m_currentTime; }
+	auto GetFramesPerSecond() const { return m_framesPerSecond; }
 
 	GLFWwindow* GetGLFWWindow() { return m_window; }
 	uint16_t GetWindowWidth() const { return m_width; }
@@ -87,8 +88,8 @@ private:
 	void fpsTick(float deltaSeconds, bool frameRendered = true);
 
 	void keyPress(int key, int scanCode, int action, int mods);
-	void mousePos(double xpos, double ypos);
-	void mouseScroll(double xoffset, double yoffset);
+	void mousePos(double xPos, double yPos);
+	void mouseScroll(double xOffset, double yOffset);
 	void mouseButton(int button, int action, int mods);
 
 	// system
@@ -102,12 +103,13 @@ private:
 
 	// time config
 	float       m_deltaTime{ 0.0f };
+	double      m_currentTime{ 0.0 };
 
 	// fps
 	const float m_avgInterval{ 0.5f };
-	unsigned    m_numFrames{ 0 };
-	double      m_accumulatedTime{ 0.0 };
-	float       m_currentFPS{ 0.0f };
+	unsigned    m_frameCounter{ 0 };
+	double      m_timeCounter{ 0.0 };
+	float       m_framesPerSecond{ 0.0f };
 
 	// state
 	bool        m_canRender{ true };

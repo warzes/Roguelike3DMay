@@ -42,20 +42,20 @@ public:
 	static void Init(GLFWwindow* window);
 	static void Update();
 
-	static glm::vec2 GetScreenPos() { return m_screenPos; }
-	static glm::vec2 GetScreenOffset() { return m_screenOffset; }
-	static glm::vec2 GetPrevScreenPos() { return m_prevScreenPos; }
-	static glm::vec2 GetScrollOffset() { return m_scrollOffset; }
+	static const glm::vec2& GetCursorPos() { return m_cursorPos; }
+	static const glm::vec2& GetCursorOffset() { return m_cursorOffset; }
+	static const glm::vec2& GetPrevCursorPos() { return m_cursorPosLastFrame; }
+	static const glm::vec2& GetScrollOffset() { return m_scrollOffset; }
 
-	static KeyState GetKeyState(Key key);
-	static bool IsKeyDown(Key key);
-	static bool IsKeyUp(Key key);
-	static bool IsKeyPressed(Key key);
-	static bool IsKeyReleased(Key key);
-	static bool IsMouseDown(MouseButton key);
-	static bool IsMouseUp(MouseButton key);
-	static bool IsMousePressed(MouseButton key);
-	static bool IsMouseReleased(MouseButton key);
+	static KeyState GetKeyState(Key key) { return m_keysStatus[key]; }
+	static bool IsKeyDown(Key key) { return m_keysStatus[key] & KeyState::down; }
+	static bool IsKeyUp(Key key) { return m_keysStatus[key] & KeyState::up; }
+	static bool IsKeyPressed(Key key) { return m_keysStatus[key] == KeyState::pressed; }
+	static bool IsKeyReleased(Key key) { return m_keysStatus[key] == KeyState::released; }
+	static bool IsMouseDown(MouseButton key) { return m_mouseButtonStatus[key] & KeyState::down; }
+	static bool IsMouseUp(MouseButton key) { return m_mouseButtonStatus[key] & KeyState::up; }
+	static bool IsMousePressed(MouseButton key) { return m_mouseButtonStatus[key] == KeyState::pressed; }
+	static bool IsMouseReleased(MouseButton key) { return m_mouseButtonStatus[key] == KeyState::released; }
 
 	static void SetCursorVisible(bool state);
 
@@ -64,17 +64,17 @@ public:
 private:
 	friend class IEngineApp;
 
-	static void keypress(int key, int action);
-	static void mousePos(double xpos, double ypos);
-	static void mouseScroll(double xoffset, double yoffset);
+	static void keyPress(int key, int action);
 	static void mouseButton(int button, int action);
+	static void mousePos(double xPos, double yPos);
+	static void mouseScroll(double xOffset, double yOffset);
 
-	static inline glm::vec2 m_screenPos{};
-	static inline glm::vec2 m_screenOffset{};
-	static inline glm::vec2 m_prevScreenPos{};
+	static inline glm::vec2 m_cursorPos{};
+	static inline glm::vec2 m_cursorOffset{};
+	static inline glm::vec2 m_cursorPosLastFrame{};
 	static inline glm::vec2 m_scrollOffset{};
 
 	static inline GLFWwindow* m_window{ nullptr };
-	static inline KeyState m_keyStates[MaxKeys] = { KeyState(0) };
-	static inline KeyState m_mouseButtonStates[MaxMouseButtons] = { KeyState(0) };
+	static inline KeyState m_keysStatus[MaxKeys] = { KeyState(0) };
+	static inline KeyState m_mouseButtonStatus[MaxMouseButtons] = { KeyState(0) };
 };

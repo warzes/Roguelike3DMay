@@ -74,8 +74,8 @@ void GameModelManager::Draw(Camera& cam, ShadowPassManager& shadowPassMgr)
 		{
 			auto& mat = model->material;
 
-			materialUbo.diffuseMaterial = mat.diffuse;
-			materialUbo.specularMaterial = mat.specular;
+			materialUbo.diffuseMaterial = mat.diffuseColor;
+			materialUbo.specularMaterial = mat.specularColor;
 			materialUbo.shininessMaterial = mat.shininess;
 
 			materialUbo.hasDiffuse =  mat.diffuseTexture != nullptr;

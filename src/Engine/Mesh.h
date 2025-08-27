@@ -1,69 +1,34 @@
 ﻿#pragma once
 
+#include "MeshVertex.h"
 #include "Material.h"
-#include "CoreFunc.h"
+#include "AABB.h"
 #include "OpenGL4Buffer.h"
-#include "OpenGL4Pipeline.h"
 
-struct MeshVertex final
+// TODO: сделать возможность хранить буфер вершин/индексов в Model, а здесь хранить смещения в буфере
+class Mesh final
 {
-	glm::vec3 position{ 0.0f };
-	glm::vec3 color{ 1.0f };
-	glm::vec3 normal{ 0.0f };
-	glm::vec2 uv{ 0.0f };
-	glm::vec3 tangent{ 0.0f };
+public:
+	Mesh() = default;
+	Mesh(std::span<const MeshVertex> vertices,
+		std::span<const uint32_t> indices,
+		PhongMaterial* material);
+	~Mesh();
 
-	bool operator==(const MeshVertex& v) const&
-	{
-		return position == v.position && normal == v.normal && uv == v.uv;
-	}
-};
+	uint32_t GetVertexCount() const { return m_vertexCount; }
+	uint32_t GetIndexCount() const { return m_indicesCount; }
+	const AABB& GetAABB() const { return m_aabb; }
 
-namespace std
-{
-	template<> struct hash<MeshVertex>
-	{
-		std::size_t operator()(const MeshVertex& v) const noexcept
-		{
-			std::size_t h1 = std::hash<glm::vec3>{}((v.position));
-			std::size_t h2 = std::hash<glm::vec3>{}((v.normal));
-			std::size_t h3 = std::hash<glm::vec2>{}((v.uv));
-			std::size_t seed = 0;
-			HashCombine(seed, h1, h2, h3);
-			return seed;
-		}
-	};
-}
+	void Bind();
 
-constexpr std::array<gl::VertexInputBindingDescription, 5> MeshVertexInputBindingDescs{
-  gl::VertexInputBindingDescription{
-	.location = 0,
-	.binding = 0,
-	.format = gl::Format::R32G32B32_FLOAT,
-	.offset = offsetof(MeshVertex, position),
-  },
-	gl::VertexInputBindingDescription{
-	.location = 1,
-	.binding = 0,
-	.format = gl::Format::R32G32B32_FLOAT,
-	.offset = offsetof(MeshVertex, color),
-  },
-  gl::VertexInputBindingDescription{
-	.location = 2,
-	.binding = 0,
-	.format = gl::Format::R32G32B32_FLOAT,
-	.offset = offsetof(MeshVertex, normal),
-  },
-	gl::VertexInputBindingDescription{
-	.location = 3,
-	.binding = 0,
-	.format = gl::Format::R32G32_FLOAT,
-	.offset = offsetof(MeshVertex, uv),
-  },
-	gl::VertexInputBindingDescription{
-	.location = 4,
-	.binding = 0,
-	.format = gl::Format::R32G32B32_FLOAT,
-	.offset = offsetof(MeshVertex, tangent),
-  },
+	PhongMaterial* GetMaterial() { return m_material; }
+
+private:
+	uint32_t       m_vertexCount{ 0 };
+	uint32_t       m_indicesCount{ 0 };
+
+	gl::Buffer* m_vertexBuffer{ nullptr };
+	gl::Buffer* m_indexBuffer{ nullptr };
+	PhongMaterial* m_material{ nullptr };
+	AABB        m_aabb{};
 };

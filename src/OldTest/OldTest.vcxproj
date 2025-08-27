@@ -106,7 +106,6 @@
     <ClCompile Include="MainRenderPass.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="MaterialOLD.cpp" />
-    <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="MeshOLD.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="ModelOLD.cpp" />
@@ -173,7 +172,6 @@
     <ClInclude Include="MainRenderPass.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="MaterialOLD.h" />
-    <ClInclude Include="Mesh.h" />
     <ClInclude Include="MeshOLD.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="ModelOLD.h" />

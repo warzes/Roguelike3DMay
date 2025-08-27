@@ -4,119 +4,54 @@
 void Input::Init(GLFWwindow* wnd)
 {
 	Input::m_window = wnd;
+
+	double xpos, ypos;
+	glfwGetCursorPos(wnd, &xpos, &ypos);
+	m_cursorOffset.x = static_cast<float>(xpos);
+	m_cursorOffset.y = static_cast<float>(ypos);
+	m_cursorPosLastFrame = m_cursorOffset;
 }
 //=============================================================================
 void Input::Update()
 {
+	// TODO: wtf
 	for (unsigned i = 0; i < MaxKeys; ++i)
 	{
 		// keystates decay to either up or down after one frame
-		if (m_keyStates[i] & KeyState::up) m_keyStates[i] = KeyState::up;
-		if (m_keyStates[i] & KeyState::down) m_keyStates[i] = KeyState::down;
+		if (m_keysStatus[i] & KeyState::up) m_keysStatus[i] = KeyState::up;
+		if (m_keysStatus[i] & KeyState::down) m_keysStatus[i] = KeyState::down;
 	}
+	// TODO: wtf
 	for (unsigned i = 0; i < MaxMouseButtons; i++)
 	{
-		if (m_mouseButtonStates[i] & KeyState::up) m_mouseButtonStates[i] = KeyState::up;
-		if (m_mouseButtonStates[i] & KeyState::down) m_mouseButtonStates[i] = KeyState::down;
+		if (m_mouseButtonStatus[i] & KeyState::up) m_mouseButtonStatus[i] = KeyState::up;
+		if (m_mouseButtonStatus[i] & KeyState::down) m_mouseButtonStatus[i] = KeyState::down;
 	}
 	m_scrollOffset = glm::vec2(0);
-	m_screenOffset = glm::vec2(0);
+	m_cursorOffset = glm::vec2(0);
 	glfwPollEvents();
 }
 //=============================================================================
-Input::KeyState Input::GetKeyState(Key key)
-{
-	return m_keyStates[key];
-}
-//=============================================================================
-bool Input::IsKeyDown(Key key)
-{
-	return m_keyStates[key] & KeyState::down;
-}
-//=============================================================================
-bool Input::IsKeyUp(Key key)
-{
-	return m_keyStates[key] & KeyState::up;
-}
-//=============================================================================
-bool Input::IsKeyPressed(Key key)
-{
-	return m_keyStates[key] == KeyState::pressed;
-}
-//=============================================================================
-bool Input::IsKeyReleased(Key key)
-{
-	return m_keyStates[key] == KeyState::released;
-}
-//=============================================================================
-bool Input::IsMouseDown(MouseButton key)
-{
-	return m_mouseButtonStates[key] & KeyState::down;
-}
-//=============================================================================
-bool Input::IsMouseUp(MouseButton key)
-{
-	return m_mouseButtonStates[key] & KeyState::up;
-}
-//=============================================================================
-bool Input::IsMousePressed(MouseButton key)
-{
-	return m_mouseButtonStates[key] == KeyState::pressed;
-}
-//=============================================================================
-bool Input::IsMouseReleased(MouseButton key)
-{
-	return m_mouseButtonStates[key] == KeyState::released;
-}
-//=============================================================================
-void Input::keypress(int key, int action)
+void Input::keyPress(int key, int action)
 {
 	if (key != GLFW_KEY_UNKNOWN)
 	{
 		switch (action)
 		{
 		case GLFW_RELEASE:
-			m_keyStates[key] = KeyState::released;
+			m_keysStatus[key] = KeyState::released;
 			break;
 		case GLFW_PRESS:
-			m_keyStates[key] = KeyState::pressed;
+			m_keysStatus[key] = KeyState::pressed;
 			break;
 		case GLFW_REPEAT:
-			m_keyStates[key] = KeyState::repeat;
+			m_keysStatus[key] = KeyState::repeat;
 			break;
 		default:
-			assert(0 && "Invalid keycode.");
+			std::unreachable();
 			break;
 		}
 	}
-}
-//=============================================================================
-void Input::mousePos(double xpos, double ypos)
-{
-	static bool firstMouse = true;
-
-	if (firstMouse)
-	{
-		m_screenOffset.x = static_cast<float>(xpos);
-		m_screenOffset.y = static_cast<float>(ypos);
-		m_prevScreenPos = m_screenOffset;
-		firstMouse = false;
-		return;
-	}
-
-	m_screenPos.x = static_cast<float>(xpos);
-	m_screenPos.y = static_cast<float>(ypos);
-
-	m_screenOffset.x += static_cast<float>(xpos) - m_prevScreenPos.x;
-	m_screenOffset.y += m_prevScreenPos.y - static_cast<float>(ypos);
-	m_prevScreenPos = glm::vec2(xpos, ypos);
-	m_screenOffset *= sensitivity;
-}
-//=============================================================================
-void Input::mouseScroll(double xoffset, double yoffset)
-{
-	m_scrollOffset.x = static_cast<float>(xoffset);
-	m_scrollOffset.y = static_cast<float>(yoffset);
 }
 //=============================================================================
 void Input::mouseButton(int button, int action)
@@ -124,18 +59,35 @@ void Input::mouseButton(int button, int action)
 	switch (action)
 	{
 	case GLFW_RELEASE:
-		m_mouseButtonStates[button] = KeyState::released;
+		m_mouseButtonStatus[button] = KeyState::released;
 		break;
 	case GLFW_PRESS:
-		m_mouseButtonStates[button] = KeyState::pressed;
+		m_mouseButtonStatus[button] = KeyState::pressed;
 		break;
 	case GLFW_REPEAT:
-		m_mouseButtonStates[button] = KeyState::repeat;
+		m_mouseButtonStatus[button] = KeyState::repeat;
 		break;
 	default:
-		assert(0 && "Invalid keycode.");
+		std::unreachable();
 		break;
 	}
+}
+//=============================================================================
+void Input::mousePos(double xPos, double yPos)
+{
+	m_cursorPos.x = static_cast<float>(xPos);
+	m_cursorPos.y = static_cast<float>(yPos);
+
+	m_cursorOffset.x += m_cursorPos.x - m_cursorPosLastFrame.x;
+	m_cursorOffset.y += m_cursorPosLastFrame.y - m_cursorPos.y;
+	m_cursorPosLastFrame = m_cursorPos;
+	m_cursorOffset *= sensitivity;
+}
+//=============================================================================
+void Input::mouseScroll(double xOffset, double yOffset)
+{
+	m_scrollOffset.x = static_cast<float>(xOffset);
+	m_scrollOffset.y = static_cast<float>(yOffset);
 }
 //=============================================================================
 void Input::SetCursorVisible(bool state)
