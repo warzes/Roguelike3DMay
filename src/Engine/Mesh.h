@@ -5,11 +5,19 @@
 #include "AABB.h"
 #include "OpenGL4Buffer.h"
 
+struct MeshCreateInfo final
+{
+	std::vector<MeshVertex> vertices;
+	std::vector<uint32_t> indices;
+	PhongMaterial* material{ nullptr };
+};
+
 // TODO: сделать возможность хранить буфер вершин/индексов в Model, а здесь хранить смещения в буфере
 class Mesh final
 {
 public:
 	Mesh() = default;
+	Mesh(const MeshCreateInfo& createInfo);
 	Mesh(std::span<const MeshVertex> vertices,
 		std::span<const uint32_t> indices,
 		PhongMaterial* material);

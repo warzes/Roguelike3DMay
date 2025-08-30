@@ -86,6 +86,9 @@
     <ClCompile Include="OpenGL4Cmd.cpp">
       <Filter>04_RHI\Context</Filter>
     </ClCompile>
+    <ClCompile Include="GeometryGenerator.cpp">
+      <Filter>05_Render</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -211,6 +214,9 @@
       <Filter>01_Base</Filter>
     </ClInclude>
     <ClInclude Include="MeshVertex.h">
+      <Filter>05_Render</Filter>
+    </ClInclude>
+    <ClInclude Include="GeometryGenerator.h">
       <Filter>05_Render</Filter>
     </ClInclude>
   </ItemGroup>

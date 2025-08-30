@@ -25,6 +25,8 @@ Model::~Model()
 //=============================================================================
 bool Model::Load(const std::string& fileName)
 {
+	Free();
+
 	Assimp::Importer importer;
 
 	const aiScene* scene = importer.ReadFile(fileName.c_str(), ASSIMP_LOAD_FLAGS);
@@ -37,12 +39,26 @@ bool Model::Load(const std::string& fileName)
 	std::string directory = io::GetFileDirectory(fileName);
 	processNode(scene, scene->mRootNode, directory);
 
-	for (size_t i = 0; i < m_meshes.size(); i++)
-	{
-		m_aabb.CombineAABB(m_meshes[i]->GetAABB());
-	}
+	computeAABB();
 
 	return true;
+}
+//=============================================================================
+void Model::Create(const MeshCreateInfo& ci)
+{
+	Free();
+	m_meshes.emplace_back(new Mesh(ci.vertices, ci.indices, ci.material));
+	computeAABB();
+}
+//=============================================================================
+void Model::Create(const std::vector<MeshCreateInfo>& meshes)
+{
+	Free();
+	for (size_t i = 0; i < meshes.size(); i++)
+	{
+		m_meshes.emplace_back(new Mesh(meshes[i].vertices, meshes[i].indices, meshes[i].material));
+	}
+	computeAABB();
 }
 //=============================================================================
 void Model::Free()
@@ -174,5 +190,13 @@ Mesh* Model::processMesh(const aiScene* scene, struct aiMesh* mesh, std::string_
 	}
 
 	return new Mesh(vertices, indices, meshMaterial);
+}
+//=============================================================================
+void Model::computeAABB()
+{
+	for (size_t i = 0; i < m_meshes.size(); i++)
+	{
+		m_aabb.CombineAABB(m_meshes[i]->GetAABB());
+	}
 }
 //=============================================================================

@@ -98,6 +98,7 @@
     <ClCompile Include="EngineApp.cpp" />
     <ClCompile Include="FileUtils.cpp" />
     <ClCompile Include="Frustum.cpp" />
+    <ClCompile Include="GeometryGenerator.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="Log.cpp" />
     <ClCompile Include="Material.cpp" />
@@ -139,6 +140,7 @@
     <ClInclude Include="FileUtils.h" />
     <ClInclude Include="FlagsUtils.h" />
     <ClInclude Include="Frustum.h" />
+    <ClInclude Include="GeometryGenerator.h" />
     <ClInclude Include="Hash.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="KeyCode.h" />

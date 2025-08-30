@@ -8,6 +8,8 @@
 #include "Example007.h"
 #include "Example008.h"
 
+#include "Demo001.h"
+
 #include "TestXXX.h"
 //=============================================================================
 #if defined(_MSC_VER)
@@ -61,8 +63,9 @@ int main(
 	//Example008 game;
 
 
+	Demo001 game;
 
-	TestXXX game;
+	//TestXXX game;
 
 	game.Run();
 }

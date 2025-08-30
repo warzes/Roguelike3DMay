@@ -94,6 +94,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Demo001.cpp" />
     <ClCompile Include="Example002.cpp" />
     <ClCompile Include="Example003.cpp" />
     <ClCompile Include="Example004.cpp" />
@@ -110,6 +111,7 @@
     <ClCompile Include="TestXXX.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Demo001.h" />
     <ClInclude Include="Example001.h" />
     <ClInclude Include="Example002.h" />
     <ClInclude Include="Example003.h" />

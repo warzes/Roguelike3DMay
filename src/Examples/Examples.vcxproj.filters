@@ -28,6 +28,9 @@
       <Filter>01_BaseExamples</Filter>
     </ClCompile>
     <ClCompile Include="TestXXX.cpp" />
+    <ClCompile Include="Demo001.cpp">
+      <Filter>XX_Demo</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -56,10 +59,16 @@
       <Filter>01_BaseExamples</Filter>
     </ClInclude>
     <ClInclude Include="TestXXX.h" />
+    <ClInclude Include="Demo001.h">
+      <Filter>XX_Demo</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="01_BaseExamples">
       <UniqueIdentifier>{d4085903-5c45-4e41-a558-2a8b5da2c669}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="XX_Demo">
+      <UniqueIdentifier>{c0084ff4-5804-4773-8020-9f6988f53f18}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

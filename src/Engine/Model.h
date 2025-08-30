@@ -8,6 +8,9 @@ public:
 	~Model();
 
 	bool Load(const std::string& fileName);
+	void Create(const MeshCreateInfo& meshCreateInfo);
+	void Create(const std::vector<MeshCreateInfo>& meshes);
+
 	void Free();
 
 	size_t GetNumMeshes() const { return m_meshes.size(); }
@@ -19,6 +22,7 @@ public:
 private:
 	void processNode(const aiScene* scene, aiNode* node, std::string_view directory);
 	Mesh* processMesh(const aiScene* scene, struct aiMesh* mesh, std::string_view directory);
+	void computeAABB();
 
 	std::vector<Mesh*> m_meshes;
 	AABB               m_aabb;

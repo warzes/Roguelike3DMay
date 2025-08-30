@@ -2,6 +2,11 @@
 #include "Mesh.h"
 #include "OpenGL4Cmd.h"
 //=============================================================================
+Mesh::Mesh(const MeshCreateInfo& ci)
+	: Mesh(ci.vertices, ci.indices, ci.material)
+{
+}
+//=============================================================================
 Mesh::Mesh(std::span<const MeshVertex> vertices, std::span<const uint32_t> indices, PhongMaterial* material)
 {
 	m_vertexCount = static_cast<uint32_t>(vertices.size());
