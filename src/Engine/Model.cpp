@@ -71,6 +71,20 @@ void Model::Free()
 	m_meshes.clear();
 }
 //=============================================================================
+void Model::DrawSubMesh(size_t id)
+{
+	if (id < m_meshes.size())
+		m_meshes[id]->Bind();
+}
+//=============================================================================
+void Model::Draw()
+{
+	for (size_t i = 0; i < m_meshes.size(); i++)
+	{
+		m_meshes[i]->Bind();
+	}
+}
+//=============================================================================
 void Model::processNode(const aiScene* scene, aiNode* node, std::string_view directory)
 {
 	for (unsigned i = 0; i < node->mNumMeshes; i++)

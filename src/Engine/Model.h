@@ -13,6 +13,9 @@ public:
 
 	void Free();
 
+	void DrawSubMesh(size_t id);
+	void Draw();
+
 	size_t GetNumMeshes() const { return m_meshes.size(); }
 	const std::vector<Mesh*>& GetMeshes() const { return m_meshes; }
 	Mesh* GetMesh(size_t id) { return m_meshes[id]; }

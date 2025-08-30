@@ -54,10 +54,8 @@ void main()
 
 	Camera camera;
 
-	std::optional<gl::Buffer> cubeVB;
-	std::optional<gl::Buffer> cubeIB;
-
 	Model plane;
+	Model box;
 
 	std::optional<gl::Buffer> uniformBuffer;
 
@@ -104,62 +102,7 @@ EngineCreateInfo Demo001::GetCreateInfo() const
 //=============================================================================
 bool Demo001::OnInit()
 {
-	std::vector<MeshVertex> cubeVerts = {
-		{{-0.5f, -0.5f,  0.5f}, glm::vec3(1.0f), glm::vec3(0.0f), {0.0f, 0.0f}, glm::vec3(0.0f)},
-		{{ 0.5f, -0.5f,  0.5f}, glm::vec3(1.0f), glm::vec3(0.0f), {1.0f, 0.0f}, glm::vec3(0.0f)},
-		{{ 0.5f,  0.5f,  0.5f}, glm::vec3(1.0f), glm::vec3(0.0f), {1.0f, 1.0f}, glm::vec3(0.0f)},
-		{{-0.5f,  0.5f,  0.5f}, glm::vec3(1.0f), glm::vec3(0.0f), {0.0f, 1.0f}, glm::vec3(0.0f)},
-		{{ 0.5f, -0.5f,  0.5f}, glm::vec3(1.0f), glm::vec3(0.0f), {0.0f, 0.0f}, glm::vec3(0.0f)},
-		{{ 0.5f, -0.5f, -0.5f}, glm::vec3(1.0f), glm::vec3(0.0f), {1.0f, 0.0f}, glm::vec3(0.0f)},
-		{{ 0.5f,  0.5f, -0.5f}, glm::vec3(1.0f), glm::vec3(0.0f), {1.0f, 1.0f}, glm::vec3(0.0f)},
-		{{ 0.5f,  0.5f,  0.5f}, glm::vec3(1.0f), glm::vec3(0.0f), {0.0f, 1.0f}, glm::vec3(0.0f)},
-		{{ 0.5f, -0.5f, -0.5f}, glm::vec3(1.0f), glm::vec3(0.0f), {0.0f, 0.0f}, glm::vec3(0.0f)},
-		{{-0.5f, -0.5f, -0.5f}, glm::vec3(1.0f), glm::vec3(0.0f), {1.0f, 0.0f}, glm::vec3(0.0f)},
-		{{-0.5f,  0.5f, -0.5f}, glm::vec3(1.0f), glm::vec3(0.0f), {1.0f, 1.0f}, glm::vec3(0.0f)},
-		{{ 0.5f,  0.5f, -0.5f}, glm::vec3(1.0f), glm::vec3(0.0f), {0.0f, 1.0f}, glm::vec3(0.0f)},
-		{{-0.5f, -0.5f, -0.5f}, glm::vec3(1.0f), glm::vec3(0.0f), {0.0f, 0.0f}, glm::vec3(0.0f)},
-		{{-0.5f, -0.5f,  0.5f}, glm::vec3(1.0f), glm::vec3(0.0f), {1.0f, 0.0f}, glm::vec3(0.0f)},
-		{{-0.5f,  0.5f,  0.5f}, glm::vec3(1.0f), glm::vec3(0.0f), {1.0f, 1.0f}, glm::vec3(0.0f)},
-		{{-0.5f,  0.5f, -0.5f}, glm::vec3(1.0f), glm::vec3(0.0f), {0.0f, 1.0f}, glm::vec3(0.0f)},
-		{{-0.5f,  0.5f,  0.5f}, glm::vec3(1.0f), glm::vec3(0.0f), {0.0f, 0.0f}, glm::vec3(0.0f)},
-		{{ 0.5f,  0.5f,  0.5f}, glm::vec3(1.0f), glm::vec3(0.0f), {1.0f, 0.0f}, glm::vec3(0.0f)},
-		{{ 0.5f,  0.5f, -0.5f}, glm::vec3(1.0f), glm::vec3(0.0f), {1.0f, 1.0f}, glm::vec3(0.0f)},
-		{{-0.5f,  0.5f, -0.5f}, glm::vec3(1.0f), glm::vec3(0.0f), {0.0f, 1.0f}, glm::vec3(0.0f)},
-		{{-0.5f, -0.5f, -0.5f}, glm::vec3(1.0f), glm::vec3(0.0f), {0.0f, 0.0f}, glm::vec3(0.0f)},
-		{{ 0.5f, -0.5f, -0.5f}, glm::vec3(1.0f), glm::vec3(0.0f), {1.0f, 0.0f}, glm::vec3(0.0f)},
-		{{ 0.5f, -0.5f,  0.5f}, glm::vec3(1.0f), glm::vec3(0.0f), {1.0f, 1.0f}, glm::vec3(0.0f)},
-		{{-0.5f, -0.5f,  0.5f}, glm::vec3(1.0f), glm::vec3(0.0f), {0.0f, 1.0f}, glm::vec3(0.0f)},
-	};
-	cubeVB = gl::Buffer(cubeVerts);
-
-	std::vector<unsigned> cubeIndices = {
-		// Передняя грань
-		0, 2, 1,
-		0, 3, 2,
-
-		// Правая грань
-		4, 6, 5,
-		4, 7, 6,
-
-		// Задняя грань
-		8,  10, 9,
-		8,  11, 10,
-
-		// Левая грань
-		12, 14, 13,
-		12, 15, 14,
-
-		// Верхняя грань
-		16, 18, 17,
-		16, 19, 18,
-
-		// Нижняя грань
-		20, 22, 21,
-		20, 23, 22
-
-	};
-	cubeIB = gl::Buffer(cubeIndices);
-
+	box.Create(GeometryGenerator::CreateBox());
 	plane.Create(GeometryGenerator::CreatePlane(10.0f, 10.0f, 10.0f, 10.0f));
 
 	uniformBuffer = gl::Buffer(sizeof(vsUniforms), gl::BufferStorageFlag::DynamicStorage);
@@ -228,8 +171,7 @@ bool Demo001::OnInit()
 //=============================================================================
 void Demo001::OnClose()
 {
-	cubeVB = {};
-	cubeIB = {};
+	box.Free();
 	plane.Free();
 	uniformBuffer = {};
 	pipeline = {};
@@ -282,11 +224,7 @@ void Demo001::OnRender()
 			gl::Cmd::BindSampledImage(0, texture1.value(), sampler.value());
 			gl::Cmd::BindUniformBuffer(0, uniformBuffer.value());
 
-			for (size_t i = 0; i < plane.GetNumMeshes(); i++)
-			{
-				auto meshes = plane.GetMesh(i);
-				meshes->Bind();
-			}
+			plane.Draw();
 		}
 
 		// куб 1
@@ -295,9 +233,8 @@ void Demo001::OnRender()
 			uniformBuffer->UpdateData(uniforms);
 			gl::Cmd::BindSampledImage(0, texture2.value(), sampler.value());
 			gl::Cmd::BindUniformBuffer(0, uniformBuffer.value());
-			gl::Cmd::BindVertexBuffer(0, cubeVB.value(), 0, sizeof(MeshVertex));
-			gl::Cmd::BindIndexBuffer(cubeIB.value(), gl::IndexType::UInt);
-			gl::Cmd::DrawIndexed(36, 1, 0, 0, 0);
+
+			box.Draw();
 		}
 		// куб 2
 		{
@@ -305,9 +242,8 @@ void Demo001::OnRender()
 			uniformBuffer->UpdateData(uniforms);
 			gl::Cmd::BindSampledImage(0, texture2.value(), sampler.value());
 			gl::Cmd::BindUniformBuffer(0, uniformBuffer.value());
-			gl::Cmd::BindVertexBuffer(0, cubeVB.value(), 0, sizeof(MeshVertex));
-			gl::Cmd::BindIndexBuffer(cubeIB.value(), gl::IndexType::UInt);
-			gl::Cmd::DrawIndexed(36, 1, 0, 0, 0);
+
+			box.Draw();
 		}
 	}
 	gl::EndRendering();
