@@ -16,7 +16,7 @@ void createXZPlane(float width, float depth, int xDivisions, int zDivisions, flo
 			MeshVertex v;
 			v.position = { x, 0, z };
 			v.normal = { 0, 1, 0 };
-			v.uv = { x / width * uvRepeat, z / depth * uvRepeat };
+			v.texCoord = { x / width * uvRepeat, z / depth * uvRepeat };
 			v.color = glm::vec3(1.0f);
 			vertices.emplace_back(v);
 		}

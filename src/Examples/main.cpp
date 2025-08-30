@@ -7,6 +7,8 @@
 #include "Example006.h"
 #include "Example007.h"
 #include "Example008.h"
+
+#include "TestXXX.h"
 //=============================================================================
 #if defined(_MSC_VER)
 #	pragma comment( lib, "3rdparty.lib" )
@@ -56,8 +58,11 @@ int main(
 
 	//----------------------------------------------------------------------------
 	// Вывод простой сцены с прозрачностью
-	Example008 game;
+	//Example008 game;
 
+
+
+	TestXXX game;
 
 	game.Run();
 }

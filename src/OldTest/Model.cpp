@@ -79,9 +79,9 @@ MeshDescriptor LoadObjBase(const std::string& path, MaterialManager& materialMan
 			glm::vec3 pos1 = vertices[vertices.size() - 3].position;
 			glm::vec3 pos2 = vertices[vertices.size() - 2].position;
 			glm::vec3 pos3 = vertices[vertices.size() - 1].position;
-			glm::vec2 uv1 = vertices[vertices.size() - 3].uv;
-			glm::vec2 uv2 = vertices[vertices.size() - 2].uv;
-			glm::vec2 uv3 = vertices[vertices.size() - 1].uv;
+			glm::vec2 uv1 = vertices[vertices.size() - 3].texCoord;
+			glm::vec2 uv2 = vertices[vertices.size() - 2].texCoord;
+			glm::vec2 uv3 = vertices[vertices.size() - 1].texCoord;
 			glm::vec3 edge1 = pos2 - pos1;
 			glm::vec3 edge2 = pos3 - pos1;
 			glm::vec2 deltaUV1 = uv2 - uv1;

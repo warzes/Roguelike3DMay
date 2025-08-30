@@ -27,6 +27,7 @@
     <ClCompile Include="Example008.cpp">
       <Filter>01_BaseExamples</Filter>
     </ClCompile>
+    <ClCompile Include="TestXXX.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -54,6 +55,7 @@
     <ClInclude Include="Example008.h">
       <Filter>01_BaseExamples</Filter>
     </ClInclude>
+    <ClInclude Include="TestXXX.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="01_BaseExamples">

@@ -48,8 +48,8 @@ Mesh* LoadAssimpMesh(const std::string& filename)
 
 		//if (mesh->HasTextureCoords(0))
 		{
-			v.uv.x = mesh->mTextureCoords[0][i].x;
-			v.uv.y = mesh->mTextureCoords[0][i].y;
+			v.texCoord.x = mesh->mTextureCoords[0][i].x;
+			v.texCoord.y = mesh->mTextureCoords[0][i].y;
 		}
 
 		//if (mesh->HasTangentsAndBitangents())
@@ -164,12 +164,12 @@ namespace
 
 			if (mesh->HasTextureCoords(0))
 			{
-				v.uv.x = mesh->mTextureCoords[0][i].x;
-				v.uv.y = mesh->mTextureCoords[0][i].y;
+				v.texCoord.x = mesh->mTextureCoords[0][i].x;
+				v.texCoord.y = mesh->mTextureCoords[0][i].y;
 			}
 			else
 			{
-				v.uv = glm::vec2(0.0f);
+				v.texCoord = glm::vec2(0.0f);
 			}
 
 			if (mesh->HasTangentsAndBitangents())
