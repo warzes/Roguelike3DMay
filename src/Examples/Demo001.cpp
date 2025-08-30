@@ -56,6 +56,7 @@ void main()
 
 	Model plane;
 	Model box;
+	Model sphere;
 
 	std::optional<gl::Buffer> uniformBuffer;
 
@@ -104,6 +105,7 @@ bool Demo001::OnInit()
 {
 	box.Create(GeometryGenerator::CreateBox());
 	plane.Create(GeometryGenerator::CreatePlane(10.0f, 10.0f, 10.0f, 10.0f));
+	sphere.Create(GeometryGenerator::CreateSphere());
 
 	uniformBuffer = gl::Buffer(sizeof(vsUniforms), gl::BufferStorageFlag::DynamicStorage);
 
@@ -173,6 +175,7 @@ void Demo001::OnClose()
 {
 	box.Free();
 	plane.Free();
+	sphere.Free();
 	uniformBuffer = {};
 	pipeline = {};
 	sampler = {};
@@ -244,6 +247,16 @@ void Demo001::OnRender()
 			gl::Cmd::BindUniformBuffer(0, uniformBuffer.value());
 
 			box.Draw();
+		}
+
+		// Спфера
+		{
+			uniforms.modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(1.0f, 2.0f, 1.0f));
+			uniformBuffer->UpdateData(uniforms);
+			gl::Cmd::BindSampledImage(0, texture2.value(), sampler.value());
+			gl::Cmd::BindUniformBuffer(0, uniformBuffer.value());
+
+			sphere.Draw();
 		}
 	}
 	gl::EndRendering();

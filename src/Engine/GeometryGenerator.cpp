@@ -53,7 +53,7 @@ MeshCreateInfo GeometryGenerator::CreatePlane(float width, float height, float w
 	return meshInfo;
 }
 //=============================================================================
-void buildBoxPlane(MeshCreateInfo& meshInfo, int& numberOfVertices, int u, int v, int w, float udir, float vdir, float width, float height, float depth, float gridX, float gridY, float materialIndex)
+inline void buildBoxPlane(MeshCreateInfo& meshInfo, int& numberOfVertices, int u, int v, int w, float udir, float vdir, float width, float height, float depth, float gridX, float gridY, float materialIndex)
 {
 	float segmentWidth = width / gridX;
 	float segmentHeight = height / gridY;
@@ -132,6 +132,87 @@ MeshCreateInfo GeometryGenerator::CreateBox(float width, float height, float dep
 
 	buildBoxPlane(meshInfo, numberOfVertices, 0, 1, 2, 1, -1, width, height, depth, widthSegments, heightSegments, 4); // +Z
 	buildBoxPlane(meshInfo, numberOfVertices, 0, 1, 2, -1, -1, width, height, -depth, widthSegments, heightSegments, 5); // -Z
+
+	return meshInfo;
+}
+//=============================================================================
+MeshCreateInfo GeometryGenerator::CreateSphere(float radius, float widthSeg, float heightSeg, float phiStart, float phiLength, float thetaStart, float thetaLength)
+{
+	MeshCreateInfo meshInfo;
+
+	constexpr const float PI = glm::pi<float>();
+	const float thetaEnd = glm::min(thetaStart + thetaLength, PI);
+
+	unsigned widthSegments = std::max(3u, static_cast<unsigned>(std::floor(widthSeg)));
+	unsigned heightSegments = std::max(2u, static_cast<unsigned>(std::floor(heightSeg)));
+
+	std::vector<std::vector<unsigned>> grid;
+	int index = 0;
+
+	MeshVertex vertex;
+	for (unsigned iy = 0; iy <= heightSegments; iy++)
+	{
+		std::vector<unsigned> verticesRow;
+
+		float v = static_cast<float>(iy) / heightSegments;
+
+		float uOffset = 0.0f;
+
+		// Коррекция UV на полюсах (для избежания сжатия)
+		if (iy == 0 && thetaStart == 0.0f)
+			uOffset = 0.5f / widthSegments;
+		else if (iy == heightSegments && thetaEnd == PI)
+			uOffset = -0.5f / widthSegments;
+
+		for (unsigned ix = 0; ix <= widthSegments; ix++)
+		{
+			const float u = static_cast<float>(ix) / widthSegments;
+
+			const float phi = phiStart + u * phiLength;
+			const float theta = thetaStart + v * thetaLength;
+
+			// Позиция (Y — вверх, правосторонняя система) // TODO: переделать под левосторонюю?
+			vertex.position.x = -radius * glm::cos(phi) * glm::sin(theta);
+			vertex.position.y = radius * glm::cos(theta);
+			vertex.position.z = radius * glm::sin(phi) * glm::sin(theta);
+
+			// normal
+			vertex.normal = glm::normalize(vertex.position);
+
+			// uv
+			vertex.texCoord = glm::vec2(u + uOffset, 1.0f - v);
+
+			meshInfo.vertices.push_back(vertex);
+			verticesRow.push_back(index++);
+		}
+		grid.push_back(verticesRow);
+	}
+
+	// indices
+	for (unsigned int iy = 0; iy < heightSegments; iy++)
+	{
+		for (unsigned ix = 0; ix < widthSegments; ix++)
+		{
+			unsigned int a = grid[iy][ix + 1];
+			unsigned int b = grid[iy][ix];
+			unsigned int c = grid[iy + 1][ix];
+			unsigned int d = grid[iy + 1][ix + 1];
+
+			if (iy != 0 || thetaStart > 0)
+			{
+				meshInfo.indices.push_back(a);
+				meshInfo.indices.push_back(d);
+				meshInfo.indices.push_back(b);
+			}
+
+			if (iy != heightSegments - 1 || thetaEnd < M_PI)
+			{
+				meshInfo.indices.push_back(b);
+				meshInfo.indices.push_back(d);
+				meshInfo.indices.push_back(c);
+			}
+		}
+	}
 
 	return meshInfo;
 }
