@@ -1,7 +1,13 @@
 #include "stdafx.h"
 #include "Demo001.h"
+
+https://developer.nvidia.com/ue4-sun-temple
+https://github.com/NVIDIA-RTX/Donut
+https://sibras.github.io/OpenGL4-Tutorials/docs/Tutorials/02-Tutorial2/
+http://www.3dcpptutorials.sk/index.php?id=14
+
 //=============================================================================
-// Вывод простой сцены с прозрачностью
+// 
 //=============================================================================
 namespace
 {
