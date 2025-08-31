@@ -48,7 +48,7 @@ void ShadowPass::DrawModel(GameModelOld& model)
 	m_uboData.model = model.GetModelMat();
 	m_ubo->UpdateData(m_uboData);
 	gl::Cmd::BindUniformBuffer(0, m_ubo.value());
-	model.mesh->Bind();
+	model.mesh->Bind(std::nullopt);
 }
 //=============================================================================
 void ShadowPass::End()

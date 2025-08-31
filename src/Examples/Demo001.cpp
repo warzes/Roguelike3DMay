@@ -8,49 +8,280 @@ namespace
 	const char* shaderCodeVertex = R"(
 #version 460 core
 
-layout(location = 0) in vec3 aPosition;
-layout(location = 1) in vec3 aColor;
-layout(location = 2) in vec3 aNormal;
-layout(location = 3) in vec2 aTexCoord;
-layout(location = 4) in vec3 aTangent;
+layout(location = 0) in vec3 vertexPosition;
+layout(location = 1) in vec3 vertexColor;
+layout(location = 2) in vec3 vertexNormal;
+layout(location = 3) in vec2 vertexTexCoord;
+layout(location = 4) in vec3 vertexTangent;
 
-layout(binding = 0, std140) uniform vsUniforms {
-	mat4 modelMatrix;
+layout(binding = 0, std140) uniform SceneBlock {
 	mat4 viewMatrix;
 	mat4 projectionMatrix;
 };
 
-layout(location = 0) out vec2 vTexCoord;
+layout(binding = 1, std140) uniform ModelMatricesBlock {
+	mat4 modelMatrix;
+	mat3 normalMatrix;
+};
+
+layout(location = 0) out vec2 fragTexCoord;
+layout(location = 1) out vec3 fragNormal;
+layout(location = 2) out vec4 fragWorldPosition;
 
 void main()
 {
-	gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(aPosition, 1.0);
-	vTexCoord = aTexCoord;
+	mat4 mvMatrix = viewMatrix * modelMatrix;
+	mat4 mvpMatrix = projectionMatrix * mvMatrix;
+	gl_Position = mvpMatrix * vec4(vertexPosition, 1.0);
+
+	// Output all out variables
+	fragTexCoord = vertexTexCoord;
+
+	//fragNormal = mat3(transpose(inverse(modelMatrix))) * vertexNormal;
+	fragNormal = normalMatrix * vertexNormal;
+	fragWorldPosition = modelMatrix * vec4(vertexPosition, 1.0);
 }
 )";
 
 	const char* shaderCodeFragment = R"(
 #version 460 core
 
-layout(location = 0) in vec2 vTexCoord;
+//=============================================================
+// AmbientLight.glsl
+//=============================================================
+
+struct AmbientLight
+{
+	vec3 color;
+	bool isOn;
+};
+
+vec3 getAmbientLightColor(AmbientLight ambientLight)
+{
+	return ambientLight.isOn ? ambientLight.color : vec3(0.0, 0.0, 0.0);
+}
+
+//=============================================================
+// DiffuseLight.glsl
+//=============================================================
+
+struct DiffuseLight
+{
+	vec3 color;
+	vec3 direction;
+	float factor;
+	bool isOn;
+};
+
+vec3 getDiffuseLightColor(DiffuseLight diffuseLight, vec3 normal)
+{
+	if(!diffuseLight.isOn) {
+		return vec3(0.0, 0.0, 0.0);
+	}
+
+	float finalIntensity = max(0.0, dot(normal, -diffuseLight.direction));
+	finalIntensity = clamp(finalIntensity*diffuseLight.factor, 0.0, 1.0);
+	return vec3(diffuseLight.color*finalIntensity);
+}
+
+//=============================================================
+// SpecularHighlight.glsl
+//=============================================================
+
+struct Material
+{
+	bool isEnabled;
+	float specularIntensity;
+	float specularPower;
+};
+
+vec3 getSpecularHighlightColor(vec3 worldPosition, vec3 normal, vec3 eyePosition, Material material, DiffuseLight diffuseLight)
+{
+	if(!material.isEnabled) {
+		return vec3(0.0);
+	}
+
+	vec3 reflectedVector = normalize(reflect(diffuseLight.direction, normal));
+	vec3 worldToEyeVector = normalize(eyePosition - worldPosition);
+	float specularFactor = dot(worldToEyeVector, reflectedVector);
+
+	if (specularFactor > 0)
+	{
+		specularFactor = pow(specularFactor, material.specularPower);
+		return diffuseLight.color * material.specularIntensity * specularFactor;
+	}
+
+	return vec3(0.0);
+}
+
+//=============================================================
+// PointLight.glsl
+//=============================================================
+
+struct PointLight
+{
+	vec3 position;
+	vec3 color;
+	
+	float ambientFactor;
+
+	float constantAttenuation;
+	float linearAttenuation;
+	float exponentialAttenuation;
+	
+	bool isOn;
+};
+
+vec3 getPointLightColor(const PointLight pointLight, const vec3 worldPosition, const vec3 normal)
+{
+	if(!pointLight.isOn) {
+		return vec3(0.0);
+	}
+
+	/*vec3 lightDir = normalize(pointLight.position - worldPosition);
+	float diffuseFactor = max(0.0, dot(normal, lightDir));
+
+	float distance = length(pointLight.position - worldPosition);
+
+	float attenuation = pointLight.constantAttenuation
+		+ pointLight.linearAttenuation * distance
+		+ pointLight.exponentialAttenuation * distance * distance;
+
+	vec3 lightColor = pointLight.color * diffuseFactor / attenuation;
+
+	return lightColor;*/
+	
+	vec3 positionToLightVector = worldPosition - pointLight.position;
+	float distance = length(positionToLightVector);
+	positionToLightVector = normalize(positionToLightVector);
+	
+	float diffuseFactor = max(0.0, dot(normal, -positionToLightVector));
+	float totalAttenuation = pointLight.constantAttenuation
+		+ pointLight.linearAttenuation * distance
+		+ pointLight.exponentialAttenuation * pow(distance, 2.0);
+
+	return pointLight.color * (pointLight.ambientFactor + diffuseFactor) / totalAttenuation;
+}
+
+//=============================================================
+// Fragment Code
+//=============================================================
+
+layout(location = 0) in vec2 fragTexCoord;
+layout(location = 1) in vec3 fragNormal;
+layout(location = 2) in vec4 fragWorldPosition;
 
 layout(binding = 0) uniform sampler2D diffuseTexture;
 
-layout(location = 0) out vec4 fragColor;
+layout(binding = 2, std140) uniform LightSceneBlock {
+	vec4 color; // TODO: diffuse
+	AmbientLight ambientLight;
+	DiffuseLight diffuseLight;
+	Material material;
+	vec3 eyePosition;
+};
+
+layout(binding = 3, std140) uniform PointLightsBlock {
+	int numPointLights;
+	PointLight pointLights[100];
+};
+
+layout(location = 0) out vec4 outputColor;
 
 void main()
 {
-	fragColor = texture(diffuseTexture, vTexCoord);
+	vec3 normal = normalize(fragNormal);
+	vec4 textureColor = texture(diffuseTexture, fragTexCoord);
+	vec4 objectColor = textureColor*color;
+	
+	vec3 ambientColor = getAmbientLightColor(ambientLight);
+	vec3 diffuseColor = getDiffuseLightColor(diffuseLight, normal);
+	vec3 specularHighlightColor = getSpecularHighlightColor(fragWorldPosition.xyz, normal, eyePosition, material, diffuseLight);
+	vec3 lightColor = ambientColor + diffuseColor + specularHighlightColor;
+
+	for(int i = 0; i < numPointLights; i++) {
+		lightColor += getPointLightColor(pointLights[i], fragWorldPosition.xyz, normal);
+	}
+
+	outputColor = objectColor * vec4(lightColor, 1.0);
+
+///outputColor = vec4(normal * 0.5 + 0.5, 1.0);
+
 }
 )";
 
-	struct vsUniforms final
+	struct SceneBlockUniform final
 	{
-		glm::mat4 modelMatrix;
 		glm::mat4 viewMatrix;
 		glm::mat4 projectionMatrix;
 	};
-	vsUniforms uniforms;
+	SceneBlockUniform sceneBlockUniform;
+	std::optional<gl::Buffer> sceneBlockUBO;
+
+	struct ModelMatricesBlock final
+	{
+		glm::mat4 modelMatrix;
+		glm::mat3 normalMatrix;
+	};
+	ModelMatricesBlock modelMatricesBlock;
+	std::optional<gl::Buffer> modelMatricesBlockUBO;
+
+	struct alignas(16) AmbientLight final
+	{
+		glm::vec3 color;
+		bool isOn;
+	};
+
+	struct alignas(16) DiffuseLight final
+	{
+		glm::vec3 color;
+		float pad0;
+		glm::vec3 direction;
+		float pad1;
+
+		float factor;
+		bool isOn;
+	};
+
+	struct alignas(16) Material final
+	{
+		bool isEnabled;
+		float specularIntensity;
+		float specularPower;
+	};
+
+	struct alignas(16) LightSceneBlock final
+	{
+		glm::vec4 color; // TODO: diffuse
+		AmbientLight ambientLight;
+		DiffuseLight diffuseLight;
+		Material material;
+		glm::vec3 eyePosition;
+	};
+	LightSceneBlock lightSceneBlock;
+	std::optional<gl::Buffer> lightSceneBlockUBO;
+
+	struct alignas(16) PointLight final
+	{
+		glm::vec3 position;
+		float pad0;
+
+		glm::vec3 color;
+		float ambientFactor;
+
+		float constantAttenuation;
+		float linearAttenuation;
+		float exponentialAttenuation;
+
+		bool isOn;
+	};
+	struct alignas(16) PointLightsBlock final
+	{
+		int numPointLights;
+		PointLight lights[100];
+	};
+	PointLightsBlock pointLightsBlock;
+	std::optional<gl::Buffer> pointLightsBlockUBO;
 
 	Camera camera;
 
@@ -58,7 +289,7 @@ void main()
 	Model box;
 	Model sphere;
 
-	std::optional<gl::Buffer> uniformBuffer;
+	Model house;
 
 	std::optional<gl::GraphicsPipeline> pipeline;
 	std::optional<gl::Texture> texture1;
@@ -86,6 +317,7 @@ void main()
 			.fragmentShader = &fragmentShader,
 			.inputAssemblyState = {.topology = gl::PrimitiveTopology::TriangleList },
 			.vertexInputState = { MeshVertexInputBindingDescs },
+			.rasterizationState = {.cullMode = gl::CullMode::None },
 			.depthState = {.depthTestEnable = true },
 			.colorBlendState = blendState
 			});
@@ -104,10 +336,18 @@ EngineCreateInfo Demo001::GetCreateInfo() const
 bool Demo001::OnInit()
 {
 	box.Create(GeometryGenerator::CreateBox());
-	plane.Create(GeometryGenerator::CreatePlane(10.0f, 10.0f, 10.0f, 10.0f));
+	plane.Create(GeometryGenerator::CreatePlane(100.0f, 100.0f, 100.0f, 100.0f));
 	sphere.Create(GeometryGenerator::CreateSphere());
 
-	uniformBuffer = gl::Buffer(sizeof(vsUniforms), gl::BufferStorageFlag::DynamicStorage);
+	auto matrix = glm::scale(glm::mat4(1.0f), glm::vec3(0.002f));
+	matrix = glm::rotate(matrix, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+
+	house.Load("ExampleData/mesh/scheune_3ds/scheune.3ds", matrix);
+
+	sceneBlockUBO = gl::Buffer(sizeof(SceneBlockUniform), gl::BufferStorageFlag::DynamicStorage);
+	modelMatricesBlockUBO = gl::Buffer(sizeof(ModelMatricesBlock), gl::BufferStorageFlag::DynamicStorage);
+	lightSceneBlockUBO = gl::Buffer(sizeof(LightSceneBlock), gl::BufferStorageFlag::DynamicStorage);
+	pointLightsBlockUBO = gl::Buffer(sizeof(PointLightsBlock), gl::BufferStorageFlag::DynamicStorage);
 
 	pipeline = CreatePipeline();
 
@@ -164,7 +404,8 @@ bool Demo001::OnInit()
 	sampleDesc.addressModeV = gl::AddressMode::Repeat;
 	sampler = gl::Sampler(sampleDesc);
 
-	camera.SetPosition(glm::vec3(0.0f, 0.0f, -3.0f));
+	camera.SetPosition(glm::vec3(0.0f, 10.0f, -1.0f));
+	camera.MovementSpeed = 50.0f;
 
 	resize(GetWindowWidth(), GetWindowHeight());
 
@@ -176,7 +417,11 @@ void Demo001::OnClose()
 	box.Free();
 	plane.Free();
 	sphere.Free();
-	uniformBuffer = {};
+	house.Free();
+	sceneBlockUBO = {};
+	modelMatricesBlockUBO = {};
+	lightSceneBlockUBO = {};
+	pointLightsBlockUBO = {};
 	pipeline = {};
 	sampler = {};
 	texture1 = {};
@@ -200,9 +445,54 @@ void Demo001::OnUpdate([[maybe_unused]] float deltaTime)
 		Input::SetCursorVisible(true);
 	}
 
-	uniforms.modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-	uniforms.viewMatrix = camera.GetViewMatrix();
-	uniforms.projectionMatrix = glm::perspective(glm::radians(65.0f), GetWindowAspect(), 0.1f, 100.0f);
+	sceneBlockUniform.viewMatrix = camera.GetViewMatrix();
+	sceneBlockUniform.projectionMatrix = glm::perspective(glm::radians(65.0f), GetWindowAspect(), 0.1f, 1000.0f);
+	sceneBlockUBO->UpdateData(sceneBlockUniform);
+
+	lightSceneBlock.color = glm::vec4(1.0f);
+	lightSceneBlock.ambientLight.color = glm::vec3(0.02f);
+	lightSceneBlock.ambientLight.isOn = 1;
+
+	lightSceneBlock.material.isEnabled = 1;
+	lightSceneBlock.material.specularIntensity = 1.0f;
+	lightSceneBlock.material.specularPower = 32.0f;
+
+	lightSceneBlock.diffuseLight.color = glm::vec3(0.0f);
+	lightSceneBlock.diffuseLight.direction = glm::vec3(0.0f);
+	lightSceneBlock.diffuseLight.factor = 0.0f;
+	lightSceneBlock.diffuseLight.isOn = 0;
+
+	lightSceneBlock.eyePosition = camera.Position;
+
+	lightSceneBlockUBO->UpdateData(lightSceneBlock);
+
+	pointLightsBlock.numPointLights = 3;
+	pointLightsBlock.lights[0].position = glm::vec3(0.0f, 1.0f, 0.0f);
+	pointLightsBlock.lights[0].color = glm::vec3(0.0f, 1.0f, 0.0f);
+	pointLightsBlock.lights[0].ambientFactor = 0.0f;
+	pointLightsBlock.lights[0].constantAttenuation = 0.3f;
+	pointLightsBlock.lights[0].linearAttenuation = 0.007f;
+	pointLightsBlock.lights[0].exponentialAttenuation = 0.00008f;
+	pointLightsBlock.lights[0].isOn = 1;
+
+
+	pointLightsBlock.lights[1].position = glm::vec3(24.0f, 1.0f, 0.0f);
+	pointLightsBlock.lights[1].color = glm::vec3(1.0f, 0.0f, 0.0f);
+	pointLightsBlock.lights[1].ambientFactor = 0.0f;
+	pointLightsBlock.lights[1].constantAttenuation = 0.3f;
+	pointLightsBlock.lights[1].linearAttenuation = 0.007f;
+	pointLightsBlock.lights[1].exponentialAttenuation = 0.00008f;
+	pointLightsBlock.lights[1].isOn = 1;
+
+	pointLightsBlock.lights[2].position = glm::vec3(-24.0f, 1.0f, 0.0f);
+	pointLightsBlock.lights[2].color = glm::vec3(0.5f, 0.0f, 1.0f);
+	pointLightsBlock.lights[2].ambientFactor = 0.0f;
+	pointLightsBlock.lights[2].constantAttenuation = 0.3f;
+	pointLightsBlock.lights[2].linearAttenuation = 0.007f;
+	pointLightsBlock.lights[2].exponentialAttenuation = 0.00008f;
+	pointLightsBlock.lights[2].isOn = 1;
+
+	pointLightsBlockUBO->UpdateData(pointLightsBlock);
 }
 //=============================================================================
 void Demo001::OnRender()
@@ -219,44 +509,77 @@ void Demo001::OnRender()
 	gl::BeginSwapChainRendering(renderInfo);
 	{
 		gl::Cmd::BindGraphicsPipeline(pipeline.value());
+		gl::Cmd::BindUniformBuffer(0, sceneBlockUBO.value());
+		gl::Cmd::BindUniformBuffer(2, lightSceneBlockUBO.value());
+		gl::Cmd::BindUniformBuffer(3, pointLightsBlockUBO.value());
 
 		// плоскость
 		{
-			uniforms.modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -0.5f, 0.0f));
-			uniformBuffer->UpdateData(uniforms);
-			gl::Cmd::BindSampledImage(0, texture1.value(), sampler.value());
-			gl::Cmd::BindUniformBuffer(0, uniformBuffer.value());
+			modelMatricesBlock.modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+			modelMatricesBlock.normalMatrix = glm::transpose(glm::inverse(glm::mat3(modelMatricesBlock.modelMatrix)));
 
-			plane.Draw();
+			modelMatricesBlockUBO->UpdateData(modelMatricesBlock);
+			gl::Cmd::BindUniformBuffer(1, modelMatricesBlockUBO.value());
+
+			gl::Cmd::BindSampledImage(0, texture1.value(), sampler.value());
+			plane.Draw(std::nullopt);
 		}
 
 		// куб 1
 		{
-			uniforms.modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(-1.0f, 0.0f, 1.0f));
-			uniformBuffer->UpdateData(uniforms);
-			gl::Cmd::BindSampledImage(0, texture2.value(), sampler.value());
-			gl::Cmd::BindUniformBuffer(0, uniformBuffer.value());
+			modelMatricesBlock.modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(-1.0f, 0.0f, 1.0f));
+			modelMatricesBlock.normalMatrix = glm::transpose(glm::inverse(glm::mat3(modelMatricesBlock.modelMatrix)));
 
-			box.Draw();
+			modelMatricesBlockUBO->UpdateData(modelMatricesBlock);
+			gl::Cmd::BindUniformBuffer(1, modelMatricesBlockUBO.value());
+			
+			gl::Cmd::BindSampledImage(0, texture2.value(), sampler.value());
+			box.Draw(std::nullopt);
 		}
 		// куб 2
 		{
-			uniforms.modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(2.0f, 0.0f, 0.0f));
-			uniformBuffer->UpdateData(uniforms);
-			gl::Cmd::BindSampledImage(0, texture2.value(), sampler.value());
-			gl::Cmd::BindUniformBuffer(0, uniformBuffer.value());
+			modelMatricesBlock.modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(2.0f, 0.0f, 0.0f));
+			modelMatricesBlock.normalMatrix = glm::transpose(glm::inverse(glm::mat3(modelMatricesBlock.modelMatrix)));
 
-			box.Draw();
+			modelMatricesBlockUBO->UpdateData(modelMatricesBlock);
+			gl::Cmd::BindUniformBuffer(1, modelMatricesBlockUBO.value());
+
+			gl::Cmd::BindSampledImage(0, texture2.value(), sampler.value());
+			box.Draw(std::nullopt);
 		}
 
-		// Спфера
+		// Сфера
 		{
-			uniforms.modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(1.0f, 2.0f, 1.0f));
-			uniformBuffer->UpdateData(uniforms);
-			gl::Cmd::BindSampledImage(0, texture2.value(), sampler.value());
-			gl::Cmd::BindUniformBuffer(0, uniformBuffer.value());
+			modelMatricesBlock.modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 3.0f, 0.0f));
+			modelMatricesBlock.normalMatrix = glm::transpose(glm::inverse(glm::mat3(modelMatricesBlock.modelMatrix)));
 
-			sphere.Draw();
+			modelMatricesBlockUBO->UpdateData(modelMatricesBlock);
+			gl::Cmd::BindUniformBuffer(1, modelMatricesBlockUBO.value());
+
+			gl::Cmd::BindSampledImage(0, texture2.value(), sampler.value());
+			sphere.Draw(std::nullopt);
+		}
+
+		// Дом
+		{
+			std::vector<glm::vec3> housePositions
+			{
+				glm::vec3(0.0f, 0.0f, -10.0f),
+				glm::vec3(-20.0f, 0.0f, 0.0f),
+				glm::vec3(0.0f, 0.0f, 10.0f),
+				glm::vec3(20.0f, 0.0f, 0.0f),
+				glm::vec3(5.0f, 0.0f, 0.0f),
+			};
+			for (const auto& housePosition : housePositions)
+			{
+				modelMatricesBlock.modelMatrix = glm::translate(glm::mat4(1.0f), housePosition);
+				modelMatricesBlock.normalMatrix = glm::transpose(glm::inverse(glm::mat3(modelMatricesBlock.modelMatrix)));
+
+				modelMatricesBlockUBO->UpdateData(modelMatricesBlock);
+				gl::Cmd::BindUniformBuffer(1, modelMatricesBlockUBO.value());
+
+				house.Draw(sampler);
+			}
 		}
 	}
 	gl::EndRendering();

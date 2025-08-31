@@ -16,28 +16,29 @@
                            aiProcess_GenUVCoords |              \
                            /*aiProcess_FlipUVs |*/              \
                            aiProcess_MakeLeftHanded |           \
-                           aiProcess_CalcTangentSpace)
+                           aiProcess_CalcTangentSpace |         \
+                           aiProcess_SortByPType)
 //=============================================================================
 Model::~Model()
 {
 	Free();
 }
 //=============================================================================
-bool Model::Load(const std::string& fileName)
+bool Model::Load(const std::string& fileName, std::optional<glm::mat4> modelTransformMatrix)
 {
 	Free();
 
 	Assimp::Importer importer;
 
 	const aiScene* scene = importer.ReadFile(fileName.c_str(), ASSIMP_LOAD_FLAGS);
-	if (!scene || !scene->HasMeshes())
+	if (!scene || !scene->HasMeshes() || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
 	{
 		Fatal("Not load mesh: " + fileName + "\n\tError: " + importer.GetErrorString());
 		return false;
 	}
 
 	std::string directory = io::GetFileDirectory(fileName);
-	processNode(scene, scene->mRootNode, directory);
+	processNode(scene, scene->mRootNode, directory, modelTransformMatrix);
 
 	computeAABB();
 
@@ -71,35 +72,35 @@ void Model::Free()
 	m_meshes.clear();
 }
 //=============================================================================
-void Model::DrawSubMesh(size_t id)
+void Model::DrawSubMesh(size_t id, std::optional<gl::Sampler> sampler)
 {
 	if (id < m_meshes.size())
-		m_meshes[id]->Bind();
+		m_meshes[id]->Bind(sampler);
 }
 //=============================================================================
-void Model::Draw()
+void Model::Draw(std::optional<gl::Sampler> sampler)
 {
 	for (size_t i = 0; i < m_meshes.size(); i++)
 	{
-		m_meshes[i]->Bind();
+		m_meshes[i]->Bind(sampler);
 	}
 }
 //=============================================================================
-void Model::processNode(const aiScene* scene, aiNode* node, std::string_view directory)
+void Model::processNode(const aiScene* scene, aiNode* node, std::string_view directory, std::optional<glm::mat4> modelTransformMatrix)
 {
 	for (unsigned i = 0; i < node->mNumMeshes; i++)
 	{
 		aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-		m_meshes.emplace_back(processMesh(scene, mesh, directory));
+		m_meshes.emplace_back(processMesh(scene, mesh, directory, modelTransformMatrix));
 	}
 
 	for (unsigned i = 0; i < node->mNumChildren; i++)
 	{
-		processNode(scene, node->mChildren[i], directory);
+		processNode(scene, node->mChildren[i], directory, modelTransformMatrix);
 	}
 }
 //=============================================================================
-Mesh* Model::processMesh(const aiScene* scene, struct aiMesh* mesh, std::string_view directory)
+Mesh* Model::processMesh(const aiScene* scene, struct aiMesh* mesh, std::string_view directory, std::optional<glm::mat4> modelTransformMatrix)
 {
 	std::vector<MeshVertex> vertices(mesh->mNumVertices);
 
@@ -116,6 +117,10 @@ Mesh* Model::processMesh(const aiScene* scene, struct aiMesh* mesh, std::string_
 		v.position.x = mesh->mVertices[i].x;
 		v.position.y = mesh->mVertices[i].y;
 		v.position.z = mesh->mVertices[i].z;
+		if (modelTransformMatrix.has_value())
+		{
+			v.position = glm::vec3(modelTransformMatrix.value() * glm::vec4(v.position, 1.0f));
+		}
 
 		if (mesh->HasVertexColors(0))
 		{
@@ -128,11 +133,17 @@ Mesh* Model::processMesh(const aiScene* scene, struct aiMesh* mesh, std::string_
 			v.color = glm::vec3(1.0f);
 		}
 
-		//if (mesh->HasNormals())
+		if (mesh->HasNormals())
 		{
 			v.normal.x = mesh->mNormals[i].x;
 			v.normal.y = mesh->mNormals[i].y;
 			v.normal.z = mesh->mNormals[i].z;
+			if (modelTransformMatrix.has_value())
+			{
+				const auto normalMatrix = glm::transpose(glm::inverse(glm::mat3(modelTransformMatrix.value())));
+
+				v.normal = glm::normalize(normalMatrix * v.normal);
+			}
 		}
 
 		if (mesh->HasTextureCoords(0))

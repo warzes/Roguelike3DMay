@@ -254,7 +254,7 @@ void dung::DungeonsApp::drawModel(GameModelOld& model)
 	if (model.material.depthTexture)
 		gl::Cmd::BindSampledImage(4, *model.material.depthTexture, sampler);
 
-	model.mesh->Bind();
+	model.mesh->Bind(std::nullopt);
 }
 //=============================================================================
 void dung::DungeonsApp::drawModel(const GameModel& model)
@@ -281,19 +281,8 @@ void dung::DungeonsApp::drawModel(const GameModel& model)
 		m_materialUboData.noLighing = meshes->GetMaterial()->noLighing;
 		m_materialUbo->UpdateData(m_materialUboData);
 		gl::Cmd::BindUniformBuffer(3, m_materialUbo.value());
-
-		if (meshes->GetMaterial()->diffuseTexture)
-			gl::Cmd::BindSampledImage(0, *meshes->GetMaterial()->diffuseTexture, sampler);
-		if (meshes->GetMaterial()->specularTexture)
-			gl::Cmd::BindSampledImage(1, *meshes->GetMaterial()->specularTexture, sampler);
-		if (meshes->GetMaterial()->emissionTexture)
-			gl::Cmd::BindSampledImage(2, *meshes->GetMaterial()->emissionTexture, sampler);
-		if (meshes->GetMaterial()->normalTexture)
-			gl::Cmd::BindSampledImage(3, *meshes->GetMaterial()->normalTexture, sampler);
-		if (meshes->GetMaterial()->depthTexture)
-			gl::Cmd::BindSampledImage(4, *meshes->GetMaterial()->depthTexture, sampler);
-
-		meshes->Bind();
+		
+		meshes->Bind(sampler);
 	}
 }
 //=============================================================================

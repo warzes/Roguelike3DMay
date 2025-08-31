@@ -4,6 +4,7 @@
 #include "Material.h"
 #include "AABB.h"
 #include "OpenGL4Buffer.h"
+#include "OpenGL4Sampler.h"
 
 struct MeshCreateInfo final
 {
@@ -27,7 +28,7 @@ public:
 	uint32_t GetIndexCount() const { return m_indicesCount; }
 	const AABB& GetAABB() const { return m_aabb; }
 
-	void Bind();
+	void Bind(std::optional<gl::Sampler> sampler);
 
 	PhongMaterial* GetMaterial() { return m_material; }
 

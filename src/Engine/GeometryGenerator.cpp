@@ -26,7 +26,7 @@ MeshCreateInfo GeometryGenerator::CreatePlane(float width, float height, float w
 			float x = ix * segment_width - height_half;
 			vertex.position = glm::vec3(x, 0.0f, -y);
 			vertex.color = glm::vec3(1.0f);
-			vertex.normal = glm::vec3(0.0f, 0.0f, 1.0f);
+			vertex.normal = glm::vec3(0.0f, 1.0f, 0.0f);
 			vertex.texCoord = glm::vec2(ix / wSegment, 1.0f - (iy / hSegment));
 			vertex.tangent = glm::vec3(0.0f);
 			meshInfo.vertices.push_back(vertex);

@@ -170,7 +170,7 @@ void MainRenderPass::DrawModel(GameModelOld& model)
 
 	m_world->GetShadowMap()[0].Bind(7, sampler); // TODO: сеплер для тени
 
-	model.mesh->Bind();
+	model.mesh->Bind(std::nullopt);
 }
 //=============================================================================
 bool MainRenderPass::createPipeline()

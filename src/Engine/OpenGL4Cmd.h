@@ -141,4 +141,15 @@ namespace gl
 
 	} // namespace Cmd
 
+	namespace Cmd
+	{
+		// TODO: доделать
+	/*	inline void BindSampledImage(uint32_t index, std::optional<Texture> texture, std::optional<Sampler> sampler)
+		{
+			assert(texture.has_value());
+			assert(sampler.has_value());
+			BindSampledImage(index, texture.value(), sampler.value());
+		}*/
+	} // namespace Cmd
+
 } // namespace gl

@@ -198,7 +198,7 @@ void GameApp3::drawModel(GameModelOld& model)
 	if (model.material.depthTexture)
 		gl::Cmd::BindSampledImage(4, *model.material.depthTexture, sampler);
 
-	model.mesh->Bind();
+	model.mesh->Bind(std::nullopt);
 }
 //=============================================================================
 void GameApp3::drawModel(const GameModel& model)
@@ -236,7 +236,7 @@ void GameApp3::drawModel(const GameModel& model)
 		if (meshes->GetMaterial()->depthTexture)
 			gl::Cmd::BindSampledImage(4, *meshes->GetMaterial()->depthTexture, sampler);
 
-		meshes->Bind();
+		meshes->Bind(std::nullopt);
 	}
 }
 //=============================================================================

@@ -108,7 +108,7 @@ void GameModelManager::Draw(Camera& cam, ShadowPassManager& shadowPassMgr)
 
 		gl::Cmd::BindSampledImage(5, *shadowPassMgr.GetShadowPass().depthTexture, sampler);
 
-		model->mesh->Bind();
+		model->mesh->Bind(std::nullopt);
 	}
 	m_currentModel = 0;
 }
@@ -134,7 +134,7 @@ void GameModelManager::DrawInDepth(Camera& cam, ShadowPassManager& shadowPassMgr
 			m_objectUniformUbo->UpdateData(trMat);
 			gl::Cmd::BindUniformBuffer(1, m_objectUniformUbo.value());
 		}
-		model->mesh->Bind();
+		model->mesh->Bind(std::nullopt);
 	}
 	m_currentDrawShadowModel = 0;
 }

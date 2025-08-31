@@ -29,8 +29,22 @@ Mesh::~Mesh()
 	delete m_indexBuffer;
 }
 //=============================================================================
-void Mesh::Bind()
+void Mesh::Bind(std::optional<gl::Sampler> sampler)
 {
+	if (m_material && sampler.has_value())
+	{
+		if (m_material->diffuseTexture)
+			gl::Cmd::BindSampledImage(0, *m_material->diffuseTexture, *sampler);
+		if (m_material->specularTexture)
+			gl::Cmd::BindSampledImage(1, *m_material->specularTexture, *sampler);
+		if (m_material->emissionTexture)
+			gl::Cmd::BindSampledImage(2, *m_material->emissionTexture, *sampler);
+		if (m_material->normalTexture)
+			gl::Cmd::BindSampledImage(3, *m_material->normalTexture, *sampler);
+		if (m_material->depthTexture)
+			gl::Cmd::BindSampledImage(4, *m_material->depthTexture, *sampler);
+	}
+
 	gl::Cmd::BindVertexBuffer(0, *m_vertexBuffer, 0, sizeof(MeshVertex));
 	gl::Cmd::BindIndexBuffer(*m_indexBuffer, gl::IndexType::UInt);
 	gl::Cmd::DrawIndexed(m_indicesCount, 1, 0, 0, 0);
