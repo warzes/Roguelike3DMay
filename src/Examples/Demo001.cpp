@@ -21,7 +21,6 @@ layout(binding = 0, std140) uniform SceneBlock {
 
 layout(binding = 1, std140) uniform ModelMatricesBlock {
 	mat4 modelMatrix;
-	mat3 normalMatrix;
 };
 
 layout(location = 0) out vec2 fragTexCoord;
@@ -37,8 +36,7 @@ void main()
 	// Output all out variables
 	fragTexCoord = vertexTexCoord;
 
-	//fragNormal = mat3(transpose(inverse(modelMatrix))) * vertexNormal;
-	fragNormal = normalMatrix * vertexNormal;
+	fragNormal = mat3(transpose(inverse(modelMatrix))) * vertexNormal;
 	fragWorldPosition = modelMatrix * vec4(vertexPosition, 1.0);
 }
 )";
@@ -205,12 +203,11 @@ void main()
 
 	outputColor = objectColor * vec4(lightColor, 1.0);
 
-///outputColor = vec4(normal * 0.5 + 0.5, 1.0);
-
+//outputColor = vec4(fragNormal * 0.5 + 0.5, 1.0);
 }
 )";
 
-	struct SceneBlockUniform final
+	struct alignas(16) SceneBlockUniform final
 	{
 		glm::mat4 viewMatrix;
 		glm::mat4 projectionMatrix;
@@ -218,10 +215,9 @@ void main()
 	SceneBlockUniform sceneBlockUniform;
 	std::optional<gl::Buffer> sceneBlockUBO;
 
-	struct ModelMatricesBlock final
+	struct alignas(16) ModelMatricesBlock final
 	{
 		glm::mat4 modelMatrix;
-		glm::mat3 normalMatrix;
 	};
 	ModelMatricesBlock modelMatricesBlock;
 	std::optional<gl::Buffer> modelMatricesBlockUBO;
@@ -283,6 +279,13 @@ void main()
 	PointLightsBlock pointLightsBlock;
 	std::optional<gl::Buffer> pointLightsBlockUBO;
 
+	void setPointLightRadius(PointLight& light, float radius)
+	{
+		light.constantAttenuation = 1.0f;
+		light.linearAttenuation = 4.5f / radius;
+		light.exponentialAttenuation = 75.0f / (radius * radius);
+	}
+
 	Camera camera;
 
 	Model plane;
@@ -290,6 +293,7 @@ void main()
 	Model sphere;
 
 	Model house;
+	Model boxObj;
 
 	std::optional<gl::GraphicsPipeline> pipeline;
 	std::optional<gl::Texture> texture1;
@@ -341,8 +345,11 @@ bool Demo001::OnInit()
 
 	auto matrix = glm::scale(glm::mat4(1.0f), glm::vec3(0.002f));
 	matrix = glm::rotate(matrix, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-
 	house.Load("ExampleData/mesh/scheune_3ds/scheune.3ds", matrix);
+
+	matrix = glm::scale(glm::mat4(1.0f), glm::vec3(0.5f));
+	matrix = glm::rotate(matrix, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+	boxObj.Load("ExampleData/mesh/cube.obj", matrix);
 
 	sceneBlockUBO = gl::Buffer(sizeof(SceneBlockUniform), gl::BufferStorageFlag::DynamicStorage);
 	modelMatricesBlockUBO = gl::Buffer(sizeof(ModelMatricesBlock), gl::BufferStorageFlag::DynamicStorage);
@@ -404,8 +411,8 @@ bool Demo001::OnInit()
 	sampleDesc.addressModeV = gl::AddressMode::Repeat;
 	sampler = gl::Sampler(sampleDesc);
 
-	camera.SetPosition(glm::vec3(0.0f, 10.0f, -1.0f));
-	camera.MovementSpeed = 50.0f;
+	camera.SetPosition(glm::vec3(0.0f, 1.4f, -6.0f));
+	camera.MovementSpeed = 20.0f;
 
 	resize(GetWindowWidth(), GetWindowHeight());
 
@@ -418,6 +425,7 @@ void Demo001::OnClose()
 	plane.Free();
 	sphere.Free();
 	house.Free();
+	boxObj.Free();
 	sceneBlockUBO = {};
 	modelMatricesBlockUBO = {};
 	lightSceneBlockUBO = {};
@@ -450,7 +458,7 @@ void Demo001::OnUpdate([[maybe_unused]] float deltaTime)
 	sceneBlockUBO->UpdateData(sceneBlockUniform);
 
 	lightSceneBlock.color = glm::vec4(1.0f);
-	lightSceneBlock.ambientLight.color = glm::vec3(0.02f);
+	lightSceneBlock.ambientLight.color = glm::vec3(0.1f);
 	lightSceneBlock.ambientLight.isOn = 1;
 
 	lightSceneBlock.material.isEnabled = 1;
@@ -466,7 +474,7 @@ void Demo001::OnUpdate([[maybe_unused]] float deltaTime)
 
 	lightSceneBlockUBO->UpdateData(lightSceneBlock);
 
-	pointLightsBlock.numPointLights = 3;
+	pointLightsBlock.numPointLights = 1;
 	pointLightsBlock.lights[0].position = glm::vec3(0.0f, 1.0f, 0.0f);
 	pointLightsBlock.lights[0].color = glm::vec3(0.0f, 1.0f, 0.0f);
 	pointLightsBlock.lights[0].ambientFactor = 0.0f;
@@ -474,7 +482,7 @@ void Demo001::OnUpdate([[maybe_unused]] float deltaTime)
 	pointLightsBlock.lights[0].linearAttenuation = 0.007f;
 	pointLightsBlock.lights[0].exponentialAttenuation = 0.00008f;
 	pointLightsBlock.lights[0].isOn = 1;
-
+	setPointLightRadius(pointLightsBlock.lights[0], 20.0f);
 
 	pointLightsBlock.lights[1].position = glm::vec3(24.0f, 1.0f, 0.0f);
 	pointLightsBlock.lights[1].color = glm::vec3(1.0f, 0.0f, 0.0f);
@@ -483,6 +491,7 @@ void Demo001::OnUpdate([[maybe_unused]] float deltaTime)
 	pointLightsBlock.lights[1].linearAttenuation = 0.007f;
 	pointLightsBlock.lights[1].exponentialAttenuation = 0.00008f;
 	pointLightsBlock.lights[1].isOn = 1;
+	setPointLightRadius(pointLightsBlock.lights[1], 10.0f);
 
 	pointLightsBlock.lights[2].position = glm::vec3(-24.0f, 1.0f, 0.0f);
 	pointLightsBlock.lights[2].color = glm::vec3(0.5f, 0.0f, 1.0f);
@@ -491,6 +500,7 @@ void Demo001::OnUpdate([[maybe_unused]] float deltaTime)
 	pointLightsBlock.lights[2].linearAttenuation = 0.007f;
 	pointLightsBlock.lights[2].exponentialAttenuation = 0.00008f;
 	pointLightsBlock.lights[2].isOn = 1;
+	setPointLightRadius(pointLightsBlock.lights[2], 10.0f);
 
 	pointLightsBlockUBO->UpdateData(pointLightsBlock);
 }
@@ -516,8 +526,6 @@ void Demo001::OnRender()
 		// плоскость
 		{
 			modelMatricesBlock.modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-			modelMatricesBlock.normalMatrix = glm::transpose(glm::inverse(glm::mat3(modelMatricesBlock.modelMatrix)));
-
 			modelMatricesBlockUBO->UpdateData(modelMatricesBlock);
 			gl::Cmd::BindUniformBuffer(1, modelMatricesBlockUBO.value());
 
@@ -525,22 +533,19 @@ void Demo001::OnRender()
 			plane.Draw(std::nullopt);
 		}
 
-		// куб 1
+		// куб из модели
 		{
-			modelMatricesBlock.modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(-1.0f, 0.0f, 1.0f));
-			modelMatricesBlock.normalMatrix = glm::transpose(glm::inverse(glm::mat3(modelMatricesBlock.modelMatrix)));
-
+			modelMatricesBlock.modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(-2.0f, 1.0f, 0.0f));
 			modelMatricesBlockUBO->UpdateData(modelMatricesBlock);
 			gl::Cmd::BindUniformBuffer(1, modelMatricesBlockUBO.value());
-			
-			gl::Cmd::BindSampledImage(0, texture2.value(), sampler.value());
-			box.Draw(std::nullopt);
-		}
-		// куб 2
-		{
-			modelMatricesBlock.modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(2.0f, 0.0f, 0.0f));
-			modelMatricesBlock.normalMatrix = glm::transpose(glm::inverse(glm::mat3(modelMatricesBlock.modelMatrix)));
 
+			gl::Cmd::BindSampledImage(0, texture2.value(), sampler.value());
+			boxObj.Draw(std::nullopt);
+		}
+
+		// куб
+		{
+			modelMatricesBlock.modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(2.0f, 1.0f, 0.0f));
 			modelMatricesBlockUBO->UpdateData(modelMatricesBlock);
 			gl::Cmd::BindUniformBuffer(1, modelMatricesBlockUBO.value());
 
@@ -550,8 +555,7 @@ void Demo001::OnRender()
 
 		// —фера
 		{
-			modelMatricesBlock.modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 3.0f, 0.0f));
-			modelMatricesBlock.normalMatrix = glm::transpose(glm::inverse(glm::mat3(modelMatricesBlock.modelMatrix)));
+			modelMatricesBlock.modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 5.0f, 0.0f));
 
 			modelMatricesBlockUBO->UpdateData(modelMatricesBlock);
 			gl::Cmd::BindUniformBuffer(1, modelMatricesBlockUBO.value());
@@ -573,7 +577,6 @@ void Demo001::OnRender()
 			for (const auto& housePosition : housePositions)
 			{
 				modelMatricesBlock.modelMatrix = glm::translate(glm::mat4(1.0f), housePosition);
-				modelMatricesBlock.normalMatrix = glm::transpose(glm::inverse(glm::mat3(modelMatricesBlock.modelMatrix)));
 
 				modelMatricesBlockUBO->UpdateData(modelMatricesBlock);
 				gl::Cmd::BindUniformBuffer(1, modelMatricesBlockUBO.value());
