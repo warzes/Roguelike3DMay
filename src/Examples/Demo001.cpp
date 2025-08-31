@@ -29,14 +29,11 @@ layout(location = 2) out vec4 fragWorldPosition;
 
 void main()
 {
-	mat4 mvMatrix = viewMatrix * modelMatrix;
-	mat4 mvpMatrix = projectionMatrix * mvMatrix;
-	gl_Position = mvpMatrix * vec4(vertexPosition, 1.0);
+	gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(vertexPosition, 1.0);
 
 	// Output all out variables
-	fragTexCoord = vertexTexCoord;
-
-	fragNormal = mat3(transpose(inverse(modelMatrix))) * vertexNormal;
+	fragTexCoord      = vertexTexCoord;
+	fragNormal        = mat3(transpose(inverse(modelMatrix))) * vertexNormal;
 	fragWorldPosition = modelMatrix * vec4(vertexPosition, 1.0);
 }
 )";
@@ -321,7 +318,6 @@ void main()
 			.fragmentShader = &fragmentShader,
 			.inputAssemblyState = {.topology = gl::PrimitiveTopology::TriangleList },
 			.vertexInputState = { MeshVertexInputBindingDescs },
-			.rasterizationState = {.cullMode = gl::CullMode::None },
 			.depthState = {.depthTestEnable = true },
 			.colorBlendState = blendState
 			});
@@ -458,7 +454,7 @@ void Demo001::OnUpdate([[maybe_unused]] float deltaTime)
 	sceneBlockUBO->UpdateData(sceneBlockUniform);
 
 	lightSceneBlock.color = glm::vec4(1.0f);
-	lightSceneBlock.ambientLight.color = glm::vec3(0.1f);
+	lightSceneBlock.ambientLight.color = glm::vec3(0.01f);
 	lightSceneBlock.ambientLight.isOn = 1;
 
 	lightSceneBlock.material.isEnabled = 1;
@@ -474,7 +470,18 @@ void Demo001::OnUpdate([[maybe_unused]] float deltaTime)
 
 	lightSceneBlockUBO->UpdateData(lightSceneBlock);
 
-	pointLightsBlock.numPointLights = 1;
+	pointLightsBlock.numPointLights = 3;
+
+	//for (int i = 0; i < 100; i++)
+	//{
+
+	//	pointLightsBlock.lights[i].position = glm::vec3(rand()%100-50, 1.0f, rand() % 100 - 50);
+	//	pointLightsBlock.lights[i].color = glm::vec3(rand() % 255/255.0f, rand() % 255 / 255.0f, rand() % 255 / 255.0f);
+	//	pointLightsBlock.lights[i].ambientFactor = 0.0f;
+	//	pointLightsBlock.lights[i].isOn = 1;
+	//	setPointLightRadius(pointLightsBlock.lights[i], rand() % 20+30);
+	//}
+
 	pointLightsBlock.lights[0].position = glm::vec3(0.0f, 1.0f, 0.0f);
 	pointLightsBlock.lights[0].color = glm::vec3(0.0f, 1.0f, 0.0f);
 	pointLightsBlock.lights[0].ambientFactor = 0.0f;
@@ -482,25 +489,25 @@ void Demo001::OnUpdate([[maybe_unused]] float deltaTime)
 	pointLightsBlock.lights[0].linearAttenuation = 0.007f;
 	pointLightsBlock.lights[0].exponentialAttenuation = 0.00008f;
 	pointLightsBlock.lights[0].isOn = 1;
-	setPointLightRadius(pointLightsBlock.lights[0], 20.0f);
+	setPointLightRadius(pointLightsBlock.lights[0], 100.0f);
 
-	pointLightsBlock.lights[1].position = glm::vec3(24.0f, 1.0f, 0.0f);
+	pointLightsBlock.lights[1].position = glm::vec3(0.0f, 1.0f, 20.0f);
 	pointLightsBlock.lights[1].color = glm::vec3(1.0f, 0.0f, 0.0f);
 	pointLightsBlock.lights[1].ambientFactor = 0.0f;
 	pointLightsBlock.lights[1].constantAttenuation = 0.3f;
 	pointLightsBlock.lights[1].linearAttenuation = 0.007f;
 	pointLightsBlock.lights[1].exponentialAttenuation = 0.00008f;
 	pointLightsBlock.lights[1].isOn = 1;
-	setPointLightRadius(pointLightsBlock.lights[1], 10.0f);
+	setPointLightRadius(pointLightsBlock.lights[1], 100.0f);
 
-	pointLightsBlock.lights[2].position = glm::vec3(-24.0f, 1.0f, 0.0f);
-	pointLightsBlock.lights[2].color = glm::vec3(0.5f, 0.0f, 1.0f);
+	pointLightsBlock.lights[2].position = glm::vec3(0.0f, 1.0f, -20.0f);
+	pointLightsBlock.lights[2].color = glm::vec3(0.2f, 0.0f, 1.0f);
 	pointLightsBlock.lights[2].ambientFactor = 0.0f;
 	pointLightsBlock.lights[2].constantAttenuation = 0.3f;
 	pointLightsBlock.lights[2].linearAttenuation = 0.007f;
 	pointLightsBlock.lights[2].exponentialAttenuation = 0.00008f;
 	pointLightsBlock.lights[2].isOn = 1;
-	setPointLightRadius(pointLightsBlock.lights[2], 10.0f);
+	setPointLightRadius(pointLightsBlock.lights[2], 100.0f);
 
 	pointLightsBlockUBO->UpdateData(pointLightsBlock);
 }
