@@ -389,31 +389,27 @@ void gl::Texture::GenMipmaps()
 //=============================================================================
 gl::Texture gl::CreateTexture2D(Extent2D size, Format format, std::string_view name)
 {
-	TextureCreateInfo createInfo{
-	  .imageType = ImageType::Tex2D,
-	  .format = format,
-	  .extent = {size.width, size.height, 1},
-	  .mipLevels = 1,
-	  .arrayLayers = 1,
-	  .sampleCount = SampleCount::Samples1,
-	};
-	return Texture(createInfo, name);
+	return Texture({
+			.imageType   = ImageType::Tex2D,
+			.format      = format,
+			.extent      = {size.width, size.height, 1},
+			.mipLevels   = 1,
+			.arrayLayers = 1,
+			.sampleCount = SampleCount::Samples1,
+		}, name);
 }
 //=============================================================================
 gl::Texture gl::CreateTexture2DMip(Extent2D size, Format format, uint32_t mipLevels, std::string_view name)
 {
-	TextureCreateInfo createInfo{
-	  .imageType = ImageType::Tex2D,
-	  .format = format,
-	  .extent = {size.width, size.height, 1},
-	  .mipLevels = mipLevels,
-	  .arrayLayers = 1,
-	  .sampleCount = SampleCount::Samples1,
-	};
-	return Texture(createInfo, name);
+	return Texture({
+			.imageType   = ImageType::Tex2D,
+			.format      = format,
+			.extent      = {size.width, size.height, 1},
+			.mipLevels   = mipLevels,
+			.arrayLayers = 1,
+			.sampleCount = SampleCount::Samples1,
+		}, name);
 }
-//=============================================================================
-gl::TextureView::TextureView() {}
 //=============================================================================
 gl::TextureView::TextureView(const TextureViewCreateInfo& viewInfo, Texture& texture, std::string_view name)
 	: m_viewInfo(viewInfo)

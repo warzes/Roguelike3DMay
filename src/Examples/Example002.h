@@ -2,8 +2,9 @@
 
 //=============================================================================
 // Вывод прямоугольника с текстурой на основную поверхность
-// - текстура
-// - семплер
+// - загрузка текстуры из файла
+// - Texture
+// - Sampler
 //=============================================================================
 class Example002 final : public IEngineApp
 {
@@ -28,5 +29,9 @@ public:
 	void OnKey(int key, int scanCode, int action, int mods) final;
 
 private:
-
+	std::optional<gl::Buffer>           m_vertexBuffer;
+	std::optional<gl::Buffer>           m_indexBuffer;
+	std::optional<gl::GraphicsPipeline> m_pipeline;
+	std::optional<gl::Texture>          m_texture;
+	std::optional<gl::Sampler>          m_sampler;
 };

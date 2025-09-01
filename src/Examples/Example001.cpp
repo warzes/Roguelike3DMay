@@ -107,7 +107,7 @@ void Example001::OnRender()
 		.name = "Render Triangle",
 		.viewport = {.drawRect{.offset = {0, 0}, .extent = {GetWindowWidth(), GetWindowHeight()}}},
 		.colorLoadOp = gl::AttachmentLoadOp::Clear,
-		.clearColorValue = {0.1f, 0.5f, 0.8f, 1.0f},
+		.clearColorValue = { 0.1f, 0.5f, 0.8f, 1.0f },
 	};
 
 	gl::BeginSwapChainRendering(renderInfo);

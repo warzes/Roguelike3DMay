@@ -323,7 +323,7 @@ void main()
 			.vertexShader = &vertexShader,
 			.fragmentShader = &fragmentShader,
 			.inputAssemblyState = {.topology = gl::PrimitiveTopology::TriangleList },
-			.vertexInputState = { MeshVertexInputBindingDescs },
+			.vertexInputState = { MeshVertexInputBindingDesc },
 			.depthState = {.depthTestEnable = true },
 			.colorBlendState = blendState
 			});

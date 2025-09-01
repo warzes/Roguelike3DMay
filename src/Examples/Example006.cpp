@@ -1,43 +1,40 @@
 ﻿#include "stdafx.h"
 #include "Example006.h"
 //=============================================================================
-// Вывод кубов на сцену с освещением (блин-фонг) и текстурами
-//=============================================================================
 namespace
 {
 	const char* shaderCodeVertex = R"(
 #version 460 core
 
-layout(location = 0) in vec3 aPosition;
-layout(location = 1) in vec3 aNormal;
-layout(location = 2) in vec2 aTexCoord;
+layout(location = 0) in vec3 vertexPosition;
+layout(location = 1) in vec3 vertexNormal;
+layout(location = 2) in vec2 vertexTexCoord;
 
-layout(binding = 0, std140) uniform vsUniforms {
+layout(binding = 0, std140) uniform MatrixBlock {
 	mat4 modelMatrix;
 	mat4 viewMatrix;
 	mat4 projectionMatrix;
 };
 
-layout(location = 0) out vec3 vFragPos;
-layout(location = 1) out vec3 vNormal;
-layout(location = 2) out vec2 vTexCoord;
+layout(location = 0) out vec3 fragPos;
+layout(location = 1) out vec3 fragNormal;
+layout(location = 2) out vec2 fragTexCoord;
 
 void main()
 {
-	gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(aPosition, 1.0);
-
-	vFragPos = vec3(modelMatrix * vec4(aPosition, 1.0));
-	vNormal = mat3(transpose(inverse(modelMatrix))) * aNormal;
-	vTexCoord = aTexCoord;
+	fragNormal   = mat3(transpose(inverse(modelMatrix))) * vertexNormal;
+	fragTexCoord = vertexTexCoord;
+	fragPos      = vec3(modelMatrix * vec4(vertexPosition, 1.0));
+	gl_Position  = projectionMatrix * viewMatrix * modelMatrix * vec4(vertexPosition, 1.0);
 }
 )";
 
 	const char* shaderCodeFragment = R"(
 #version 460 core
 
-layout(location = 0) in vec3 vFragPos;
-layout(location = 1) in vec3 vNormal;
-layout(location = 2) in vec2 vTexCoord;
+layout(location = 0) in vec3 fragPos;
+layout(location = 1) in vec3 fragNormal;
+layout(location = 2) in vec2 fragTexCoord;
 
 layout(binding = 0) uniform sampler2D diffuseTexture;
 layout(binding = 1) uniform sampler2D specularTexture;
@@ -47,79 +44,79 @@ struct Material {
 }; 
 
 struct Light {
-	vec4 position;
-	vec4 ambient;
-	vec4 diffuse;
-	vec4 specular;
+	vec3 position;
+	vec3 ambient;
+	vec3 diffuse;
+	vec3 specular;
 };
 
-layout(binding = 1, std140) uniform fs_params {
+layout(binding = 1, std140) uniform SceneBlock {
 	vec3 viewPos;
 };
 
-layout(binding = 2, std140) uniform fs_material {
+layout(binding = 2, std140) uniform MaterialBlock {
 	Material material;
 };
 
-layout(binding = 3, std140) uniform fs_light {
+layout(binding = 3, std140) uniform LightBlock {
 	Light light;
 };
 
-layout(location = 0) out vec4 fragColor;
+layout(location = 0) out vec4 outputColor;
 
 void main()
 {
-	vec4 diffuseTex = texture(diffuseTexture, vTexCoord);
-	vec4 specularTex = texture(specularTexture, vTexCoord);
+	vec4 diffuseTex = texture(diffuseTexture, fragTexCoord);
+	vec4 specularTex = texture(specularTexture, fragTexCoord);
 
 	// ambient
-	vec3 ambient = light.ambient.xyz * diffuseTex.xyz;
+	vec3 ambient = light.ambient * diffuseTex.xyz;
 
 	// diffuse
-	vec3 norm = normalize(vNormal);
-	vec3 lightDir = normalize(light.position.xyz - vFragPos);
-	float diff = max(dot(norm, lightDir), 0.0);
-	vec3 diffuse = light.diffuse.xyz * (diff * diffuseTex.xyz);
+	vec3 norm     = normalize(fragNormal);
+	vec3 lightDir = normalize(light.position - fragPos);
+	float diff    = max(dot(norm, lightDir), 0.0);
+	vec3 diffuse  = light.diffuse * (diff * diffuseTex.xyz);
 
 	// specular
-	vec3 viewDir = normalize(viewPos - vFragPos);
+	vec3 viewDir    = normalize(viewPos - fragPos);
 	vec3 reflectDir = reflect(-lightDir, norm);
-	float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
-	vec3 specular = light.specular.xyz * (spec * specularTex.xyz);
+	float spec      = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
+	vec3 specular   = light.specular * (spec * specularTex.xyz);
 
 	vec3 result = ambient + diffuse + specular;
-	fragColor = vec4(result, 1.0);
+	outputColor = vec4(result, 1.0);
 }
 )";
 
-	struct vsUniforms final
+	struct alignas(16) MatrixBlock final
 	{
 		glm::mat4 modelMatrix;
 		glm::mat4 viewMatrix;
 		glm::mat4 projectionMatrix;
 	};
-	vsUniforms uniforms[10];
+	MatrixBlock matrixData[10];
 
-	struct FragUniform final
+	struct alignas(16) SceneBlock final
 	{
 		glm::vec3 viewPos;
 	};
-	FragUniform fragUniform;
+	SceneBlock sceneData;
 
-	struct Material final
+	struct alignas(16) Material final
 	{
 		float shininess;
 	};
-	Material materialUniform;
+	Material materialData;
 
-	struct Light final
+	struct alignas(16) Light final
 	{
-		glm::vec4 position;
-		glm::vec4 ambient;
-		glm::vec4 diffuse;
-		glm::vec4 specular;
+		glm::aligned_vec3 position;
+		glm::aligned_vec3 ambient;
+		glm::aligned_vec3 diffuse;
+		glm::aligned_vec3 specular;
 	};
-	Light lightUniform;
+	Light lightData;
 
 	struct Vertex final
 	{
@@ -128,9 +125,7 @@ void main()
 		glm::vec2 uv;
 	};
 
-	Camera camera;
-
-	constexpr std::array<gl::VertexInputBindingDescription, 3> inputBindingDescs{
+	constexpr std::array<gl::VertexInputBindingDescription, 3> inputBindingDesc{
 		gl::VertexInputBindingDescription{
 			.location = 0,
 			.binding = 0,
@@ -150,47 +145,18 @@ void main()
 			.offset = offsetof(Vertex, uv),
 		}
 	};
-
-	std::optional<gl::Buffer> vertexBuffer;
-	std::optional<gl::Buffer> indexBuffer;
-	std::optional<gl::Buffer> uniformBuffer;
-	std::optional<gl::Buffer> uniformBuffer2;
-	std::optional<gl::Buffer> uniformBuffer3;
-	std::optional<gl::Buffer> uniformBuffer4;
-
-	std::optional<gl::GraphicsPipeline> pipeline;
-	std::optional<gl::Texture> texture1;
-	std::optional<gl::Texture> texture2;
-	std::optional<gl::Sampler> sampler;
-
-	gl::GraphicsPipeline CreatePipeline()
-	{
-		auto vertexShader = gl::Shader(gl::ShaderType::VertexShader, shaderCodeVertex, "VS");
-		auto fragmentShader = gl::Shader(gl::ShaderType::FragmentShader, shaderCodeFragment, "FS");
-
-		return gl::GraphicsPipeline({
-			 .name = "Pipeline",
-			.vertexShader = &vertexShader,
-			.fragmentShader = &fragmentShader,
-			.inputAssemblyState = {.topology = gl::PrimitiveTopology::TriangleList },
-			.vertexInputState = { inputBindingDescs },
-			.depthState = {.depthTestEnable = true },
-
-			});
-	}
-
-	void resize([[maybe_unused]] uint16_t width, [[maybe_unused]] uint16_t height)
-	{
-	}
 }
 //=============================================================================
 EngineCreateInfo Example006::GetCreateInfo() const
 {
-	return {};
+	EngineCreateInfo createInfo{};
+	return createInfo;
 }
 //=============================================================================
 bool Example006::OnInit()
 {
+	//-------------------------------------------------------------------------
+	// create vertex buffer
 	std::vector<Vertex> v = {
 		// Передняя грань (Z = 0.5) — нормаль: (0, 0, 1)
 		{{-0.5f, -0.5f,  0.5f}, { 0.0f,  0.0f,  1.0f}, {0.0f, 0.0f}},
@@ -228,8 +194,10 @@ bool Example006::OnInit()
 		{{ 0.5f, -0.5f,  0.5f}, { 0.0f, -1.0f,  0.0f}, {1.0f, 1.0f}},
 		{{-0.5f, -0.5f,  0.5f}, { 0.0f, -1.0f,  0.0f}, {0.0f, 1.0f}},
 	};
-	vertexBuffer = gl::Buffer(v);
+	m_vertexBuffer = gl::Buffer(v);
 
+	//-------------------------------------------------------------------------
+	// create index buffer
 	std::vector<unsigned> ind = {
 		// Передняя грань
 		0, 2, 1,
@@ -256,169 +224,150 @@ bool Example006::OnInit()
 		20, 23, 22
 
 	};
-	indexBuffer = gl::Buffer(ind);
+	m_indexBuffer = gl::Buffer(ind);
 
-	uniformBuffer = gl::Buffer(sizeof(vsUniforms), gl::BufferStorageFlag::DynamicStorage);
-	uniformBuffer2 = gl::Buffer(sizeof(FragUniform), gl::BufferStorageFlag::DynamicStorage);
-	uniformBuffer3 = gl::Buffer(sizeof(Material), gl::BufferStorageFlag::DynamicStorage);
-	uniformBuffer4 = gl::Buffer(sizeof(Light), gl::BufferStorageFlag::DynamicStorage);
+	//-------------------------------------------------------------------------
+	// create uniform buffer
+	m_matrixUBO = gl::Buffer(sizeof(MatrixBlock), gl::BufferStorageFlag::DynamicStorage);
+	m_sceneUBO = gl::Buffer(sizeof(SceneBlock), gl::BufferStorageFlag::DynamicStorage);
+	m_materialUBO = gl::Buffer(sizeof(Material), gl::BufferStorageFlag::DynamicStorage);
+	m_lightUBO = gl::Buffer(sizeof(Light), gl::BufferStorageFlag::DynamicStorage);
 
-	pipeline = CreatePipeline();
+	//-------------------------------------------------------------------------
+	// create pipeline
+	auto vertexShader = gl::Shader(gl::ShaderType::VertexShader, shaderCodeVertex, "VS");
+	auto fragmentShader = gl::Shader(gl::ShaderType::FragmentShader, shaderCodeFragment, "FS");
 
-	{
-		int imgW, imgH, nrChannels;
-		auto pixels = stbi_load("ExampleData/textures/container2.png", &imgW, &imgH, &nrChannels, 4);
+	m_pipeline = gl::GraphicsPipeline({
+		.name               = "Pipeline",
+		.vertexShader       = &vertexShader,
+		.fragmentShader     = &fragmentShader,
+		.inputAssemblyState = {.topology = gl::PrimitiveTopology::TriangleList },
+		.vertexInputState   = { inputBindingDesc },
+		.depthState         = {.depthTestEnable = true },
+	});
 
-		const gl::TextureCreateInfo createInfo{
-		  .imageType = gl::ImageType::Tex2D,
-		  .format = gl::Format::R8G8B8A8_UNORM,
-		  .extent = {static_cast<uint32_t>(imgW), static_cast<uint32_t>(imgH), 1},
-		  .mipLevels = 1,
-		  .arrayLayers = 1,
-		  .sampleCount = gl::SampleCount::Samples1,
-		};
-		texture1 = gl::Texture(createInfo);
+	//-------------------------------------------------------------------------
+	// load texture
+	m_diffuseTexture = TextureManager::GetTexture("ExampleData/textures/container2.png", false);
+	m_specTexture    = TextureManager::GetTexture("ExampleData/textures/container2_specular.png", false);
 
-		texture1->UpdateImage({
-		  .extent = createInfo.extent,
-		  .format = gl::UploadFormat::RGBA,
-		  .type = gl::UploadType::UBYTE,
-		  .pixels = pixels,
-			});
-		stbi_image_free(pixels);
-	}
+	//-------------------------------------------------------------------------
+	// create Sampler
+	m_sampler = gl::Sampler({
+		.minFilter    = gl::MinFilter::Nearest,
+		.magFilter    = gl::MagFilter::Nearest,
+		.addressModeU = gl::AddressMode::Repeat,
+		.addressModeV = gl::AddressMode::Repeat,
+	});
 
-	{
-		int imgW, imgH, nrChannels;
-		auto pixels = stbi_load("ExampleData/textures/container2_specular.png", &imgW, &imgH, &nrChannels, 4);
-
-		const gl::TextureCreateInfo createInfo{
-		  .imageType = gl::ImageType::Tex2D,
-		  .format = gl::Format::R8G8B8A8_UNORM,
-		  .extent = {static_cast<uint32_t>(imgW), static_cast<uint32_t>(imgH), 1},
-		  .mipLevels = 1,
-		  .arrayLayers = 1,
-		  .sampleCount = gl::SampleCount::Samples1,
-		};
-		texture2 = gl::Texture(createInfo);
-
-		texture2->UpdateImage({
-		  .extent = createInfo.extent,
-		  .format = gl::UploadFormat::RGBA,
-		  .type = gl::UploadType::UBYTE,
-		  .pixels = pixels,
-			});
-		stbi_image_free(pixels);
-	}
-
-	gl::SamplerState sampleDesc;
-	sampleDesc.minFilter = gl::MinFilter::Linear;
-	sampleDesc.magFilter = gl::MagFilter::Linear;
-	sampleDesc.addressModeU = gl::AddressMode::Repeat;
-	sampleDesc.addressModeV = gl::AddressMode::Repeat;
-	sampler = gl::Sampler(sampleDesc);
-
-	camera.SetPosition(glm::vec3(0.0f, 0.0f, -3.0f));
-
-	resize(GetWindowWidth(), GetWindowHeight());
+	//-------------------------------------------------------------------------
+	// set camera
+	m_camera.SetPosition(glm::vec3(0.0f, 0.0f, -3.0f));
 
 	return true;
 }
 //=============================================================================
 void Example006::OnClose()
 {
-	vertexBuffer = {};
-	indexBuffer = {};
-	uniformBuffer = {};
-	uniformBuffer2 = {};
-	uniformBuffer3 = {};
-	uniformBuffer4 = {};
-	pipeline = {};
-	sampler = {};
-	texture1 = {};
-	texture2 = {};
+	m_vertexBuffer = {};
+	m_indexBuffer = {};
+	m_matrixUBO = {};
+	m_sceneUBO = {};
+	m_materialUBO = {};
+	m_lightUBO = {};
+	m_pipeline = {};
+	m_sampler = {};
+	m_diffuseTexture = {};
+	m_specTexture = {};
 }
 //=============================================================================
 void Example006::OnUpdate([[maybe_unused]] float deltaTime)
 {
-	if (Input::IsKeyDown(GLFW_KEY_W)) camera.ProcessKeyboard(CameraForward, deltaTime);
-	if (Input::IsKeyDown(GLFW_KEY_S)) camera.ProcessKeyboard(CameraBackward, deltaTime);
-	if (Input::IsKeyDown(GLFW_KEY_A)) camera.ProcessKeyboard(CameraLeft, deltaTime);
-	if (Input::IsKeyDown(GLFW_KEY_D)) camera.ProcessKeyboard(CameraRight, deltaTime);
+	if (Input::IsKeyDown(GLFW_KEY_W)) m_camera.ProcessKeyboard(CameraForward, deltaTime);
+	if (Input::IsKeyDown(GLFW_KEY_S)) m_camera.ProcessKeyboard(CameraBackward, deltaTime);
+	if (Input::IsKeyDown(GLFW_KEY_A)) m_camera.ProcessKeyboard(CameraLeft, deltaTime);
+	if (Input::IsKeyDown(GLFW_KEY_D)) m_camera.ProcessKeyboard(CameraRight, deltaTime);
 
 	if (Input::IsMouseDown(GLFW_MOUSE_BUTTON_RIGHT))
 	{
 		Input::SetCursorVisible(false);
-		camera.ProcessMouseMovement(Input::GetCursorOffset().x, Input::GetCursorOffset().y);
+		m_camera.ProcessMouseMovement(Input::GetCursorOffset().x, Input::GetCursorOffset().y);
 	}
 	else if (Input::IsMouseReleased(GLFW_MOUSE_BUTTON_RIGHT))
 	{
 		Input::SetCursorVisible(true);
 	}
 
-	uniforms[0].modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-	uniforms[1].modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(1.2f, 1.0f, -2.0f));
-	uniforms[2].modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(-1.5f, -2.2f, 2.5f));
-	uniforms[3].modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(-3.8f, -2.0f, 6.3f));
-	uniforms[4].modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(2.4f, -0.4f, 3.5f));
-	uniforms[5].modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(-1.7f, 3.0f, 7.5f));
-	uniforms[6].modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(1.3f, -2.0f, 2.5f));
-	uniforms[7].modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(1.5f, 2.0f, 2.5f));
-	uniforms[8].modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(1.5f, 0.2f, 1.5f));
-	uniforms[9].modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(-1.3f, 1.0f, 1.5f));
-	for (size_t i = 0; i < 10; i++)
+	const std::vector<glm::vec3> boxPositions
 	{
-		float angle = 20.0f * i;
-		uniforms[i].modelMatrix *= glm::rotate(glm::mat4(1.0f), glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+		glm::vec3(0.0f, 0.0f, 0.0f),
+		glm::vec3(2.0f, 5.0f, 8.0f),
+		glm::vec3(-1.5f, -2.2f, 2.5f),
+		glm::vec3(-3.8f, -2.0f, 6.3f),
+		glm::vec3(2.4f, -0.4f, 3.5f),
+		glm::vec3(-1.7f, 3.0f, 7.5f),
+		glm::vec3(1.3f, -2.0f, 2.5f),
+		glm::vec3(1.5f, 2.0f, 2.5f),
+		glm::vec3(1.5f, 0.2f, 1.5f),
+		glm::vec3(-1.3f, 1.0f, 1.5f),
+	};
 
-		uniforms[i].viewMatrix = camera.GetViewMatrix();
-		uniforms[i].projectionMatrix = glm::perspective(glm::radians(65.0f), GetWindowAspect(), 0.1f, 100.0f);
+	for (size_t i = 0; i < boxPositions.size(); i++)
+	{
+		float angle = 20.0f * (float)i;
+
+		matrixData[i].modelMatrix = glm::translate(glm::mat4(1.0f), boxPositions[i]);
+		matrixData[i].modelMatrix *= glm::rotate(glm::mat4(1.0f), glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+
+		matrixData[i].viewMatrix = m_camera.GetViewMatrix();
+		matrixData[i].projectionMatrix = glm::perspective(glm::radians(65.0f), GetWindowAspect(), 0.1f, 100.0f);
 	}
 
-	fragUniform.viewPos = camera.Position;
-	uniformBuffer2->UpdateData(fragUniform);
+	sceneData.viewPos = m_camera.Position;
+	m_sceneUBO->UpdateData(sceneData);
 
-	materialUniform.shininess = 32.0f;
-	uniformBuffer3->UpdateData(materialUniform);
+	materialData.shininess = 32.0f;
+	m_materialUBO->UpdateData(materialData);
 
-	glm::vec4 lightColor;
-	lightColor.x = static_cast<float>(sin(glfwGetTime() * 2.0));
-	lightColor.y = static_cast<float>(sin(glfwGetTime() * 0.7));
-	lightColor.z = static_cast<float>(sin(glfwGetTime() * 1.3));
-	lightColor.w = 1.0f;
-	lightUniform.position = glm::vec4(1.2f, 1.0f, -2.0f, 1.0f);
-	lightUniform.ambient = lightColor * glm::vec4(0.2f);
-	lightUniform.diffuse = lightColor * glm::vec4(0.5f);
-	lightUniform.specular = glm::vec4(1.0f);
-	uniformBuffer4->UpdateData(lightUniform);
+	glm::vec3 lightColor = {
+		static_cast<float>(sin(glfwGetTime() * 2.0)),
+		static_cast<float>(sin(glfwGetTime() * 0.7)),
+		static_cast<float>(sin(glfwGetTime() * 1.3))
+	};
+	lightData.position = { 1.2f, 1.0f, -2.0f };
+	lightData.ambient  = lightColor * glm::vec3(0.2f);
+	lightData.diffuse  = lightColor * glm::vec3(0.5f);
+	lightData.specular = glm::vec3(1.0f);
+	m_lightUBO->UpdateData(lightData);
 }
 //=============================================================================
 void Example006::OnRender()
 {
 	const gl::SwapChainRenderInfo renderInfo
 	{
-		.name = "Render Triangle",
+		.name = "Render",
 		.viewport = {.drawRect{.offset = {0, 0}, .extent = {GetWindowWidth(), GetWindowHeight()}}},
 		.colorLoadOp = gl::AttachmentLoadOp::Clear,
-		.clearColorValue = {.1f, .5f, .8f, 1.0f},
+		.clearColorValue = { 0.1f, 0.5f, 0.8f, 1.0f },
 		.depthLoadOp = gl::AttachmentLoadOp::Clear,
 		.clearDepthValue = 1.0f,
 	};
 	gl::BeginSwapChainRendering(renderInfo);
 	{
-		gl::Cmd::BindGraphicsPipeline(pipeline.value());
-		gl::Cmd::BindVertexBuffer(0, vertexBuffer.value(), 0, sizeof(Vertex));
-		gl::Cmd::BindIndexBuffer(indexBuffer.value(), gl::IndexType::UInt);
-		gl::Cmd::BindSampledImage(0, texture1.value(), sampler.value());
-		gl::Cmd::BindSampledImage(1, texture2.value(), sampler.value());
+		gl::Cmd::BindGraphicsPipeline(*m_pipeline);
+		gl::Cmd::BindVertexBuffer(0, *m_vertexBuffer, 0, sizeof(Vertex));
+		gl::Cmd::BindIndexBuffer(*m_indexBuffer, gl::IndexType::UInt);
+		gl::Cmd::BindSampledImage(0, *m_diffuseTexture, *m_sampler);
+		gl::Cmd::BindSampledImage(1, *m_specTexture, *m_sampler);
 
-		gl::Cmd::BindUniformBuffer(1, uniformBuffer2.value());
-		gl::Cmd::BindUniformBuffer(2, uniformBuffer3.value());
-		gl::Cmd::BindUniformBuffer(3, uniformBuffer4.value());
+		gl::Cmd::BindUniformBuffer(1, *m_sceneUBO);
+		gl::Cmd::BindUniformBuffer(2, *m_materialUBO);
+		gl::Cmd::BindUniformBuffer(3, *m_lightUBO);
 		for (size_t i = 0; i < 10; i++)
 		{
-			uniformBuffer->UpdateData(uniforms[i]);
-			gl::Cmd::BindUniformBuffer(0, uniformBuffer.value());
+			m_matrixUBO->UpdateData(matrixData[i]);
+			gl::Cmd::BindUniformBuffer(0, *m_matrixUBO);
 
 			gl::Cmd::DrawIndexed(36, 1, 0, 0, 0);
 		}
@@ -431,9 +380,8 @@ void Example006::OnImGuiDraw()
 	DrawFPS();
 }
 //=============================================================================
-void Example006::OnResize(uint16_t width, uint16_t height)
+void Example006::OnResize([[maybe_unused]] uint16_t width, [[maybe_unused]] uint16_t height)
 {
-	resize(width, height);
 }
 //=============================================================================
 void Example006::OnMouseButton([[maybe_unused]] int button, [[maybe_unused]] int action, [[maybe_unused]] int mods)

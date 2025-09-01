@@ -1,5 +1,9 @@
 ﻿#pragma once
 
+//=============================================================================
+// Вывод кубов на сцену с освещением (блин-фонг) и текстурами
+// - две текстуры
+//=============================================================================
 class Example006 final : public IEngineApp
 {
 public:
@@ -21,4 +25,17 @@ public:
 	void OnMousePos(double x, double y) final;
 	void OnScroll(double dx, double dy) final;
 	void OnKey(int key, int scanCode, int action, int mods) final;
+
+private:
+	std::optional<gl::Buffer>           m_vertexBuffer;
+	std::optional<gl::Buffer>           m_indexBuffer;
+	std::optional<gl::Buffer>           m_matrixUBO;
+	std::optional<gl::Buffer>           m_sceneUBO;
+	std::optional<gl::Buffer>           m_materialUBO;
+	std::optional<gl::Buffer>           m_lightUBO;
+	std::optional<gl::GraphicsPipeline> m_pipeline;
+	gl::Texture*                        m_diffuseTexture{ nullptr };
+	gl::Texture*                        m_specTexture{ nullptr };
+	std::optional<gl::Sampler>          m_sampler;
+	Camera                              m_camera;
 };

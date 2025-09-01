@@ -1,5 +1,9 @@
 ﻿#pragma once
 
+//=============================================================================
+// Вывод прямоугольника с текстурой на основную поверхность с матрицами трансформации
+// - uniform буфер и MVP матрицы
+//=============================================================================
 class Example003 final : public IEngineApp
 {
 public:
@@ -21,4 +25,12 @@ public:
 	void OnMousePos(double x, double y) final;
 	void OnScroll(double dx, double dy) final;
 	void OnKey(int key, int scanCode, int action, int mods) final;
+
+private:
+	std::optional<gl::Buffer>           m_vertexBuffer;
+	std::optional<gl::Buffer>           m_indexBuffer;
+	std::optional<gl::Buffer>           m_uniformBuffer;
+	std::optional<gl::GraphicsPipeline> m_pipeline;
+	gl::Texture*                        m_texture{ nullptr };
+	std::optional<gl::Sampler>          m_sampler;
 };

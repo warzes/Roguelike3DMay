@@ -44,7 +44,7 @@ void main()
 		glm::vec2 uv;
 	};
 
-	constexpr std::array<gl::VertexInputBindingDescription, 3> inputBindingDescs{
+	constexpr std::array<gl::VertexInputBindingDescription, 3> inputBindingDesc{
 		gl::VertexInputBindingDescription{
 			.location = 0,
 			.binding = 0,
@@ -64,89 +64,88 @@ void main()
 			.offset = offsetof(Vertex, uv),
 		},
 	};
-
-	std::optional<gl::Buffer> vertexBuffer;
-	std::optional<gl::Buffer> indexBuffer;
-	std::optional<gl::GraphicsPipeline> pipeline;
-	std::optional<gl::Texture> texture;
-	std::optional<gl::Sampler> sampler;
-
-	gl::GraphicsPipeline CreatePipeline()
-	{
-		auto vertexShader = gl::Shader(gl::ShaderType::VertexShader, shaderCodeVertex, "VS");
-		auto fragmentShader = gl::Shader(gl::ShaderType::FragmentShader, shaderCodeFragment, "FS");
-
-		return gl::GraphicsPipeline({
-			 .name = "Pipeline",
-			.vertexShader = &vertexShader,
-			.fragmentShader = &fragmentShader,
-			.inputAssemblyState = {.topology = gl::PrimitiveTopology::TriangleList},
-			.vertexInputState = {inputBindingDescs},
-			});
-	}
 }
 //=============================================================================
 EngineCreateInfo Example002::GetCreateInfo() const
 {
-	идея - рог с рандомными данжами
-	return {};
+	EngineCreateInfo createInfo{};
+	return createInfo;
 }
 //=============================================================================
 bool Example002::OnInit()
 {
+	//-------------------------------------------------------------------------
+	// create vertex buffer
 	std::vector<Vertex> v = {
 		{{ -0.8f,  0.8f, 0.0f}, {1, 0, 0}, {0.0f, 0.0f}},
 		{{ -0.8f, -0.8f, 0.0f}, {0, 1, 0}, {0.0f, 1.0f}},
 		{{  0.8f, -0.8f, 0.0f}, {0, 0, 1}, {1.0f, 1.0f}},
 		{{  0.8f,  0.8f, 0.0f}, {1, 1, 0}, {1.0f, 0.0f}},
 	};
-	vertexBuffer = gl::Buffer(v);
+	m_vertexBuffer = gl::Buffer(v);
 
+	//-------------------------------------------------------------------------
+	// create index buffer
 	std::vector<unsigned> ind = { 0, 1, 2, 2, 3, 0};
-	indexBuffer = gl::Buffer(ind);
+	m_indexBuffer = gl::Buffer(ind);
 
-	pipeline = CreatePipeline();
+	//-------------------------------------------------------------------------
+	// create pipeline
+	auto vertexShader   = gl::Shader(gl::ShaderType::VertexShader, shaderCodeVertex, "VS");
+	auto fragmentShader = gl::Shader(gl::ShaderType::FragmentShader, shaderCodeFragment, "FS");
 
+	m_pipeline = gl::GraphicsPipeline({
+		.name               = "Pipeline",
+		.vertexShader       = &vertexShader,
+		.fragmentShader     = &fragmentShader,
+		.inputAssemblyState = {.topology = gl::PrimitiveTopology::TriangleList},
+		.vertexInputState   = {inputBindingDesc},
+	});
+
+	//-------------------------------------------------------------------------
+	// load texture
 	{
 		int imgW, imgH, nrChannels;
 		auto pixels = stbi_load("CoreData/textures/temp.png", &imgW, &imgH, &nrChannels, 4);
+		const Extent3D extent = { static_cast<uint32_t>(imgW), static_cast<uint32_t>(imgH), 1 };
 
-		const gl::TextureCreateInfo createInfo{
-		  .imageType = gl::ImageType::Tex2D,
-		  .format = gl::Format::R8G8B8A8_UNORM,
-		  .extent = {static_cast<uint32_t>(imgW), static_cast<uint32_t>(imgH), 1},
-		  .mipLevels = 1,
-		  .arrayLayers = 1,
-		  .sampleCount = gl::SampleCount::Samples1,
-		};
-		texture = gl::Texture(createInfo);
+		m_texture = gl::Texture({
+			.imageType   = gl::ImageType::Tex2D,
+			.format      = gl::Format::R8G8B8A8_UNORM,
+			.extent      = extent,
+			.mipLevels   = 1u,
+			.arrayLayers = 1u,
+			.sampleCount = gl::SampleCount::Samples1,
+		});
 
-		texture->UpdateImage({
-		  .extent = createInfo.extent,
-		  .format = gl::UploadFormat::RGBA,
-		  .type = gl::UploadType::UBYTE,
-		  .pixels = pixels,
-			});
+		m_texture->UpdateImage({
+			.extent = extent,
+			.format = gl::UploadFormat::RGBA,
+			.type   = gl::UploadType::UBYTE,
+			.pixels = pixels,
+		});
 		stbi_image_free(pixels);
 	}
 
-	gl::SamplerState sampleDesc;
-	sampleDesc.minFilter = gl::MinFilter::Nearest;
-	sampleDesc.magFilter = gl::MagFilter::Nearest;
-	sampleDesc.addressModeU = gl::AddressMode::Repeat;
-	sampleDesc.addressModeV = gl::AddressMode::Repeat;
-	sampler = gl::Sampler(sampleDesc);
+	//-------------------------------------------------------------------------
+	// create Sampler
+	m_sampler = gl::Sampler({ 
+		.minFilter    = gl::MinFilter::Nearest,
+		.magFilter    = gl::MagFilter::Nearest,
+		.addressModeU = gl::AddressMode::Repeat,
+		.addressModeV = gl::AddressMode::Repeat, 
+	});
 
 	return true;
 }
 //=============================================================================
 void Example002::OnClose()
 {
-	vertexBuffer = {};
-	indexBuffer = {};
-	pipeline = {};
-	sampler = {};
-	texture = {};
+	m_vertexBuffer = {};
+	m_indexBuffer = {};
+	m_pipeline = {};
+	m_sampler = {};
+	m_texture = {};
 }
 //=============================================================================
 void Example002::OnUpdate([[maybe_unused]] float deltaTime)
@@ -155,19 +154,18 @@ void Example002::OnUpdate([[maybe_unused]] float deltaTime)
 //=============================================================================
 void Example002::OnRender()
 {
-	const gl::SwapChainRenderInfo renderInfo
-	{
+	const gl::SwapChainRenderInfo renderInfo {
 		.name = "Render",
 		.viewport = {.drawRect{.offset = {0, 0}, .extent = {GetWindowWidth(), GetWindowHeight()}}},
 		.colorLoadOp = gl::AttachmentLoadOp::Clear,
-		.clearColorValue = {.1f, .5f, .8f, 1.0f},
+		.clearColorValue = { 0.1f, 0.5f, 0.8f, 1.0f },
 	};
 	gl::BeginSwapChainRendering(renderInfo);
 	{
-		gl::Cmd::BindGraphicsPipeline(pipeline.value());
-		gl::Cmd::BindVertexBuffer(0, vertexBuffer.value(), 0, sizeof(Vertex));
-		gl::Cmd::BindIndexBuffer(indexBuffer.value(), gl::IndexType::UInt);
-		gl::Cmd::BindSampledImage(0, texture.value(), sampler.value());
+		gl::Cmd::BindGraphicsPipeline(*m_pipeline);
+		gl::Cmd::BindVertexBuffer(0, *m_vertexBuffer, 0, sizeof(Vertex));
+		gl::Cmd::BindIndexBuffer(*m_indexBuffer, gl::IndexType::UInt);
+		gl::Cmd::BindSampledImage(0, *m_texture, *m_sampler);
 		gl::Cmd::DrawIndexed(6, 1, 0, 0, 0);
 	}
 	gl::EndRendering();

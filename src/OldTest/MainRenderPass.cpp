@@ -185,7 +185,7 @@ bool MainRenderPass::createPipeline()
 		.vertexShader       = &vertexShader,
 		.fragmentShader     = &fragmentShader,
 		.inputAssemblyState = {.topology = gl::PrimitiveTopology::TriangleList},
-		.vertexInputState   = {MeshVertexInputBindingDescs},
+		.vertexInputState   = {MeshVertexInputBindingDesc},
 		.depthState         = {.depthTestEnable = true, .depthWriteEnable = true},
 		});
 	if (!m_pipeline.has_value()) return false;

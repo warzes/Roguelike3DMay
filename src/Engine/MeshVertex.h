@@ -33,7 +33,7 @@ namespace std
 	};
 }
 
-constexpr std::array<gl::VertexInputBindingDescription, 5> MeshVertexInputBindingDescs{
+constexpr std::array<gl::VertexInputBindingDescription, 5> MeshVertexInputBindingDesc{
   gl::VertexInputBindingDescription{
 	.location = 0,
 	.binding = 0,

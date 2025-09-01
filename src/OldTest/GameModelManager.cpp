@@ -151,7 +151,7 @@ bool GameModelManager::createPipeline()
 		.vertexShader = &vertexShader,
 		.fragmentShader = &fragmentShader,
 		.inputAssemblyState = {.topology = gl::PrimitiveTopology::TriangleList},
-		.vertexInputState = {MeshVertexInputBindingDescs},
+		.vertexInputState = {MeshVertexInputBindingDesc},
 		.depthState = {.depthTestEnable = true, .depthWriteEnable = true},
 		});
 
@@ -167,7 +167,7 @@ bool GameModelManager::createPipeline()
 		.vertexShader = &vertexShader2,
 		.fragmentShader = &fragmentShader2,
 		.inputAssemblyState = {.topology = gl::PrimitiveTopology::TriangleList},
-		.vertexInputState = {MeshVertexInputBindingDescs},
+		.vertexInputState = {MeshVertexInputBindingDesc},
 		.depthState = {.depthTestEnable = true, .depthWriteEnable = true },
 		});
 

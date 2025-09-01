@@ -174,7 +174,7 @@ namespace gl
 		[[nodiscard]] const TextureViewCreateInfo& GetViewInfo() const noexcept { return m_viewInfo; }
 
 	private:
-		TextureView();
+		TextureView() = default;
 		TextureViewCreateInfo m_viewInfo{};
 	};
 

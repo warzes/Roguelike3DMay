@@ -292,7 +292,7 @@ bool dung::DungeonsApp::createPipeline()
 		.vertexShader = &vertexShader,
 		.fragmentShader = &fragmentShader,
 		.inputAssemblyState = {.topology = gl::PrimitiveTopology::TriangleList},
-		.vertexInputState = {MeshVertexInputBindingDescs},
+		.vertexInputState = {MeshVertexInputBindingDesc},
 		.rasterizationState = {/*.frontFace = gl::FrontFace::Clockwise*/ .cullMode = gl::CullMode::None },
 		.depthState = {.depthTestEnable = true, .depthWriteEnable = true},
 		});

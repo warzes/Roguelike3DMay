@@ -1,5 +1,11 @@
 ﻿#pragma once
 
+//=============================================================================
+// Вывод кубов на сцену и движение по ней с помощью камеры
+// - вывод кубов. куб с нормалью
+// - включения Z буфера
+// - Camera
+//=============================================================================
 class Example004 final : public IEngineApp
 {
 public:
@@ -21,4 +27,13 @@ public:
 	void OnMousePos(double x, double y) final;
 	void OnScroll(double dx, double dy) final;
 	void OnKey(int key, int scanCode, int action, int mods) final;
+
+private:
+	std::optional<gl::Buffer>           m_vertexBuffer;
+	std::optional<gl::Buffer>           m_indexBuffer;
+	std::optional<gl::Buffer>           m_uniformBuffer;
+	std::optional<gl::GraphicsPipeline> m_pipeline;
+	gl::Texture*                        m_texture{ nullptr };
+	std::optional<gl::Sampler>          m_sampler;
+	Camera                              m_camera;
 };
