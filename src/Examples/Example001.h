@@ -1,5 +1,12 @@
 ﻿#pragma once
 
+//=============================================================================
+// Вывод треугольника на основную поверхность
+// - вершинный буфер из позиции и цвета
+// - индексный буфер
+// - создание GraphicsPipeline
+// - дополнительное окно imGui с информацией об GAPI
+//=============================================================================
 class Example001 final : public IEngineApp
 {
 public:
@@ -21,4 +28,9 @@ public:
 	void OnMousePos(double x, double y) final;
 	void OnScroll(double dx, double dy) final;
 	void OnKey(int key, int scanCode, int action, int mods) final;
+
+private:
+	std::optional<gl::Buffer>           m_vertexBuffer;
+	std::optional<gl::Buffer>           m_indexBuffer;
+	std::optional<gl::GraphicsPipeline> m_pipeline;
 };

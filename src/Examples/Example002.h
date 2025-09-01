@@ -1,5 +1,10 @@
-#pragma once
+﻿#pragma once
 
+//=============================================================================
+// Вывод прямоугольника с текстурой на основную поверхность
+// - текстура
+// - семплер
+//=============================================================================
 class Example002 final : public IEngineApp
 {
 public:
@@ -21,4 +26,7 @@ public:
 	void OnMousePos(double x, double y) final;
 	void OnScroll(double dx, double dy) final;
 	void OnKey(int key, int scanCode, int action, int mods) final;
+
+private:
+
 };

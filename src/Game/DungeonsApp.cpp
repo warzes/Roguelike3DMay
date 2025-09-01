@@ -1,7 +1,5 @@
 ﻿#include "stdafx.h"
 #include "DungeonsApp.h"
-//
-//https://www.youtube.com/watch?v=yk0psth053I - такой пс1 стиль
 //https://github.com/QwePek/LightingOpenGL - простое освещение
 //https://github.com/damdoy/opengl_examples/tree/master/volumetric_light
 //https://github.com/stanislawfortonski/3D-Engine-OpenGL-4/tree/master/shaders
@@ -11,11 +9,9 @@
 //https://github.com/Rabbid76/graphics-snippets
 //https://github.com/cadaver/turso3d/tree/master
 //
-//
 //https://github.com/moonwho101/DungeonStompDirectX12
 //https://github.com/pmborg/WoMA3Dengine/tree/main/CoreEngine_Tutorials/DXENGINE_054
 
-//
 //переделать загрузку меша на основе кода SceneLoader.h через fastgltf: нужна поддержка мультимеша, материалов, свойств модели.
 //также возможно нужно чтобы оно брало fastgltf для gltf, тиниобж для обж, и асимп для остального
 //
@@ -24,8 +20,6 @@
 //возможно отключить левостороннюю систему координат
 //
 //StratusGFX
-//
-//https://github.com/QwePek/LightingOpenGL
 //=============================================================================
 dung::DungeonsApp::DungeonsApp()
 {

@@ -8,9 +8,10 @@
 	switch (stage)
 	{
 	case gl::ShaderType::VertexShader:                 return "GL_VERTEX_SHADER";
-	case gl::ShaderType::FragmentShader:               return "GL_FRAGMENT_SHADER";
+	case gl::ShaderType::GeometryShader:               return "GL_GEOMETRY_SHADER";
 	case gl::ShaderType::TessellationControlShader:    return "GL_TESS_CONTROL_SHADER";
 	case gl::ShaderType::TessellationEvaluationShader: return "GL_TESS_EVALUATION_SHADER";
+	case gl::ShaderType::FragmentShader:               return "GL_FRAGMENT_SHADER";
 	case gl::ShaderType::ComputeShader:                return "GL_COMPUTE_SHADER";
 	default: std::unreachable();
 	}
@@ -21,6 +22,7 @@
 	switch (stage)
 	{
 	case gl::ShaderType::VertexShader:                 return GL_VERTEX_SHADER;
+	case gl::ShaderType::GeometryShader:               return GL_GEOMETRY_SHADER;
 	case gl::ShaderType::TessellationControlShader:    return GL_TESS_CONTROL_SHADER;
 	case gl::ShaderType::TessellationEvaluationShader: return GL_TESS_EVALUATION_SHADER;
 	case gl::ShaderType::FragmentShader:               return GL_FRAGMENT_SHADER;

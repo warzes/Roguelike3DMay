@@ -5,6 +5,7 @@ namespace gl
 	enum class ShaderType : uint8_t
 	{
 		VertexShader,                 // GL_VERTEX_SHADER
+		GeometryShader,               // GL_GEOMETRY_SHADER
 		TessellationControlShader,    // GL_TESS_CONTROL_SHADER
 		TessellationEvaluationShader, // GL_TESS_EVALUATION_SHADER
 		FragmentShader,               // GL_FRAGMENT_SHADER

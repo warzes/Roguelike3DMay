@@ -1,4 +1,12 @@
-﻿https://www.youtube.com/watch?v=MH0WAjzAmJk
+﻿https://www.youtube.com/shorts/0hdta4b8hcA - идея
+
+
+
+
+https://www.youtube.com/watch?v=yk0psth053I - такой пс1 стиль
+
+
+https://www.youtube.com/watch?v=MH0WAjzAmJk
 	контролер персонажа на physx через rigidbody
 
 https://www.youtube.com/watch?v=GOfttJQ-FGw

@@ -43,11 +43,11 @@ struct alignas(16) MaterialUniforms final
 {
 	glm::vec4 diffuse;
 
-	int hasDiffuseTexture;
-	int hasSpecularTexture;
-	int hasEmissionTexture;
-	int hasNormalMapTexture;
-	int hasDepthMapTexture;
+	int hasDiffuseTexture{ 0 };
+	int hasSpecularTexture{ 0 };
+	int hasEmissionTexture{ 0 };
+	int hasNormalMapTexture{ 0 };
+	int hasDepthMapTexture{ 0 };
 
-	bool noLighing;
+	bool noLighing{ true };
 };

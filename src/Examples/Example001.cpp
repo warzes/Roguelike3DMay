@@ -1,39 +1,33 @@
 ﻿#include "stdafx.h"
 #include "Example001.h"
-
-//=============================================================================
-// Вывод треугольника на основную поверхность
-// - вершинный буфер из позиции и цвета
-// - индексный буфер
-// - создание GraphicsPipeline
 //=============================================================================
 namespace
 {
 	const char* shaderCodeVertex = R"(
 #version 460 core
 
-layout(location = 0) in vec2 aPosition;
-layout(location = 1) in vec3 aColor;
+layout(location = 0) in vec2 vertexPosition;
+layout(location = 1) in vec3 vertexColor;
 
-layout(location = 0) out vec3 vColor;
+out vec3 fragColor;
 
 void main()
 {
-	vColor = aColor;
-	gl_Position = vec4(aPosition.xy, 0.0, 1.0);
+	fragColor   = vertexColor;
+	gl_Position = vec4(vertexPosition.xy, 0.0, 1.0);
 }
 )";
 
 	const char* shaderCodeFragment = R"(
 #version 460 core
 
-layout(location = 0) in vec3 vColor;
+in vec3 fragColor;
 
-layout(location = 0) out vec4 fragColor;
+layout(location = 0) out vec4 outputColor;
 
 void main()
 {
-	fragColor = vec4(vColor, 1.0);
+	outputColor = vec4(fragColor, 1.0);
 }
 )";
 
@@ -42,8 +36,7 @@ void main()
 		glm::vec2 pos;
 		glm::vec3 color;
 	};
-
-	constexpr std::array<gl::VertexInputBindingDescription, 2> inputBindingDescs{
+	constexpr std::array<gl::VertexInputBindingDescription, 2> inputBindingDesc{
 		gl::VertexInputBindingDescription{
 			.location = 0,
 			.binding = 0,
@@ -57,53 +50,51 @@ void main()
 			.offset = offsetof(Vertex, color),
 		},
 	};
-
-	std::optional<gl::Buffer> vertexBuffer;
-	std::optional<gl::Buffer> indexBuffer;
-	std::optional<gl::GraphicsPipeline> pipeline;
-
-	gl::GraphicsPipeline CreatePipeline()
-	{
-		auto vertexShader = gl::Shader(gl::ShaderType::VertexShader, shaderCodeVertex, "Triangle VS");
-		auto fragmentShader = gl::Shader(gl::ShaderType::FragmentShader, shaderCodeFragment, "Triangle FS");
-
-		return gl::GraphicsPipeline({
-			 .name = "Triangle Pipeline",
-			.vertexShader = &vertexShader,
-			.fragmentShader = &fragmentShader,
-			.inputAssemblyState = {.topology = gl::PrimitiveTopology::TriangleList},
-			.vertexInputState = {inputBindingDescs},
-			});
-	}
 }
 //=============================================================================
 EngineCreateInfo Example001::GetCreateInfo() const
 {
-	return {};
+	EngineCreateInfo createInfo{};
+	return createInfo;
 }
 //=============================================================================
 bool Example001::OnInit()
 {
+	//-------------------------------------------------------------------------
+	// create vertex buffer
 	std::vector<Vertex> v = {
 		{{  0.0f,  0.4f}, {1, 0, 0}},
 		{{ -1.0f, -1.0f}, {0, 1, 0}},
 		{{  1.0f, -1.0f}, {0, 0, 1}},
 	};
-	vertexBuffer = gl::Buffer(v);
+	m_vertexBuffer = gl::Buffer(v);
 
+	//-------------------------------------------------------------------------
+	// create index buffer
 	std::vector<unsigned> ind = { 0, 1, 2 };
-	indexBuffer = gl::Buffer(ind);
+	m_indexBuffer = gl::Buffer(ind);
 
-	pipeline = CreatePipeline();
+	//-------------------------------------------------------------------------
+	// create pipeline
+	auto vertexShader   = gl::Shader(gl::ShaderType::VertexShader, shaderCodeVertex, "Triangle VS");
+	auto fragmentShader = gl::Shader(gl::ShaderType::FragmentShader, shaderCodeFragment, "Triangle FS");
+
+	m_pipeline = gl::GraphicsPipeline({ 
+		.name               = "Triangle Pipeline",
+		.vertexShader       = &vertexShader,
+		.fragmentShader     = &fragmentShader,
+		.inputAssemblyState = {.topology = gl::PrimitiveTopology::TriangleList },
+		.vertexInputState   = { inputBindingDesc },
+	});
 
 	return true;
 }
 //=============================================================================
 void Example001::OnClose()
 {
-	vertexBuffer = {};
-	indexBuffer = {};
-	pipeline = {};
+	m_vertexBuffer = {};
+	m_indexBuffer = {};
+	m_pipeline = {};
 }
 //=============================================================================
 void Example001::OnUpdate([[maybe_unused]] float deltaTime)
@@ -112,18 +103,18 @@ void Example001::OnUpdate([[maybe_unused]] float deltaTime)
 //=============================================================================
 void Example001::OnRender()
 {
-	const gl::SwapChainRenderInfo renderInfo
-	{
+	const gl::SwapChainRenderInfo renderInfo {
 		.name = "Render Triangle",
 		.viewport = {.drawRect{.offset = {0, 0}, .extent = {GetWindowWidth(), GetWindowHeight()}}},
 		.colorLoadOp = gl::AttachmentLoadOp::Clear,
-		.clearColorValue = {.1f, .5f, .8f, 1.0f},
+		.clearColorValue = {0.1f, 0.5f, 0.8f, 1.0f},
 	};
+
 	gl::BeginSwapChainRendering(renderInfo);
 	{
-		gl::Cmd::BindGraphicsPipeline(pipeline.value());
-		gl::Cmd::BindVertexBuffer(0, vertexBuffer.value(), 0, sizeof(Vertex));
-		gl::Cmd::BindIndexBuffer(indexBuffer.value(), gl::IndexType::UInt);
+		gl::Cmd::BindGraphicsPipeline(*m_pipeline);
+		gl::Cmd::BindVertexBuffer(0, *m_vertexBuffer, 0, sizeof(Vertex));
+		gl::Cmd::BindIndexBuffer(*m_indexBuffer, gl::IndexType::UInt);
 		gl::Cmd::DrawIndexed(3, 1, 0, 0, 0);
 	}
 	gl::EndRendering();

@@ -104,12 +104,13 @@ namespace gl
 
 	struct GraphicsPipelineInfo final
 	{
-		std::string_view name{};
+		std::string_view   name{};
 
-		const Shader* vertexShader{ nullptr };
-		const Shader* fragmentShader{ nullptr };
-		const Shader* tessellationControlShader{ nullptr };
-		const Shader* tessellationEvaluationShader{ nullptr };
+		const Shader*      vertexShader{ nullptr };
+		const Shader*      geometryShader{ nullptr };
+		const Shader*      fragmentShader{ nullptr };
+		const Shader*      tessellationControlShader{ nullptr };
+		const Shader*      tessellationEvaluationShader{ nullptr };
 
 		InputAssemblyState inputAssemblyState = {};
 		VertexInputState   vertexInputState = {};

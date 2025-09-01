@@ -1,43 +1,39 @@
 ﻿#include "stdafx.h"
 #include "Example002.h"
 //=============================================================================
-// Вывод прямоугольника с текстурой на основную поверхность
-// - текстура
-// - семплер
-//=============================================================================
 namespace
 {
 	const char* shaderCodeVertex = R"(
 #version 460 core
 
-layout(location = 0) in vec3 aPosition;
-layout(location = 1) in vec3 aColor;
-layout(location = 2) in vec2 aTexCoord;
+layout(location = 0) in vec3 vertexPosition;
+layout(location = 1) in vec3 vertexColor;
+layout(location = 2) in vec2 vertexTexCoord;
 
-layout(location = 0) out vec3 vColor;
-layout(location = 1) out vec2 vTexCoord;
+layout(location = 0) out vec3 fragColor;
+layout(location = 1) out vec2 fragTexCoord;
 
 void main()
 {
-	vColor = aColor;
-	vTexCoord = aTexCoord;
-	gl_Position = vec4(aPosition, 1.0);
+	fragColor    = vertexColor;
+	fragTexCoord = vertexTexCoord;
+	gl_Position  = vec4(vertexPosition, 1.0);
 }
 )";
 
 	const char* shaderCodeFragment = R"(
 #version 460 core
 
-layout(location = 0) in vec3 vColor;
-layout(location = 1) in vec2 vTexCoord;
+layout(location = 0) in vec3 fragColor;
+layout(location = 1) in vec2 fragTexCoord;
 
 layout(binding = 0) uniform sampler2D diffuseTex;
 
-layout(location = 0) out vec4 fragColor;
+layout(location = 0) out vec4 outputColor;
 
 void main()
 {
-	fragColor = texture(diffuseTex, vTexCoord) * vec4(vColor, 1.0);
+	outputColor = texture(diffuseTex, fragTexCoord) * vec4(fragColor, 1.0);
 }
 )";
 

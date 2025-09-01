@@ -31,13 +31,14 @@ public:
 	void Bind(std::optional<gl::Sampler> sampler);
 
 	PhongMaterial* GetMaterial() { return m_material; }
+	PhongMaterial* GetMaterial() const { return m_material; }
 
 private:
 	uint32_t       m_vertexCount{ 0 };
 	uint32_t       m_indicesCount{ 0 };
 
-	gl::Buffer* m_vertexBuffer{ nullptr };
-	gl::Buffer* m_indexBuffer{ nullptr };
+	gl::Buffer*    m_vertexBuffer{ nullptr };
+	gl::Buffer*    m_indexBuffer{ nullptr };
 	PhongMaterial* m_material{ nullptr };
-	AABB        m_aabb{};
+	AABB           m_aabb{};
 };

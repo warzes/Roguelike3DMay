@@ -37,6 +37,12 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Examples", "Examples\Exampl
 		{9A6B816F-E018-4EF9-81AB-788F27B2DA96} = {9A6B816F-E018-4EF9-81AB-788F27B2DA96}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ModernRender", "ModernRender\ModernRender.vcxproj", "{42B84D75-24AD-424C-84C5-D8EB0E974A29}"
+	ProjectSection(ProjectDependencies) = postProject
+		{349C7579-70E5-4769-93F8-1CF63C9358DE} = {349C7579-70E5-4769-93F8-1CF63C9358DE}
+		{9A6B816F-E018-4EF9-81AB-788F27B2DA96} = {9A6B816F-E018-4EF9-81AB-788F27B2DA96}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -63,6 +69,10 @@ Global
 		{2DCCDFE7-0CB5-470D-A55D-0CFE2E71AEF3}.Debug|x64.Build.0 = Debug|x64
 		{2DCCDFE7-0CB5-470D-A55D-0CFE2E71AEF3}.Release|x64.ActiveCfg = Release|x64
 		{2DCCDFE7-0CB5-470D-A55D-0CFE2E71AEF3}.Release|x64.Build.0 = Release|x64
+		{42B84D75-24AD-424C-84C5-D8EB0E974A29}.Debug|x64.ActiveCfg = Debug|x64
+		{42B84D75-24AD-424C-84C5-D8EB0E974A29}.Debug|x64.Build.0 = Debug|x64
+		{42B84D75-24AD-424C-84C5-D8EB0E974A29}.Release|x64.ActiveCfg = Release|x64
+		{42B84D75-24AD-424C-84C5-D8EB0E974A29}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

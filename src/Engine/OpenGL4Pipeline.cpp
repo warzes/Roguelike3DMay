@@ -143,6 +143,10 @@ gl::GraphicsPipeline::GraphicsPipeline(const GraphicsPipelineInfo& info)
 	if (!program) return;
 
 	glAttachShader(program, info.vertexShader->Handle());
+
+	if (info.geometryShader)
+		glAttachShader(program, info.geometryShader->Handle());
+
 	if (info.fragmentShader)
 		glAttachShader(program, info.fragmentShader->Handle());
 
