@@ -1,40 +1,10 @@
 ﻿#include "stdafx.h"
 #include "Demo001.h"
 //=============================================================================
-namespace
-{
-#include "DemoShader.h"
-		
-	gl::GraphicsPipeline CreatePipeline()
-	{
-		auto vertexShader = gl::Shader(gl::ShaderType::VertexShader, shaderCodeVertex, "VS");
-		auto fragmentShader = gl::Shader(gl::ShaderType::FragmentShader, shaderCodeFragment, "FS");
-
-		gl::ColorBlendState blendState;
-		blendState.attachments.push_back({});
-		blendState.attachments[0].blendEnable = true;
-		blendState.attachments[0].srcColorBlendFactor = gl::BlendFactor::SrcAlpha;
-		blendState.attachments[0].dstColorBlendFactor = gl::BlendFactor::OneMinusSrcAlpha;
-		blendState.attachments[0].colorBlendOp = gl::BlendOp::Add;
-		blendState.attachments[0].srcAlphaBlendFactor = gl::BlendFactor::SrcAlpha;
-		blendState.attachments[0].dstAlphaBlendFactor = gl::BlendFactor::OneMinusSrcAlpha;
-		blendState.attachments[0].alphaBlendOp = gl::BlendOp::Add;
-
-		return gl::GraphicsPipeline({
-			 .name = "Pipeline",
-			.vertexShader = &vertexShader,
-			.fragmentShader = &fragmentShader,
-			.inputAssemblyState = {.topology = gl::PrimitiveTopology::TriangleList },
-			.vertexInputState = { MeshVertexInputBindingDesc },
-			.depthState = {.depthTestEnable = true },
-			.colorBlendState = blendState
-			});
-	}
-}
-//=============================================================================
 EngineCreateInfo Demo001::GetCreateInfo() const
 {
-	return {};
+	EngineCreateInfo createInfo{};
+	return createInfo;
 }
 //=============================================================================
 bool Demo001::OnInit()
@@ -55,8 +25,6 @@ bool Demo001::OnInit()
 	SceneDataUBO.Init();
 	ModelDataUBO.Init();
 
-	m_pipeline = CreatePipeline();
-
 	m_texture1 = TextureManager::GetTexture("ExampleData/textures/metal.png");
 	m_texture2 = TextureManager::GetTexture("ExampleData/textures/marble.jpg");
 
@@ -70,7 +38,6 @@ bool Demo001::OnInit()
 	m_camera.SetPosition(glm::vec3(0.0f, 1.4f, -6.0f));
 	m_camera.MovementSpeed = 20.0f;
 
-	m_renderPass.SetName("FBOColor", "FBODepth");
 	OnResize(GetWindowWidth(), GetWindowHeight());
 
 	return true;
@@ -79,7 +46,6 @@ bool Demo001::OnInit()
 void Demo001::OnClose()
 {
 	m_renderPassManager.Close();
-	m_renderPass.Close();
 	m_sceneManager.Close();
 	m_box.Free();
 	m_plane.Free();
@@ -87,7 +53,6 @@ void Demo001::OnClose()
 	m_house.Free();
 	SceneDataUBO.Close();
 	ModelDataUBO.Close();
-	m_pipeline = {};
 	m_sampler = {};
 	m_texture1 = nullptr;
 	m_texture2 = nullptr;
@@ -118,17 +83,18 @@ void Demo001::OnRender()
 {
 	m_renderPassManager.shadowMapPass.Begin();
 	{
-		sceneDraw();
+		//sceneDraw();
 	}
 	m_renderPassManager.shadowMapPass.End();
 
-	m_renderPass.Begin({ 0.1f, 0.5f, 0.8f });
+	m_renderPassManager.tempPass.Begin({ 0.1f, 0.5f, 0.8f });
 	{
+		SceneDataUBO.Bind(0);
 		sceneDraw();
 	}
-	m_renderPass.End();
+	m_renderPassManager.tempPass.End();
 
-	m_renderPass.BlitToSwapChain();
+	m_renderPassManager.Final();
 }
 //=============================================================================
 void Demo001::OnImGuiDraw()
@@ -138,7 +104,7 @@ void Demo001::OnImGuiDraw()
 //=============================================================================
 void Demo001::OnResize(uint16_t width, uint16_t height)
 {
-	m_renderPass.SetSize(width, height);
+	m_renderPassManager.Resize(width, height);
 }
 //=============================================================================
 void Demo001::OnMouseButton([[maybe_unused]] int button, [[maybe_unused]] int action, [[maybe_unused]] int mods)
@@ -159,9 +125,6 @@ void Demo001::OnKey([[maybe_unused]] int key, [[maybe_unused]] int scanCode, [[m
 //=============================================================================
 void Demo001::sceneDraw()
 {
-	gl::Cmd::BindGraphicsPipeline(*m_pipeline);
-	SceneDataUBO.Bind(0);
-
 	// плоскость
 	{
 		ModelDataUBO->modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));

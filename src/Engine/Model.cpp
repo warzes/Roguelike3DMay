@@ -14,7 +14,7 @@
                            aiProcess_FindDegenerates |          \
                            aiProcess_FindInvalidData |          \
                            aiProcess_GenUVCoords |              \
-                           /*aiProcess_FlipUVs |*/              \
+                           aiProcess_FlipUVs |                  \
                            aiProcess_MakeLeftHanded |           \
                            aiProcess_CalcTangentSpace |         \
                            aiProcess_SortByPType)

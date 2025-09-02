@@ -10,7 +10,11 @@ public:
 	bool Init();
 	void Close();
 
-	ShadowMapPass shadowMapPass;
+	void Resize(uint16_t width, uint16_t height);
+	void Final();
 
+
+
+	ShadowMapPass shadowMapPass;
 	TempPass tempPass;
 };

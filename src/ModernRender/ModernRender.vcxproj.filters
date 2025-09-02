@@ -71,9 +71,6 @@
     <ClInclude Include="MaterialManager.h">
       <Filter>Engine</Filter>
     </ClInclude>
-    <ClInclude Include="DemoShader.h">
-      <Filter>Shader</Filter>
-    </ClInclude>
     <ClInclude Include="RenderPassManager.h">
       <Filter>RenderPass</Filter>
     </ClInclude>

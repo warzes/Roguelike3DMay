@@ -18,3 +18,13 @@ void RenderPassManager::Close()
 	tempPass.Close();
 }
 //=============================================================================
+void RenderPassManager::Resize(uint16_t width, uint16_t height)
+{
+	tempPass.m_rt.SetSize(width, height);
+}
+//=============================================================================
+void RenderPassManager::Final()
+{
+	tempPass.m_rt.BlitToSwapChain();
+}
+//=============================================================================
