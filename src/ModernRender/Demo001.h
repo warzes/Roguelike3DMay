@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "SceneManager.h"
+#include "RenderPassManager.h"
 
 class Demo001 final : public IEngineApp
 {
@@ -25,6 +26,8 @@ public:
 	void OnKey(int key, int scanCode, int action, int mods) final;
 
 private:
+	void sceneDraw();
 	SceneManager m_sceneManager;
 	RenderTarget m_renderPass;
+	RenderPassManager m_renderPassManager;
 };

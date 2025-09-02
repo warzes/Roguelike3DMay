@@ -134,6 +134,8 @@ bool Demo001::OnInit()
 {
 	if (!m_sceneManager.Init())
 		return false;
+	if (!m_renderPassManager.Init())
+		return false;
 
 	box.Create(GeometryGenerator::CreateBox());
 	plane.Create(GeometryGenerator::CreatePlane(100.0f, 100.0f, 100.0f, 100.0f));
@@ -218,6 +220,7 @@ bool Demo001::OnInit()
 //=============================================================================
 void Demo001::OnClose()
 {
+	m_renderPassManager.Close();
 	m_renderPass.Close();
 	m_sceneManager.Close();
 	box.Free();
@@ -317,74 +320,15 @@ void Demo001::OnUpdate([[maybe_unused]] float deltaTime)
 //=============================================================================
 void Demo001::OnRender()
 {
+	m_renderPassManager.shadowMapPass.Begin();
+	{
+		sceneDraw();
+	}
+	m_renderPassManager.shadowMapPass.End();
+
 	m_renderPass.Begin({ 0.1f, 0.5f, 0.8f });
 	{
-		gl::Cmd::BindGraphicsPipeline(pipeline.value());
-		gl::Cmd::BindUniformBuffer(0, sceneBlockUBO.value());
-		gl::Cmd::BindUniformBuffer(2, lightSceneBlockUBO.value());
-		gl::Cmd::BindUniformBuffer(3, pointLightsBlockUBO.value());
-
-		// плоскость
-		{
-			modelMatricesBlock.modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-			modelMatricesBlockUBO->UpdateData(modelMatricesBlock);
-			gl::Cmd::BindUniformBuffer(1, modelMatricesBlockUBO.value());
-
-			gl::Cmd::BindSampledImage(0, *texture1, sampler.value());
-			plane.Draw(std::nullopt);
-		}
-
-		// куб из модели
-		{
-			modelMatricesBlock.modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(-2.0f, 1.0f, 0.0f));
-			modelMatricesBlockUBO->UpdateData(modelMatricesBlock);
-			gl::Cmd::BindUniformBuffer(1, modelMatricesBlockUBO.value());
-
-			gl::Cmd::BindSampledImage(0, texture2.value(), sampler.value());
-			boxObj.Draw(std::nullopt);
-		}
-
-		// куб
-		{
-			modelMatricesBlock.modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(2.0f, 1.0f, 0.0f));
-			modelMatricesBlockUBO->UpdateData(modelMatricesBlock);
-			gl::Cmd::BindUniformBuffer(1, modelMatricesBlockUBO.value());
-
-			gl::Cmd::BindSampledImage(0, texture2.value(), sampler.value());
-			box.Draw(std::nullopt);
-		}
-
-		// Сфера
-		{
-			modelMatricesBlock.modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 5.0f, 0.0f));
-
-			modelMatricesBlockUBO->UpdateData(modelMatricesBlock);
-			gl::Cmd::BindUniformBuffer(1, modelMatricesBlockUBO.value());
-
-			gl::Cmd::BindSampledImage(0, texture2.value(), sampler.value());
-			sphere.Draw(std::nullopt);
-		}
-
-		// Дом
-		{
-			std::vector<glm::vec3> housePositions
-			{
-				glm::vec3(0.0f, 0.0f, -10.0f),
-				glm::vec3(-20.0f, 0.0f, 0.0f),
-				glm::vec3(0.0f, 0.0f, 10.0f),
-				glm::vec3(20.0f, 0.0f, 0.0f),
-				glm::vec3(5.0f, 0.0f, 0.0f),
-			};
-			for (const auto& housePosition : housePositions)
-			{
-				modelMatricesBlock.modelMatrix = glm::translate(glm::mat4(1.0f), housePosition);
-
-				modelMatricesBlockUBO->UpdateData(modelMatricesBlock);
-				gl::Cmd::BindUniformBuffer(1, modelMatricesBlockUBO.value());
-
-				house.Draw(sampler);
-			}
-		}
+		sceneDraw();
 	}
 	m_renderPass.End();
 
@@ -415,5 +359,75 @@ void Demo001::OnScroll([[maybe_unused]] double dx, [[maybe_unused]] double dy)
 //=============================================================================
 void Demo001::OnKey([[maybe_unused]] int key, [[maybe_unused]] int scanCode, [[maybe_unused]] int action, [[maybe_unused]] int mods)
 {
+}
+//=============================================================================
+void Demo001::sceneDraw()
+{
+	gl::Cmd::BindGraphicsPipeline(pipeline.value());
+	gl::Cmd::BindUniformBuffer(0, sceneBlockUBO.value());
+	gl::Cmd::BindUniformBuffer(2, lightSceneBlockUBO.value());
+	gl::Cmd::BindUniformBuffer(3, pointLightsBlockUBO.value());
+
+	// плоскость
+	{
+		modelMatricesBlock.modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+		modelMatricesBlockUBO->UpdateData(modelMatricesBlock);
+		gl::Cmd::BindUniformBuffer(1, modelMatricesBlockUBO.value());
+
+		gl::Cmd::BindSampledImage(0, *texture1, sampler.value());
+		plane.Draw(std::nullopt);
+	}
+
+	// куб из модели
+	{
+		modelMatricesBlock.modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(-2.0f, 1.0f, 0.0f));
+		modelMatricesBlockUBO->UpdateData(modelMatricesBlock);
+		gl::Cmd::BindUniformBuffer(1, modelMatricesBlockUBO.value());
+
+		gl::Cmd::BindSampledImage(0, texture2.value(), sampler.value());
+		boxObj.Draw(std::nullopt);
+	}
+
+	// куб
+	{
+		modelMatricesBlock.modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(2.0f, 1.0f, 0.0f));
+		modelMatricesBlockUBO->UpdateData(modelMatricesBlock);
+		gl::Cmd::BindUniformBuffer(1, modelMatricesBlockUBO.value());
+
+		gl::Cmd::BindSampledImage(0, texture2.value(), sampler.value());
+		box.Draw(std::nullopt);
+	}
+
+	// Сфера
+	{
+		modelMatricesBlock.modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 5.0f, 0.0f));
+
+		modelMatricesBlockUBO->UpdateData(modelMatricesBlock);
+		gl::Cmd::BindUniformBuffer(1, modelMatricesBlockUBO.value());
+
+		gl::Cmd::BindSampledImage(0, texture2.value(), sampler.value());
+		sphere.Draw(std::nullopt);
+	}
+
+	// Дом
+	{
+		std::vector<glm::vec3> housePositions
+		{
+			glm::vec3(0.0f, 0.0f, -10.0f),
+			glm::vec3(-20.0f, 0.0f, 0.0f),
+			glm::vec3(0.0f, 0.0f, 10.0f),
+			glm::vec3(20.0f, 0.0f, 0.0f),
+			glm::vec3(5.0f, 0.0f, 0.0f),
+		};
+		for (const auto& housePosition : housePositions)
+		{
+			modelMatricesBlock.modelMatrix = glm::translate(glm::mat4(1.0f), housePosition);
+
+			modelMatricesBlockUBO->UpdateData(modelMatricesBlock);
+			gl::Cmd::BindUniformBuffer(1, modelMatricesBlockUBO.value());
+
+			house.Draw(sampler);
+		}
+	}
 }
 //=============================================================================
