@@ -62,7 +62,12 @@
     <ClInclude Include="MaterialManager.h">
       <Filter>Engine</Filter>
     </ClInclude>
-    <ClInclude Include="DemoShader.h" />
+    <ClInclude Include="DemoShader.h">
+      <Filter>Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="DemoSwapChainShader.h">
+      <Filter>Shader</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Engine">
@@ -73,6 +78,9 @@
     </Filter>
     <Filter Include="RenderPass">
       <UniqueIdentifier>{1ae4ba1d-6ded-4bd8-b684-a42e41ac0528}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shader">
+      <UniqueIdentifier>{90589fae-194d-4d8a-989c-67ffc474f92b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

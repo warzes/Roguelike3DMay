@@ -3,7 +3,8 @@
 //=============================================================================
 namespace
 {
-#include "DemoShader.h"	
+#include "DemoShader.h"
+#include "DemoSwapChainShader.h"
 
 	struct alignas(16) SceneBlockUniform final
 	{
@@ -124,9 +125,25 @@ namespace
 			});
 	}
 
-	void resize([[maybe_unused]] uint16_t width, [[maybe_unused]] uint16_t height)
+	struct QuadVertex final
 	{
-	}
+		glm::vec3 pos;
+		glm::vec2 uv;
+	};
+	constexpr std::array<gl::VertexInputBindingDescription, 2> inputBindingDesc{
+		gl::VertexInputBindingDescription{
+			.location = 0,
+			.binding = 0,
+			.format = gl::Format::R32G32B32_FLOAT,
+			.offset = offsetof(QuadVertex, pos),
+		},
+		gl::VertexInputBindingDescription{
+			.location = 1,
+			.binding = 0,
+			.format = gl::Format::R32G32_FLOAT,
+			.offset = offsetof(QuadVertex, uv),
+		},
+	};
 }
 //=============================================================================
 EngineCreateInfo Demo001::GetCreateInfo() const
@@ -214,7 +231,35 @@ bool Demo001::OnInit()
 	camera.SetPosition(glm::vec3(0.0f, 1.4f, -6.0f));
 	camera.MovementSpeed = 20.0f;
 
-	resize(GetWindowWidth(), GetWindowHeight());
+	OnResize(GetWindowWidth(), GetWindowHeight());
+
+	//-------------------------------------------------------------------------
+	// create quad vertex buffer
+	std::vector<QuadVertex> v = {
+		{{ -0.98f,  0.98f, 0.0f}, {0.0f, 1.0f}},
+		{{ -0.98f, -0.98f, 0.0f}, {0.0f, 0.0f}},
+		{{  0.98f, -0.98f, 0.0f}, {1.0f, 0.0f}},
+		{{  0.98f,  0.98f, 0.0f}, {1.0f, 1.0f}},
+	};
+	m_quadvb = gl::Buffer(v);
+
+	//-------------------------------------------------------------------------
+	// create quad index buffer
+	std::vector<unsigned> ind = { 0, 1, 2, 2, 3, 0 };
+	m_quadib = gl::Buffer(ind);
+
+	//-------------------------------------------------------------------------
+	// create pipeline
+	auto vertexQuadShader = gl::Shader(gl::ShaderType::VertexShader, shaderQuadCodeVertex, "SwapChainVS");
+	auto fragmentQuadShader = gl::Shader(gl::ShaderType::FragmentShader, shaderQuadCodeFragment, "SwapChainFS");
+
+	m_swapChainPipeline = gl::GraphicsPipeline({
+		.name = "SwapChain Pipeline",
+		.vertexShader = &vertexQuadShader,
+		.fragmentShader = &fragmentQuadShader,
+		.inputAssemblyState = {.topology = gl::PrimitiveTopology::TriangleList},
+		.vertexInputState = {inputBindingDesc},
+		});
 
 	return true;
 }
@@ -235,6 +280,11 @@ void Demo001::OnClose()
 	sampler = {};
 	texture1 = {};
 	texture2 = {};
+	m_swapChainPipeline = {};
+	m_quadvb = {};
+	m_quadib = {};
+	m_fboColorTex = {};
+	m_fboDepthTex = {};
 }
 //=============================================================================
 void Demo001::OnUpdate([[maybe_unused]] float deltaTime)
@@ -319,16 +369,17 @@ void Demo001::OnUpdate([[maybe_unused]] float deltaTime)
 //=============================================================================
 void Demo001::OnRender()
 {
-	const gl::SwapChainRenderInfo renderInfo
-	{
-		.name = "Render Triangle",
-		.viewport = {.drawRect{.offset = {0, 0}, .extent = {GetWindowWidth(), GetWindowHeight()}}},
-		.colorLoadOp = gl::AttachmentLoadOp::Clear,
-		.clearColorValue = {.1f, .5f, .8f, 1.0f},
-		.depthLoadOp = gl::AttachmentLoadOp::Clear,
-		.clearDepthValue = 1.0f,
+	auto sceneColorAttachment = gl::RenderColorAttachment{
+		.texture = *m_fboColorTex,
+		.loadOp = gl::AttachmentLoadOp::Clear,
+		.clearValue = { 0.1f, 0.5f, 0.8f, 1.0f },
 	};
-	gl::BeginSwapChainRendering(renderInfo);
+	auto sceneDepthAttachment = gl::RenderDepthStencilAttachment{
+		.texture = *m_fboDepthTex,
+		.loadOp = gl::AttachmentLoadOp::Clear,
+		.clearValue = {.depth = 1.0f},
+	};
+	gl::BeginRendering({ .colorAttachments = {&sceneColorAttachment, 1}, .depthAttachment = sceneDepthAttachment });
 	{
 		gl::Cmd::BindGraphicsPipeline(pipeline.value());
 		gl::Cmd::BindUniformBuffer(0, sceneBlockUBO.value());
@@ -398,6 +449,23 @@ void Demo001::OnRender()
 		}
 	}
 	gl::EndRendering();
+
+	const gl::SwapChainRenderInfo renderInfo
+	{
+		.name = "SwapChain Pass",
+		.viewport = {.drawRect{.offset = {0, 0}, .extent = {GetWindowWidth(), GetWindowHeight()}}},
+		.colorLoadOp = gl::AttachmentLoadOp::Clear,
+		.clearColorValue = {0.0f, 0.0f, 0.0f, 1.0f},
+	};
+	gl::BeginSwapChainRendering(renderInfo);
+	{
+		gl::Cmd::BindGraphicsPipeline(*m_swapChainPipeline);
+		gl::Cmd::BindVertexBuffer(0, *m_quadvb, 0, sizeof(QuadVertex));
+		gl::Cmd::BindIndexBuffer(*m_quadib, gl::IndexType::UInt);
+		gl::Cmd::BindSampledImage(0, *m_fboColorTex, *sampler);
+		gl::Cmd::DrawIndexed(6, 1, 0, 0, 0);
+	}
+	gl::EndRendering();
 }
 //=============================================================================
 void Demo001::OnImGuiDraw()
@@ -407,7 +475,8 @@ void Demo001::OnImGuiDraw()
 //=============================================================================
 void Demo001::OnResize(uint16_t width, uint16_t height)
 {
-	resize(width, height);
+	m_fboColorTex = gl::CreateTexture2D({ width, height }, gl::Format::R8G8B8A8_SRGB, "fboColorBuffer");
+	m_fboDepthTex = gl::CreateTexture2D({ width, height }, gl::Format::D32_FLOAT, "fboDepthBuffer");
 }
 //=============================================================================
 void Demo001::OnMouseButton([[maybe_unused]] int button, [[maybe_unused]] int action, [[maybe_unused]] int mods)

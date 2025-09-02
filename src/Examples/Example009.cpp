@@ -282,7 +282,7 @@ void Example009::OnRender()
 
 	const gl::SwapChainRenderInfo renderInfo
 	{
-		.name = "SwapChain",
+		.name = "SwapChain Pass",
 		.viewport = {.drawRect{.offset = {0, 0}, .extent = {GetWindowWidth(), GetWindowHeight()}}},
 		.colorLoadOp = gl::AttachmentLoadOp::Clear,
 		.clearColorValue = { 0.1f, 0.5f, 0.8f, 1.0f },

@@ -26,4 +26,11 @@ public:
 
 private:
 	SceneManager m_sceneManager;
+
+	std::optional<gl::Texture>          m_fboColorTex;
+	std::optional<gl::Texture>          m_fboDepthTex;
+
+	std::optional<gl::Buffer>           m_quadvb;
+	std::optional<gl::Buffer>           m_quadib;
+	std::optional<gl::GraphicsPipeline> m_swapChainPipeline;
 };
