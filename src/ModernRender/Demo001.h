@@ -27,8 +27,7 @@ public:
 private:
 	SceneManager m_sceneManager;
 
-	std::optional<gl::Texture>          m_fboColorTex;
-	std::optional<gl::Texture>          m_fboDepthTex;
+	RenderPass                          m_renderPass;
 
 	std::optional<gl::Buffer>           m_quadvb;
 	std::optional<gl::Buffer>           m_quadib;

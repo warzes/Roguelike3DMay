@@ -89,6 +89,9 @@
     <ClCompile Include="GeometryGenerator.cpp">
       <Filter>05_Render</Filter>
     </ClCompile>
+    <ClCompile Include="RenderPass.cpp">
+      <Filter>05_Render</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -217,6 +220,9 @@
       <Filter>05_Render</Filter>
     </ClInclude>
     <ClInclude Include="GeometryGenerator.h">
+      <Filter>05_Render</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderPass.h">
       <Filter>05_Render</Filter>
     </ClInclude>
   </ItemGroup>
