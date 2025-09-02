@@ -3,6 +3,9 @@
 //=============================================================================
 bool RenderPassManager::Init()
 {
+	if (!tempPass.Init())
+		return false;
+
 	if (!shadowMapPass.Init())
 		return false;
 
@@ -12,5 +15,6 @@ bool RenderPassManager::Init()
 void RenderPassManager::Close()
 {
 	shadowMapPass.Close();
+	tempPass.Close();
 }
 //=============================================================================

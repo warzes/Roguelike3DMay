@@ -110,6 +110,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="TempPass.cpp" />
     <ClCompile Include="WeatherSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -126,6 +127,8 @@
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="ShadowMapPass.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="TempPass.h" />
+    <ClInclude Include="Uniforms.h" />
     <ClInclude Include="WeatherSystem.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

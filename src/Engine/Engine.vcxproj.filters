@@ -225,6 +225,9 @@
     <ClInclude Include="RenderTarget.h">
       <Filter>05_Render</Filter>
     </ClInclude>
+    <ClInclude Include="UniformsWrapper.h">
+      <Filter>05_Render</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="01_Base">

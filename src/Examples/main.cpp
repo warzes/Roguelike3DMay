@@ -30,9 +30,9 @@ int main(
 	//Example006 game;
 	//Example007 game;
 	//Example008 game;
-	Example009 game;
+	//Example009 game;
 
-	//Demo001 game;
+	Demo001 game;
 
 	//TestXXX game;
 

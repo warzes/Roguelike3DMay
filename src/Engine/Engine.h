@@ -37,6 +37,7 @@
 #include "Model.h"
 #include "GeometryGenerator.h"
 #include "RenderTarget.h"
+#include "UniformsWrapper.h"
 
 // Graphics
 

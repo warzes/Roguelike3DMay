@@ -12,7 +12,7 @@ public:
 	static gl::Texture* GetDefaultNormal2D();
 	static gl::Texture* GetDefaultSpecular2D();
 
-	static gl::Texture* GetTexture(const std::string& name, bool flipVertical = true);
+	static gl::Texture* GetTexture(const std::string& name, bool flipVertical = false);
 
 private:
 	static inline std::unordered_map<std::string, gl::Texture*> m_texturesMap;

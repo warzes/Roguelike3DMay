@@ -27,7 +27,19 @@ public:
 
 private:
 	void sceneDraw();
-	SceneManager m_sceneManager;
-	RenderTarget m_renderPass;
+	SceneManager      m_sceneManager;
+	RenderTarget      m_renderPass;
 	RenderPassManager m_renderPassManager;
+
+	Camera            m_camera;
+
+	Model             m_plane;
+	Model             m_box;
+	Model             m_sphere;
+	Model             m_house;
+
+	std::optional<gl::GraphicsPipeline> m_pipeline;
+	gl::Texture* m_texture1;
+	gl::Texture* m_texture2;
+	std::optional<gl::Sampler> m_sampler;
 };
