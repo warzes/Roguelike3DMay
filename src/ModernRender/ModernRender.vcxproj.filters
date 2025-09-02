@@ -71,5 +71,8 @@
     <Filter Include="Engine\Object">
       <UniqueIdentifier>{4a9c76ad-820b-4cbf-afdb-71361b0bc60c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="RenderPass">
+      <UniqueIdentifier>{1ae4ba1d-6ded-4bd8-b684-a42e41ac0528}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>

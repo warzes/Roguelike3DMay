@@ -7,6 +7,7 @@
 #include "Example006.h"
 #include "Example007.h"
 #include "Example008.h"
+#include "Example009.h"
 
 #include "Demo001.h"
 
@@ -28,8 +29,8 @@ int main(
 	//Example005 game;
 	//Example006 game;
 	//Example007 game;
-	Example008 game;
-
+	//Example008 game;
+	Example009 game;
 
 	//Demo001 game;
 
