@@ -41,7 +41,33 @@ std::string io::GetFileDirectory(const std::string& filePath)
 std::string io::LoadFile(const std::filesystem::path& path)
 {
 	std::ifstream file{ path };
-	return { std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>() };
+	if (!file)
+	{
+		Error("Fail to open file: " + path.string());
+		return {};
+	}
+
+	file.seekg(0, std::ios::end);
+	auto size = file.tellg();
+	if (size < 0)
+	{
+		Error("Cannot determine file size: " + path.string());
+		return {};
+	}
+
+	file.seekg(0, std::ios::beg);
+
+	std::string content;
+	content.resize(static_cast<size_t>(size));
+	file.read(content.data(), size);
+
+	if (content.empty())
+	{
+		Error("Error reading file: " + path.string());
+		return {};
+	}
+
+	return content;
 }
 //=============================================================================
 std::pair<std::unique_ptr<std::byte[]>, std::size_t> io::LoadBinaryFile(const std::filesystem::path& path)
@@ -49,6 +75,11 @@ std::pair<std::unique_ptr<std::byte[]>, std::size_t> io::LoadBinaryFile(const st
 	std::size_t fileSize = std::filesystem::file_size(path);
 	auto memory = std::make_unique<std::byte[]>(fileSize);
 	std::ifstream file{ path, std::ifstream::binary };
+	if (!file)
+	{
+		Error("Fail to open file: " + path.string());
+		return {};
+	}
 	std::copy(std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>(), reinterpret_cast<char*>(memory.get()));
 	return { std::move(memory), fileSize };
 }

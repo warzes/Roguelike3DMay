@@ -13,6 +13,27 @@
     <ClCompile Include="FreeController.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
+    <ClCompile Include="GameObject.cpp">
+      <Filter>Engine\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="GameLight.cpp">
+      <Filter>Engine\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="GameCamera.cpp">
+      <Filter>Engine\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="GameMeshObject.cpp">
+      <Filter>Engine\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="LightManager.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Material.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="MaterialManager.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Demo001.h" />
@@ -26,10 +47,34 @@
     <ClInclude Include="FreeController.h">
       <Filter>Engine</Filter>
     </ClInclude>
+    <ClInclude Include="GameObject.h">
+      <Filter>Engine\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="GameLight.h">
+      <Filter>Engine\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="GameCamera.h">
+      <Filter>Engine\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="GameMeshObject.h">
+      <Filter>Engine\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="LightManager.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Material.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="MaterialManager.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Engine">
       <UniqueIdentifier>{116ba487-8215-43ff-b9ce-f5b7bf6c2767}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Object">
+      <UniqueIdentifier>{4a9c76ad-820b-4cbf-afdb-71361b0bc60c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

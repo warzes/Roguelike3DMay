@@ -96,7 +96,14 @@
   <ItemGroup>
     <ClCompile Include="Demo001.cpp" />
     <ClCompile Include="FreeController.cpp" />
+    <ClCompile Include="GameCamera.cpp" />
+    <ClCompile Include="GameLight.cpp" />
+    <ClCompile Include="GameMeshObject.cpp" />
+    <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="LightManager.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Material.cpp" />
+    <ClCompile Include="MaterialManager.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -107,6 +114,13 @@
   <ItemGroup>
     <ClInclude Include="Demo001.h" />
     <ClInclude Include="FreeController.h" />
+    <ClInclude Include="GameCamera.h" />
+    <ClInclude Include="GameLight.h" />
+    <ClInclude Include="GameMeshObject.h" />
+    <ClInclude Include="GameObject.h" />
+    <ClInclude Include="LightManager.h" />
+    <ClInclude Include="Material.h" />
+    <ClInclude Include="MaterialManager.h" />
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="WeatherSystem.h" />

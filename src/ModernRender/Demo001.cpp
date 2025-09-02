@@ -333,8 +333,6 @@ EngineCreateInfo Demo001::GetCreateInfo() const
 //=============================================================================
 bool Demo001::OnInit()
 {
-	if (!m_weatherSystem.Init())
-		return false;
 	if (!m_sceneManager.Init())
 		return false;
 
@@ -421,7 +419,6 @@ bool Demo001::OnInit()
 void Demo001::OnClose()
 {
 	m_sceneManager.Close();
-	m_weatherSystem.Close();
 	box.Free();
 	plane.Free();
 	sphere.Free();
