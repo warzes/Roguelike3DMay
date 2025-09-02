@@ -1,13 +1,5 @@
 ﻿#include "stdafx.h"
 #include "Demo001.h"
-
-//https://github.com/e-hat/efgl/blob/main/efgl/shaders/phong.glsl
-//https://www.youtube.com/watch?v=Ey8fagfIm5o
-//https://developer.nvidia.com/ue4-sun-temple
-//https://github.com/NVIDIA-RTX/Donut
-//https://sibras.github.io/OpenGL4-Tutorials/docs/Tutorials/02-Tutorial2/
-//http://www.3dcpptutorials.sk/index.php?id=14
-
 //=============================================================================
 // 
 //=============================================================================

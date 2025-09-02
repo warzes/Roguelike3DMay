@@ -176,7 +176,6 @@ Mesh* Model::processMesh(const aiScene* scene, struct aiMesh* mesh, std::string_
 	}
 
 	// Process material
-	if (mesh->mMaterialIndex >= 0)
 	{
 		// TODO: по одной текстуре грузится, а тут есть возможность нескольих текстур
 		meshMaterial = new PhongMaterial();

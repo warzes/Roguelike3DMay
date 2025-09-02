@@ -5,22 +5,70 @@
 //=============================================================================
 bool TextureManager::Init()
 {
+	// Create default texture
+	{
+		constexpr size_t SizeTexture = 32u;
+		uint8_t data[SizeTexture][SizeTexture][3];
+		for (size_t i = 0; i < SizeTexture; i++)
+		{
+			for (size_t j = 0; j < SizeTexture; j++)
+			{
+				if ((i + j) % 2 == 0)
+				{
+					data[i][j][0] = 255;
+					data[i][j][1] = 0;
+					data[i][j][2] = 100;
+				}
+				else
+				{
+					data[i][j][0] = 100;
+					data[i][j][1] = 0;
+					data[i][j][2] = 255;
+				}
+			}
+		}
+
+		const gl::TextureCreateInfo createInfo{
+			.imageType   = gl::ImageType::Tex2D,
+			.format      = gl::Format::R8G8B8_UNORM,
+			.extent      = {SizeTexture, SizeTexture, 1u},
+			.mipLevels   = 1u,
+			.arrayLayers = 1u,
+			.sampleCount = gl::SampleCount::Samples1,
+		};
+		m_default2D = new gl::Texture(createInfo, "DefaultTexture2D");
+		m_default2D->UpdateImage({
+			.extent = createInfo.extent,
+			.format = gl::UploadFormat::RGB,
+			.type   = gl::UploadType::UBYTE,
+			.pixels = data,
+		});
+	}
+
 	return true;
 }
 //=============================================================================
 void TextureManager::Close()
 {
-	for (auto& it : m_textures)
+	delete m_default2D;
+	m_default2D = nullptr;
+
+	for (auto& it : m_texturesMap)
 	{
 		delete it.second;
 	}
-	m_textures.clear();
+	m_texturesMap.clear();
+}
+//=============================================================================
+gl::Texture* TextureManager::GetDefaultTexture2D()
+{
+	return m_default2D;
 }
 //=============================================================================
 gl::Texture* TextureManager::GetTexture(const std::string& name, bool flipVertical)
 {
-	auto it = m_textures.find(name);
-	if (it != m_textures.end())
+	auto it = m_texturesMap.find(name);
+	if (it != m_texturesMap.end())
 	{
 		return it->second;
 	}
@@ -30,7 +78,7 @@ gl::Texture* TextureManager::GetTexture(const std::string& name, bool flipVertic
 		if (hasTex == false)
 		{
 			Error("Failed to load texture " + name);
-			return nullptr;
+			return GetDefaultTexture2D();
 		}
 
 		stbi_set_flip_vertically_on_load(flipVertical);
@@ -40,7 +88,7 @@ gl::Texture* TextureManager::GetTexture(const std::string& name, bool flipVertic
 		if (!pixels || nrChannels < 1 || nrChannels > 4 || imgW < 0 || imgH < 0)
 		{
 			Error("Failed to load texture " + name);
-			return nullptr;
+			return GetDefaultTexture2D();
 		}
 		gl::Format imgFormat{ gl::Format::R8G8B8_UNORM };
 		if (nrChannels == 1)      imgFormat = gl::Format::R8_UNORM;
@@ -49,15 +97,15 @@ gl::Texture* TextureManager::GetTexture(const std::string& name, bool flipVertic
 		else if (nrChannels == 4) imgFormat = gl::Format::R8G8B8A8_UNORM;
 
 		const gl::TextureCreateInfo createInfo{
-		  .imageType   = gl::ImageType::Tex2D,
-		  .format      = imgFormat,
-		  .extent      = {static_cast<uint32_t>(imgW), static_cast<uint32_t>(imgH), 1},
-		  .mipLevels   = 1,
-		  .arrayLayers = 1,
-		  .sampleCount = gl::SampleCount::Samples1,
+			.imageType   = gl::ImageType::Tex2D,
+			.format      = imgFormat,
+			.extent      = {static_cast<uint32_t>(imgW), static_cast<uint32_t>(imgH), 1},
+			.mipLevels   = 1u,
+			.arrayLayers = 1u,
+			.sampleCount = gl::SampleCount::Samples1,
 		};
-		m_textures[name] = new gl::Texture(createInfo, name);
-		gl::Texture& texture = *m_textures[name];
+		m_texturesMap[name] = new gl::Texture(createInfo, name);
+		gl::Texture& texture = *m_texturesMap[name];
 
 		gl::UploadFormat texFormat{ gl::UploadFormat::RGB };
 		if (nrChannels == 1)      texFormat = gl::UploadFormat::R;
@@ -66,11 +114,11 @@ gl::Texture* TextureManager::GetTexture(const std::string& name, bool flipVertic
 		else if (nrChannels == 4) texFormat = gl::UploadFormat::RGBA;
 
 		texture.UpdateImage({
-		  .extent = createInfo.extent,
-		  .format = texFormat,
-		  .type   = gl::UploadType::FLOAT,
-		  .pixels = pixels,
-			});
+			.extent = createInfo.extent,
+			.format = texFormat,
+			.type   = gl::UploadType::FLOAT,
+			.pixels = pixels,
+		});
 		stbi_image_free(pixels);
 
 		Debug("Load Texture: " + name);

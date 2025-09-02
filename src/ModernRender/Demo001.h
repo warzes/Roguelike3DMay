@@ -1,4 +1,7 @@
-#pragma once
+﻿#pragma once
+
+#include "WeatherSystem.h"
+#include "SceneManager.h"
 
 class Demo001 final : public IEngineApp
 {
@@ -21,4 +24,8 @@ public:
 	void OnMousePos(double x, double y) final;
 	void OnScroll(double dx, double dy) final;
 	void OnKey(int key, int scanCode, int action, int mods) final;
+
+private:
+	WeatherSystem m_weatherSystem;
+	SceneManager  m_sceneManager;
 };

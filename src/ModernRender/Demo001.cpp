@@ -1,13 +1,5 @@
 ﻿#include "stdafx.h"
 #include "Demo001.h"
-
-//https://developer.nvidia.com/ue4-sun-temple
-//https://github.com/NVIDIA-RTX/Donut
-//https://sibras.github.io/OpenGL4-Tutorials/docs/Tutorials/02-Tutorial2/
-//http://www.3dcpptutorials.sk/index.php?id=14
-
-//=============================================================================
-// 
 //=============================================================================
 namespace
 {
@@ -341,6 +333,11 @@ EngineCreateInfo Demo001::GetCreateInfo() const
 //=============================================================================
 bool Demo001::OnInit()
 {
+	if (!m_weatherSystem.Init())
+		return false;
+	if (!m_sceneManager.Init())
+		return false;
+
 	box.Create(GeometryGenerator::CreateBox());
 	plane.Create(GeometryGenerator::CreatePlane(100.0f, 100.0f, 100.0f, 100.0f));
 	sphere.Create(GeometryGenerator::CreateSphere());
@@ -423,6 +420,8 @@ bool Demo001::OnInit()
 //=============================================================================
 void Demo001::OnClose()
 {
+	m_sceneManager.Close();
+	m_weatherSystem.Close();
 	box.Free();
 	plane.Free();
 	sphere.Free();
@@ -460,7 +459,7 @@ void Demo001::OnUpdate([[maybe_unused]] float deltaTime)
 	sceneBlockUBO->UpdateData(sceneBlockUniform);
 
 	lightSceneBlock.color = glm::vec4(1.0f);
-	lightSceneBlock.ambientLight.color = glm::vec3(0.01f);
+	lightSceneBlock.ambientLight.color = glm::vec3(0.05f);
 	lightSceneBlock.ambientLight.isOn = 1;
 
 	lightSceneBlock.material.isEnabled = 1;
@@ -542,7 +541,7 @@ void Demo001::OnRender()
 			modelMatricesBlockUBO->UpdateData(modelMatricesBlock);
 			gl::Cmd::BindUniformBuffer(1, modelMatricesBlockUBO.value());
 
-			gl::Cmd::BindSampledImage(0, texture1.value(), sampler.value());
+			gl::Cmd::BindSampledImage(0, *texture1, sampler.value());
 			plane.Draw(std::nullopt);
 		}
 

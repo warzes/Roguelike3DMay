@@ -417,6 +417,10 @@
     <ClInclude Include="imgui\imstb_truetype.h" />
     <ClInclude Include="KHR\khrplatform.h" />
     <ClInclude Include="PoissonGenerator\PoissonGenerator.h" />
+    <ClInclude Include="RapidXML\rapidxml.hpp" />
+    <ClInclude Include="RapidXML\rapidxml_iterators.hpp" />
+    <ClInclude Include="RapidXML\rapidxml_print.hpp" />
+    <ClInclude Include="RapidXML\rapidxml_utils.hpp" />
     <ClInclude Include="simdjson\simdjson.h" />
     <ClInclude Include="stb\stb_image.h" />
     <ClInclude Include="stb\stb_image_resize2.h" />
@@ -574,6 +578,9 @@
     <Library Include="lib\ktx.lib" />
     <Library Include="lib\ktx_read.lib" />
     <Library Include="lib\objUtil.lib" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="RapidXML\license.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

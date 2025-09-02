@@ -1,6 +1,30 @@
-﻿https://www.youtube.com/shorts/0hdta4b8hcA - идея
+﻿https://github.com/e-hat/efgl/blob/main/efgl/shaders/phong.glsl
+https://www.youtube.com/watch?v=Ey8fagfIm5o
+https://developer.nvidia.com/ue4-sun-temple
+https://github.com/NVIDIA-RTX/Donut
+https://sibras.github.io/OpenGL4-Tutorials/docs/Tutorials/02-Tutorial2/
+http://www.3dcpptutorials.sk/index.php?id=14
 
+//https://github.com/QwePek/LightingOpenGL - простое освещение
+//https://github.com/damdoy/opengl_examples/tree/master/volumetric_light
+//https://github.com/stanislawfortonski/3D-Engine-OpenGL-4/tree/master/shaders
+https://github.com/carbonsunsu/CarbonRender - рендер пассы
+//https://github.com/potato3d/azdo
+//https://github.com/houmain/gpupad
+//https://github.com/Rabbid76/graphics-snippets
+//https://github.com/cadaver/turso3d/tree/master
+//
+//https://github.com/moonwho101/DungeonStompDirectX12
+//https://github.com/pmborg/WoMA3Dengine/tree/main/CoreEngine_Tutorials/DXENGINE_054
 
+//переделать загрузку меша на основе кода SceneLoader.h через fastgltf: нужна поддержка мультимеша, материалов, свойств модели.
+//также возможно нужно чтобы оно брало fastgltf для gltf, тиниобж для обж, и асимп для остального
+//
+//обновить сторонние либы
+//
+//возможно отключить левостороннюю систему координат
+//
+//StratusGFX
 
 
 https://www.youtube.com/watch?v=yk0psth053I - такой пс1 стиль

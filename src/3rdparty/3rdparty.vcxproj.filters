@@ -93,6 +93,9 @@
     <Filter Include="PoissonGenerator">
       <UniqueIdentifier>{f0a3705b-2f4f-4718-bcea-d5ac83033cef}</UniqueIdentifier>
     </Filter>
+    <Filter Include="RapidXML">
+      <UniqueIdentifier>{686b32d5-f989-4670-abe0-907a89631676}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="KHR\khrplatform.h">
@@ -1041,6 +1044,18 @@
     <ClInclude Include="PoissonGenerator\PoissonGenerator.h">
       <Filter>PoissonGenerator</Filter>
     </ClInclude>
+    <ClInclude Include="RapidXML\rapidxml.hpp">
+      <Filter>RapidXML</Filter>
+    </ClInclude>
+    <ClInclude Include="RapidXML\rapidxml_iterators.hpp">
+      <Filter>RapidXML</Filter>
+    </ClInclude>
+    <ClInclude Include="RapidXML\rapidxml_print.hpp">
+      <Filter>RapidXML</Filter>
+    </ClInclude>
+    <ClInclude Include="RapidXML\rapidxml_utils.hpp">
+      <Filter>RapidXML</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="glm\detail\func_common.inl">
@@ -1483,5 +1498,10 @@
     <Library Include="lib\ktx.lib">
       <Filter>ktx</Filter>
     </Library>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="RapidXML\license.txt">
+      <Filter>RapidXML</Filter>
+    </Text>
   </ItemGroup>
 </Project>

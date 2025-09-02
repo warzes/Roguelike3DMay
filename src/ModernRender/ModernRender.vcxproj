@@ -95,15 +95,21 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Demo001.cpp" />
+    <ClCompile Include="FreeController.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="WeatherSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Demo001.h" />
+    <ClInclude Include="FreeController.h" />
+    <ClInclude Include="SceneManager.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="WeatherSystem.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

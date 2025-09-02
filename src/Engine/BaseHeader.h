@@ -83,6 +83,9 @@
 
 #include <PoissonGenerator/PoissonGenerator.h>
 
+#include <RapidXML/rapidxml.hpp>
+#include <RapidXML/rapidxml_print.hpp>
+
 #if defined(_MSC_VER)
 #	pragma warning(pop)
 #endif

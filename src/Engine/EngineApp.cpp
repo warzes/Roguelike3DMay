@@ -418,7 +418,7 @@ void IEngineApp::initImGui()
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImGui_ImplGlfw_InitForOpenGL(m_window, false);
-	ImGui_ImplOpenGL3_Init("#version 150");
+	ImGui_ImplOpenGL3_Init("#version 330");
 	ImGui::StyleColorsDark();
 
 	GLFWmonitor* primary = glfwGetPrimaryMonitor();
@@ -483,7 +483,7 @@ void IEngineApp::fpsTick(float deltaSeconds, bool frameRendered)
 
 	if (m_timeCounter > m_avgInterval)
 	{
-		m_framesPerSecond = static_cast<float>(m_frameCounter / m_avgInterval);
+		m_framesPerSecond = static_cast<float>(m_frameCounter) / m_avgInterval;
 		m_frameCounter = 0;
 		m_timeCounter = 0.0;
 	}
