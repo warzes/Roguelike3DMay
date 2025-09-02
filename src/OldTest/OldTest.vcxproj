@@ -114,7 +114,6 @@
     <ClCompile Include="PipelineBloom.cpp" />
     <ClCompile Include="PipelineDeferredSSAO.cpp" />
     <ClCompile Include="PipelineShadowMapping.cpp" />
-    <ClCompile Include="RenderData.cpp" />
     <ClCompile Include="Shadow.cpp" />
     <ClCompile Include="ShadowPass.cpp" />
     <ClCompile Include="ShadowPassManager.cpp" />
@@ -181,7 +180,6 @@
     <ClInclude Include="PipelineDeferredSSAO.h" />
     <ClInclude Include="PipelineDeferredSSAOShaders.h" />
     <ClInclude Include="PipelineShadowMapping.h" />
-    <ClInclude Include="RenderData.h" />
     <ClInclude Include="Shadow.h" />
     <ClInclude Include="ShadowPass.h" />
     <ClInclude Include="ShadowPassManager.h" />

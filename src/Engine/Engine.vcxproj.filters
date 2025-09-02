@@ -89,7 +89,7 @@
     <ClCompile Include="GeometryGenerator.cpp">
       <Filter>05_Render</Filter>
     </ClCompile>
-    <ClCompile Include="RenderPass.cpp">
+    <ClCompile Include="RenderTarget.cpp">
       <Filter>05_Render</Filter>
     </ClCompile>
   </ItemGroup>
@@ -222,7 +222,7 @@
     <ClInclude Include="GeometryGenerator.h">
       <Filter>05_Render</Filter>
     </ClInclude>
-    <ClInclude Include="RenderPass.h">
+    <ClInclude Include="RenderTarget.h">
       <Filter>05_Render</Filter>
     </ClInclude>
   </ItemGroup>

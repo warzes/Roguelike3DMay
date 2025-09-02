@@ -27,7 +27,7 @@ public:
 private:
 	SceneManager m_sceneManager;
 
-	RenderPass                          m_renderPass;
+	RenderTarget                          m_renderPass;
 
 	std::optional<gl::Buffer>           m_quadvb;
 	std::optional<gl::Buffer>           m_quadib;

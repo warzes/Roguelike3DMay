@@ -36,7 +36,7 @@
 #include "Mesh.h"
 #include "Model.h"
 #include "GeometryGenerator.h"
-#include "RenderPass.h"
+#include "RenderTarget.h"
 
 // Graphics
 

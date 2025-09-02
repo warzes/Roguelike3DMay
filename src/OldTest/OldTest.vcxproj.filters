@@ -87,9 +87,6 @@
     <ClCompile Include="DepthPrepass.cpp">
       <Filter>engine\Render\RenderPass</Filter>
     </ClCompile>
-    <ClCompile Include="RenderData.cpp">
-      <Filter>engine\Render</Filter>
-    </ClCompile>
     <ClCompile Include="ModelOLD.cpp">
       <Filter>engine\Graphics</Filter>
     </ClCompile>
@@ -210,9 +207,6 @@
     </ClInclude>
     <ClInclude Include="DepthPrepass.h">
       <Filter>engine\Render\RenderPass</Filter>
-    </ClInclude>
-    <ClInclude Include="RenderData.h">
-      <Filter>engine\Render</Filter>
     </ClInclude>
     <ClInclude Include="ModelOLD.h">
       <Filter>engine\Graphics</Filter>

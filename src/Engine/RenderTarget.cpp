@@ -1,13 +1,13 @@
 ﻿#include "stdafx.h"
-#include "RenderPass.h"
+#include "RenderTarget.h"
 //=============================================================================
-void RenderPass::SetName(const std::string& colorBuffer, const std::string& depthBuffer)
+void RenderTarget::SetName(const std::string& colorBuffer, const std::string& depthBuffer)
 {
 	m_colorBufferName = colorBuffer;
 	m_depthBufferName = depthBuffer;
 }
 //=============================================================================
-void RenderPass::SetSize(uint16_t width, uint16_t height)
+void RenderTarget::SetSize(uint16_t width, uint16_t height)
 {
 	m_width = width;
 	m_height = height;
@@ -15,13 +15,13 @@ void RenderPass::SetSize(uint16_t width, uint16_t height)
 	m_fboDepthTex = gl::CreateTexture2D({ width, height }, gl::Format::D32_FLOAT, m_depthBufferName);
 }
 //=============================================================================
-void RenderPass::Close()
+void RenderTarget::Close()
 {
 	m_fboColorTex = {};
 	m_fboDepthTex = {};
 }
 //=============================================================================
-void RenderPass::Begin(const glm::vec3& clearColor, float clearDepth)
+void RenderTarget::Begin(const glm::vec3& clearColor, float clearDepth)
 {
 	auto sceneColorAttachment = gl::RenderColorAttachment{
 		.texture = *m_fboColorTex,
@@ -37,7 +37,7 @@ void RenderPass::Begin(const glm::vec3& clearColor, float clearDepth)
 	gl::BeginRendering({ .colorAttachments = {&sceneColorAttachment, 1}, .depthAttachment = sceneDepthAttachment });
 }
 //=============================================================================
-void RenderPass::End()
+void RenderTarget::End()
 {
 	gl::EndRendering();
 }

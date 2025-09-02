@@ -3,7 +3,7 @@
 #include "OpenGL4Texture.h"
 #include "OpenGL4Render.h"
 
-class RenderPass final
+class RenderTarget final
 {
 public:
 	void SetName(const std::string& colorBuffer, const std::string& depthBuffer);
