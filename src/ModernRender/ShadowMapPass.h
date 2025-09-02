@@ -10,5 +10,6 @@ public:
 	void End();
 
 private:
-	RenderTarget m_rt;
+	RenderTarget                        m_rt;
+	std::optional<gl::GraphicsPipeline> m_pipeline;
 };
