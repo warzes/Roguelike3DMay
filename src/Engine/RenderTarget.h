@@ -16,6 +16,9 @@ public:
 	const gl::Texture& GetColor() const { assert(m_fboColorTex.has_value()); return *m_fboColorTex; }
 	const gl::Texture& GetDepth() const { assert(m_fboDepthTex.has_value()); return *m_fboDepthTex; }
 	Extent3D GetExtent() const { return { m_width, m_height, 1 }; }
+
+	void BlitToSwapChain();
+	void BlitToTexture(); // TODO:
 private:
 	std::optional<gl::Texture> m_fboColorTex;
 	std::optional<gl::Texture> m_fboDepthTex;

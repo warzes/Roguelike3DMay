@@ -26,10 +26,5 @@ public:
 
 private:
 	SceneManager m_sceneManager;
-
-	RenderTarget                          m_renderPass;
-
-	std::optional<gl::Buffer>           m_quadvb;
-	std::optional<gl::Buffer>           m_quadib;
-	std::optional<gl::GraphicsPipeline> m_swapChainPipeline;
+	RenderTarget m_renderPass;
 };

@@ -42,3 +42,11 @@ void RenderTarget::End()
 	gl::EndRendering();
 }
 //=============================================================================
+void RenderTarget::BlitToSwapChain()
+{
+	// TODO: есть возможность задавать оффсет и размер (например чтобы блитило только на часть экрана. сделать такое)
+	extern uint16_t GetWindowWidth();
+	extern uint16_t GetWindowHeight();
+	gl::BlitTextureToSwapChain(*m_fboColorTex, {}, {}, GetExtent(), { GetWindowWidth(), GetWindowHeight(), 1 }, gl::MagFilter::Nearest);
+}
+//=============================================================================

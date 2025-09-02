@@ -5,6 +5,7 @@
 // - сцена рендерится в текстуру (цвет и глубина)
 // - затем рисуется квад на SwapChain с этой текстурой
 // TODO: есть еще блитинг текстуры на поверхность, сделать по нему пример
+//		gl::BlitTextureToSwapChain(texture, {}, {}, { texture.width, texture.height, 1 }, { GetWindowWidth(), GetWindowHeight(), 1 }, gl::MagFilter::Nearest);
 //=============================================================================
 class Example009 final : public IEngineApp
 {

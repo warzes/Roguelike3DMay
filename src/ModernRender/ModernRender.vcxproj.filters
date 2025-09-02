@@ -65,9 +65,6 @@
     <ClInclude Include="DemoShader.h">
       <Filter>Shader</Filter>
     </ClInclude>
-    <ClInclude Include="DemoSwapChainShader.h">
-      <Filter>Shader</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Engine">
