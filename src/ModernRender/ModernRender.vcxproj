@@ -95,7 +95,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Demo001.cpp" />
-    <ClCompile Include="FreeController.cpp" />
     <ClCompile Include="GameCamera.cpp" />
     <ClCompile Include="GameLight.cpp" />
     <ClCompile Include="GameMeshObject.cpp" />
@@ -113,7 +112,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Demo001.h" />
-    <ClInclude Include="FreeController.h" />
+    <ClInclude Include="DemoShader.h" />
     <ClInclude Include="GameCamera.h" />
     <ClInclude Include="GameLight.h" />
     <ClInclude Include="GameMeshObject.h" />

@@ -196,9 +196,7 @@ void SceneManager::Draw(GameObject* node)
 
 	//draw children
 	GameObject* child = node->GetFirstChild();
-	if (child == nullptr)
-		return;
-
+	if (child == nullptr) return;
 	while (true)
 	{
 		Draw(child);
