@@ -178,7 +178,7 @@ void NewTest003::OnRender()
 	gl::BlitTextureToSwapChain(*msColorTex,
 		{},
 		{},
-		msColorTex->Extent(),
+		msColorTex->GetExtent(),
 		{ GetWindowWidth(), GetWindowHeight(), 1 },
 		gl::MagFilter::Nearest);
 }

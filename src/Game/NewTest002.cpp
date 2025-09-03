@@ -97,7 +97,7 @@ void main()
 		resolveColorTex = gl::Texture({
 		  .imageType = gl::ImageType::Tex2D,
 		  .format = gl::Format::R8G8B8A8_SRGB,
-		  .extent = msColorTex->Extent(),
+		  .extent = msColorTex->GetExtent(),
 		  .mipLevels = 1,
 		  .arrayLayers = 1,
 		  .sampleCount = gl::SampleCount::Samples1,
@@ -159,13 +159,13 @@ void NewTest002::OnRender()
 	gl::EndRendering();
 
 	// Resolve multisample texture by blitting it to a same-size non-multisample texture
-	gl::BlitTexture(*msColorTex, *resolveColorTex, {}, {}, msColorTex->Extent(), resolveColorTex->Extent(), gl::MagFilter::Linear);
+	gl::BlitTexture(*msColorTex, *resolveColorTex, {}, {}, msColorTex->GetExtent(), resolveColorTex->GetExtent(), gl::MagFilter::Linear);
 
 	// Blit resolved texture to screen with nearest neighbor filter to make MSAA resolve more obvious
 	gl::BlitTextureToSwapChain(*resolveColorTex,
 		{},
 		{},
-		resolveColorTex->Extent(),
+		resolveColorTex->GetExtent(),
 		{ GetWindowWidth(), GetWindowHeight(), 1},
 		gl::MagFilter::Nearest);
 }

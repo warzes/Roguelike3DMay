@@ -393,8 +393,8 @@ gl::Texture gl::CreateTexture2D(Extent2D size, Format format, std::string_view n
 			.imageType   = ImageType::Tex2D,
 			.format      = format,
 			.extent      = {size.width, size.height, 1},
-			.mipLevels   = 1,
-			.arrayLayers = 1,
+			.mipLevels   = 1u,
+			.arrayLayers = 1u,
 			.sampleCount = SampleCount::Samples1,
 		}, name);
 }
@@ -406,7 +406,7 @@ gl::Texture gl::CreateTexture2DMip(Extent2D size, Format format, uint32_t mipLev
 			.format      = format,
 			.extent      = {size.width, size.height, 1},
 			.mipLevels   = mipLevels,
-			.arrayLayers = 1,
+			.arrayLayers = 1u,
 			.sampleCount = SampleCount::Samples1,
 		}, name);
 }

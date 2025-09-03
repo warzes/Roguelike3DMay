@@ -130,12 +130,9 @@ namespace gl
 		// return A bindless texture handle that can be placed in a buffer and used to construct a combined texture sampler in a shader
 		[[nodiscard]] uint64_t GetBindlessHandle(const Sampler& sampler);
 
-		[[nodiscard]] const TextureCreateInfo& GetCreateInfo() const noexcept
-		{
-			return m_createInfo;
-		}
-
-		[[nodiscard]] Extent3D Extent() const noexcept { return m_createInfo.extent; }
+		[[nodiscard]] const TextureCreateInfo& GetCreateInfo() const noexcept { return m_createInfo; }
+		[[nodiscard]] Format GetFormat() const noexcept { return m_createInfo.format; }
+		[[nodiscard]] Extent3D GetExtent() const noexcept { return m_createInfo.extent; }
 
 		[[nodiscard]] bool IsValid() const noexcept { return m_id > 0; }
 

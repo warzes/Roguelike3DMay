@@ -56,7 +56,9 @@ void main()
 //=============================================================================
 bool TempPass::Init()
 {
-	m_rt.SetName("ShadowMapPassColor", "ShadowMapPassDepth");
+	m_rt.Init(GetWindowWidth(), GetWindowHeight(),
+		RTAttachment{ gl::Format::R8G8B8A8_SRGB, "ShadowMapPassColor", gl::AttachmentLoadOp::Clear },
+		RTAttachment{ gl::Format::D32_FLOAT, "ShadowMapPassDepth", gl::AttachmentLoadOp::Clear });
 
 	auto vertexShader = gl::Shader(gl::ShaderType::VertexShader, shaderCodeVertex, "TempVS");
 	auto fragmentShader = gl::Shader(gl::ShaderType::FragmentShader, shaderCodeFragment, "TempFS");

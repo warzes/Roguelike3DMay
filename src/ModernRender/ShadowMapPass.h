@@ -2,6 +2,7 @@
 
 class ShadowMapPass final
 {
+	friend class RenderPassManager;
 public:
 	bool Init();
 	void Close();

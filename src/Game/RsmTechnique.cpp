@@ -147,14 +147,14 @@ namespace RSM
 		}
 
 		historyLengthTex->ClearImage({
-		.extent = historyLengthTex->Extent(),
+		.extent = historyLengthTex->GetExtent(),
 		.format = gl::UploadFormat::R_INTEGER,
 		.type = gl::UploadType::UBYTE,
 		.data = nullptr,
 			});
 
 		indirectUnfilteredTex->ClearImage({
-		.extent = indirectUnfilteredTex->Extent(),
+		.extent = indirectUnfilteredTex->GetExtent(),
 		.format = gl::UploadFormat::RGBA,
 		.type = gl::UploadType::UBYTE,
 		.data = nullptr,
@@ -211,7 +211,7 @@ namespace RSM
 		}
 		else
 		{
-			rsmUniforms.targetDim = { illuminationUpscaled->Extent().width, illuminationUpscaled->Extent().height };
+			rsmUniforms.targetDim = { illuminationUpscaled->GetExtent().width, illuminationUpscaled->GetExtent().height };
 		}
 
 		rsmUniformBuffer.UpdateData(rsmUniforms);
@@ -263,15 +263,15 @@ namespace RSM
 
 					gl::Cmd::BindSampledImage(0, rsmFlux, nearestSampler);
 					gl::Cmd::BindImage(0, *rsmFluxSmall, 0);
-					gl::Cmd::DispatchInvocations(rsmFluxSmall->Extent());
+					gl::Cmd::DispatchInvocations(rsmFluxSmall->GetExtent());
 
 					gl::Cmd::BindSampledImage(0, rsmNormal, nearestSampler);
 					gl::Cmd::BindImage(0, *rsmNormalSmall, 0);
-					gl::Cmd::DispatchInvocations(rsmNormalSmall->Extent());
+					gl::Cmd::DispatchInvocations(rsmNormalSmall->GetExtent());
 
 					gl::Cmd::BindSampledImage(0, rsmDepth, nearestSampler);
 					gl::Cmd::BindImage(0, *rsmDepthSmall, 0);
-					gl::Cmd::DispatchInvocations(rsmDepthSmall->Extent());
+					gl::Cmd::DispatchInvocations(rsmDepthSmall->GetExtent());
 				}
 
 				rsmUniforms.currentPass = 0;
@@ -299,7 +299,7 @@ namespace RSM
 					.proj = cameraUniforms.proj,
 					.viewPos = cameraUniforms.cameraPos,
 					.temporalWeightFactor = spatialFilterStep,
-					.targetDim = {indirectUnfilteredTex->Extent().width, indirectUnfilteredTex->Extent().height},
+					.targetDim = {indirectUnfilteredTex->GetExtent().width, indirectUnfilteredTex->GetExtent().height},
 					.alphaIlluminance = alphaIlluminance,
 					.phiDepth = phiDepth,
 					.phiNormal = phiNormal,
@@ -327,7 +327,7 @@ namespace RSM
 				.proj = cameraUniforms.proj,
 				.invViewProj = cameraUniforms.invViewProj,
 				.viewPos = cameraUniforms.cameraPos,
-				.targetDim = {indirectUnfilteredTex->Extent().width, indirectFilteredTex->Extent().height},
+				.targetDim = {indirectUnfilteredTex->GetExtent().width, indirectFilteredTex->GetExtent().height},
 				.phiNormal = phiNormal,
 				.phiDepth = phiDepth,
 				};
@@ -432,7 +432,7 @@ namespace RSM
 						gl::Cmd::BindSampledImage(1, gAlbedo, nearestSampler);
 						gl::Cmd::BindImage(0, *illuminationOutTex, 0);
 						gl::MemoryBarrier(gl::MemoryBarrierBit::TextureFetchBit);
-						gl::Cmd::DispatchInvocations(illuminationOutTex->Extent());
+						gl::Cmd::DispatchInvocations(illuminationOutTex->GetExtent());
 					}
 					else // Use bilateral upscale
 					{
@@ -454,12 +454,12 @@ namespace RSM
 						gl::Cmd::BindSampledImage(3, gDepth, nearestSampler);
 						gl::Cmd::BindSampledImage(4, *gNormalSmall, nearestSampler);
 						gl::Cmd::BindSampledImage(5, *gDepthSmall, nearestSampler);
-						filterUniforms.targetDim = { illuminationOutTex->Extent().width, illuminationOutTex->Extent().height };
+						filterUniforms.targetDim = { illuminationOutTex->GetExtent().width, illuminationOutTex->GetExtent().height };
 						filterUniformBuffer.UpdateData(filterUniforms);
 						gl::Cmd::BindUniformBuffer(0, filterUniformBuffer);
 						gl::Cmd::BindImage(0, *illuminationOutTex, 0);
 						gl::MemoryBarrier(gl::MemoryBarrierBit::TextureFetchBit);
-						gl::Cmd::DispatchInvocations(illuminationOutTex->Extent());
+						gl::Cmd::DispatchInvocations(illuminationOutTex->GetExtent());
 					}
 				}
 				else
@@ -468,8 +468,8 @@ namespace RSM
 						*illuminationOutTex,
 						{},
 						{},
-						indirectFilteredTex->Extent(),
-						illuminationOutTex->Extent(),
+						indirectFilteredTex->GetExtent(),
+						illuminationOutTex->GetExtent(),
 						gl::MagFilter::Nearest);
 				}
 			}

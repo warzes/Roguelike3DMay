@@ -83,16 +83,17 @@ void Demo001::OnRender()
 {
 	m_renderPassManager.shadowMapPass.Begin();
 	{
-		//sceneDraw();
-	}
-	m_renderPassManager.shadowMapPass.End();
-
-	m_renderPassManager.tempPass.Begin({ 0.1f, 0.5f, 0.8f });
-	{
 		SceneDataUBO.Bind(0);
 		sceneDraw();
 	}
-	m_renderPassManager.tempPass.End();
+	m_renderPassManager.shadowMapPass.End();
+
+	//m_renderPassManager.tempPass.Begin({ 0.1f, 0.5f, 0.8f });
+	//{
+	//	SceneDataUBO.Bind(0);
+	//	sceneDraw();
+	//}
+	//m_renderPassManager.tempPass.End();
 
 	m_renderPassManager.Final();
 }

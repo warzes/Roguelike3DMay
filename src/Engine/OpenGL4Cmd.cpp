@@ -574,7 +574,7 @@ void gl::Cmd::DispatchInvocations(Extent3D invocationCount)
 void gl::Cmd::DispatchInvocations(const Texture& texture, uint32_t lod)
 {
 	const auto imageType = texture.GetCreateInfo().imageType;
-	auto extent = texture.Extent();
+	auto extent = texture.GetExtent();
 	extent.width >>= lod;
 	extent.height >>= lod;
 	if (imageType == ImageType::TexCubemap || imageType == ImageType::TexCubemapArray)
