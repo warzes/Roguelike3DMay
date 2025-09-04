@@ -12,6 +12,8 @@
 
 // Math
 #include "CoreMath.h"
+#include "Random.h"
+#include "Noise.h"
 #include "Transformable.h"
 
 // RHI

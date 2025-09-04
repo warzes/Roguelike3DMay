@@ -83,10 +83,10 @@ void main()
 bool ShadowMapPass::Init()
 {
 	std::vector<RTAttachment> rts = {
-		RTAttachment{ gl::Format::R8_UNORM, "ShadowMapDepthMap", gl::AttachmentLoadOp::Clear },
-		RTAttachment{ gl::Format::R8G8B8_SRGB, "ShadowMapPosColor", gl::AttachmentLoadOp::DontCare },
-		RTAttachment{ gl::Format::R8G8B8_SRGB, "ShadowMapAlbedoColor", gl::AttachmentLoadOp::DontCare },
-		RTAttachment{ gl::Format::R8G8B8_SRGB, "ShadowMapNormalColor", gl::AttachmentLoadOp::DontCare },
+		RTAttachment{ gl::Format::R8_UNORM, "ShadowMapDepthMap", gl::AttachmentLoadOp::Clear }, // TODO: DontCare?
+		RTAttachment{ gl::Format::R8G8B8_UNORM, "ShadowMapPosColor", gl::AttachmentLoadOp::Clear }, // TODO: DontCare?
+		RTAttachment{ gl::Format::R8G8B8_SRGB, "ShadowMapAlbedoColor", gl::AttachmentLoadOp::Clear }, // TODO: DontCare?
+		RTAttachment{ gl::Format::R8G8B8_UNORM, "ShadowMapNormalColor", gl::AttachmentLoadOp::Clear }, // TODO: DontCare?
 	};
 	m_rt.Init(GetWindowWidth(), GetWindowHeight(), rts, RTAttachment{gl::Format::D32_FLOAT, "ShadowMapPassDepth", gl::AttachmentLoadOp::Clear });
 
@@ -131,7 +131,7 @@ void ShadowMapPass::Begin()
 	SMFragmentDataUBO->alphaTestThreshold = 0.2f;
 	SMFragmentDataUBO->depthOnly = 0;
 
-	m_rt.Begin({ 1.0f, 1.0f, 1.0f });
+	m_rt.Begin({ 0.0f, 0.0f, 0.0f });
 	gl::Cmd::BindGraphicsPipeline(*m_pipeline);
 	SMFragmentDataUBO.Bind(2);
 }

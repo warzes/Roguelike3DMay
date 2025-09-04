@@ -36,6 +36,6 @@ void RenderPassManager::Resize(uint16_t width, uint16_t height)
 void RenderPassManager::Final()
 {
 	tempPass.m_rt.BlitToSwapChain();
-	//shadowMapPass.m_rt.BlitToSwapChain(0);
+	shadowMapPass.m_rt.BlitToSwapChain(3);
 }
 //=============================================================================

@@ -92,6 +92,12 @@
     <ClCompile Include="RenderTarget.cpp">
       <Filter>05_Render</Filter>
     </ClCompile>
+    <ClCompile Include="Noise.cpp">
+      <Filter>03_Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Random.cpp">
+      <Filter>03_Math</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -227,6 +233,12 @@
     </ClInclude>
     <ClInclude Include="UniformsWrapper.h">
       <Filter>05_Render</Filter>
+    </ClInclude>
+    <ClInclude Include="Noise.h">
+      <Filter>03_Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Random.h">
+      <Filter>03_Math</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
