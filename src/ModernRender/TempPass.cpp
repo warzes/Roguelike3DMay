@@ -53,8 +53,6 @@ void main()
 {
 	vec4 albedo = texture(diffuseTexture, fragTexCoord);
 	if (albedo.a <= alphaTestThreshold) discard;
-	//albedo.rgb = pow(albedo.rgb, vec3(2.2f));
-
 	outputColor = albedo;
 }
 )";

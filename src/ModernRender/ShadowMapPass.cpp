@@ -64,7 +64,6 @@ void main()
 {
 	vec4 albedo = texture(albedoMap, fragTexCoord);
 	if (albedo.a <= alphaTestThreshold) discard;
-	albedo.rgb = pow(albedo.rgb, vec3(2.2f));
 	albedo.rgb *= albedoScaler;
 
 	float d = -(viewMat * fragWorldPosition).z;
