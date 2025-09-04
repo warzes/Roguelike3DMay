@@ -4,15 +4,16 @@
 //=============================================================================
 bool SceneManager::Init()
 {
-https://github.com/paul-akl/Praxis3D
-https://github.com/paul-akl/Paradime3D
-https://www.youtube.com/@ShaneCodesSpaghetti/videos
-https://www.youtube.com/@blakedarrow/videos
-https://www.youtube.com/watch?v=PaJpxk4XzK0
-https://www.youtube.com/@ikoukourakis/videos
-https://www.youtube.com/@funitinker/videos
-	if (!m_weatherSystem.Init())
-		return false;
+//https://github.com/paul-akl/Praxis3D
+//https://github.com/paul-akl/Paradime3D
+//https://www.youtube.com/@ShaneCodesSpaghetti/videos
+//https://www.youtube.com/@blakedarrow/videos
+//https://www.youtube.com/watch?v=PaJpxk4XzK0
+//https://www.youtube.com/@ikoukourakis/videos
+//https://www.youtube.com/@funitinker/videos
+
+	//if (!m_weatherSystem.Init(&m_lightManager))
+	//	return false;
 
 	m_curSceneName = "New Scene";
 	m_sceneRoot.SetName("Root");
@@ -22,6 +23,7 @@ https://www.youtube.com/@funitinker/videos
 void SceneManager::Close()
 {
 	m_weatherSystem.Close();
+	m_lightManager.Free();
 }
 //=============================================================================
 void SceneManager::LoadScene(const std::string& sceneName)

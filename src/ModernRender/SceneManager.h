@@ -2,6 +2,7 @@
 
 #include "GameObject.h"
 #include "WeatherSystem.h"
+#include "LightManager.h"
 
 class SceneManager final
 {
@@ -30,6 +31,7 @@ private:
 	std::string m_curSceneName;
 	GameObject  m_sceneRoot;
 
+	LightManager  m_lightManager;
 	WeatherSystem m_weatherSystem;
 	Camera        m_camera;
 };
