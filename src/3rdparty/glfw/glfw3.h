@@ -1,4 +1,4 @@
-﻿/*************************************************************************
+/*************************************************************************
  * GLFW 3.5 - www.glfw.org
  * A library for OpenGL, window and input
  *------------------------------------------------------------------------
@@ -1228,13 +1228,13 @@ extern "C" {
  *  The top-left to bottom-right diagonal resize/move shape.  This is usually
  *  a diagonal double-headed arrow.
  *
- *  @note @macos This shape is provided by a private system API and may fail
+ *  @note __macOS:__ This shape is provided by a private system API and may fail
  *  with @ref GLFW_CURSOR_UNAVAILABLE in the future.
  *
- *  @note @wayland This shape is provided by a newer standard not supported by
+ *  @note __Wayland:__ This shape is provided by a newer standard not supported by
  *  all cursor themes.
  *
- *  @note @x11 This shape is provided by a newer standard not supported by all
+ *  @note __X11:__ This shape is provided by a newer standard not supported by all
  *  cursor themes.
  */
 #define GLFW_RESIZE_NWSE_CURSOR     0x00036007
@@ -1243,13 +1243,13 @@ extern "C" {
  *  The top-right to bottom-left diagonal resize/move shape.  This is usually
  *  a diagonal double-headed arrow.
  *
- *  @note @macos This shape is provided by a private system API and may fail
+ *  @note __macOS:__ This shape is provided by a private system API and may fail
  *  with @ref GLFW_CURSOR_UNAVAILABLE in the future.
  *
- *  @note @wayland This shape is provided by a newer standard not supported by
+ *  @note __Wayland:__ This shape is provided by a newer standard not supported by
  *  all cursor themes.
  *
- *  @note @x11 This shape is provided by a newer standard not supported by all
+ *  @note __X11:__ This shape is provided by a newer standard not supported by all
  *  cursor themes.
  */
 #define GLFW_RESIZE_NESW_CURSOR     0x00036008
@@ -1264,10 +1264,10 @@ extern "C" {
  *  The operation-not-allowed shape.  This is usually a circle with a diagonal
  *  line through it.
  *
- *  @note @wayland This shape is provided by a newer standard not supported by
+ *  @note __Wayland:__ This shape is provided by a newer standard not supported by
  *  all cursor themes.
  *
- *  @note @x11 This shape is provided by a newer standard not supported by all
+ *  @note __X11:__ This shape is provided by a newer standard not supported by all
  *  cursor themes.
  */
 #define GLFW_NOT_ALLOWED_CURSOR     0x0003600A
@@ -1629,7 +1629,7 @@ typedef void (* GLFWwindowposfun)(GLFWwindow* window, int xpos, int ypos);
  *  @sa @ref glfwSetWindowSizeCallback
  *
  *  @since Added in version 1.0.
- *  @glfw3 Added window handle parameter.
+ *  __GLFW 3:__ Added window handle parameter.
  *
  *  @ingroup window
  */
@@ -1649,7 +1649,7 @@ typedef void (* GLFWwindowsizefun)(GLFWwindow* window, int width, int height);
  *  @sa @ref glfwSetWindowCloseCallback
  *
  *  @since Added in version 2.5.
- *  @glfw3 Added window handle parameter.
+ *  __GLFW 3:__ Added window handle parameter.
  *
  *  @ingroup window
  */
@@ -1669,7 +1669,7 @@ typedef void (* GLFWwindowclosefun)(GLFWwindow* window);
  *  @sa @ref glfwSetWindowRefreshCallback
  *
  *  @since Added in version 2.5.
- *  @glfw3 Added window handle parameter.
+ *  __GLFW 3:__ Added window handle parameter.
  *
  *  @ingroup window
  */
@@ -1800,7 +1800,7 @@ typedef void (* GLFWwindowcontentscalefun)(GLFWwindow* window, float xscale, flo
  *  @sa @ref glfwSetMouseButtonCallback
  *
  *  @since Added in version 1.0.
- *  @glfw3 Added window handle and modifier mask parameters.
+ *  __GLFW 3:__ Added window handle and modifier mask parameters.
  *
  *  @ingroup input
  */
@@ -1891,7 +1891,7 @@ typedef void (* GLFWscrollfun)(GLFWwindow* window, double xoffset, double yoffse
  *  @sa @ref glfwSetKeyCallback
  *
  *  @since Added in version 1.0.
- *  @glfw3 Added window handle, scancode and modifier mask parameters.
+ *  __GLFW 3:__ Added window handle, scancode and modifier mask parameters.
  *
  *  @ingroup input
  */
@@ -1912,7 +1912,7 @@ typedef void (* GLFWkeyfun)(GLFWwindow* window, int key, int scancode, int actio
  *  @sa @ref glfwSetCharCallback
  *
  *  @since Added in version 2.4.
- *  @glfw3 Added window handle parameter.
+ *  __GLFW 3:__ Added window handle parameter.
  *
  *  @ingroup input
  */
@@ -2020,7 +2020,7 @@ typedef void (* GLFWjoystickfun)(int jid, int event);
  *  @sa @ref glfwGetVideoModes
  *
  *  @since Added in version 1.0.
- *  @glfw3 Added refresh rate member.
+ *  __GLFW 3:__ Added refresh rate member.
  *
  *  @ingroup monitor
  */
@@ -2083,7 +2083,7 @@ typedef struct GLFWgammaramp
  *  @sa @ref window_icon
  *
  *  @since Added in version 2.1.
- *  @glfw3 Removed format and bytes-per-pixel members.
+ *  __GLFW 3:__ Removed format and bytes-per-pixel members.
  *
  *  @ingroup window
  */
@@ -2183,12 +2183,12 @@ typedef struct GLFWallocator
  *  @errors Possible errors include @ref GLFW_PLATFORM_UNAVAILABLE and @ref
  *  GLFW_PLATFORM_ERROR.
  *
- *  @remark @macos This function will change the current directory of the
+ *  @remark __macOS:__ This function will change the current directory of the
  *  application to the `Contents/Resources` subdirectory of the application's
  *  bundle, if present.  This can be disabled with the @ref
  *  GLFW_COCOA_CHDIR_RESOURCES init hint.
  *
- *  @remark @macos This function will create the main menu and dock icon for the
+ *  @remark __macOS:__ This function will create the main menu and dock icon for the
  *  application.  If GLFW finds a `MainMenu.nib` it is loaded and assumed to
  *  contain a menu bar.  Otherwise a minimal menu bar is created manually with
  *  common commands like Hide, Quit and About.  The About entry opens a minimal
@@ -2203,7 +2203,7 @@ typedef struct GLFWallocator
  *  to something other than `wayland` or `x11`, the regular detection mechanism
  *  will be used instead.
  *
- *  @remark @x11 This function will set the `LC_CTYPE` category of the
+ *  @remark __X11:__ This function will set the `LC_CTYPE` category of the
  *  application locale according to the current environment if that category is
  *  still "C".  This is because the "C" locale breaks Unicode text input.
  *
@@ -2679,7 +2679,7 @@ GLFWAPI void glfwGetMonitorWorkarea(GLFWmonitor* monitor, int* xpos, int* ypos, 
  *
  *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED.
  *
- *  @remark @win32 On Windows 8 and earlier the physical size is calculated from
+ *  @remark __Win32:__ On Windows 8 and earlier the physical size is calculated from
  *  the current resolution and system DPI instead of querying the monitor EDID data.
  *
  *  @thread_safety This function must only be called from the main thread.
@@ -2713,7 +2713,7 @@ GLFWAPI void glfwGetMonitorPhysicalSize(GLFWmonitor* monitor, int* widthMM, int*
  *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED and @ref
  *  GLFW_PLATFORM_ERROR.
  *
- *  @remark @wayland Fractional scaling information is not yet available for
+ *  @remark __Wayland:__ Fractional scaling information is not yet available for
  *  monitors, so this function only returns integer content scales.
  *
  *  @thread_safety This function must only be called from the main thread.
@@ -2861,7 +2861,7 @@ GLFWAPI GLFWmonitorfun glfwSetMonitorCallback(GLFWmonitorfun callback);
  *  @sa @ref glfwGetVideoMode
  *
  *  @since Added in version 1.0.
- *  @glfw3 Changed to return an array of modes for a specific monitor.
+ *  __GLFW 3:__ Changed to return an array of modes for a specific monitor.
  *
  *  @ingroup monitor
  */
@@ -2915,8 +2915,8 @@ GLFWAPI const GLFWvidmode* glfwGetVideoMode(GLFWmonitor* monitor);
  *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED, @ref GLFW_INVALID_VALUE,
  *  @ref GLFW_PLATFORM_ERROR and @ref GLFW_FEATURE_UNAVAILABLE (see remarks).
  *
- *  @remark @wayland Gamma handling is a privileged protocol, this function
- *  will thus never be implemented and emits @ref GLFW_FEATURE_UNAVAILABLE.
+ *  @remark __Wayland:__ Monitor gamma is a privileged protocol, so this function
+ *  cannot be implemented and emits @ref GLFW_FEATURE_UNAVAILABLE.
  *
  *  @thread_safety This function must only be called from the main thread.
  *
@@ -2939,8 +2939,8 @@ GLFWAPI void glfwSetGamma(GLFWmonitor* monitor, float gamma);
  *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED, @ref GLFW_PLATFORM_ERROR
  *  and @ref GLFW_FEATURE_UNAVAILABLE (see remarks).
  *
- *  @remark @wayland Gamma handling is a privileged protocol, this function
- *  will thus never be implemented and emits @ref GLFW_FEATURE_UNAVAILABLE while
+ *  @remark __Wayland:__ Monitor gamma is a privileged protocol, so this function
+ *  cannot be implemented and emits @ref GLFW_FEATURE_UNAVAILABLE while
  *  returning `NULL`.
  *
  *  @pointer_lifetime The returned structure and its arrays are allocated and
@@ -2981,10 +2981,10 @@ GLFWAPI const GLFWgammaramp* glfwGetGammaRamp(GLFWmonitor* monitor);
  *  @remark The size of the specified gamma ramp should match the size of the
  *  current ramp for that monitor.
  *
- *  @remark @win32 The gamma ramp size must be 256.
+ *  @remark __Win32:__ The gamma ramp size must be 256.
  *
- *  @remark @wayland Gamma handling is a privileged protocol, this function
- *  will thus never be implemented and emits @ref GLFW_FEATURE_UNAVAILABLE.
+ *  @remark __Wayland:__ Monitor gamma is a privileged protocol, so this function
+ *  cannot be implemented and emits @ref GLFW_FEATURE_UNAVAILABLE.
  *
  *  @pointer_lifetime The specified gamma ramp is copied before this function
  *  returns.
@@ -3159,32 +3159,32 @@ GLFWAPI void glfwWindowHintString(int hint, const char* value);
  *  GLFW_VERSION_UNAVAILABLE, @ref GLFW_FORMAT_UNAVAILABLE, @ref
  *  GLFW_NO_WINDOW_CONTEXT and @ref GLFW_PLATFORM_ERROR.
  *
- *  @remark @win32 Window creation will fail if the Microsoft GDI software
+ *  @remark __Win32:__ Window creation will fail if the Microsoft GDI software
  *  OpenGL implementation is the only one available.
  *
- *  @remark @win32 If the executable has an icon resource named `GLFW_ICON,` it
+ *  @remark __Win32:__ If the executable has an icon resource named `GLFW_ICON,` it
  *  will be set as the initial icon for the window.  If no such icon is present,
  *  the `IDI_APPLICATION` icon will be used instead.  To set a different icon,
  *  see @ref glfwSetWindowIcon.
  *
- *  @remark @win32 The context to share resources with must not be current on
+ *  @remark __Win32:__ The context to share resources with must not be current on
  *  any other thread.
  *
- *  @remark @macos The OS only supports core profile contexts for OpenGL
+ *  @remark __macOS:__ The OS only supports core profile contexts for OpenGL
  *  versions 3.2 and later.  Before creating an OpenGL context of version 3.2 or
  *  later you must set the [GLFW_OPENGL_PROFILE](@ref GLFW_OPENGL_PROFILE_hint)
  *  hint accordingly.  OpenGL 3.0 and 3.1 contexts are not supported at all
  *  on macOS.
  *
- *  @remark @macos The GLFW window has no icon, as it is not a document
+ *  @remark __macOS:__ The GLFW window has no icon, as it is not a document
  *  window, but the dock icon will be the same as the application bundle's icon.
  *  For more information on bundles, see the
  *  [Bundle Programming Guide][bundle-guide] in the Mac Developer Library.
  *
  *  [bundle-guide]: https://developer.apple.com/library/mac/documentation/CoreFoundation/Conceptual/CFBundles/
  *
- *  @remark @macos The window frame will not be rendered at full resolution on
- *  Retina displays unless the
+ *  @remark __macOS:__  The window frame will not be rendered at full resolution
+ *  on Retina displays unless the
  *  [GLFW_SCALE_FRAMEBUFFER](@ref GLFW_SCALE_FRAMEBUFFER_hint)
  *  hint is `GLFW_TRUE` and the `NSHighResolutionCapable` key is enabled in the
  *  application bundle's `Info.plist`.  For more information, see
@@ -3195,11 +3195,11 @@ GLFWAPI void glfwWindowHintString(int hint, const char* value);
  *
  *  [hidpi-guide]: https://developer.apple.com/library/mac/documentation/GraphicsAnimation/Conceptual/HighResolutionOSX/Explained/Explained.html
  *
- *  @remark @macos When activating frame autosaving with
+ *  @remark __macOS:__ When activating frame autosaving with
  *  [GLFW_COCOA_FRAME_NAME](@ref GLFW_COCOA_FRAME_NAME_hint), the specified
  *  window size and position may be overridden by previously saved values.
  *
- *  @remark @wayland GLFW uses [libdecor][] where available to create its window
+ *  @remark __Wayland:__ GLFW uses [libdecor][] where available to create its window
  *  decorations.  This in turn uses server-side XDG decorations where available
  *  and provides high quality client-side decorations on compositors like GNOME.
  *  If both XDG decorations and libdecor are unavailable, GLFW falls back to
@@ -3208,15 +3208,15 @@ GLFWAPI void glfwWindowHintString(int hint, const char* value);
  *
  *  [libdecor]: https://gitlab.freedesktop.org/libdecor/libdecor
  *
- *  @remark @x11 Some window managers will not respect the placement of
+ *  @remark __X11:__ Some window managers will not respect the placement of
  *  initially hidden windows.
  *
- *  @remark @x11 Due to the asynchronous nature of X11, it may take a moment for
+ *  @remark __X11:__ Due to the asynchronous nature of X11, it may take a moment for
  *  a window to reach its requested state.  This means you may not be able to
  *  query the final size, position or other attributes directly after window
  *  creation.
  *
- *  @remark @x11 The class part of the `WM_CLASS` window property will by
+ *  @remark __X11:__ The class part of the `WM_CLASS` window property will by
  *  default be set to the window title passed to this function.  The instance
  *  part will use the contents of the `RESOURCE_NAME` environment variable, if
  *  present and not empty, or fall back to the window title.  Set the
@@ -3349,7 +3349,7 @@ GLFWAPI const char* glfwGetWindowTitle(GLFWwindow* window);
  *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED and @ref
  *  GLFW_PLATFORM_ERROR.
  *
- *  @remark @macos The window title will not be updated until the next time you
+ *  @remark __macOS:__ The window title will not be updated until the next time you
  *  process events.
  *
  *  @thread_safety This function must only be called from the main thread.
@@ -3358,7 +3358,7 @@ GLFWAPI const char* glfwGetWindowTitle(GLFWwindow* window);
  *  @sa @ref glfwGetWindowTitle
  *
  *  @since Added in version 1.0.
- *  @glfw3 Added window handle parameter.
+ *  __GLFW 3:__ Added window handle parameter.
  *
  *  @ingroup window
  */
@@ -3392,14 +3392,14 @@ GLFWAPI void glfwSetWindowTitle(GLFWwindow* window, const char* title);
  *  @pointer_lifetime The specified image data is copied before this function
  *  returns.
  *
- *  @remark @macos Regular windows do not have icons on macOS.  This function
+ *  @remark __macOS:__ Regular windows do not have icons on macOS.  This function
  *  will emit @ref GLFW_FEATURE_UNAVAILABLE.  The dock icon will be the same as
  *  the application bundle's icon.  For more information on bundles, see the
  *  [Bundle Programming Guide][bundle-guide] in the Mac Developer Library.
  *
  *  [bundle-guide]: https://developer.apple.com/library/mac/documentation/CoreFoundation/Conceptual/CFBundles/
  *
- *  @remark @wayland There is no existing protocol to change an icon, the
+ *  @remark __Wayland:__ There is no existing protocol to change an icon, the
  *  window will thus inherit the one defined in the application's desktop file.
  *  This function will emit @ref GLFW_FEATURE_UNAVAILABLE.
  *
@@ -3430,8 +3430,8 @@ GLFWAPI void glfwSetWindowIcon(GLFWwindow* window, int count, const GLFWimage* i
  *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED, @ref
  *  GLFW_PLATFORM_ERROR and @ref GLFW_FEATURE_UNAVAILABLE (see remarks).
  *
- *  @remark @wayland There is no way for an application to retrieve the global
- *  position of its windows.  This function will emit @ref
+ *  @remark __Wayland:__ Window positions are not currently part of any common
+ *  Wayland protocol, so this function cannot be implemented and will emit @ref
  *  GLFW_FEATURE_UNAVAILABLE.
  *
  *  @thread_safety This function must only be called from the main thread.
@@ -3464,8 +3464,8 @@ GLFWAPI void glfwGetWindowPos(GLFWwindow* window, int* xpos, int* ypos);
  *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED, @ref
  *  GLFW_PLATFORM_ERROR and @ref GLFW_FEATURE_UNAVAILABLE (see remarks).
  *
- *  @remark @wayland There is no way for an application to set the global
- *  position of its windows.  This function will emit @ref
+ *  @remark __Wayland:__ Window positions are not currently part of any common
+ *  Wayland protocol, so this function cannot be implemented and will emit @ref
  *  GLFW_FEATURE_UNAVAILABLE.
  *
  *  @thread_safety This function must only be called from the main thread.
@@ -3474,7 +3474,7 @@ GLFWAPI void glfwGetWindowPos(GLFWwindow* window, int* xpos, int* ypos);
  *  @sa @ref glfwGetWindowPos
  *
  *  @since Added in version 1.0.
- *  @glfw3 Added window handle parameter.
+ *  __GLFW 3:__ Added window handle parameter.
  *
  *  @ingroup window
  */
@@ -3504,7 +3504,7 @@ GLFWAPI void glfwSetWindowPos(GLFWwindow* window, int xpos, int ypos);
  *  @sa @ref glfwSetWindowSize
  *
  *  @since Added in version 1.0.
- *  @glfw3 Added window handle parameter.
+ *  __GLFW 3:__ Added window handle parameter.
  *
  *  @ingroup window
  */
@@ -3539,7 +3539,7 @@ GLFWAPI void glfwGetWindowSize(GLFWwindow* window, int* width, int* height);
  *  @remark If you set size limits and an aspect ratio that conflict, the
  *  results are undefined.
  *
- *  @remark @wayland The size limits will not be applied until the window is
+ *  @remark __Wayland:__ The size limits will not be applied until the window is
  *  actually resized, either by the user or by the compositor.
  *
  *  @thread_safety This function must only be called from the main thread.
@@ -3582,7 +3582,7 @@ GLFWAPI void glfwSetWindowSizeLimits(GLFWwindow* window, int minwidth, int minhe
  *  @remark If you set size limits and an aspect ratio that conflict, the
  *  results are undefined.
  *
- *  @remark @wayland The aspect ratio will not be applied until the window is
+ *  @remark __Wayland:__ The aspect ratio will not be applied until the window is
  *  actually resized, either by the user or by the compositor.
  *
  *  @thread_safety This function must only be called from the main thread.
@@ -3628,7 +3628,7 @@ GLFWAPI void glfwSetWindowAspectRatio(GLFWwindow* window, int numer, int denom);
  *  @sa @ref glfwSetWindowMonitor
  *
  *  @since Added in version 1.0.
- *  @glfw3 Added window handle parameter.
+ *  __GLFW 3:__ Added window handle parameter.
  *
  *  @ingroup window
  */
@@ -3778,7 +3778,7 @@ GLFWAPI float glfwGetWindowOpacity(GLFWwindow* window);
  *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED, @ref
  *  GLFW_PLATFORM_ERROR and @ref GLFW_FEATURE_UNAVAILABLE (see remarks).
  *
- *  @remark @wayland There is no way to set an opacity factor for a window.
+ *  @remark __Wayland:__ There is no way to set an opacity factor for a window.
  *  This function will emit @ref GLFW_FEATURE_UNAVAILABLE.
  *
  *  @thread_safety This function must only be called from the main thread.
@@ -3807,10 +3807,6 @@ GLFWAPI void glfwSetWindowOpacity(GLFWwindow* window, float opacity);
  *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED and @ref
  *  GLFW_PLATFORM_ERROR.
  *
- *  @remark @wayland Once a window is iconified, @ref glfwRestoreWindow won’t
- *  be able to restore it.  This is a design decision of the xdg-shell
- *  protocol.
- *
  *  @thread_safety This function must only be called from the main thread.
  *
  *  @sa @ref window_iconify
@@ -3818,7 +3814,7 @@ GLFWAPI void glfwSetWindowOpacity(GLFWwindow* window, float opacity);
  *  @sa @ref glfwMaximizeWindow
  *
  *  @since Added in version 2.1.
- *  @glfw3 Added window handle parameter.
+ *  __GLFW 3:__ Added window handle parameter.
  *
  *  @ingroup window
  */
@@ -3838,6 +3834,10 @@ GLFWAPI void glfwIconifyWindow(GLFWwindow* window);
  *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED and @ref
  *  GLFW_PLATFORM_ERROR.
  *
+ *  @remark __Wayland:__ Restoring a window from maximization is not currently
+ *  part of any common Wayland protocol, so this function can only restore
+ *  windows from maximization.
+ *
  *  @thread_safety This function must only be called from the main thread.
  *
  *  @sa @ref window_iconify
@@ -3845,7 +3845,7 @@ GLFWAPI void glfwIconifyWindow(GLFWwindow* window);
  *  @sa @ref glfwMaximizeWindow
  *
  *  @since Added in version 2.1.
- *  @glfw3 Added window handle parameter.
+ *  __GLFW 3:__ Added window handle parameter.
  *
  *  @ingroup window
  */
@@ -3892,7 +3892,7 @@ GLFWAPI void glfwMaximizeWindow(GLFWwindow* window);
  *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED and @ref
  *  GLFW_PLATFORM_ERROR.
  *
- *  @remark @wayland Because Wayland wants every frame of the desktop to be
+ *  @remark __Wayland:__ Because Wayland wants every frame of the desktop to be
  *  complete, this function does not immediately make the window visible.
  *  Instead it will become visible the next time the window framebuffer is
  *  updated after this call.
@@ -3955,7 +3955,7 @@ GLFWAPI void glfwHideWindow(GLFWwindow* window);
  *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED and @ref
  *  GLFW_PLATFORM_ERROR.
  *
- *  @remark @wayland The compositor will likely ignore focus requests unless
+ *  @remark __Wayland:__ The compositor will likely ignore focus requests unless
  *  another window created by the same application already has input focus.
  *
  *  @thread_safety This function must only be called from the main thread.
@@ -3983,7 +3983,7 @@ GLFWAPI void glfwFocusWindow(GLFWwindow* window);
  *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED and @ref
  *  GLFW_PLATFORM_ERROR.
  *
- *  @remark @macos Attention is requested to the application as a whole, not the
+ *  @remark __macOS:__ Attention is requested to the application as a whole, not the
  *  specific window.
  *
  *  @thread_safety This function must only be called from the main thread.
@@ -4058,8 +4058,8 @@ GLFWAPI GLFWmonitor* glfwGetWindowMonitor(GLFWwindow* window);
  *  affected by any resizing or mode switching, although you may need to update
  *  your viewport if the framebuffer size has changed.
  *
- *  @remark @wayland The desired window position is ignored, as there is no way
- *  for an application to set this property.
+ *  @remark __Wayland:__ Window positions are not currently part of any common
+ *  Wayland protocol.  The window position arguments are ignored.
  *
  *  @thread_safety This function must only be called from the main thread.
  *
@@ -4096,8 +4096,9 @@ GLFWAPI void glfwSetWindowMonitor(GLFWwindow* window, GLFWmonitor* monitor, int 
  *  errors.  However, this function should not fail as long as it is passed
  *  valid arguments and the library has been [initialized](@ref intro_init).
  *
- *  @remark @wayland The Wayland protocol provides no way to check whether a
- *  window is iconfied, so @ref GLFW_ICONIFIED always returns `GLFW_FALSE`.
+ *  @remark __Wayland:__ Checking whether a window is iconified is not currently
+ *  part of any common Wayland protocol, so the @ref GLFW_ICONIFIED attribute
+ *  cannot be implemented and is always `GLFW_FALSE`.
  *
  *  @thread_safety This function must only be called from the main thread.
  *
@@ -4139,7 +4140,7 @@ GLFWAPI int glfwGetWindowAttrib(GLFWwindow* window, int attrib);
  *  @remark Calling @ref glfwGetWindowAttrib will always return the latest
  *  value, even if that value is ignored by the current mode of the window.
  *
- *  @remark @wayland The [GLFW_FLOATING](@ref GLFW_FLOATING_attrib) window attribute is
+ *  @remark __Wayland:__ The [GLFW_FLOATING](@ref GLFW_FLOATING_attrib) window attribute is
  *  not supported.  Setting this will emit @ref GLFW_FEATURE_UNAVAILABLE.
  *
  *  @thread_safety This function must only be called from the main thread.
@@ -4219,8 +4220,8 @@ GLFWAPI void* glfwGetWindowUserPointer(GLFWwindow* window);
  *
  *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED.
  *
- *  @remark @wayland This callback will never be called, as there is no way for
- *  an application to know its global position.
+ *  @remark __Wayland:__ This callback will not be called.  The Wayland protocol
+ *  provides no way to be notified of when a window is moved.
  *
  *  @thread_safety This function must only be called from the main thread.
  *
@@ -4258,7 +4259,7 @@ GLFWAPI GLFWwindowposfun glfwSetWindowPosCallback(GLFWwindow* window, GLFWwindow
  *  @sa @ref window_size
  *
  *  @since Added in version 1.0.
- *  @glfw3 Added window handle parameter and return value.
+ *  __GLFW 3:__ Added window handle parameter and return value.
  *
  *  @ingroup window
  */
@@ -4290,7 +4291,7 @@ GLFWAPI GLFWwindowsizefun glfwSetWindowSizeCallback(GLFWwindow* window, GLFWwind
  *
  *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED.
  *
- *  @remark @macos Selecting Quit from the application menu will trigger the
+ *  @remark __macOS:__ Selecting Quit from the application menu will trigger the
  *  close callback for all windows.
  *
  *  @thread_safety This function must only be called from the main thread.
@@ -4298,7 +4299,7 @@ GLFWAPI GLFWwindowsizefun glfwSetWindowSizeCallback(GLFWwindow* window, GLFWwind
  *  @sa @ref window_close
  *
  *  @since Added in version 2.5.
- *  @glfw3 Added window handle parameter and return value.
+ *  __GLFW 3:__ Added window handle parameter and return value.
  *
  *  @ingroup window
  */
@@ -4334,7 +4335,7 @@ GLFWAPI GLFWwindowclosefun glfwSetWindowCloseCallback(GLFWwindow* window, GLFWwi
  *  @sa @ref window_refresh
  *
  *  @since Added in version 2.5.
- *  @glfw3 Added window handle parameter and return value.
+ *  __GLFW 3:__ Added window handle parameter and return value.
  *
  *  @ingroup window
  */
@@ -4394,6 +4395,10 @@ GLFWAPI GLFWwindowfocusfun glfwSetWindowFocusCallback(GLFWwindow* window, GLFWwi
  *  [function pointer type](@ref GLFWwindowiconifyfun).
  *
  *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED.
+ *
+ *  @remark __Wayland:__ This callback will not be called.  The Wayland protocol
+ *  provides no way to be notified of when a window is iconified, and no way to
+ *  check whether a window is currently iconified.
  *
  *  @thread_safety This function must only be called from the main thread.
  *
@@ -4900,7 +4905,7 @@ GLFWAPI int glfwGetKeyScancode(int key);
  *  @sa @ref input_key
  *
  *  @since Added in version 1.0.
- *  @glfw3 Added window handle parameter.
+ *  __GLFW 3:__ Added window handle parameter.
  *
  *  @ingroup input
  */
@@ -4932,7 +4937,7 @@ GLFWAPI int glfwGetKey(GLFWwindow* window, int key);
  *  @sa @ref input_mouse_button
  *
  *  @since Added in version 1.0.
- *  @glfw3 Added window handle parameter.
+ *  __GLFW 3:__ Added window handle parameter.
  *
  *  @ingroup input
  */
@@ -5002,7 +5007,7 @@ GLFWAPI void glfwGetCursorPos(GLFWwindow* window, double* xpos, double* ypos);
  *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED, @ref
  *  GLFW_PLATFORM_ERROR and @ref GLFW_FEATURE_UNAVAILABLE (see remarks).
  *
- *  @remark @wayland This function will only work when the cursor mode is
+ *  @remark __Wayland:__ This function will only work when the cursor mode is
  *  `GLFW_CURSOR_DISABLED`, otherwise it will emit @ref GLFW_FEATURE_UNAVAILABLE.
  *
  *  @thread_safety This function must only be called from the main thread.
@@ -5200,7 +5205,7 @@ GLFWAPI void glfwSetCursor(GLFWwindow* window, GLFWcursor* cursor);
  *  @sa @ref input_key
  *
  *  @since Added in version 1.0.
- *  @glfw3 Added window handle parameter and return value.
+ *  __GLFW 3:__ Added window handle parameter and return value.
  *
  *  @ingroup input
  */
@@ -5243,7 +5248,7 @@ GLFWAPI GLFWkeyfun glfwSetKeyCallback(GLFWwindow* window, GLFWkeyfun callback);
  *  @sa @ref input_char
  *
  *  @since Added in version 2.4.
- *  @glfw3 Added window handle parameter and return value.
+ *  __GLFW 3:__ Added window handle parameter and return value.
  *
  *  @ingroup input
  */
@@ -5327,7 +5332,7 @@ GLFWAPI GLFWcharmodsfun glfwSetCharModsCallback(GLFWwindow* window, GLFWcharmods
  *  @sa @ref input_mouse_button
  *
  *  @since Added in version 1.0.
- *  @glfw3 Added window handle parameter and return value.
+ *  __GLFW 3:__ Added window handle parameter and return value.
  *
  *  @ingroup input
  */
@@ -5557,7 +5562,7 @@ GLFWAPI const float* glfwGetJoystickAxes(int jid, int* count);
  *  @sa @ref joystick_button
  *
  *  @since Added in version 2.2.
- *  @glfw3 Changed to return a dynamic array.
+ *  __GLFW 3:__ Changed to return a dynamic array.
  *
  *  @ingroup input
  */
@@ -5921,7 +5926,7 @@ GLFWAPI int glfwGetGamepadState(int jid, GLFWgamepadstate* state);
  *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED and @ref
  *  GLFW_PLATFORM_ERROR.
  *
- *  @remark @win32 The clipboard on Windows has a single global lock for reading and
+ *  @remark __Win32:__ The clipboard on Windows has a single global lock for reading and
  *  writing.  GLFW tries to acquire it a few times, which is almost always enough.  If it
  *  cannot acquire the lock then this function emits @ref GLFW_PLATFORM_ERROR and returns.
  *  It is safe to try this multiple times.
@@ -5954,7 +5959,7 @@ GLFWAPI void glfwSetClipboardString(GLFWwindow* window, const char* string);
  *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED, @ref
  *  GLFW_FORMAT_UNAVAILABLE and @ref GLFW_PLATFORM_ERROR.
  *
- *  @remark @win32 The clipboard on Windows has a single global lock for reading and
+ *  @remark __Win32:__ The clipboard on Windows has a single global lock for reading and
  *  writing.  GLFW tries to acquire it a few times, which is almost always enough.  If it
  *  cannot acquire the lock then this function emits @ref GLFW_PLATFORM_ERROR and returns.
  *  It is safe to try this multiple times.
@@ -6171,7 +6176,7 @@ GLFWAPI GLFWwindow* glfwGetCurrentContext(void);
  *  @sa @ref glfwSwapInterval
  *
  *  @since Added in version 1.0.
- *  @glfw3 Added window handle parameter.
+ *  __GLFW 3:__ Added window handle parameter.
  *
  *  @ingroup window
  */
@@ -6438,7 +6443,7 @@ GLFWAPI GLFWvkproc glfwGetInstanceProcAddress(VkInstance instance, const char* p
  *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED, @ref
  *  GLFW_API_UNAVAILABLE and @ref GLFW_PLATFORM_ERROR.
  *
- *  @remark @macos This function currently always returns `GLFW_TRUE`, as the
+ *  @remark __macOS:__ This function currently always returns `GLFW_TRUE`, as the
  *  `VK_MVK_macos_surface` and `VK_EXT_metal_surface` extensions do not provide
  *  a `vkGetPhysicalDevice*PresentationSupport` type function.
  *
@@ -6496,15 +6501,15 @@ GLFWAPI int glfwGetPhysicalDevicePresentationSupport(VkInstance instance, VkPhys
  *  @ref glfwVulkanSupported and @ref glfwGetRequiredInstanceExtensions should
  *  eliminate almost all occurrences of these errors.
  *
- *  @remark @macos GLFW prefers the `VK_EXT_metal_surface` extension, with the
+ *  @remark __macOS:__ GLFW prefers the `VK_EXT_metal_surface` extension, with the
  *  `VK_MVK_macos_surface` extension as a fallback.  The name of the selected
  *  extension, if any, is included in the array returned by @ref
  *  glfwGetRequiredInstanceExtensions.
  *
- *  @remark @macos This function creates and sets a `CAMetalLayer` instance for
+ *  @remark __macOS:__ This function creates and sets a `CAMetalLayer` instance for
  *  the window content view, which is required for MoltenVK to function.
  *
- *  @remark @x11 By default GLFW prefers the `VK_KHR_xcb_surface` extension,
+ *  @remark __X11:__ By default GLFW prefers the `VK_KHR_xcb_surface` extension,
  *  with the `VK_KHR_xlib_surface` extension as a fallback.  You can make
  *  `VK_KHR_xlib_surface` the preferred extension by setting the
  *  [GLFW_X11_XCB_VULKAN_SURFACE](@ref GLFW_X11_XCB_VULKAN_SURFACE_hint) init
@@ -7040,6 +7045,29 @@ GLFWAPI GLXContext glfwGetGLXContext(GLFWwindow* window);
  *  @ingroup native
  */
 GLFWAPI GLXWindow glfwGetGLXWindow(GLFWwindow* window);
+
+/*! @brief Retrieves the `GLXFBConfig` of the specified window's `GLXWindow`.
+ *
+ *  @param[in] window The window whose `GLXWindow` to query.
+ *  @param[out] config The `GLXFBConfig` of the window `GLXWindow`, if available.
+ *  @return `GLFW_TRUE` if successful, or `GLFW_FALSE` if an
+ *  [error](@ref error_handling) occurred.
+ *
+ *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED, @ref
+ *  GLFW_NO_WINDOW_CONTEXT and @ref GLFW_PLATFORM_UNAVAILABLE.
+ *
+ *  @remark `GLXFBConfig` is an opaque type.  Unlike other GLFW functions, the
+ *  @p config out parameter is not cleared on error, as core GLX does not define
+ *  any invalid value.
+ *
+ *  @thread_safety This function may be called from any thread.  Access is not
+ *  synchronized.
+ *
+ *  @since Added in version 3.5
+ *
+ *  @ingroup native
+ */
+GLFWAPI int glfwGetGLXFBConfig(GLFWwindow* window, GLXFBConfig* config);
 #endif
 
 #if defined(GLFW_EXPOSE_NATIVE_WAYLAND)
@@ -7148,6 +7176,29 @@ GLFWAPI EGLContext glfwGetEGLContext(GLFWwindow* window);
  *  @ingroup native
  */
 GLFWAPI EGLSurface glfwGetEGLSurface(GLFWwindow* window);
+
+/*! @brief Retrieves the `EGLConfig` of the specified window's `EGLSurface`.
+ *
+ *  @param[in] window The window whose `EGLSurface` to query.
+ *  @param[out] config The `EGLConfig` of the window `EGLSurface`, if available.
+ *  @return `GLFW_TRUE` if successful, or `GLFW_FALSE` if an
+ *  [error](@ref error_handling) occurred.
+ *
+ *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED and @ref
+ *  GLFW_NO_WINDOW_CONTEXT.
+ *
+ *  @remark `EGLConfig` is an opaque type.  Unlike other GLFW functions, the @p
+ *  config out parameter is not cleared on error, as core EGL does not define
+ *  any invalid value.
+ *
+ *  @thread_safety This function may be called from any thread.  Access is not
+ *  synchronized.
+ *
+ *  @since Added in version 3.5.
+ *
+ *  @ingroup native
+ */
+GLFWAPI int glfwGetEGLConfig(GLFWwindow* window, EGLConfig* config);
 #endif
 
 #if defined(GLFW_EXPOSE_NATIVE_OSMESA)
@@ -7980,14 +8031,14 @@ void _glfwPollMonitorsNull(void);
  #define UNICODE
 #endif
 
-// GLFW requires Windows XP or later
-#if WINVER < 0x0501
+// GLFW requires Windows 7 or later
+#if WINVER < 0x0601
  #undef WINVER
- #define WINVER 0x0501
+ #define WINVER 0x0601
 #endif
-#if _WIN32_WINNT < 0x0501
+#if _WIN32_WINNT < 0x0601
  #undef _WIN32_WINNT
- #define _WIN32_WINNT 0x0501
+ #define _WIN32_WINNT 0x0601
 #endif
 
 // GLFW uses DirectInput8 interfaces
@@ -7998,40 +8049,20 @@ void _glfwPollMonitorsNull(void);
 
 #include <wctype.h>
 #include <windows.h>
+#include <dwmapi.h>
 #include <dinput.h>
 #include <xinput.h>
 #include <dbt.h>
 
 // HACK: Define macros that some windows.h variants don't
-#ifndef WM_MOUSEHWHEEL
- #define WM_MOUSEHWHEEL 0x020E
-#endif
-#ifndef WM_DWMCOMPOSITIONCHANGED
- #define WM_DWMCOMPOSITIONCHANGED 0x031E
-#endif
-#ifndef WM_DWMCOLORIZATIONCOLORCHANGED
- #define WM_DWMCOLORIZATIONCOLORCHANGED 0x0320
-#endif
 #ifndef WM_COPYGLOBALDATA
  #define WM_COPYGLOBALDATA 0x0049
-#endif
-#ifndef WM_UNICHAR
- #define WM_UNICHAR 0x0109
-#endif
-#ifndef UNICODE_NOCHAR
- #define UNICODE_NOCHAR 0xFFFF
 #endif
 #ifndef WM_DPICHANGED
  #define WM_DPICHANGED 0x02E0
 #endif
-#ifndef GET_XBUTTON_WPARAM
- #define GET_XBUTTON_WPARAM(w) (HIWORD(w))
-#endif
 #ifndef EDS_ROTATEDMODE
  #define EDS_ROTATEDMODE 0x00000004
-#endif
-#ifndef DISPLAY_DEVICE_ACTIVE
- #define DISPLAY_DEVICE_ACTIVE 0x00000001
 #endif
 #ifndef _WIN32_WINNT_WINBLUE
  #define _WIN32_WINNT_WINBLUE 0x0603
@@ -8045,34 +8076,6 @@ void _glfwPollMonitorsNull(void);
 #ifndef USER_DEFAULT_SCREEN_DPI
  #define USER_DEFAULT_SCREEN_DPI 96
 #endif
-#ifndef OCR_HAND
- #define OCR_HAND 32649
-#endif
-
-#if WINVER < 0x0601
-typedef struct
-{
-    DWORD cbSize;
-    DWORD ExtStatus;
-} CHANGEFILTERSTRUCT;
-#ifndef MSGFLT_ALLOW
- #define MSGFLT_ALLOW 1
-#endif
-#endif /*Windows 7*/
-
-#if WINVER < 0x0600
-#define DWM_BB_ENABLE 0x00000001
-#define DWM_BB_BLURREGION 0x00000002
-typedef struct
-{
-    DWORD dwFlags;
-    BOOL fEnable;
-    HRGN hRgnBlur;
-    BOOL fTransitionOnMaximized;
-} DWM_BLURBEHIND;
-#else
- #include <dwmapi.h>
-#endif /*Windows Vista*/
 
 #ifndef DPI_ENUMS_DECLARED
 typedef enum
@@ -8097,12 +8100,6 @@ typedef enum
 // Replacement for versionhelpers.h macros, as we cannot rely on the
 // application having a correct embedded manifest
 //
-#define IsWindowsVistaOrGreater()                                     \
-    _glfwIsWindowsVersionOrGreaterWin32(HIBYTE(_WIN32_WINNT_VISTA),   \
-                                        LOBYTE(_WIN32_WINNT_VISTA), 0)
-#define IsWindows7OrGreater()                                         \
-    _glfwIsWindowsVersionOrGreaterWin32(HIBYTE(_WIN32_WINNT_WIN7),    \
-                                        LOBYTE(_WIN32_WINNT_WIN7), 0)
 #define IsWindows8OrGreater()                                         \
     _glfwIsWindowsVersionOrGreaterWin32(HIBYTE(_WIN32_WINNT_WIN8),    \
                                         LOBYTE(_WIN32_WINNT_WIN8), 0)
@@ -8213,15 +8210,11 @@ typedef HRESULT (WINAPI * PFN_DirectInput8Create)(HINSTANCE,DWORD,REFIID,LPVOID*
 #define DirectInput8Create _glfw.win32.dinput8.Create
 
 // user32.dll function pointer typedefs
-typedef BOOL (WINAPI * PFN_SetProcessDPIAware)(void);
-typedef BOOL (WINAPI * PFN_ChangeWindowMessageFilterEx)(HWND,UINT,DWORD,CHANGEFILTERSTRUCT*);
 typedef BOOL (WINAPI * PFN_EnableNonClientDpiScaling)(HWND);
 typedef BOOL (WINAPI * PFN_SetProcessDpiAwarenessContext)(HANDLE);
 typedef UINT (WINAPI * PFN_GetDpiForWindow)(HWND);
 typedef BOOL (WINAPI * PFN_AdjustWindowRectExForDpi)(LPRECT,DWORD,BOOL,DWORD,UINT);
 typedef int (WINAPI * PFN_GetSystemMetricsForDpi)(int,UINT);
-#define SetProcessDPIAware _glfw.win32.user32.SetProcessDPIAware_
-#define ChangeWindowMessageFilterEx _glfw.win32.user32.ChangeWindowMessageFilterEx_
 #define EnableNonClientDpiScaling _glfw.win32.user32.EnableNonClientDpiScaling_
 #define SetProcessDpiAwarenessContext _glfw.win32.user32.SetProcessDpiAwarenessContext_
 #define GetDpiForWindow _glfw.win32.user32.GetDpiForWindow_
@@ -8407,8 +8400,6 @@ typedef struct _GLFWlibraryWin32
 
     struct {
         HINSTANCE                       instance;
-        PFN_SetProcessDPIAware          SetProcessDPIAware_;
-        PFN_ChangeWindowMessageFilterEx ChangeWindowMessageFilterEx_;
         PFN_EnableNonClientDpiScaling   EnableNonClientDpiScaling_;
         PFN_SetProcessDpiAwarenessContext SetProcessDpiAwarenessContext_;
         PFN_GetDpiForWindow             GetDpiForWindow_;
@@ -9161,62 +9152,62 @@ struct libdecor_configuration;
 
 enum libdecor_error
 {
-	LIBDECOR_ERROR_COMPOSITOR_INCOMPATIBLE,
-	LIBDECOR_ERROR_INVALID_FRAME_CONFIGURATION,
+    LIBDECOR_ERROR_COMPOSITOR_INCOMPATIBLE,
+    LIBDECOR_ERROR_INVALID_FRAME_CONFIGURATION,
 };
 
 enum libdecor_window_state
 {
-	LIBDECOR_WINDOW_STATE_NONE = 0,
-	LIBDECOR_WINDOW_STATE_ACTIVE = 1,
-	LIBDECOR_WINDOW_STATE_MAXIMIZED = 2,
-	LIBDECOR_WINDOW_STATE_FULLSCREEN = 4,
-	LIBDECOR_WINDOW_STATE_TILED_LEFT = 8,
-	LIBDECOR_WINDOW_STATE_TILED_RIGHT = 16,
-	LIBDECOR_WINDOW_STATE_TILED_TOP = 32,
-	LIBDECOR_WINDOW_STATE_TILED_BOTTOM = 64
+    LIBDECOR_WINDOW_STATE_NONE = 0,
+    LIBDECOR_WINDOW_STATE_ACTIVE = 1,
+    LIBDECOR_WINDOW_STATE_MAXIMIZED = 2,
+    LIBDECOR_WINDOW_STATE_FULLSCREEN = 4,
+    LIBDECOR_WINDOW_STATE_TILED_LEFT = 8,
+    LIBDECOR_WINDOW_STATE_TILED_RIGHT = 16,
+    LIBDECOR_WINDOW_STATE_TILED_TOP = 32,
+    LIBDECOR_WINDOW_STATE_TILED_BOTTOM = 64
 };
 
 enum libdecor_capabilities
 {
-	LIBDECOR_ACTION_MOVE = 1,
-	LIBDECOR_ACTION_RESIZE = 2,
-	LIBDECOR_ACTION_MINIMIZE = 4,
-	LIBDECOR_ACTION_FULLSCREEN = 8,
-	LIBDECOR_ACTION_CLOSE = 16
+    LIBDECOR_ACTION_MOVE = 1,
+    LIBDECOR_ACTION_RESIZE = 2,
+    LIBDECOR_ACTION_MINIMIZE = 4,
+    LIBDECOR_ACTION_FULLSCREEN = 8,
+    LIBDECOR_ACTION_CLOSE = 16
 };
 
 struct libdecor_interface
 {
-	void (* error)(struct libdecor*,enum libdecor_error,const char*);
-	void (* reserved0)(void);
-	void (* reserved1)(void);
-	void (* reserved2)(void);
-	void (* reserved3)(void);
-	void (* reserved4)(void);
-	void (* reserved5)(void);
-	void (* reserved6)(void);
-	void (* reserved7)(void);
-	void (* reserved8)(void);
-	void (* reserved9)(void);
+    void (* error)(struct libdecor*,enum libdecor_error,const char*);
+    void (* reserved0)(void);
+    void (* reserved1)(void);
+    void (* reserved2)(void);
+    void (* reserved3)(void);
+    void (* reserved4)(void);
+    void (* reserved5)(void);
+    void (* reserved6)(void);
+    void (* reserved7)(void);
+    void (* reserved8)(void);
+    void (* reserved9)(void);
 };
 
 struct libdecor_frame_interface
 {
-	void (* configure)(struct libdecor_frame*,struct libdecor_configuration*,void*);
-	void (* close)(struct libdecor_frame*,void*);
-	void (* commit)(struct libdecor_frame*,void*);
-	void (* dismiss_popup)(struct libdecor_frame*,const char*,void*);
-	void (* reserved0)(void);
-	void (* reserved1)(void);
-	void (* reserved2)(void);
-	void (* reserved3)(void);
-	void (* reserved4)(void);
-	void (* reserved5)(void);
-	void (* reserved6)(void);
-	void (* reserved7)(void);
-	void (* reserved8)(void);
-	void (* reserved9)(void);
+    void (* configure)(struct libdecor_frame*,struct libdecor_configuration*,void*);
+    void (* close)(struct libdecor_frame*,void*);
+    void (* commit)(struct libdecor_frame*,void*);
+    void (* dismiss_popup)(struct libdecor_frame*,const char*,void*);
+    void (* reserved0)(void);
+    void (* reserved1)(void);
+    void (* reserved2)(void);
+    void (* reserved3)(void);
+    void (* reserved4)(void);
+    void (* reserved5)(void);
+    void (* reserved6)(void);
+    void (* reserved7)(void);
+    void (* reserved8)(void);
+    void (* reserved9)(void);
 };
 
 typedef struct libdecor* (* PFN_libdecor_new)(struct wl_display*,const struct libdecor_interface*);
@@ -9357,6 +9348,8 @@ typedef struct _GLFWwindowWayland
         struct wl_buffer*           buffer;
         _GLFWfallbackEdgeWayland    top, left, right, bottom;
         struct wl_surface*          focus;
+        wl_fixed_t                  pointerX, pointerY;
+        const char*                 cursorName;
     } fallback;
 } _GLFWwindowWayland;
 
@@ -9398,7 +9391,6 @@ typedef struct _GLFWlibraryWayland
     struct wl_cursor_theme*     cursorTheme;
     struct wl_cursor_theme*     cursorThemeHiDPI;
     struct wl_surface*          cursorSurface;
-    const char*                 cursorPreviousName;
     int                         cursorTimerfd;
     uint32_t                    serial;
     uint32_t                    pointerEnterSerial;
@@ -10205,6 +10197,7 @@ typedef struct _GLFWcontextGLX
 {
     GLXContext      handle;
     GLXWindow       window;
+    GLXFBConfig     fbconfig;
 } _GLFWcontextGLX;
 
 // GLX-specific global data
@@ -11377,6 +11370,7 @@ typedef struct _GLFWtimerPOSIX
 
 #define GLFW_NATIVE_INCLUDE_NONE
 
+
 // Checks for whether the library has been initialized
 #define _GLFW_REQUIRE_INIT()                         \
     if (!_glfw.initialized)                          \
@@ -11443,7 +11437,6 @@ struct _GLFWwndconfig
     int           ypos;
     int           width;
     int           height;
-    const char*   title;
     GLFWbool      resizable;
     GLFWbool      visible;
     GLFWbool      decorated;
@@ -12097,7 +12090,6 @@ void _glfw_free(void* pointer);
 
 
 
-
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
@@ -12489,7 +12481,6 @@ GLFWAPI OSMesaContext glfwGetOSMesaContext(GLFWwindow* handle)
 //    distribution.
 //
 //========================================================================
-
 
 
 
@@ -13405,11 +13396,33 @@ GLFWAPI EGLSurface glfwGetEGLSurface(GLFWwindow* handle)
             window->context.source != GLFW_NATIVE_CONTEXT_API)
         {
             _glfwInputError(GLFW_NO_WINDOW_CONTEXT, NULL);
-            return EGL_NO_CONTEXT;
+            return EGL_NO_SURFACE;
         }
     }
 
     return window->context.egl.surface;
+}
+
+GLFWAPI int glfwGetEGLConfig(GLFWwindow* handle, EGLConfig* config)
+{
+    _GLFW_REQUIRE_INIT_OR_RETURN(GLFW_FALSE);
+
+    _GLFWwindow* window = (_GLFWwindow*) handle;
+    assert(window != NULL);
+    assert(config != NULL);
+
+    if (window->context.source != GLFW_EGL_CONTEXT_API)
+    {
+        if (_glfw.platform.platformID != GLFW_PLATFORM_WAYLAND ||
+            window->context.source != GLFW_NATIVE_CONTEXT_API)
+        {
+            _glfwInputError(GLFW_NO_WINDOW_CONTEXT, NULL);
+            return GLFW_FALSE;
+        }
+    }
+
+    *config = window->context.egl.config;
+    return GLFW_TRUE;
 }
 
 
@@ -13445,7 +13458,6 @@ GLFWAPI EGLSurface glfwGetEGLSurface(GLFWwindow* handle)
 //    distribution.
 //
 //========================================================================
-
 
 
 
@@ -14221,7 +14233,6 @@ GLFWAPI GLFWglproc glfwGetProcAddress(const char* procname)
 
 
 
-
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -14754,7 +14765,6 @@ GLFWAPI GLFWerrorfun glfwSetErrorCallback(GLFWerrorfun cbfun)
 //    distribution.
 //
 //========================================================================
-
 
 
 
@@ -17298,7 +17308,6 @@ GLFWAPI uint64_t glfwGetTimerFrequency(void)
 
 
 
-
 #include <string.h>
 #include <stdlib.h>
 
@@ -17459,8 +17468,6 @@ GLFWAPI const char* glfwGetVersionString(void)
         " OSMesa"
 #if defined(__MINGW64_VERSION_MAJOR)
         " MinGW-w64"
-#elif defined(__MINGW32__)
-        " MinGW"
 #elif defined(_MSC_VER)
         " VisualC"
 #endif
@@ -17515,7 +17522,6 @@ GLFWAPI const char* glfwGetVersionString(void)
 //    distribution.
 //
 //========================================================================
-
 
 
 
@@ -18081,7 +18087,6 @@ GLFWAPI void glfwSetGammaRamp(GLFWmonitor* handle, const GLFWgammaramp* ramp)
 
 
 
-
 #include <assert.h>
 #include <string.h>
 #include <stdlib.h>
@@ -18421,7 +18426,6 @@ GLFWAPI VkResult glfwCreateWindowSurface(VkInstance instance,
 
 
 
-
 #include <assert.h>
 #include <string.h>
 #include <stdlib.h>
@@ -18602,7 +18606,6 @@ GLFWAPI GLFWwindow* glfwCreateWindow(int width, int height,
 
     wndconfig.width   = width;
     wndconfig.height  = height;
-    wndconfig.title   = title;
     ctxconfig.share   = (_GLFWwindow*) share;
 
     if (!_glfwIsValidContextConfig(&ctxconfig))
@@ -19637,7 +19640,6 @@ GLFWAPI void glfwPostEmptyEvent(void)
 
 
 
-
 #if defined(_GLFW_WIN32)
 
 #include <stdlib.h>
@@ -19700,10 +19702,6 @@ static GLFWbool loadLibraries(void)
         return GLFW_FALSE;
     }
 
-    _glfw.win32.user32.SetProcessDPIAware_ = (PFN_SetProcessDPIAware)
-        _glfwPlatformGetModuleSymbol(_glfw.win32.user32.instance, "SetProcessDPIAware");
-    _glfw.win32.user32.ChangeWindowMessageFilterEx_ = (PFN_ChangeWindowMessageFilterEx)
-        _glfwPlatformGetModuleSymbol(_glfw.win32.user32.instance, "ChangeWindowMessageFilterEx");
     _glfw.win32.user32.EnableNonClientDpiScaling_ = (PFN_EnableNonClientDpiScaling)
         _glfwPlatformGetModuleSymbol(_glfw.win32.user32.instance, "EnableNonClientDpiScaling");
     _glfw.win32.user32.SetProcessDpiAwarenessContext_ = (PFN_SetProcessDpiAwarenessContext)
@@ -20303,7 +20301,7 @@ int _glfwInitWin32(void)
         SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
     else if (IsWindows8Point1OrGreater())
         SetProcessDpiAwareness(PROCESS_PER_MONITOR_DPI_AWARE);
-    else if (IsWindowsVistaOrGreater())
+    else
         SetProcessDPIAware();
 
     if (!createHelperWindow())
@@ -20373,7 +20371,6 @@ void _glfwTerminateWin32(void)
 //    distribution.
 //
 //========================================================================
-
 
 
 
@@ -21150,7 +21147,6 @@ void _glfwUpdateGamepadGUIDWin32(char* guid)
 
 
 
-
 #if defined(GLFW_BUILD_WIN32_MODULE)
 
 //////////////////////////////////////////////////////////////////////////
@@ -21207,7 +21203,6 @@ GLFWproc _glfwPlatformGetModuleSymbol(void* module, const char* name)
 //    distribution.
 //
 //========================================================================
-
 
 
 
@@ -21792,7 +21787,6 @@ GLFWAPI const char* glfwGetWin32Monitor(GLFWmonitor* handle)
 
 
 
-
 #if defined(GLFW_BUILD_WIN32_TIMER)
 
 //////////////////////////////////////////////////////////////////////////
@@ -21851,7 +21845,6 @@ uint64_t _glfwPlatformGetTimerFrequency(void)
 //    distribution.
 //
 //========================================================================
-
 
 
 
@@ -21959,7 +21952,6 @@ void _glfwPlatformUnlockMutex(_GLFWmutex* mutex)
 //    distribution.
 //
 //========================================================================
-
 
 
 
@@ -22309,9 +22301,6 @@ static void updateFramebufferTransparency(const _GLFWwindow* window)
 {
     BOOL composition, opaque;
     DWORD color;
-
-    if (!IsWindowsVistaOrGreater())
-        return;
 
     if (FAILED(DwmIsCompositionEnabled(&composition)) || !composition)
        return;
@@ -22919,7 +22908,6 @@ static LRESULT CALLBACK windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
 
         case WM_MOUSEHWHEEL:
         {
-            // This message is only sent on Windows Vista and later
             // NOTE: The X-axis is inverted for consistency with macOS and X11
             _glfwInputScroll(window, -((SHORT) HIWORD(wParam) / (double) WHEEL_DELTA), 0.0);
             return 0;
@@ -23317,7 +23305,7 @@ static int createNativeWindow(_GLFWwindow* window,
         frameHeight = rect.bottom - rect.top;
     }
 
-    wideTitle = _glfwCreateWideStringFromUTF8Win32(wndconfig->title);
+    wideTitle = _glfwCreateWideStringFromUTF8Win32(window->title);
     if (!wideTitle)
         return GLFW_FALSE;
 
@@ -23343,15 +23331,9 @@ static int createNativeWindow(_GLFWwindow* window,
 
     SetPropW(window->win32.handle, L"GLFW", window);
 
-    if (IsWindows7OrGreater())
-    {
-        ChangeWindowMessageFilterEx(window->win32.handle,
-                                    WM_DROPFILES, MSGFLT_ALLOW, NULL);
-        ChangeWindowMessageFilterEx(window->win32.handle,
-                                    WM_COPYDATA, MSGFLT_ALLOW, NULL);
-        ChangeWindowMessageFilterEx(window->win32.handle,
-                                    WM_COPYGLOBALDATA, MSGFLT_ALLOW, NULL);
-    }
+    ChangeWindowMessageFilterEx(window->win32.handle, WM_DROPFILES, MSGFLT_ALLOW, NULL);
+    ChangeWindowMessageFilterEx(window->win32.handle, WM_COPYDATA, MSGFLT_ALLOW, NULL);
+    ChangeWindowMessageFilterEx(window->win32.handle, WM_COPYGLOBALDATA, MSGFLT_ALLOW, NULL);
 
     window->win32.scaleToMonitor = wndconfig->scaleToMonitor;
     window->win32.keymenu = wndconfig->win32.keymenu;
@@ -23915,9 +23897,6 @@ GLFWbool _glfwFramebufferTransparentWin32(_GLFWwindow* window)
     DWORD color;
 
     if (!window->win32.transparent)
-        return GLFW_FALSE;
-
-    if (!IsWindowsVistaOrGreater())
         return GLFW_FALSE;
 
     if (FAILED(DwmIsCompositionEnabled(&composition)) || !composition)
@@ -24566,7 +24545,6 @@ GLFWAPI HWND glfwGetWin32Window(GLFWwindow* handle)
 
 
 
-
 #if defined(_GLFW_WIN32)
 
 #include <stdlib.h>
@@ -24867,8 +24845,8 @@ static void swapBuffersWGL(_GLFWwindow* window)
 {
     if (!window->monitor)
     {
-        // HACK: Use DwmFlush when desktop composition is enabled on Windows Vista and 7
-        if (!IsWindows8OrGreater() && IsWindowsVistaOrGreater())
+        // HACK: Use DwmFlush when desktop composition is enabled on Windows 7
+        if (!IsWindows8OrGreater())
         {
             BOOL enabled = FALSE;
 
@@ -24893,9 +24871,9 @@ static void swapIntervalWGL(int interval)
 
     if (!window->monitor)
     {
-        // HACK: Disable WGL swap interval when desktop composition is enabled on Windows
-        //       Vista and 7 to avoid interfering with DWM vsync
-        if (!IsWindows8OrGreater() && IsWindowsVistaOrGreater())
+        // HACK: Disable WGL swap interval when desktop composition is enabled on
+        //       Windows 7 to avoid interfering with DWM vsync
+        if (!IsWindows8OrGreater())
         {
             BOOL enabled = FALSE;
 
@@ -25382,7 +25360,6 @@ GLFWbool _glfwConnectNull(int platformID, _GLFWplatform* platform) { return GLFW
 
 
 
-
 #include <stdlib.h>
 #include <string.h>
 
@@ -25654,7 +25631,6 @@ void _glfwTerminateNull(void)
 
 
 
-
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
@@ -25819,7 +25795,6 @@ void _glfwSetGammaRampNull(_GLFWmonitor* monitor, const GLFWgammaramp* ramp)
 //    distribution.
 //
 //========================================================================
-
 
 
 
@@ -26579,7 +26554,6 @@ VkResult _glfwCreateWindowSurfaceNull(VkInstance instance,
 
 
 
-
 //////////////////////////////////////////////////////////////////////////
 //////                       GLFW platform API                      //////
 //////////////////////////////////////////////////////////////////////////
@@ -26644,7 +26618,6 @@ void _glfwUpdateGamepadGUIDNull(char* guid)
 //    distribution.
 //
 //========================================================================
-
 
 
 
@@ -28312,7 +28285,6 @@ void _glfwTerminateX11(void)
 
 
 
-
 #if defined(_GLFW_X11)
 
 #include <limits.h>
@@ -28963,7 +28935,6 @@ GLFWAPI RROutput glfwGetX11Monitor(GLFWmonitor* handle)
 //    distribution.
 //
 //========================================================================
-
 
 
 
@@ -29694,13 +29665,13 @@ static GLFWbool createNativeWindow(_GLFWwindow* window,
             const char* resourceName = getenv("RESOURCE_NAME");
             if (resourceName && strlen(resourceName))
                 hint->res_name = (char*) resourceName;
-            else if (strlen(wndconfig->title))
-                hint->res_name = (char*) wndconfig->title;
+            else if (strlen(window->title))
+                hint->res_name = (char*) window->title;
             else
                 hint->res_name = (char*) "glfw-application";
 
-            if (strlen(wndconfig->title))
-                hint->res_class = (char*) wndconfig->title;
+            if (strlen(window->title))
+                hint->res_class = (char*) window->title;
             else
                 hint->res_class = (char*) "GLFW-Application";
         }
@@ -29720,7 +29691,7 @@ static GLFWbool createNativeWindow(_GLFWwindow* window,
     if (_glfw.x11.im)
         _glfwCreateInputContextX11(window);
 
-    _glfwSetWindowTitleX11(window, wndconfig->title);
+    _glfwSetWindowTitleX11(window, window->title);
     _glfwGetWindowPosX11(window, &window->x11.xpos, &window->x11.ypos);
     _glfwGetWindowSizeX11(window, &window->x11.width, &window->x11.height);
 
@@ -32335,7 +32306,6 @@ GLFWAPI const char* glfwGetX11SelectionString(void)
 
 
 
-
 #if defined(_GLFW_X11)
 
 #include <string.h>
@@ -32935,6 +32905,8 @@ GLFWbool _glfwCreateContextGLX(_GLFWwindow* window,
         return GLFW_FALSE;
     }
 
+    window->context.glx.fbconfig = native;
+
     window->context.makeCurrent = makeContextCurrentGLX;
     window->context.swapBuffers = swapBuffersGLX;
     window->context.swapInterval = swapIntervalGLX;
@@ -33028,6 +33000,30 @@ GLFWAPI GLXWindow glfwGetGLXWindow(GLFWwindow* handle)
     return window->context.glx.window;
 }
 
+GLFWAPI int glfwGetGLXFBConfig(GLFWwindow* handle, GLXFBConfig* config)
+{
+    _GLFW_REQUIRE_INIT_OR_RETURN(GLFW_FALSE);
+
+    if (_glfw.platform.platformID != GLFW_PLATFORM_X11)
+    {
+        _glfwInputError(GLFW_PLATFORM_UNAVAILABLE, "GLX: Platform not initialized");
+        return GLFW_FALSE;
+    }
+
+    _GLFWwindow* window = (_GLFWwindow*) handle;
+    assert(window != NULL);
+    assert(config != NULL);
+
+    if (window->context.source != GLFW_NATIVE_CONTEXT_API)
+    {
+        _glfwInputError(GLFW_NO_WINDOW_CONTEXT, NULL);
+        return GLFW_FALSE;
+    }
+
+    *config = window->context.glx.fbconfig;
+    return GLFW_TRUE;
+}
+
 #endif // _GLFW_X11
 
 
@@ -33066,7 +33062,6 @@ GLFWAPI GLXWindow glfwGetGLXWindow(GLFWwindow* handle)
 //    distribution.
 //
 //========================================================================
-
 
 
 
@@ -34085,7 +34080,6 @@ void _glfwTerminateWayland(void)
 
 
 
-
 #if defined(_GLFW_WAYLAND)
 
 #include <stdio.h>
@@ -34372,7 +34366,6 @@ GLFWAPI struct wl_output* glfwGetWaylandMonitor(GLFWmonitor* handle)
 
 
 
-
 #if defined(_GLFW_WAYLAND)
 
 #include <stdio.h>
@@ -34618,6 +34611,152 @@ static void destroyFallbackDecorations(_GLFWwindow* window)
     destroyFallbackEdge(&window->wl.fallback.left);
     destroyFallbackEdge(&window->wl.fallback.right);
     destroyFallbackEdge(&window->wl.fallback.bottom);
+}
+
+static void updateFallbackDecorationCursor(_GLFWwindow* window,
+                                           wl_fixed_t sx,
+                                           wl_fixed_t sy)
+{
+    window->wl.fallback.pointerX = sx;
+    window->wl.fallback.pointerY = sy;
+
+    const double xpos = wl_fixed_to_double(sx);
+    const double ypos = wl_fixed_to_double(sy);
+    const char* cursorName = "left_ptr";
+
+    if (window->resizable)
+    {
+        if (window->wl.fallback.focus == window->wl.fallback.top.surface)
+        {
+            if (ypos < GLFW_BORDER_SIZE)
+                cursorName = "n-resize";
+        }
+        else if (window->wl.fallback.focus == window->wl.fallback.left.surface)
+        {
+            if (ypos < GLFW_BORDER_SIZE)
+                cursorName = "nw-resize";
+            else
+                cursorName = "w-resize";
+        }
+        else if (window->wl.fallback.focus == window->wl.fallback.right.surface)
+        {
+            if (ypos < GLFW_BORDER_SIZE)
+                cursorName = "ne-resize";
+            else
+                cursorName = "e-resize";
+        }
+        else if (window->wl.fallback.focus == window->wl.fallback.bottom.surface)
+        {
+            if (xpos < GLFW_BORDER_SIZE)
+                cursorName = "sw-resize";
+            else if (xpos > window->wl.width + GLFW_BORDER_SIZE)
+                cursorName = "se-resize";
+            else
+                cursorName = "s-resize";
+        }
+    }
+
+    if (window->wl.fallback.cursorName != cursorName)
+    {
+        struct wl_surface* surface = _glfw.wl.cursorSurface;
+        struct wl_cursor_theme* theme = _glfw.wl.cursorTheme;
+        int scale = 1;
+
+        if (window->wl.bufferScale > 1 && _glfw.wl.cursorThemeHiDPI)
+        {
+            // We only support up to scale=2 for now, since libwayland-cursor
+            // requires us to load a different theme for each size.
+            scale = 2;
+            theme = _glfw.wl.cursorThemeHiDPI;
+        }
+
+        struct wl_cursor* cursor = wl_cursor_theme_get_cursor(theme, cursorName);
+        if (!cursor)
+            return;
+
+        // TODO: handle animated cursors too.
+        struct wl_cursor_image* image = cursor->images[0];
+        if (!image)
+            return;
+
+        struct wl_buffer* buffer = wl_cursor_image_get_buffer(image);
+        if (!buffer)
+            return;
+
+        wl_pointer_set_cursor(_glfw.wl.pointer, _glfw.wl.pointerEnterSerial,
+                              surface,
+                              image->hotspot_x / scale,
+                              image->hotspot_y / scale);
+        wl_surface_set_buffer_scale(surface, scale);
+        wl_surface_attach(surface, buffer, 0, 0);
+        wl_surface_damage(surface, 0, 0, image->width, image->height);
+        wl_surface_commit(surface);
+
+        window->wl.fallback.cursorName = cursorName;
+    }
+}
+
+static void handleFallbackDecorationButton(_GLFWwindow* window,
+                                           uint32_t serial,
+                                           uint32_t button)
+{
+    const double xpos = wl_fixed_to_double(window->wl.fallback.pointerX);
+    const double ypos = wl_fixed_to_double(window->wl.fallback.pointerY);
+
+    if (button == BTN_LEFT)
+    {
+        uint32_t edges = XDG_TOPLEVEL_RESIZE_EDGE_NONE;
+
+        if (window->wl.fallback.focus == window->wl.fallback.top.surface)
+        {
+            if (ypos < GLFW_BORDER_SIZE)
+                edges = XDG_TOPLEVEL_RESIZE_EDGE_TOP;
+            else
+                xdg_toplevel_move(window->wl.xdg.toplevel, _glfw.wl.seat, serial);
+        }
+        else if (window->wl.fallback.focus == window->wl.fallback.left.surface)
+        {
+            if (ypos < GLFW_BORDER_SIZE)
+                edges = XDG_TOPLEVEL_RESIZE_EDGE_TOP_LEFT;
+            else
+                edges = XDG_TOPLEVEL_RESIZE_EDGE_LEFT;
+        }
+        else if (window->wl.fallback.focus == window->wl.fallback.right.surface)
+        {
+            if (ypos < GLFW_BORDER_SIZE)
+                edges = XDG_TOPLEVEL_RESIZE_EDGE_TOP_RIGHT;
+            else
+                edges = XDG_TOPLEVEL_RESIZE_EDGE_RIGHT;
+        }
+        else if (window->wl.fallback.focus == window->wl.fallback.bottom.surface)
+        {
+            if (xpos < GLFW_BORDER_SIZE)
+                edges = XDG_TOPLEVEL_RESIZE_EDGE_BOTTOM_LEFT;
+            else if (xpos > window->wl.width + GLFW_BORDER_SIZE)
+                edges = XDG_TOPLEVEL_RESIZE_EDGE_BOTTOM_RIGHT;
+            else
+                edges = XDG_TOPLEVEL_RESIZE_EDGE_BOTTOM;
+        }
+
+        if (edges != XDG_TOPLEVEL_RESIZE_EDGE_NONE)
+            xdg_toplevel_resize(window->wl.xdg.toplevel, _glfw.wl.seat, serial, edges);
+    }
+    else if (button == BTN_RIGHT)
+    {
+        if (!window->wl.xdg.toplevel)
+            return;
+
+        if (window->wl.fallback.focus != window->wl.fallback.top.surface)
+            return;
+
+        if (ypos < GLFW_BORDER_SIZE)
+            return;
+
+        xdg_toplevel_show_window_menu(window->wl.xdg.toplevel,
+                                      _glfw.wl.seat, serial,
+                                      xpos,
+                                      ypos - GLFW_CAPTION_HEIGHT - GLFW_BORDER_SIZE);
+    }
 }
 
 static void xdgDecorationHandleConfigure(void* userData,
@@ -35612,17 +35751,21 @@ static void handleEvents(double* timeout)
 
             if (read(_glfw.wl.keyRepeatTimerfd, &repeats, sizeof(repeats)) == 8)
             {
-                for (uint64_t i = 0; i < repeats; i++)
+                if(_glfw.wl.keyboardFocus)
                 {
-                    _glfwInputKey(_glfw.wl.keyboardFocus,
-                                  translateKey(_glfw.wl.keyRepeatScancode),
-                                  _glfw.wl.keyRepeatScancode,
-                                  GLFW_PRESS,
-                                  _glfw.wl.xkb.modifiers);
-                    inputText(_glfw.wl.keyboardFocus, _glfw.wl.keyRepeatScancode);
+                    for (uint64_t i = 0; i < repeats; i++)
+                    {
+                        _glfwInputKey(_glfw.wl.keyboardFocus,
+                                      translateKey(_glfw.wl.keyRepeatScancode),
+                                      _glfw.wl.keyRepeatScancode,
+                                      GLFW_PRESS,
+                                      _glfw.wl.xkb.modifiers);
+                        inputText(_glfw.wl.keyboardFocus, _glfw.wl.keyRepeatScancode);
+                    }
+
+                    event = GLFW_TRUE;
                 }
 
-                event = GLFW_TRUE;
             }
         }
 
@@ -35674,6 +35817,7 @@ static char* readDataOfferAsString(struct wl_data_offer* offer, const char* mime
             if (!longer)
             {
                 _glfwInputError(GLFW_OUT_OF_MEMORY, NULL);
+                _glfw_free(string);
                 close(fds[0]);
                 return NULL;
             }
@@ -35693,6 +35837,7 @@ static char* readDataOfferAsString(struct wl_data_offer* offer, const char* mime
             _glfwInputError(GLFW_PLATFORM_ERROR,
                             "Wayland: Failed to read from data offer pipe: %s",
                             strerror(errno));
+            _glfw_free(string);
             close(fds[0]);
             return NULL;
         }
@@ -35731,11 +35876,21 @@ static void pointerHandleEnter(void* userData,
         window->wl.hovered = GLFW_TRUE;
         _glfwSetCursorWayland(window, window->wl.currentCursor);
         _glfwInputCursorEnter(window, GLFW_TRUE);
+
+        if (window->cursorMode != GLFW_CURSOR_DISABLED)
+        {
+            window->wl.cursorPosX = wl_fixed_to_double(sx);
+            window->wl.cursorPosY = wl_fixed_to_double(sy);
+            _glfwInputCursorPos(window, window->wl.cursorPosX, window->wl.cursorPosY);
+        }
     }
     else
     {
         if (window->wl.fallback.decorations)
+        {
             window->wl.fallback.focus = surface;
+            updateFallbackDecorationCursor(window, sx, sy);
+        }
     }
 }
 
@@ -35756,7 +35911,6 @@ static void pointerHandleLeave(void* userData,
 
     _glfw.wl.serial = serial;
     _glfw.wl.pointerFocus = NULL;
-    _glfw.wl.cursorPreviousName = NULL;
 
     if (window->wl.hovered)
     {
@@ -35766,7 +35920,10 @@ static void pointerHandleLeave(void* userData,
     else
     {
         if (window->wl.fallback.decorations)
+        {
             window->wl.fallback.focus = NULL;
+            window->wl.fallback.cursorName = NULL;
+        }
     }
 }
 
@@ -35783,92 +35940,16 @@ static void pointerHandleMotion(void* userData,
     if (window->cursorMode == GLFW_CURSOR_DISABLED)
         return;
 
-    const double xpos = wl_fixed_to_double(sx);
-    const double ypos = wl_fixed_to_double(sy);
-    window->wl.cursorPosX = xpos;
-    window->wl.cursorPosY = ypos;
-
     if (window->wl.hovered)
     {
-        _glfw.wl.cursorPreviousName = NULL;
-        _glfwInputCursorPos(window, xpos, ypos);
-        return;
+        window->wl.cursorPosX = wl_fixed_to_double(sx);
+        window->wl.cursorPosY = wl_fixed_to_double(sy);
+        _glfwInputCursorPos(window, window->wl.cursorPosX, window->wl.cursorPosY);
     }
-
-    if (window->wl.fallback.decorations)
+    else
     {
-        const char* cursorName = "left_ptr";
-
-        if (window->resizable)
-        {
-            if (window->wl.fallback.focus == window->wl.fallback.top.surface)
-            {
-                if (ypos < GLFW_BORDER_SIZE)
-                    cursorName = "n-resize";
-            }
-            else if (window->wl.fallback.focus == window->wl.fallback.left.surface)
-            {
-                if (ypos < GLFW_BORDER_SIZE)
-                    cursorName = "nw-resize";
-                else
-                    cursorName = "w-resize";
-            }
-            else if (window->wl.fallback.focus == window->wl.fallback.right.surface)
-            {
-                if (ypos < GLFW_BORDER_SIZE)
-                    cursorName = "ne-resize";
-                else
-                    cursorName = "e-resize";
-            }
-            else if (window->wl.fallback.focus == window->wl.fallback.bottom.surface)
-            {
-                if (xpos < GLFW_BORDER_SIZE)
-                    cursorName = "sw-resize";
-                else if (xpos > window->wl.width + GLFW_BORDER_SIZE)
-                    cursorName = "se-resize";
-                else
-                    cursorName = "s-resize";
-            }
-        }
-
-        if (_glfw.wl.cursorPreviousName != cursorName)
-        {
-            struct wl_surface* surface = _glfw.wl.cursorSurface;
-            struct wl_cursor_theme* theme = _glfw.wl.cursorTheme;
-            int scale = 1;
-
-            if (window->wl.bufferScale > 1 && _glfw.wl.cursorThemeHiDPI)
-            {
-                // We only support up to scale=2 for now, since libwayland-cursor
-                // requires us to load a different theme for each size.
-                scale = 2;
-                theme = _glfw.wl.cursorThemeHiDPI;
-            }
-
-            struct wl_cursor* cursor = wl_cursor_theme_get_cursor(theme, cursorName);
-            if (!cursor)
-                return;
-
-            // TODO: handle animated cursors too.
-            struct wl_cursor_image* image = cursor->images[0];
-            if (!image)
-                return;
-
-            struct wl_buffer* buffer = wl_cursor_image_get_buffer(image);
-            if (!buffer)
-                return;
-
-            wl_pointer_set_cursor(_glfw.wl.pointer, _glfw.wl.pointerEnterSerial,
-                                  surface,
-                                  image->hotspot_x / scale,
-                                  image->hotspot_y / scale);
-            wl_surface_set_buffer_scale(surface, scale);
-            wl_surface_attach(surface, buffer, 0, 0);
-            wl_surface_damage(surface, 0, 0, image->width, image->height);
-            wl_surface_commit(surface);
-
-            _glfw.wl.cursorPreviousName = cursorName;
-        }
+        if (window->wl.fallback.decorations)
+            updateFallbackDecorationCursor(window, sx, sy);
     }
 }
 
@@ -35891,62 +35972,11 @@ static void pointerHandleButton(void* userData,
                              button - BTN_LEFT,
                              state == WL_POINTER_BUTTON_STATE_PRESSED,
                              _glfw.wl.xkb.modifiers);
-        return;
     }
-
-    if (window->wl.fallback.decorations)
+    else
     {
-        if (button == BTN_LEFT)
-        {
-            uint32_t edges = XDG_TOPLEVEL_RESIZE_EDGE_NONE;
-
-            if (window->wl.fallback.focus == window->wl.fallback.top.surface)
-            {
-                if (window->wl.cursorPosY < GLFW_BORDER_SIZE)
-                    edges = XDG_TOPLEVEL_RESIZE_EDGE_TOP;
-                else
-                    xdg_toplevel_move(window->wl.xdg.toplevel, _glfw.wl.seat, serial);
-            }
-            else if (window->wl.fallback.focus == window->wl.fallback.left.surface)
-            {
-                if (window->wl.cursorPosY < GLFW_BORDER_SIZE)
-                    edges = XDG_TOPLEVEL_RESIZE_EDGE_TOP_LEFT;
-                else
-                    edges = XDG_TOPLEVEL_RESIZE_EDGE_LEFT;
-            }
-            else if (window->wl.fallback.focus == window->wl.fallback.right.surface)
-            {
-                if (window->wl.cursorPosY < GLFW_BORDER_SIZE)
-                    edges = XDG_TOPLEVEL_RESIZE_EDGE_TOP_RIGHT;
-                else
-                    edges = XDG_TOPLEVEL_RESIZE_EDGE_RIGHT;
-            }
-            else if (window->wl.fallback.focus == window->wl.fallback.bottom.surface)
-            {
-                if (window->wl.cursorPosX < GLFW_BORDER_SIZE)
-                    edges = XDG_TOPLEVEL_RESIZE_EDGE_BOTTOM_LEFT;
-                else if (window->wl.cursorPosX > window->wl.width + GLFW_BORDER_SIZE)
-                    edges = XDG_TOPLEVEL_RESIZE_EDGE_BOTTOM_RIGHT;
-                else
-                    edges = XDG_TOPLEVEL_RESIZE_EDGE_BOTTOM;
-            }
-
-            if (edges != XDG_TOPLEVEL_RESIZE_EDGE_NONE)
-            {
-                xdg_toplevel_resize(window->wl.xdg.toplevel, _glfw.wl.seat,
-                                    serial, edges);
-            }
-        }
-        else if (button == BTN_RIGHT)
-        {
-            if (window->wl.xdg.toplevel)
-            {
-                xdg_toplevel_show_window_menu(window->wl.xdg.toplevel,
-                                              _glfw.wl.seat, serial,
-                                              window->wl.cursorPosX,
-                                              window->wl.cursorPosY);
-            }
-        }
+        if (window->wl.fallback.decorations)
+            handleFallbackDecorationButton(window, serial, button);
     }
 }
 
@@ -35960,11 +35990,14 @@ static void pointerHandleAxis(void* userData,
     if (!window)
         return;
 
-    // NOTE: 10 units of motion per mouse wheel step seems to be a common ratio
-    if (axis == WL_POINTER_AXIS_HORIZONTAL_SCROLL)
-        _glfwInputScroll(window, -wl_fixed_to_double(value) / 10.0, 0.0);
-    else if (axis == WL_POINTER_AXIS_VERTICAL_SCROLL)
-        _glfwInputScroll(window, 0.0, -wl_fixed_to_double(value) / 10.0);
+    if (window->wl.hovered)
+    {
+        // NOTE: 10 units of motion per mouse wheel step seems to be a common ratio
+        if (axis == WL_POINTER_AXIS_HORIZONTAL_SCROLL)
+            _glfwInputScroll(window, -wl_fixed_to_double(value) / 10.0, 0.0);
+        else if (axis == WL_POINTER_AXIS_VERTICAL_SCROLL)
+            _glfwInputScroll(window, 0.0, -wl_fixed_to_double(value) / 10.0);
+    }
 }
 
 static const struct wl_pointer_listener pointerListener =
@@ -36141,10 +36174,11 @@ static void keyboardHandleKey(void* userData,
 
             timer.it_value.tv_sec = _glfw.wl.keyRepeatDelay / 1000;
             timer.it_value.tv_nsec = (_glfw.wl.keyRepeatDelay % 1000) * 1000000;
+            timerfd_settime(_glfw.wl.keyRepeatTimerfd, 0, &timer, NULL);
         }
+    } else if (scancode == _glfw.wl.keyRepeatScancode) {
+        timerfd_settime(_glfw.wl.keyRepeatTimerfd, 0, &timer, NULL);
     }
-
-    timerfd_settime(_glfw.wl.keyRepeatTimerfd, 0, &timer, NULL);
 
     _glfwInputKey(window, key, scancode, action, _glfw.wl.xkb.modifiers);
 
@@ -36528,7 +36562,12 @@ void _glfwDestroyWindowWayland(_GLFWwindow* window)
         _glfw.wl.pointerFocus = NULL;
 
     if (window == _glfw.wl.keyboardFocus)
+    {
+        struct itimerspec timer = {0};
+        timerfd_settime(_glfw.wl.keyRepeatTimerfd, 0, &timer, NULL);
+
         _glfw.wl.keyboardFocus = NULL;
+    }
 
     if (window->wl.fractionalScale)
         wp_fractional_scale_v1_destroy(window->wl.fractionalScale);
@@ -37700,7 +37739,6 @@ GLFWAPI struct wl_surface* glfwGetWaylandWindow(GLFWwindow* handle)
 
 
 
-
 #if defined(_GLFW_COCOA)
 
 #include <sys/param.h> // For MAXPATHLEN
@@ -38403,7 +38441,6 @@ void _glfwTerminateCocoa(void)
 
 
 
-
 #if defined(_GLFW_COCOA)
 
 #include <unistd.h>
@@ -38793,7 +38830,6 @@ GLFWAPI id glfwGetNSGLContext(GLFWwindow* handle)
 //    distribution.
 //
 //========================================================================
-
 
 
 
@@ -39286,7 +39322,6 @@ void _glfwUpdateGamepadGUIDCocoa(char* guid)
 //    distribution.
 //
 //========================================================================
-
 
 
 
@@ -39939,7 +39974,6 @@ GLFWAPI CGDirectDisplayID glfwGetCocoaMonitor(GLFWmonitor* handle)
 //    distribution.
 //
 //========================================================================
-
 
 
 
@@ -40801,7 +40835,7 @@ static GLFWbool createNativeWindow(_GLFWwindow* window,
 
     [window->ns.object setContentView:window->ns.view];
     [window->ns.object makeFirstResponder:window->ns.view];
-    [window->ns.object setTitle:@(wndconfig->title)];
+    [window->ns.object setTitle:@(window->title)];
     [window->ns.object setDelegate:window->ns.delegate];
     [window->ns.object setAcceptsMouseMovedEvents:YES];
     [window->ns.object setRestorable:NO];
@@ -42013,7 +42047,6 @@ GLFWAPI id glfwGetCocoaView(GLFWwindow* handle)
 
 
 
-
 #if defined(GLFW_BUILD_COCOA_TIMER)
 
 #include <mach/mach_time.h>
@@ -42080,7 +42113,6 @@ uint64_t _glfwPlatformGetTimerFrequency(void)
 //    distribution.
 //
 //========================================================================
-
 
 
 
@@ -42157,7 +42189,6 @@ uint64_t _glfwPlatformGetTimerFrequency(void)
 //    distribution.
 //
 //========================================================================
-
 
 
 
@@ -42278,7 +42309,6 @@ void _glfwPlatformUnlockMutex(_GLFWmutex* mutex)
 
 
 
-
 #if defined(GLFW_BUILD_POSIX_MODULE)
 
 #include <dlfcn.h>
@@ -42342,7 +42372,6 @@ GLFWproc _glfwPlatformGetModuleSymbol(void* module, const char* name)
 //========================================================================
 
 #define _GNU_SOURCE
-
 
 
 
@@ -42436,7 +42465,6 @@ GLFWbool _glfwPollPOSIX(struct pollfd* fds, nfds_t count, double* timeout)
 //    distribution.
 //
 //========================================================================
-
 
 
 
@@ -42880,7 +42908,6 @@ void _glfwUpdateGamepadGUIDLinux(char* guid)
 //    distribution.
 //
 //========================================================================
-
 
 
 
