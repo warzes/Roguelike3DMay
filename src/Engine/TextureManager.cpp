@@ -2,21 +2,45 @@
 #include "TextureManager.h"
 #include "Log.h"
 #include "FileUtils.h"
+#include "CoreFunc.h"
 #include "OpenGL4ApiToEnum.h"
+//=============================================================================
+struct TextureCache final
+{
+	bool operator==(const TextureCache&) const noexcept = default;
+
+	std::string name;
+	bool sRGB;
+	bool flipVertical;
+};
+//=============================================================================
+namespace std
+{
+	template<>
+	struct hash<TextureCache>
+	{
+		std::size_t operator()(const TextureCache& tc) const noexcept
+		{
+			std::size_t h1 = std::hash<std::string>{}(tc.name);
+			std::size_t h2 = std::hash<bool>{}(tc.sRGB);
+			std::size_t h3 = std::hash<bool>{}(tc.flipVertical);
+			std::size_t seed = 0;
+			HashCombine(seed, h1, h2, h3);
+			return seed;
+		}
+	};
+}
 //=============================================================================
 namespace
 {
-	std::unordered_map<std::string, gl::Texture*> texturesMap;
-	gl::Texture*                                  defaultDiffuse2D{ nullptr };
-	gl::Texture*                                  defaultNormal2D{ nullptr };
-	gl::Texture*                                  defaultSpecular2D{ nullptr };
-	bool                                          EnableSRGB{ false };
+	std::unordered_map<TextureCache, gl::Texture*> texturesMap;
+	gl::Texture*                                   defaultDiffuse2D{ nullptr };
+	gl::Texture*                                   defaultNormal2D{ nullptr };
+	gl::Texture*                                   defaultSpecular2D{ nullptr };
 }
 //=============================================================================
-bool TextureManager::Init(bool sRGB)
+bool TextureManager::Init()
 {
-	EnableSRGB = sRGB;
-
 	// TODO: убрать копипаст
 
 	// Create default diffuse texture
@@ -155,9 +179,10 @@ gl::Texture* TextureManager::GetDefaultSpecular2D()
 	return defaultSpecular2D;
 }
 //=============================================================================
-gl::Texture* TextureManager::GetTexture(const std::string& name, bool flipVertical)
+gl::Texture* TextureManager::GetTexture(const std::string& name, bool srgb, bool flipVertical)
 {
-	auto it = texturesMap.find(name);
+	TextureCache keyMap = { .name = name, .sRGB = srgb, .flipVertical = flipVertical };
+	auto it = texturesMap.find(keyMap);
 	if (it != texturesMap.end())
 	{
 		return it->second;
@@ -185,8 +210,7 @@ gl::Texture* TextureManager::GetTexture(const std::string& name, bool flipVertic
 		else if (nrChannels == 2) imgFormat = gl::Format::R8G8_UNORM;
 		else if (nrChannels == 3) imgFormat = gl::Format::R8G8B8_UNORM;
 		else if (nrChannels == 4) imgFormat = gl::Format::R8G8B8A8_UNORM;
-
-		if (EnableSRGB) imgFormat = gl::detail::FormatToSrgb(imgFormat);
+		if (srgb) imgFormat = gl::detail::FormatToSrgb(imgFormat);
 
 		const gl::TextureCreateInfo createInfo{
 			.imageType   = gl::ImageType::Tex2D,
@@ -196,8 +220,8 @@ gl::Texture* TextureManager::GetTexture(const std::string& name, bool flipVertic
 			.arrayLayers = 1u,
 			.sampleCount = gl::SampleCount::Samples1,
 		};
-		texturesMap[name] = new gl::Texture(createInfo, name);
-		gl::Texture& texture = *texturesMap[name];
+		texturesMap[keyMap] = new gl::Texture(createInfo, name);
+		gl::Texture& texture = *texturesMap[keyMap];
 
 		gl::UploadFormat texFormat{ gl::UploadFormat::RGB };
 		if (nrChannels == 1)      texFormat = gl::UploadFormat::R;

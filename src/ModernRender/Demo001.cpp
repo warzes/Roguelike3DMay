@@ -25,8 +25,8 @@ bool Demo001::OnInit()
 	SceneDataUBO.Init();
 	ModelDataUBO.Init();
 
-	m_texture1 = TextureManager::GetTexture("ExampleData/textures/metal.png");
-	m_texture2 = TextureManager::GetTexture("ExampleData/textures/marble.jpg");
+	m_texture1 = TextureManager::GetTexture("ExampleData/textures/metal.png", true);
+	m_texture2 = TextureManager::GetTexture("ExampleData/textures/marble.jpg", false);
 
 	gl::SamplerState sampleDesc;
 	sampleDesc.minFilter = gl::MinFilter::Linear;

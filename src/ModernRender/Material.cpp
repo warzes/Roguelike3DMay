@@ -230,7 +230,7 @@ void Material::setTexture(const std::string& dir, int index)
 	}
 	else
 	{
-		m_texIns[index] = TextureManager::GetTexture(dir);
+		m_texIns[index] = TextureManager::GetTexture(dir, index == 0 ? true : false);
 		if (m_texIns[index] == 0)
 		{
 			// TODO: копипаст

@@ -294,7 +294,7 @@ bool IEngineApp::init()
 	initOpenGL();
 	initImGui();
 
-	if (!TextureManager::Init(true))
+	if (!TextureManager::Init())
 		return false;
 
 	profiler::Init();

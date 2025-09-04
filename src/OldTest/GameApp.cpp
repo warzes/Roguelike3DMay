@@ -23,20 +23,20 @@ bool GameApp::OnInit()
 
 	m_model1.mesh = LoadDataMesh(vertices, iv);
 	m_model1.textureFilter = gl::MagFilter::Nearest;
-	m_model1.material.diffuseTexture = TextureManager::GetTexture("CoreData/textures/colorful.png");
-	m_model1.material.normalTexture = TextureManager::GetTexture("CoreData/textures/normal01.tga");
+	m_model1.material.diffuseTexture = TextureManager::GetTexture("CoreData/textures/colorful.png", true);
+	m_model1.material.normalTexture = TextureManager::GetTexture("CoreData/textures/normal01.tga", false);
 
 	m_model2.mesh = LoadAssimpMesh("CoreData/mesh/Cube/Cube.gltf");
 	m_model2.textureFilter = gl::MagFilter::Nearest;
-	m_model2.material.diffuseTexture = TextureManager::GetTexture("CoreData/textures/colorful.png");
-	m_model2.material.normalTexture = TextureManager::GetTexture("CoreData/textures/normal01.tga");
+	m_model2.material.diffuseTexture = TextureManager::GetTexture("CoreData/textures/colorful.png", true);
+	m_model2.material.normalTexture = TextureManager::GetTexture("CoreData/textures/normal01.tga", false);
 
 	m_model3.mesh = LoadAssimpMesh("ExampleData/mesh/stall/stall.obj");
 	m_model3.scale = glm::vec3(0.3f);
 	m_model3.position = glm::vec3(4.0f, -0.6f, 0.0f);
 	m_model3.textureFilter = gl::MagFilter::Linear;
-	m_model3.material.diffuseTexture = TextureManager::GetTexture("ExampleData/mesh/stall/stallTexture.png", false);
-	m_model3.material.normalTexture = TextureManager::GetTexture("CoreData/textures/normal01.tga");
+	m_model3.material.diffuseTexture = TextureManager::GetTexture("ExampleData/mesh/stall/stallTexture.png", true, false);
+	m_model3.material.normalTexture = TextureManager::GetTexture("CoreData/textures/normal01.tga", false);
 
 	m_camera.SetPosition(glm::vec3(0.0f, 0.0f, -1.0f));
 

@@ -206,7 +206,7 @@ namespace
 
 				std::string path = directory.data();
 				path += str.data;
-				meshMaterial->diffuseTexture = TextureManager::GetTexture(path);
+				meshMaterial->diffuseTexture = TextureManager::GetTexture(path, true);
 			}
 
 			for (unsigned i = 0; i < material->GetTextureCount(aiTextureType_NORMALS); i++)
@@ -216,7 +216,7 @@ namespace
 
 				std::string path = directory.data();
 				path += str.data;
-				meshMaterial->normalTexture = TextureManager::GetTexture(path);
+				meshMaterial->normalTexture = TextureManager::GetTexture(path, false);
 			}
 
 			for (unsigned i = 0; i < material->GetTextureCount(aiTextureType_SPECULAR); i++)
@@ -226,7 +226,7 @@ namespace
 
 				std::string path = directory.data();
 				path += str.data;
-				meshMaterial->specularTexture = TextureManager::GetTexture(path);
+				meshMaterial->specularTexture = TextureManager::GetTexture(path, false);
 			}
 		}
 
