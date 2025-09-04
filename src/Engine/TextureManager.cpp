@@ -2,9 +2,21 @@
 #include "TextureManager.h"
 #include "Log.h"
 #include "FileUtils.h"
+#include "OpenGL4ApiToEnum.h"
 //=============================================================================
-bool TextureManager::Init()
+namespace
 {
+	std::unordered_map<std::string, gl::Texture*> texturesMap;
+	gl::Texture*                                  defaultDiffuse2D{ nullptr };
+	gl::Texture*                                  defaultNormal2D{ nullptr };
+	gl::Texture*                                  defaultSpecular2D{ nullptr };
+	bool                                          EnableSRGB{ false };
+}
+//=============================================================================
+bool TextureManager::Init(bool sRGB)
+{
+	EnableSRGB = sRGB;
+
 	// TODO: убрать копипаст
 
 	// Create default diffuse texture
@@ -38,8 +50,8 @@ bool TextureManager::Init()
 			.arrayLayers = 1u,
 			.sampleCount = gl::SampleCount::Samples1,
 		};
-		m_defaultDiffuse2D = new gl::Texture(createInfo, "DefaultDiffuseTexture2D");
-		m_defaultDiffuse2D->UpdateImage({
+		defaultDiffuse2D = new gl::Texture(createInfo, "DefaultDiffuseTexture2D");
+		defaultDiffuse2D->UpdateImage({
 			.extent = createInfo.extent,
 			.format = gl::UploadFormat::RGB,
 			.type   = gl::UploadType::UBYTE,
@@ -69,8 +81,8 @@ bool TextureManager::Init()
 			.arrayLayers = 1u,
 			.sampleCount = gl::SampleCount::Samples1,
 		};
-		m_defaultNormal2D = new gl::Texture(createInfo, "DefaultNormalTexture2D");
-		m_defaultNormal2D->UpdateImage({
+		defaultNormal2D = new gl::Texture(createInfo, "DefaultNormalTexture2D");
+		defaultNormal2D->UpdateImage({
 			.extent = createInfo.extent,
 			.format = gl::UploadFormat::RGB,
 			.type = gl::UploadType::UBYTE,
@@ -100,8 +112,8 @@ bool TextureManager::Init()
 			.arrayLayers = 1u,
 			.sampleCount = gl::SampleCount::Samples1,
 		};
-		m_defaultSpecular2D = new gl::Texture(createInfo, "DefaultSpecularTexture2D");
-		m_defaultSpecular2D->UpdateImage({
+		defaultSpecular2D = new gl::Texture(createInfo, "DefaultSpecularTexture2D");
+		defaultSpecular2D->UpdateImage({
 			.extent = createInfo.extent,
 			.format = gl::UploadFormat::RGB,
 			.type = gl::UploadType::UBYTE,
@@ -114,39 +126,39 @@ bool TextureManager::Init()
 //=============================================================================
 void TextureManager::Close()
 {
-	delete m_defaultDiffuse2D;
-	m_defaultDiffuse2D = nullptr;
-	delete m_defaultNormal2D;
-	m_defaultNormal2D = nullptr;
-	delete m_defaultSpecular2D;
-	m_defaultSpecular2D = nullptr;
+	delete defaultDiffuse2D;
+	defaultDiffuse2D = nullptr;
+	delete defaultNormal2D;
+	defaultNormal2D = nullptr;
+	delete defaultSpecular2D;
+	defaultSpecular2D = nullptr;
 
-	for (auto& it : m_texturesMap)
+	for (auto& it : texturesMap)
 	{
 		delete it.second;
 	}
-	m_texturesMap.clear();
+	texturesMap.clear();
 }
 //=============================================================================
 gl::Texture* TextureManager::GetDefaultDiffuse2D()
 {
-	return m_defaultDiffuse2D;
+	return defaultDiffuse2D;
 }
 //=============================================================================
 gl::Texture* TextureManager::GetDefaultNormal2D()
 {
-	return m_defaultNormal2D;
+	return defaultNormal2D;
 }
 //=============================================================================
 gl::Texture* TextureManager::GetDefaultSpecular2D()
 {
-	return m_defaultSpecular2D;
+	return defaultSpecular2D;
 }
 //=============================================================================
 gl::Texture* TextureManager::GetTexture(const std::string& name, bool flipVertical)
 {
-	auto it = m_texturesMap.find(name);
-	if (it != m_texturesMap.end())
+	auto it = texturesMap.find(name);
+	if (it != texturesMap.end())
 	{
 		return it->second;
 	}
@@ -174,6 +186,8 @@ gl::Texture* TextureManager::GetTexture(const std::string& name, bool flipVertic
 		else if (nrChannels == 3) imgFormat = gl::Format::R8G8B8_UNORM;
 		else if (nrChannels == 4) imgFormat = gl::Format::R8G8B8A8_UNORM;
 
+		if (EnableSRGB) imgFormat = gl::detail::FormatToSrgb(imgFormat);
+
 		const gl::TextureCreateInfo createInfo{
 			.imageType   = gl::ImageType::Tex2D,
 			.format      = imgFormat,
@@ -182,8 +196,8 @@ gl::Texture* TextureManager::GetTexture(const std::string& name, bool flipVertic
 			.arrayLayers = 1u,
 			.sampleCount = gl::SampleCount::Samples1,
 		};
-		m_texturesMap[name] = new gl::Texture(createInfo, name);
-		gl::Texture& texture = *m_texturesMap[name];
+		texturesMap[name] = new gl::Texture(createInfo, name);
+		gl::Texture& texture = *texturesMap[name];
 
 		gl::UploadFormat texFormat{ gl::UploadFormat::RGB };
 		if (nrChannels == 1)      texFormat = gl::UploadFormat::R;

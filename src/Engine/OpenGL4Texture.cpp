@@ -389,14 +389,7 @@ void gl::Texture::GenMipmaps()
 //=============================================================================
 gl::Texture gl::CreateTexture2D(Extent2D size, Format format, std::string_view name)
 {
-	return Texture({
-			.imageType   = ImageType::Tex2D,
-			.format      = format,
-			.extent      = {size.width, size.height, 1},
-			.mipLevels   = 1u,
-			.arrayLayers = 1u,
-			.sampleCount = SampleCount::Samples1,
-		}, name);
+	return CreateTexture2DMip(size, format, 1u, name);
 }
 //=============================================================================
 gl::Texture gl::CreateTexture2DMip(Extent2D size, Format format, uint32_t mipLevels, std::string_view name)

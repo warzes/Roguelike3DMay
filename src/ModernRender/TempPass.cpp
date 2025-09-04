@@ -47,9 +47,15 @@ layout(binding = 0) uniform sampler2D diffuseTexture;
 
 layout(location = 0) out vec4 outputColor;
 
+const float alphaTestThreshold = 0.1f;
+
 void main()
 {
-	outputColor = texture(diffuseTexture, fragTexCoord);
+	vec4 albedo = texture(diffuseTexture, fragTexCoord);
+	if (albedo.a <= alphaTestThreshold) discard;
+	//albedo.rgb = pow(albedo.rgb, vec3(2.2f));
+
+	outputColor = albedo;
 }
 )";
 }

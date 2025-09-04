@@ -110,7 +110,7 @@ bool ShadowMapPass::Init()
 		.fragmentShader = &fragmentShader,
 		.inputAssemblyState = {.topology = gl::PrimitiveTopology::TriangleList },
 		.vertexInputState = { MeshVertexInputBindingDesc },
-		.depthState = {.depthTestEnable = true, .depthWriteEnable = true },
+		.depthState = {.depthTestEnable = true },
 		//.colorBlendState = blendState
 	});
 

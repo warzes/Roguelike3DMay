@@ -739,4 +739,20 @@ namespace gl::detail
 		return ret;
 	}
 
+	inline Format FormatToSrgb(Format format) noexcept
+	{
+		switch (format)
+		{
+		case Format::BC1_RGBA_UNORM: return Format::BC1_RGBA_SRGB;
+		case Format::BC1_RGB_UNORM:  return Format::BC1_RGB_SRGB;
+		case Format::BC2_RGBA_UNORM: return Format::BC3_RGBA_SRGB;
+		case Format::BC3_RGBA_UNORM: return Format::BC3_RGBA_SRGB;
+		case Format::BC7_RGBA_UNORM: return Format::BC7_RGBA_SRGB;
+		case Format::R8G8B8A8_UNORM: return Format::R8G8B8A8_SRGB;
+		case Format::R8G8B8_UNORM:   return Format::R8G8B8_SRGB;
+		default: return format;
+		}
+	}
+
+
 } // namespace gl::detail
