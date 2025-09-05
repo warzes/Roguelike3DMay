@@ -199,7 +199,7 @@ gl::Texture* TextureManager::GetTexture(const std::string& name, bool srgb, bool
 		stbi_set_flip_vertically_on_load(flipVertical);
 
 		int imgW, imgH, nrChannels;
-		auto pixels = stbi_loadf(name.c_str(), &imgW, &imgH, &nrChannels, 0);
+		auto pixels = stbi_load(name.c_str(), &imgW, &imgH, &nrChannels, 0);
 		if (!pixels || nrChannels < 1 || nrChannels > 4 || imgW < 0 || imgH < 0)
 		{
 			Error("Failed to load texture " + name);
@@ -232,7 +232,7 @@ gl::Texture* TextureManager::GetTexture(const std::string& name, bool srgb, bool
 		texture.UpdateImage({
 			.extent = createInfo.extent,
 			.format = texFormat,
-			.type   = gl::UploadType::FLOAT,
+			.type   = gl::UploadType::UBYTE,
 			.pixels = pixels,
 		});
 		stbi_image_free(pixels);

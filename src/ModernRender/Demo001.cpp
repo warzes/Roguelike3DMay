@@ -25,15 +25,12 @@ bool Demo001::OnInit()
 	SceneDataUBO.Init();
 	ModelDataUBO.Init();
 
-	//m_texture1 = TextureManager::GetTexture("ExampleData/textures/metal.png", true);
-	//m_texture2 = TextureManager::GetTexture("ExampleData/textures/marble.jpg", true);
-
-	m_texture1 = TextureManager::GetTexture("CoreData/textures/green.png", true);
-	m_texture2 = TextureManager::GetTexture("CoreData/textures/green.png", true);
+	m_texture1 = TextureManager::GetTexture("ExampleData/textures/metal.png", true);
+	m_texture2 = TextureManager::GetTexture("ExampleData/textures/marble.jpg", true);
 
 	gl::SamplerState sampleDesc;
-	sampleDesc.minFilter = gl::MinFilter::Linear;
-	sampleDesc.magFilter = gl::MagFilter::Linear;
+	sampleDesc.minFilter = gl::MinFilter::Nearest;
+	sampleDesc.magFilter = gl::MagFilter::Nearest;
 	sampleDesc.addressModeU = gl::AddressMode::Repeat;
 	sampleDesc.addressModeV = gl::AddressMode::Repeat;
 	m_sampler = gl::Sampler(sampleDesc);
