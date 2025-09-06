@@ -177,7 +177,7 @@ void dung::DungeonsApp::OnResize(uint16_t width, uint16_t height)
 	m_finalColorBuffer = gl::CreateTexture2D({ width, height }, gl::Format::R8G8B8A8_SRGB, "FinalColorBuffer");
 	m_finalDepthBuffer = gl::CreateTexture2D({ width, height }, gl::Format::D32_FLOAT, "FinalDepthBuffer");
 
-	m_projection = glm::perspective(glm::radians(65.0f), GetWindowAspect(), 0.01f, 1000.0f);
+	m_projection = glm::perspective(glm::radians(60.0f), GetWindowAspect(), 0.01f, 1000.0f);
 }
 //=============================================================================
 void dung::DungeonsApp::OnMouseButton(int button, int action, int mods)

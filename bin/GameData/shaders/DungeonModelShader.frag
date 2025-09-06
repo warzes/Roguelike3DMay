@@ -42,6 +42,7 @@ void main()
 		? texture(diffuseTex, vTexCoords)
 		: diffuse;
 	DiffuseColor = DiffuseColor * vColor;
+
 	// прозрачность скипаем
 	if (DiffuseColor.a < 0.02)
 		discard;
