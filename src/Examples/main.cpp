@@ -22,7 +22,7 @@ int main(
 	[[maybe_unused]] int   argc,
 	[[maybe_unused]] char* argv[])
 {
-	//Example001 game;
+	Example001 game;
 	//Example002 game;
 	//Example003 game;
 	//Example004 game;
@@ -32,8 +32,7 @@ int main(
 	//Example008 game;
 	//Example009 game;
 
-	Demo001 game;
-
+	//Demo001 game;
 	//TestXXX game;
 
 	game.Run();

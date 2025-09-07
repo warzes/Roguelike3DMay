@@ -43,6 +43,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ModernRender", "ModernRende
 		{9A6B816F-E018-4EF9-81AB-788F27B2DA96} = {9A6B816F-E018-4EF9-81AB-788F27B2DA96}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MyGLFW", "MyGLFW\MyGLFW.vcxproj", "{582A4842-D375-4CE9-BF7C-7B2C5D929BCA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -73,6 +75,10 @@ Global
 		{42B84D75-24AD-424C-84C5-D8EB0E974A29}.Debug|x64.Build.0 = Debug|x64
 		{42B84D75-24AD-424C-84C5-D8EB0E974A29}.Release|x64.ActiveCfg = Release|x64
 		{42B84D75-24AD-424C-84C5-D8EB0E974A29}.Release|x64.Build.0 = Release|x64
+		{582A4842-D375-4CE9-BF7C-7B2C5D929BCA}.Debug|x64.ActiveCfg = Debug|x64
+		{582A4842-D375-4CE9-BF7C-7B2C5D929BCA}.Debug|x64.Build.0 = Debug|x64
+		{582A4842-D375-4CE9-BF7C-7B2C5D929BCA}.Release|x64.ActiveCfg = Release|x64
+		{582A4842-D375-4CE9-BF7C-7B2C5D929BCA}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
