@@ -97,5 +97,8 @@
     <Filter Include="Shader">
       <UniqueIdentifier>{90589fae-194d-4d8a-989c-67ffc474f92b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="_old">
+      <UniqueIdentifier>{403d19c2-09c2-4b2f-9f85-6a26cdcc211e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>

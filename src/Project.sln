@@ -18,6 +18,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DOC", "DOC", "{36D591C7-65C
 		DOC.md = DOC.md
 		Feature.md = Feature.md
 		Idea.md = Idea.md
+		ModernRender.md = ModernRender.md
 		ref.md = ref.md
 		TODO.md = TODO.md
 		unsortRef.md = unsortRef.md
@@ -44,6 +45,14 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ModernRender", "ModernRende
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MyGLFW", "MyGLFW\MyGLFW.vcxproj", "{582A4842-D375-4CE9-BF7C-7B2C5D929BCA}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CuteGame", "CuteGame\CuteGame.vcxproj", "{969FBDF6-D91D-4126-9F48-43386044FF0A}"
+	ProjectSection(ProjectDependencies) = postProject
+		{349C7579-70E5-4769-93F8-1CF63C9358DE} = {349C7579-70E5-4769-93F8-1CF63C9358DE}
+		{9A6B816F-E018-4EF9-81AB-788F27B2DA96} = {9A6B816F-E018-4EF9-81AB-788F27B2DA96}
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "E", "E", "{27460464-7200-48FF-8951-80559FB0F45F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -79,11 +88,17 @@ Global
 		{582A4842-D375-4CE9-BF7C-7B2C5D929BCA}.Debug|x64.Build.0 = Debug|x64
 		{582A4842-D375-4CE9-BF7C-7B2C5D929BCA}.Release|x64.ActiveCfg = Release|x64
 		{582A4842-D375-4CE9-BF7C-7B2C5D929BCA}.Release|x64.Build.0 = Release|x64
+		{969FBDF6-D91D-4126-9F48-43386044FF0A}.Debug|x64.ActiveCfg = Debug|x64
+		{969FBDF6-D91D-4126-9F48-43386044FF0A}.Debug|x64.Build.0 = Debug|x64
+		{969FBDF6-D91D-4126-9F48-43386044FF0A}.Release|x64.ActiveCfg = Release|x64
+		{969FBDF6-D91D-4126-9F48-43386044FF0A}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{9A6B816F-E018-4EF9-81AB-788F27B2DA96} = {27460464-7200-48FF-8951-80559FB0F45F}
+		{349C7579-70E5-4769-93F8-1CF63C9358DE} = {27460464-7200-48FF-8951-80559FB0F45F}
 		{4862674B-2976-4E44-A4D6-FF1F92ADDB28} = {DFC1025F-3E98-47E2-94AA-ABE9001A7B55}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution

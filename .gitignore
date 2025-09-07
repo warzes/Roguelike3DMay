@@ -19,3 +19,7 @@ Thumbs.db
 /bin/Examples_Release.*
 /bin/ModernRender_Debug.*
 /bin/ModernRender_Release.*
+/bin/CuteGame_Debug.*
+/bin/CuteGame_Release.*
+/bin/MyGLFW_Debug.*
+/bin/MyGLFW_Release.*
