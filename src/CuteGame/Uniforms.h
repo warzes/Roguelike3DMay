@@ -12,15 +12,26 @@ struct alignas(16) ModelDataBlock final
 	glm::mat4 modelMatrix;
 };
 
+constexpr size_t MaxPointLights = 4u;
+
 struct alignas(16) LightBlock final
 {
-	struct DirectionalLight
+	struct alignas(16) DirectionalLight final
 	{
 		glm::aligned_vec3 direction;
 		glm::aligned_vec3 color;
 		glm::aligned_f32  intensity;
 		glm::aligned_mat4 shadowMatrix;
 	} dirLight;
+
+	struct alignas(16) PointLight final
+	{
+		glm::aligned_vec3 position;
+		glm::aligned_vec3 color;
+		glm::aligned_f32  intensity;
+		glm::aligned_f32  radius;
+	} pointLights[MaxPointLights];
+	glm::aligned_int32 pointLightCount = 4;
 };
 
 struct alignas(16) SMFragmentBlock final

@@ -16,7 +16,7 @@ glm::mat4 DirectionalLight::GetMatrix() const
 
 
 	glm::mat4 viewMatrix = glm::lookAt(position, targetView, up);
-	glm::mat4 projectionMatrix = glm::ortho(-20.0f, 20.0f, -20.0f, 20.0f, 1.0f, 100.0f);
+	glm::mat4 projectionMatrix = glm::ortho(-20.0f, 20.0f, -20.0f, 20.0f, 0.1f, 100.0f);
 	return projectionMatrix * viewMatrix;
 }
 //=============================================================================
