@@ -1,6 +1,7 @@
 ﻿#include "stdafx.h"
 #include "DepthPass.h"
 #include "Uniforms.h"
+#include "DirectionalLight.h"
 //=============================================================================
 namespace
 {
@@ -52,10 +53,7 @@ void DepthPass::Close()
 //=============================================================================
 void DepthPass::Begin()
 {
-	glm::mat4 viewMatrix = glm::lookAt(glm::vec3(1.0f, 5.0f, 0.0f), glm::vec3(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-	glm::mat4 projectionMatrix = glm::ortho(-20.0f, 20.0f, -20.0f, 20.0f, 1.0f, 1000.0f);
-	m_depthDataUBO->vp = projectionMatrix * viewMatrix;
-	
+	m_depthDataUBO->vp = gDirectionalLight.GetMatrix();	
 	m_depthDataUBO.Update();
 
 	m_rt.Begin({});

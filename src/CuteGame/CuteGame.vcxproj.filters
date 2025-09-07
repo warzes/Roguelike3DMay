@@ -16,6 +16,9 @@
     <ClCompile Include="DepthPass.cpp">
       <Filter>RenderPass</Filter>
     </ClCompile>
+    <ClCompile Include="DirectionalLight.cpp">
+      <Filter>Data</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Demo001.h" />
@@ -35,6 +38,9 @@
     <ClInclude Include="DepthPass.h">
       <Filter>RenderPass</Filter>
     </ClInclude>
+    <ClInclude Include="DirectionalLight.h">
+      <Filter>Data</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="RenderPass">
@@ -42,6 +48,9 @@
     </Filter>
     <Filter Include="Shader">
       <UniqueIdentifier>{90589fae-194d-4d8a-989c-67ffc474f92b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Data">
+      <UniqueIdentifier>{3000463b-34c1-475c-b590-b66808952b00}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

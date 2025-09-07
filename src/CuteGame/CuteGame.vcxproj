@@ -96,6 +96,7 @@
   <ItemGroup>
     <ClCompile Include="Demo001.cpp" />
     <ClCompile Include="DepthPass.cpp" />
+    <ClCompile Include="DirectionalLight.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="RenderPassManager.cpp" />
     <ClCompile Include="ShadowMapPass.cpp" />
@@ -108,6 +109,7 @@
   <ItemGroup>
     <ClInclude Include="Demo001.h" />
     <ClInclude Include="DepthPass.h" />
+    <ClInclude Include="DirectionalLight.h" />
     <ClInclude Include="RenderPassManager.h" />
     <ClInclude Include="ShadowMapPass.h" />
     <ClInclude Include="stdafx.h" />

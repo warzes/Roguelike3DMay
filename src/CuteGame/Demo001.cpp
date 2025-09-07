@@ -73,7 +73,8 @@ void Demo001::OnUpdate([[maybe_unused]] float deltaTime)
 	}
 
 	SceneDataUBO->viewMatrix = m_camera.GetViewMatrix();
-	SceneDataUBO->projectionMatrix = glm::perspective(glm::radians(65.0f), GetWindowAspect(), 0.1f, 1000.0f);
+	SceneDataUBO->projectionMatrix = glm::perspective(glm::radians(60.0f), GetWindowAspect(), 0.1f, 1000.0f);
+	SceneDataUBO->cameraPosition = m_camera.Position;
 }
 //=============================================================================
 void Demo001::OnRender()
@@ -91,7 +92,7 @@ void Demo001::OnRender()
 	}
 	m_renderPassManager.shadowMapPass.End();*/
 
-	m_renderPassManager.tempPass.Begin({ 0.1f, 0.5f, 0.8f });
+	m_renderPassManager.tempPass.Begin({ 0.1f, 0.5f, 0.8f }, m_renderPassManager.depthPass.GetTexture());
 	{
 		SceneDataUBO.Bind(0);
 		sceneDraw();
