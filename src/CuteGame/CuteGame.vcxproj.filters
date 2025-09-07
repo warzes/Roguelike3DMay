@@ -10,6 +10,12 @@
     <ClCompile Include="TempPass.cpp">
       <Filter>RenderPass</Filter>
     </ClCompile>
+    <ClCompile Include="ShadowMapPass.cpp">
+      <Filter>RenderPass</Filter>
+    </ClCompile>
+    <ClCompile Include="DepthPass.cpp">
+      <Filter>RenderPass</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Demo001.h" />
@@ -22,6 +28,12 @@
     </ClInclude>
     <ClInclude Include="Uniforms.h">
       <Filter>Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="ShadowMapPass.h">
+      <Filter>RenderPass</Filter>
+    </ClInclude>
+    <ClInclude Include="DepthPass.h">
+      <Filter>RenderPass</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

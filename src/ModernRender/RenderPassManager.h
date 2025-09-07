@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include "Uniforms.h"
-#include "ShadowMapPass.h"
+#include "Temp2Pass.h"
 #include "TempPass.h"
 
 class RenderPassManager final
@@ -14,6 +14,6 @@ public:
 	void Resize(uint16_t width, uint16_t height);
 	void Final();
 
-	ShadowMapPass shadowMapPass;
+	Temp2Pass shadowMapPass;
 	TempPass tempPass;
 };

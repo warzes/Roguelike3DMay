@@ -52,7 +52,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CuteGame", "CuteGame\CuteGa
 		{9A6B816F-E018-4EF9-81AB-788F27B2DA96} = {9A6B816F-E018-4EF9-81AB-788F27B2DA96}
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "E", "E", "{27460464-7200-48FF-8951-80559FB0F45F}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Engine", "Engine", "{27460464-7200-48FF-8951-80559FB0F45F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

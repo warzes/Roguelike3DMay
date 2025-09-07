@@ -41,6 +41,8 @@ public:
 	T* operator->() { m_needsUpdate = true; return &m_data; }
 	T& operator*() { m_needsUpdate = true; return m_data; }
 
+	const T& Get() const { return m_data; }
+
 private:
 	alignas(16) T             m_data{};
 	std::optional<gl::Buffer> m_ubo;

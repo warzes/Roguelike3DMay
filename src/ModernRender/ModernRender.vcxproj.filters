@@ -34,7 +34,7 @@
     <ClCompile Include="RenderPassManager.cpp">
       <Filter>RenderPass</Filter>
     </ClCompile>
-    <ClCompile Include="ShadowMapPass.cpp">
+    <ClCompile Include="Temp2Pass.cpp">
       <Filter>RenderPass</Filter>
     </ClCompile>
     <ClCompile Include="TempPass.cpp">
@@ -74,7 +74,7 @@
     <ClInclude Include="RenderPassManager.h">
       <Filter>RenderPass</Filter>
     </ClInclude>
-    <ClInclude Include="ShadowMapPass.h">
+    <ClInclude Include="Temp2Pass.h">
       <Filter>RenderPass</Filter>
     </ClInclude>
     <ClInclude Include="TempPass.h">

@@ -80,7 +80,7 @@ void main()
 )";
 }
 //=============================================================================
-bool ShadowMapPass::Init()
+bool Temp2Pass::Init()
 {
 	std::vector<RTAttachment> rts = {
 		RTAttachment{ gl::Format::R8_UNORM, "ShadowMapDepthMap", gl::AttachmentLoadOp::Clear }, // TODO: DontCare?
@@ -88,7 +88,7 @@ bool ShadowMapPass::Init()
 		RTAttachment{ gl::Format::R8G8B8_SRGB, "ShadowMapAlbedoColor", gl::AttachmentLoadOp::Clear }, // TODO: DontCare?
 		RTAttachment{ gl::Format::R8G8B8_UNORM, "ShadowMapNormalColor", gl::AttachmentLoadOp::Clear }, // TODO: DontCare?
 	};
-	m_rt.Init(GetWindowWidth(), GetWindowHeight(), rts, RTAttachment{gl::Format::D32_FLOAT, "ShadowMapPassDepth", gl::AttachmentLoadOp::Clear });
+	m_rt.Init(GetWindowWidth(), GetWindowHeight(), rts, RTAttachment{ gl::Format::D32_FLOAT, "ShadowMapPassDepth", gl::AttachmentLoadOp::Clear });
 
 	auto vertexShader = gl::Shader(gl::ShaderType::VertexShader, shaderCodeVertex, "ShadowMapPassVS");
 	auto fragmentShader = gl::Shader(gl::ShaderType::FragmentShader, shaderCodeFragment, "ShadowMapPassFS");
@@ -111,22 +111,22 @@ bool ShadowMapPass::Init()
 		.vertexInputState = { MeshVertexInputBindingDesc },
 		.depthState = {.depthTestEnable = true },
 		//.colorBlendState = blendState
-	});
+		});
 
 	return true;
 }
 //=============================================================================
-void ShadowMapPass::Close()
+void Temp2Pass::Close()
 {
 	m_rt.Close();
 	m_pipeline = std::nullopt;
 }
 //=============================================================================
-void ShadowMapPass::Begin()
+void Temp2Pass::Begin()
 {
 	SMFragmentDataUBO->viewMat = glm::mat4(1.0f);
 	SMFragmentDataUBO->albedoScaler = { 1.0f, 1.0f, 1.0f };
-	SMFragmentDataUBO->depthClampPara = { 0.1f, 1.0f / 1000.0f };	
+	SMFragmentDataUBO->depthClampPara = { 0.1f, 1.0f / 1000.0f };
 	SMFragmentDataUBO->emissionColor = { 0.0f, 0.0f, 0.0f };
 	SMFragmentDataUBO->alphaTestThreshold = 0.2f;
 	SMFragmentDataUBO->depthOnly = 0;
@@ -136,7 +136,7 @@ void ShadowMapPass::Begin()
 	SMFragmentDataUBO.Bind(2);
 }
 //=============================================================================
-void ShadowMapPass::End()
+void Temp2Pass::End()
 {
 	m_rt.End();
 }

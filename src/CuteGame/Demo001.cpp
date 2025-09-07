@@ -78,6 +78,19 @@ void Demo001::OnUpdate([[maybe_unused]] float deltaTime)
 //=============================================================================
 void Demo001::OnRender()
 {
+	m_renderPassManager.depthPass.Begin();
+	{
+		sceneDraw();
+	}
+	m_renderPassManager.depthPass.End();
+
+	/*m_renderPassManager.shadowMapPass.Begin();
+	{
+		SceneDataUBO.Bind(0);
+		sceneDraw();
+	}
+	m_renderPassManager.shadowMapPass.End();*/
+
 	m_renderPassManager.tempPass.Begin({ 0.1f, 0.5f, 0.8f });
 	{
 		SceneDataUBO.Bind(0);

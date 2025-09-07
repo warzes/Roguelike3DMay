@@ -2,6 +2,8 @@
 
 #include "Uniforms.h"
 #include "TempPass.h"
+#include "ShadowMapPass.h"
+#include "DepthPass.h"
 
 class RenderPassManager final
 {
@@ -13,5 +15,8 @@ public:
 	void Resize(uint16_t width, uint16_t height);
 	void Final();
 
+	DepthPass depthPass;
+
+	Temp2Pass shadowMapPass;
 	TempPass tempPass;
 };

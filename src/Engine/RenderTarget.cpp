@@ -72,19 +72,28 @@ void RenderTarget::SetSize(uint16_t width, uint16_t height)
 //=============================================================================
 void RenderTarget::Begin(const glm::vec3& clearColor, float clearDepth)
 {
-	// TODO: выделять память при инициализации, а не в кадре
+	gl::RenderInfo ri{};
+
 	std::vector<gl::RenderColorAttachment> colorAttachments;
-	colorAttachments.reserve(m_colorTex.size());
-	for (size_t i = 0; i < m_colorTex.size(); i++)
+
+	// colors
+	if (m_colorTex.size() > 0)
 	{
-		colorAttachments.push_back({
-			.texture = *m_colorTex[i].texture,
-			.loadOp = m_colorTex[i].loadOp,
-			.clearValue = { clearColor, 1.0f } });
+		// TODO: выделять память при инициализации, а не в кадре
+
+		colorAttachments.reserve(m_colorTex.size());
+		for (size_t i = 0; i < m_colorTex.size(); i++)
+		{
+			colorAttachments.push_back({
+				.texture = *m_colorTex[i].texture,
+				.loadOp = m_colorTex[i].loadOp,
+				.clearValue = { clearColor, 1.0f } });
+		}
+
+		ri.colorAttachments = colorAttachments;
 	}
 
-	gl::RenderInfo ri{};
-	ri.colorAttachments = colorAttachments;
+	// depths
 	if (m_depthTex.texture.has_value())
 	{
 		ri.depthAttachment = gl::RenderDepthStencilAttachment{
