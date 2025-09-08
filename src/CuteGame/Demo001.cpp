@@ -145,7 +145,7 @@ void Demo001::sceneDraw()
 
 	// куб
 	{
-		ModelDataUBO->modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(2.0f, 1.0f, 0.0f));
+		ModelDataUBO->modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(2.0f, 0.5f, 0.0f));
 		ModelDataUBO.Bind(1);
 
 		gl::Cmd::BindSampledImage(0, *m_texture2, *m_sampler);

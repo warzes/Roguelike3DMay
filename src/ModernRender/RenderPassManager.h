@@ -15,5 +15,5 @@ public:
 	void Final();
 
 	Temp2Pass shadowMapPass;
-	TempPass tempPass;
+	ForwardPass tempPass;
 };

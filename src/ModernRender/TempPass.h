@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-class TempPass final
+class ForwardPass final
 {
 	friend class RenderPassManager;
 public:

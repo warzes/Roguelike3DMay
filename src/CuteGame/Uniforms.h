@@ -21,7 +21,7 @@ struct alignas(16) LightBlock final
 		glm::aligned_vec3 direction;
 		glm::aligned_vec3 color;
 		glm::aligned_f32  intensity;
-		glm::aligned_mat4 shadowMatrix;
+		glm::aligned_mat4 lightSpaceMatrix;
 	} dirLight;
 
 	struct alignas(16) PointLight final
@@ -29,7 +29,7 @@ struct alignas(16) LightBlock final
 		glm::aligned_vec3 position;
 		glm::aligned_vec3 color;
 		glm::aligned_f32  intensity;
-		glm::aligned_f32  radius;
+		glm::aligned_vec3 attenuation;
 	} pointLights[MaxPointLights];
 	glm::aligned_int32 pointLightCount = 4;
 };
@@ -46,5 +46,5 @@ struct alignas(16) SMFragmentBlock final
 
 inline UniformsWrapper<SceneDataBlock> SceneDataUBO;
 inline UniformsWrapper<ModelDataBlock> ModelDataUBO;
-inline UniformsWrapper<LightBlock> DirectionalLightDataUBO;
+inline UniformsWrapper<LightBlock> LightDataUBO;
 inline UniformsWrapper<SMFragmentBlock> SMFragmentDataUBO;

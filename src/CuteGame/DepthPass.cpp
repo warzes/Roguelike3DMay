@@ -3,42 +3,22 @@
 #include "Uniforms.h"
 #include "DirectionalLight.h"
 //=============================================================================
-namespace
-{
-	const char* shaderCodeVertex = R"(
-#version 460 core
-
-layout(location = 0) in vec3 vertexPosition;
-
-layout(binding = 0, std140) uniform DepthBlock {
-	mat4 vp;
-};
-
-layout(binding = 1, std140) uniform ModelMatricesBlock {
-	mat4 modelMatrix;
-};
-
-void main()
-{
-	gl_Position = vp * modelMatrix * vec4(vertexPosition, 1.0);
-}
-)";
-}
+constexpr uint16_t DepthMapSize = 4096;
 //=============================================================================
 bool DepthPass::Init()
 {
 	m_depthDataUBO.Init();
 
-	m_rt.Init(2048, 2048, std::span<RTAttachment>{}, RTAttachment{ gl::Format::D32_FLOAT, "DepthPass", gl::AttachmentLoadOp::Clear });
+	m_rt.Init(DepthMapSize, DepthMapSize, RTAttachment{ gl::Format::D32_FLOAT, "DepthPass", gl::AttachmentLoadOp::Clear });
 
-	auto vertexShader = gl::Shader(gl::ShaderType::VertexShader, shaderCodeVertex, "DepthPassVS");
+	auto vertexShader = gl::Shader(gl::ShaderType::VertexShader, io::ReadShaderCode("CuteGameData/shaders/depth.vert"), "DepthPassVS");
 
 	m_pipeline = gl::GraphicsPipeline({
-		 .name = "DepthPassPipeline",
-		.vertexShader = &vertexShader,
+		 .name              = "DepthPassPipeline",
+		.vertexShader       = &vertexShader,
 		.inputAssemblyState = {.topology = gl::PrimitiveTopology::TriangleList },
-		.vertexInputState = { MeshVertexInputBindingDesc },
-		.depthState = {.depthTestEnable = true },
+		.vertexInputState   = { MeshVertexInputBindingDesc },
+		.depthState         = {.depthTestEnable = true },
 		});
 
 	return true;
@@ -53,8 +33,11 @@ void DepthPass::Close()
 //=============================================================================
 void DepthPass::Begin()
 {
-	m_depthDataUBO->vp = gDirectionalLight.GetMatrix();	
-	m_depthDataUBO.Update();
+	if (gDirectionalLight.IsNeedsUpdate())
+	{
+		m_depthDataUBO->vp = gDirectionalLight.GetMatrix();
+		m_depthDataUBO.Update();
+	}
 
 	m_rt.Begin({});
 	gl::Cmd::BindGraphicsPipeline(*m_pipeline);

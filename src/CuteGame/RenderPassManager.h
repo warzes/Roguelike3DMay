@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include "Uniforms.h"
-#include "TempPass.h"
+#include "ForwardPass.h"
 #include "ShadowMapPass.h"
 #include "DepthPass.h"
 
@@ -18,5 +18,5 @@ public:
 	DepthPass depthPass;
 
 	Temp2Pass shadowMapPass;
-	TempPass tempPass;
+	ForwardPass tempPass;
 };

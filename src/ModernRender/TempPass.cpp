@@ -60,7 +60,7 @@ void main()
 )";
 }
 //=============================================================================
-bool TempPass::Init()
+bool ForwardPass::Init()
 {
 	m_rt.Init(GetWindowWidth(), GetWindowHeight(),
 		RTAttachment{ gl::Format::R8G8B8A8_SRGB, "ShadowMapPassColor", gl::AttachmentLoadOp::Clear },
@@ -91,19 +91,19 @@ bool TempPass::Init()
 	return true;
 }
 //=============================================================================
-void TempPass::Close()
+void ForwardPass::Close()
 {
 	m_rt.Close();
 	m_pipeline = std::nullopt;
 }
 //=============================================================================
-void TempPass::Begin(const glm::vec3& clearColor)
+void ForwardPass::Begin(const glm::vec3& clearColor)
 {
 	m_rt.Begin(clearColor);
 	gl::Cmd::BindGraphicsPipeline(*m_pipeline);
 }
 //=============================================================================
-void TempPass::End()
+void ForwardPass::End()
 {
 	m_rt.End();
 }

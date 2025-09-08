@@ -23,23 +23,17 @@ void RenderTarget::Init(uint16_t width, uint16_t height, std::span<RTAttachment>
 		};
 	}
 
-	if (depth.has_value())
-	{
-		assert(
-			depth->format == gl::Format::D32_FLOAT ||
-			depth->format == gl::Format::D32_UNORM ||
-			depth->format == gl::Format::D24_UNORM ||
-			depth->format == gl::Format::D16_UNORM ||
-			depth->format == gl::Format::D32_FLOAT_S8_UINT ||
-			depth->format == gl::Format::D24_UNORM_S8_UINT ||
-			depth->format == gl::Format::S8_UINT);
+	createDepth(depth);
+}
+//=============================================================================
+void RenderTarget::Init(uint16_t width, uint16_t height, const RTAttachment& depth)
+{
+	Close();
 
-		m_depthTex = {
-			.name = depth->name,
-			.texture = gl::CreateTexture2D({ width, height }, depth->format, depth->name),
-			.loadOp = depth->loadOp
-		};
-	}
+	m_width = width;
+	m_height = height;
+
+	createDepth(depth);
 }
 //=============================================================================
 void RenderTarget::Close()
@@ -133,5 +127,26 @@ void RenderTarget::BlitToSwapChain(size_t id)
 	extern uint16_t GetWindowWidth();
 	extern uint16_t GetWindowHeight();
 	gl::BlitTextureToSwapChain(*GetColor(id), {}, {}, GetExtent(), {GetWindowWidth(), GetWindowHeight(), 1}, gl::MagFilter::Nearest);
+}
+//=============================================================================
+void RenderTarget::createDepth(std::optional<RTAttachment> depth)
+{
+	if (depth.has_value())
+	{
+		assert(
+			depth->format == gl::Format::D32_FLOAT ||
+			depth->format == gl::Format::D32_UNORM ||
+			depth->format == gl::Format::D24_UNORM ||
+			depth->format == gl::Format::D16_UNORM ||
+			depth->format == gl::Format::D32_FLOAT_S8_UINT ||
+			depth->format == gl::Format::D24_UNORM_S8_UINT ||
+			depth->format == gl::Format::S8_UINT);
+
+		m_depthTex = {
+			.name = depth->name,
+			.texture = gl::CreateTexture2D({ m_width, m_height }, depth->format, depth->name),
+			.loadOp = depth->loadOp
+		};
+	}
 }
 //=============================================================================

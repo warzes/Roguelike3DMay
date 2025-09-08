@@ -7,7 +7,7 @@
     <ClCompile Include="RenderPassManager.cpp">
       <Filter>RenderPass</Filter>
     </ClCompile>
-    <ClCompile Include="TempPass.cpp">
+    <ClCompile Include="ForwardPass.cpp">
       <Filter>RenderPass</Filter>
     </ClCompile>
     <ClCompile Include="ShadowMapPass.cpp">
@@ -26,11 +26,11 @@
     <ClInclude Include="RenderPassManager.h">
       <Filter>RenderPass</Filter>
     </ClInclude>
-    <ClInclude Include="TempPass.h">
+    <ClInclude Include="ForwardPass.h">
       <Filter>RenderPass</Filter>
     </ClInclude>
     <ClInclude Include="Uniforms.h">
-      <Filter>Shader</Filter>
+      <Filter>Shaders</Filter>
     </ClInclude>
     <ClInclude Include="ShadowMapPass.h">
       <Filter>RenderPass</Filter>
@@ -46,11 +46,22 @@
     <Filter Include="RenderPass">
       <UniqueIdentifier>{1ae4ba1d-6ded-4bd8-b684-a42e41ac0528}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Shader">
-      <UniqueIdentifier>{90589fae-194d-4d8a-989c-67ffc474f92b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Data">
       <UniqueIdentifier>{3000463b-34c1-475c-b590-b66808952b00}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{90589fae-194d-4d8a-989c-67ffc474f92b}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\bin\CuteGameData\shaders\depth.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\bin\CuteGameData\shaders\lighting.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\bin\CuteGameData\shaders\lighting.vert">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

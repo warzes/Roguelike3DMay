@@ -15,6 +15,7 @@ class RenderTarget final
 public:
 	void Init(uint16_t width, uint16_t height, RTAttachment colors, std::optional<RTAttachment> depth);
 	void Init(uint16_t width, uint16_t height, std::span<RTAttachment> colors, std::optional<RTAttachment> depth);
+	void Init(uint16_t width, uint16_t height, const RTAttachment& depth);
 	void Close();
 
 	void SetSize(uint16_t width, uint16_t height);
@@ -33,6 +34,8 @@ public:
 	void BlitToTexture(); // TODO:
 
 private:
+	void createDepth(std::optional<RTAttachment> depth);
+
 	struct TextureAttachment final
 	{
 		std::string                name;
