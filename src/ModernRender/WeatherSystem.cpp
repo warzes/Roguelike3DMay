@@ -316,11 +316,11 @@ void WeatherSystem::GenerateCloudNoise()
 
 	bool fileExist = true;
 	std::fstream pwNoiseFile;
-	pwNoiseFile.open("Resources\\Textures\\PerlinWorley.noise", std::ios::in | std::ios::binary);
+	pwNoiseFile.open("CoreData/textures/PerlinWorley.noise", std::ios::in | std::ios::binary);
 	if (!pwNoiseFile)
 	{
 		fileExist = false;
-		pwNoiseFile.open("Resources\\Textures\\PerlinWorley.noise", std::ios::out | std::ios::binary);
+		pwNoiseFile.open("CoreData/textures/PerlinWorley.noise", std::ios::out | std::ios::binary);
 	}
 	for (int i = 0; i < 128; i++)
 		for (int j = 0; j < 128; j++)
@@ -377,11 +377,11 @@ void WeatherSystem::GenerateCloudNoise()
 
 	fileExist = true;
 	std::fstream wNoiseFile;
-	wNoiseFile.open("Resources\\Textures\\Worley.noise", std::ios::in | std::ios::binary);
+	wNoiseFile.open("CoreData/textures/Worley.noise", std::ios::in | std::ios::binary);
 	if (!wNoiseFile)
 	{
 		fileExist = false;
-		wNoiseFile.open("Resources\\Textures\\Worley.noise", std::ios::out | std::ios::binary);
+		wNoiseFile.open("CoreData/textures/Worley.noise", std::ios::out | std::ios::binary);
 	}
 	for (int i = 0; i < 32; i++)
 		for (int j = 0; j < 32; j++)

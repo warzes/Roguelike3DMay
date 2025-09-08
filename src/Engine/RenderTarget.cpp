@@ -102,6 +102,8 @@ void RenderTarget::Begin(const glm::vec3& clearColor, float clearDepth)
 			.clearValue = {.depth = clearDepth},
 		};
 	}
+
+	ri.viewport = gl::Viewport{ .drawRect = Rect2D{.offset = {0, 0}, .extent = {m_width, m_height} } };
 	
 	gl::BeginRendering(ri);
 }

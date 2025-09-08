@@ -80,6 +80,8 @@ public:
 
 	float* GetShaderParas();
 
+	LightManager* GetLightManager() { return m_lightManager; }
+
 private:
 	void updateAtmosphere();
 	void updateCloud();
