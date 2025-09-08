@@ -21,7 +21,7 @@ private:
 	glm::vec3 m_targetView = glm::vec3(0.0f);
 
 	glm::vec3 m_color = glm::vec3(1.0f, 0.6f, 0.2f);
-	float     m_intensity = 3.0f;
+	float     m_intensity = 10.0f;
 
 	glm::mat4 m_viewProj{ glm::mat4(1.0f) };
 

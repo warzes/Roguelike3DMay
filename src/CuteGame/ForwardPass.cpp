@@ -52,13 +52,18 @@ void ForwardPass::Close()
 	m_pipeline = std::nullopt;
 }
 //=============================================================================
-glm::vec3 getAttenuation(const float radius)
+glm::vec3 getAttenuation(const float radius) noexcept // TODO:
 {
 	constexpr float constant{ 1.0f };
 	const float linear{ 4.5f / radius };
 	const float quadratic{ 75.0f / (radius * radius) };
 
 	return glm::vec3(constant, linear, quadratic);
+}
+//=============================================================================
+glm::vec2 updateCutoffAngles(const float _innerCutoffAngle, const float _outerCutoffAngle) noexcept // TODO:
+{
+	return glm::vec2(glm::cos(glm::radians(_innerCutoffAngle)), glm::cos(glm::radians(_outerCutoffAngle)));
 }
 //=============================================================================
 void ForwardPass::Begin(const glm::vec3& clearColor, const gl::Texture* depthTexture)
@@ -71,7 +76,7 @@ void ForwardPass::Begin(const glm::vec3& clearColor, const gl::Texture* depthTex
 	LightDataUBO->pointLights[0].position = glm::vec3(-2.0f, 0.5f, -1.2f);
 	LightDataUBO->pointLights[0].color = glm::vec3(1.0f, 0.2f, 0.2f);
 	LightDataUBO->pointLights[0].intensity = 30.0f;
-	LightDataUBO->pointLights[0].attenuation = getAttenuation(15.0f);
+	LightDataUBO->pointLights[0].attenuation = getAttenuation(50.0f);
 
 	LightDataUBO->pointLights[1].position = glm::vec3(2.0f, 1.0f, -1.2f);
 	LightDataUBO->pointLights[1].color = glm::vec3(0.2f, 1.0f, 0.2f);
@@ -88,6 +93,12 @@ void ForwardPass::Begin(const glm::vec3& clearColor, const gl::Texture* depthTex
 	LightDataUBO->pointLights[3].intensity = 3.0f;
 	LightDataUBO->pointLights[3].attenuation = getAttenuation(15.0f);
 
+	LightDataUBO->spotLights[0].position = glm::vec3(-4.0f, 3.0f, 4.0f);
+	LightDataUBO->spotLights[0].direction = glm::vec3(0.0f, -1.0f, 0.0f);
+	LightDataUBO->spotLights[0].color = glm::vec3(0.0f, 0.0f, 1.0f);
+	LightDataUBO->spotLights[0].intensity = 10.0f;
+	LightDataUBO->spotLights[0].attenuation = getAttenuation(10.0f);
+	LightDataUBO->spotLights[0].angles = updateCutoffAngles(12.5f, 17.5f);
 
 	LightDataUBO.Update();
 

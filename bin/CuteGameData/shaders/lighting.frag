@@ -1,6 +1,7 @@
 ﻿#version 460 core
 
 #define MAX_POINT_LIGHTS 4
+#define MAX_SPOT_LIGHTS 4
 
 layout(location = 0) in vec2 fragTexCoord;
 layout(location = 1) in vec3 fragNormal;
@@ -21,10 +22,21 @@ struct PointLight {
 	vec3 attenuation; // x: constant, y: linear, z: quadratic
 };
 
+struct SpotLight {
+	vec3 position;
+	vec3 direction;
+	vec3 color;
+	float intensity;
+	vec3 attenuation; // x: constant, y: linear, z: quadratic
+	vec2 angles; // x: inner cutoff angle, y: outer cutoff angle (for spotlight)
+};
+
 layout(binding = 2, std140) uniform LightBlock {
 	DirectionalLight dirLight;
-	PointLight pointLight[MAX_POINT_LIGHTS];
-	int pointLightCount;
+	PointLight       pointLight[MAX_POINT_LIGHTS];
+	SpotLight        spotLight[MAX_SPOT_LIGHTS];
+	int              pointLightCount;
+	int              spotLightCount;
 };
 
 layout(binding = 0) uniform sampler2D diffuseTexture;
@@ -65,6 +77,34 @@ vec3 calculatePointLight(PointLight light, vec3 normal, vec3 viewDir)
 	vec3 reflectDir = reflect(-lightDir, normal);
 	float spec = pow(max(dot(normal, halfwayDir), 0.0f), MaterialSpecularColor.w);
 	vec3 specular = specularIntensity * spec * (MaterialSpecularColor.xyz * light.intensity) * attenuation;
+
+	return diffuse + specular;
+}
+
+vec3 calculateSpotLight(SpotLight light, vec3 normal, vec3 viewDir) 
+{
+	float innerCutoff = light.angles.x;
+	float outerCutoff = light.angles.y;
+
+	vec3 lightDir = normalize(light.position - fragWorldPosition.xyz);
+	vec3 halfwayDir = normalize(lightDir + viewDir);
+	float diffuseImpact = max(dot(normal, lightDir), 0.0f);
+	vec3 diffuse = diffuseImpact * light.color * light.intensity;
+
+	vec3 reflectDir = reflect(-lightDir, normal);
+	float spec = pow(max(dot(normal, halfwayDir), 0.0f), MaterialSpecularColor.w);
+	vec3 specular = specularIntensity * spec * MaterialSpecularColor.xyz * light.intensity;
+
+	float theta = dot(lightDir, normalize(-light.direction));
+	float epsilon = innerCutoff - outerCutoff;
+	float intensity = clamp((theta - outerCutoff) / epsilon, 0.0f, 1.0f);
+	diffuse *= intensity;
+	specular *= intensity;
+
+	float distance = length(light.position - fragWorldPosition.xyz);
+	float attenuation = 1.0f / (light.attenuation.x + light.attenuation.y * distance + light.attenuation.z * (distance * distance));
+	diffuse *= attenuation;
+	specular *= attenuation;
 
 	return diffuse + specular;
 }
@@ -123,6 +163,10 @@ void main()
 	}
 
 	// Spot Light
+	for (int i = 0; i < spotLightCount; ++i)
+	{
+		lighting += ambient + calculateSpotLight(spotLight[i], normal, viewDir);
+	}
 
 	// Final
 	outputColor.rgb = baseColor.rgb * lighting;
