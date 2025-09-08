@@ -145,7 +145,7 @@ void main()
 
 	vec3 ambient = ambientStrength * baseColor.rgb;
 	
-	vec3 lighting = vec3(0.0f);
+	vec3 lighting = ambient;
 	
 	// Directional Light
 	{
@@ -153,19 +153,19 @@ void main()
 
 		const vec3 lightDir = normalize(-dirLight.direction);
 		const float shadow = calculateShadow(fragPosLightSpace, normal, lightDir);
-		lighting += (ambient + (1.0f - shadow) * calculateDirectionalLight(normal, lightDir, viewDir));
+		lighting += (1.0f - shadow) * calculateDirectionalLight(normal, lightDir, viewDir);
 	}
 
 	// Point Light
 	for (int i = 0; i < pointLightCount; ++i)
 	{
-		lighting += ambient + calculatePointLight(pointLight[i], normal, viewDir);
+		lighting += calculatePointLight(pointLight[i], normal, viewDir);
 	}
 
 	// Spot Light
 	for (int i = 0; i < spotLightCount; ++i)
 	{
-		lighting += ambient + calculateSpotLight(spotLight[i], normal, viewDir);
+		lighting += calculateSpotLight(spotLight[i], normal, viewDir);
 	}
 
 	// Final
