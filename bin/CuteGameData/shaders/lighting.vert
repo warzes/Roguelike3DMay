@@ -16,17 +16,21 @@ layout(binding = 1, std140) uniform ModelMatricesBlock {
 	mat4 modelMatrix;
 };
 
-layout(location = 0) out vec2 fragTexCoord;
-layout(location = 1) out vec3 fragNormal;
-layout(location = 2) out vec4 fragWorldPosition;
-layout(location = 3) out vec3 fragCameraPosition;
+layout(location = 0) out vec2 fragTexCoord; 
+layout(location = 1) out vec3 fragNormal;        // Normal vector in world space
+layout(location = 2) out vec4 fragWorldPosition; // Fragment position in world space
+layout(location = 3) out vec3 fragViewDir;       // Direction vector from fragment to camera
 
 void main()
 {
 	fragTexCoord       = vertexTexCoord;
+	// Transform normal to world space and normalize
 	fragNormal         = mat3(transpose(inverse(modelMatrix))) * vertexNormal;
+	// Calculate position in world space
 	fragWorldPosition  = modelMatrix * vec4(vertexPosition, 1.0);
-	fragCameraPosition = cameraPosition;
+	// Calculate view direction vector
+	fragViewDir        = normalize(cameraPosition - fragWorldPosition.xyz);
 
+	// Transform vertex position into clip space
 	gl_Position = projectionMatrix * viewMatrix * fragWorldPosition;
 }

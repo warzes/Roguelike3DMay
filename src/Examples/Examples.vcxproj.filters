@@ -34,6 +34,9 @@
     <ClCompile Include="Example009.cpp">
       <Filter>01_BaseExamples</Filter>
     </ClCompile>
+    <ClCompile Include="TM_000.cpp">
+      <Filter>02_ThinMatrix</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -68,6 +71,9 @@
     <ClInclude Include="Example009.h">
       <Filter>01_BaseExamples</Filter>
     </ClInclude>
+    <ClInclude Include="TM_000.h">
+      <Filter>02_ThinMatrix</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="01_BaseExamples">
@@ -75,6 +81,9 @@
     </Filter>
     <Filter Include="XX_Demo">
       <UniqueIdentifier>{c0084ff4-5804-4773-8020-9f6988f53f18}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02_ThinMatrix">
+      <UniqueIdentifier>{57944248-c5d9-4c64-a768-dcf227f02c3c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

@@ -110,6 +110,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="TestXXX.cpp" />
+    <ClCompile Include="TM_000.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Demo001.h" />
@@ -124,6 +125,7 @@
     <ClInclude Include="Example009.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="TestXXX.h" />
+    <ClInclude Include="TM_000.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -110,8 +110,8 @@ bool Example003::OnInit()
 	});
 
 	//-------------------------------------------------------------------------
-	// load texture
-	m_texture = TextureManager::GetTexture("CoreData/textures/temp.png", false);
+	// load srgb texture
+	m_texture = TextureManager::GetTexture("CoreData/textures/temp.png", true);
 
 	//-------------------------------------------------------------------------
 	// create Sampler
@@ -137,8 +137,8 @@ void Example003::OnClose()
 //=============================================================================
 void Example003::OnUpdate([[maybe_unused]] float deltaTime)
 {
-	uniformsData.modelMatrix      = glm::rotate(glm::mat4(1.0f), glm::radians(55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-	uniformsData.viewMatrix       = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 3.0f));
+	uniformsData.modelMatrix      = glm::rotate(glm::mat4(1.0f), glm::radians(65.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+	uniformsData.viewMatrix       = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 1.4f));
 	uniformsData.projectionMatrix = glm::perspective(glm::radians(65.0f), GetWindowAspect(), 0.1f, 100.0f);
 
 	// Update UBO data

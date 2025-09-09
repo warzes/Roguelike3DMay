@@ -421,7 +421,7 @@ bool Example007::OnInit()
 
 	//-------------------------------------------------------------------------
 	// load texture
-	m_diffuseTexture = TextureManager::GetTexture("ExampleData/textures/container2.png", false);
+	m_diffuseTexture = TextureManager::GetTexture("ExampleData/textures/container2.png", true);
 	m_specTexture    = TextureManager::GetTexture("ExampleData/textures/container2_specular.png", false);
 
 	//-------------------------------------------------------------------------

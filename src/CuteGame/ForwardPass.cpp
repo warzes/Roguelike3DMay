@@ -33,7 +33,7 @@ bool ForwardPass::Init()
 	blendState.attachments[0].alphaBlendOp = gl::BlendOp::Add;
 
 	m_pipeline = gl::GraphicsPipeline({
-		 .name = "TempPipeline",
+		 .name = "ForwardPipeline",
 		.vertexShader = &vertexShader,
 		.fragmentShader = &fragmentShader,
 		.inputAssemblyState = {.topology = gl::PrimitiveTopology::TriangleList },

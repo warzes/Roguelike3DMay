@@ -6,7 +6,7 @@
 layout(location = 0) in vec2 fragTexCoord;
 layout(location = 1) in vec3 fragNormal;
 layout(location = 2) in vec4 fragWorldPosition;
-layout(location = 3) in vec3 fragCameraPosition;
+layout(location = 3) in vec3 fragViewDir;
 
 struct DirectionalLight {
 	vec3 direction;
@@ -141,7 +141,6 @@ void main()
 	vec4 baseColor = albedo * MaterialDiffuseColor;
 
 	vec3 normal = normalize(fragNormal);
-	vec3 viewDir = normalize(fragCameraPosition - fragWorldPosition.xyz);
 
 	vec3 ambient = ambientStrength * baseColor.rgb;
 	
@@ -153,19 +152,19 @@ void main()
 
 		const vec3 lightDir = normalize(-dirLight.direction);
 		const float shadow = calculateShadow(fragPosLightSpace, normal, lightDir);
-		lighting += (1.0f - shadow) * calculateDirectionalLight(normal, lightDir, viewDir);
+		lighting += (1.0f - shadow) * calculateDirectionalLight(normal, lightDir, fragViewDir);
 	}
 
 	// Point Light
 	for (int i = 0; i < pointLightCount; ++i)
 	{
-		lighting += calculatePointLight(pointLight[i], normal, viewDir);
+		lighting += calculatePointLight(pointLight[i], normal, fragViewDir);
 	}
 
 	// Spot Light
 	for (int i = 0; i < spotLightCount; ++i)
 	{
-		lighting += calculateSpotLight(spotLight[i], normal, viewDir);
+		lighting += calculateSpotLight(spotLight[i], normal, fragViewDir);
 	}
 
 	// Final

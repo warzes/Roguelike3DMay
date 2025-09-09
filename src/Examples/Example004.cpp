@@ -39,7 +39,8 @@ layout(location = 0) out vec4 outputColor;
 
 void main()
 {
-	outputColor = texture(diffuseTex, fragTexCoord) * vec4((normalize(fragNormal) * 0.5 + 0.5), 1.0);
+	vec3 normal = normalize(fragNormal);
+	outputColor = texture(diffuseTex, fragTexCoord) * vec4((normal * 0.5 + 0.5), 1.0);
 }
 )";
 
@@ -179,7 +180,7 @@ bool Example004::OnInit()
 
 	//-------------------------------------------------------------------------
 	// load texture
-	m_texture = TextureManager::GetTexture("CoreData/textures/temp.png", false);
+	m_texture = TextureManager::GetTexture("CoreData/textures/temp.png", true);
 
 	//-------------------------------------------------------------------------
 	// create Sampler
@@ -192,7 +193,7 @@ bool Example004::OnInit()
 
 	//-------------------------------------------------------------------------
 	// set camera
-	m_camera.SetPosition(glm::vec3(0.0f, 0.0f, -1.0f));
+	m_camera.SetPosition(glm::vec3(0.0f, 0.0f, -3.0f));
 
 	return true;
 }
