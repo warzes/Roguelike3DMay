@@ -1,13 +1,13 @@
 #pragma once
 
-class Demo001 final : public IEngineApp
+class TM_001 final : public IEngineApp
 {
 public:
-	Demo001() = default;
-	Demo001(const Demo001&) = delete;
-	Demo001(Demo001&&) = delete;
-	void operator=(const Demo001&) = delete;
-	void operator=(Demo001&&) = delete;
+	TM_001() = default;
+	TM_001(const TM_001&) = delete;
+	TM_001(TM_001&&) = delete;
+	void operator=(const TM_001&) = delete;
+	void operator=(TM_001&&) = delete;
 
 	EngineCreateInfo GetCreateInfo() const final;
 

@@ -10,10 +10,7 @@
 #include "Example009.h"
 
 #include "TM_000.h"
-
-#include "Demo001.h"
-
-#include "TestXXX.h"
+#include "TM_001.h"
 //=============================================================================
 #if defined(_MSC_VER)
 #	pragma comment( lib, "3rdparty.lib" )
@@ -34,10 +31,8 @@ int main(
 	//Example008 game;
 	//Example009 game;
 
-	TM_000 game;
-
-	//Demo001 game;
-	//TestXXX game;
+	//TM_000 game;
+	TM_001 game;
 
 	game.Run();
 }
