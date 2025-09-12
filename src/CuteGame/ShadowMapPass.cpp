@@ -88,7 +88,7 @@ bool Temp2Pass::Init()
 		RTAttachment{ gl::Format::R8G8B8_SRGB, "ShadowMapAlbedoColor", gl::AttachmentLoadOp::Clear }, // TODO: DontCare?
 		RTAttachment{ gl::Format::R8G8B8_UNORM, "ShadowMapNormalColor", gl::AttachmentLoadOp::Clear }, // TODO: DontCare?
 	};
-	m_rt.Init(GetWindowWidth(), GetWindowHeight(), rts, RTAttachment{ gl::Format::D32_FLOAT, "ShadowMapPassDepth", gl::AttachmentLoadOp::Clear });
+	m_rt.Init(GetWindowWidth(), GetWindowHeight(), rts, RTDAttachment{ gl::Format::D32_FLOAT, "ShadowMapPassDepth", gl::AttachmentLoadOp::Clear });
 
 	auto vertexShader = gl::Shader(gl::ShaderType::VertexShader, shaderCodeVertex, "ShadowMapPassVS");
 	auto fragmentShader = gl::Shader(gl::ShaderType::FragmentShader, shaderCodeFragment, "ShadowMapPassFS");

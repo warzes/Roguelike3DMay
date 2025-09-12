@@ -17,7 +17,7 @@ bool ForwardPass::Init()
 
 	m_rt.Init(GetWindowWidth(), GetWindowHeight(),
 		RTAttachment{ gl::Format::R8G8B8A8_SRGB, "ShadowMapPassColor", gl::AttachmentLoadOp::Clear },
-		RTAttachment{ gl::Format::D32_FLOAT, "ShadowMapPassDepth", gl::AttachmentLoadOp::Clear });
+		RTDAttachment{ gl::Format::D32_FLOAT, "ShadowMapPassDepth", gl::AttachmentLoadOp::Clear });
 
 	auto vertexShader = gl::Shader(gl::ShaderType::VertexShader, io::ReadShaderCode("CuteGameData/shaders/lighting.vert"), "lightingVS");
 	auto fragmentShader = gl::Shader(gl::ShaderType::FragmentShader, io::ReadShaderCode("CuteGameData/shaders/lighting.frag"), "lightingFS");

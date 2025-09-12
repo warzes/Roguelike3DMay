@@ -10,12 +10,19 @@ struct RTAttachment final
 	gl::AttachmentLoadOp loadOp;
 };
 
+struct RTDAttachment final
+{
+	gl::Format           format;
+	std::string          name;
+	gl::AttachmentLoadOp loadOp;
+};
+
 class RenderTarget final
 {
 public:
-	void Init(uint16_t width, uint16_t height, RTAttachment colors, std::optional<RTAttachment> depth);
-	void Init(uint16_t width, uint16_t height, std::span<RTAttachment> colors, std::optional<RTAttachment> depth);
-	void Init(uint16_t width, uint16_t height, const RTAttachment& depth);
+	void Init(uint16_t width, uint16_t height, RTAttachment colors, std::optional<RTDAttachment> depth = std::nullopt);
+	void Init(uint16_t width, uint16_t height, std::span<RTAttachment> colors, std::optional<RTDAttachment> depth = std::nullopt);
+	void Init(uint16_t width, uint16_t height, const RTDAttachment& depth);
 	void Close();
 
 	void SetSize(uint16_t width, uint16_t height);
@@ -34,7 +41,7 @@ public:
 	void BlitToTexture(); // TODO:
 
 private:
-	void createDepth(std::optional<RTAttachment> depth);
+	void createDepth(std::optional<RTDAttachment> depth);
 
 	struct TextureAttachment final
 	{

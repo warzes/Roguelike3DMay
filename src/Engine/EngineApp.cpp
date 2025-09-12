@@ -289,6 +289,8 @@ bool IEngineApp::init()
 {
 	auto engineConfig = GetCreateInfo();
 
+	Print("Engine initializing");
+
 	if (!initWindow(engineConfig))
 		return false;
 	initOpenGL();
@@ -462,6 +464,7 @@ void IEngineApp::close()
 	}
 	glfwTerminate();
 
+	Print("Engine shutting down");
 	thisIEngineApp = nullptr;
 }
 //=============================================================================

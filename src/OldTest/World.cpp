@@ -61,27 +61,27 @@ bool World::Init()
 
 	m_model1.mesh = LoadDataMesh(vertices, indices);
 	m_model1.textureFilter = gl::MagFilter::Nearest;
-	m_model1.material.diffuseTexture = TextureManager::GetTexture("CoreData/textures/White1x1.png", true);
-	m_model1.material.normalTexture = TextureManager::GetTexture("CoreData/textures/normal01.tga", false);
+	m_model1.material.diffuseTexture = TextureManager::GetTexture("CoreData/textures/White1x1.png", gl::ColorSpace::sRGB);
+	m_model1.material.normalTexture = TextureManager::GetTexture("CoreData/textures/normal01.tga");
 
 	m_model2.mesh = LoadAssimpMesh("ExampleData/mesh/bunny.obj");
 	m_model2.scale = glm::vec3(3.0f);
 	//m_model2.position = glm::vec3(0.0f, 0.0f, -4.0f);
 	m_model2.textureFilter = gl::MagFilter::Linear;
-	m_model2.material.normalTexture = TextureManager::GetTexture("CoreData/textures/normal01.tga", false);
+	m_model2.material.normalTexture = TextureManager::GetTexture("CoreData/textures/normal01.tga");
 
 	m_model3.mesh = LoadAssimpMesh("ExampleData/mesh/stall/stall.obj");
 	m_model3.scale = glm::vec3(0.3f);
 	m_model3.position = glm::vec3(4.0f, -0.6f, 0.0f);
 	m_model3.textureFilter = gl::MagFilter::Linear;
-	m_model3.material.diffuseTexture = TextureManager::GetTexture("ExampleData/mesh/stall/stallTexture.png", true, false);
-	m_model3.material.normalTexture = TextureManager::GetTexture("CoreData/textures/normal01.tga", false);
+	m_model3.material.diffuseTexture = TextureManager::GetTexture("ExampleData/mesh/stall/stallTexture.png", gl::ColorSpace::sRGB, false);
+	m_model3.material.normalTexture = TextureManager::GetTexture("CoreData/textures/normal01.tga");
 
 	m_model4.mesh = LoadAssimpMesh("ExampleData/mesh/cube.obj");
 	m_model4.position = glm::vec3(-2.0f, 0.0f, 2.0f);
 	m_model4.textureFilter = gl::MagFilter::Linear;
-	m_model4.material.diffuseTexture = TextureManager::GetTexture("ExampleData/textures/wood.jpg", true);
-	m_model4.material.normalTexture = TextureManager::GetTexture("CoreData/textures/normal01.tga", false);
+	m_model4.material.diffuseTexture = TextureManager::GetTexture("ExampleData/textures/wood.jpg", gl::ColorSpace::sRGB);
+	m_model4.material.normalTexture = TextureManager::GetTexture("CoreData/textures/normal01.tga");
 
 	Light l;
 	l.diffuseColor = glm::vec3(1, 0, 0);

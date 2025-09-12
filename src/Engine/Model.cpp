@@ -189,7 +189,7 @@ Mesh* Model::processMesh(const aiScene* scene, struct aiMesh* mesh, std::string_
 
 			std::string path = directory.data();
 			path += str.data;
-			meshMaterial->diffuseTexture = TextureManager::GetTexture(path, true);
+			meshMaterial->diffuseTexture = TextureManager::GetTexture(path, gl::ColorSpace::sRGB);
 		}
 
 		for (unsigned i = 0; i < material->GetTextureCount(aiTextureType_NORMALS); i++)
@@ -199,7 +199,7 @@ Mesh* Model::processMesh(const aiScene* scene, struct aiMesh* mesh, std::string_
 
 			std::string path = directory.data();
 			path += str.data;
-			meshMaterial->normalTexture = TextureManager::GetTexture(path, false);
+			meshMaterial->normalTexture = TextureManager::GetTexture(path);
 		}
 
 		for (unsigned i = 0; i < material->GetTextureCount(aiTextureType_SPECULAR); i++)
@@ -209,7 +209,7 @@ Mesh* Model::processMesh(const aiScene* scene, struct aiMesh* mesh, std::string_
 
 			std::string path = directory.data();
 			path += str.data;
-			meshMaterial->specularTexture = TextureManager::GetTexture(path, false);
+			meshMaterial->specularTexture = TextureManager::GetTexture(path);
 		}
 	}
 

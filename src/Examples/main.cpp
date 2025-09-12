@@ -8,9 +8,12 @@
 #include "Example007.h"
 #include "Example008.h"
 #include "Example009.h"
+#include "Example010.h"
 
 #include "TM_000.h"
 #include "TM_001.h"
+
+#include "Demo_DeferredRendering.h"
 //=============================================================================
 #if defined(_MSC_VER)
 #	pragma comment( lib, "3rdparty.lib" )
@@ -30,9 +33,12 @@ int main(
 	//Example007 game;
 	//Example008 game;
 	//Example009 game;
+	//Example010 game;
 
 	//TM_000 game;
-	TM_001 game;
+	//TM_001 game;
+
+	Demo_DeferredRendering game;
 
 	game.Run();
 }

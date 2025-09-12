@@ -5,9 +5,9 @@ gl::DeviceProperties gl::InitDeviceProperties()
 {
 	DeviceProperties prop;
 
-	prop.vendor = reinterpret_cast<const char*>(glGetString(GL_VENDOR));
+	prop.vendor   = reinterpret_cast<const char*>(glGetString(GL_VENDOR));
 	prop.renderer = reinterpret_cast<const char*>(glGetString(GL_RENDERER));
-	prop.version = reinterpret_cast<const char*>(glGetString(GL_VERSION));
+	prop.version  = reinterpret_cast<const char*>(glGetString(GL_VERSION));
 	prop.shadingLanguageVersion = reinterpret_cast<const char*>(glGetString(GL_SHADING_LANGUAGE_VERSION));
 
 	glGetIntegerv(GL_MAJOR_VERSION, &prop.glVersionMajor);

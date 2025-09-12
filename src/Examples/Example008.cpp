@@ -100,9 +100,9 @@ bool Example008::OnInit()
 
 	//-------------------------------------------------------------------------
 	// load texture
-	m_texture1 = TextureManager::GetTexture("ExampleData/textures/metal.png", false);
-	m_texture2 = TextureManager::GetTexture("ExampleData/textures/marble.jpg", false);
-	m_texture3 = TextureManager::GetTexture("ExampleData/textures/transparent_window.png", false);
+	m_texture1 = TextureManager::GetTexture("ExampleData/textures/metal.png", gl::ColorSpace::sRGB);
+	m_texture2 = TextureManager::GetTexture("ExampleData/textures/marble.jpg", gl::ColorSpace::sRGB);
+	m_texture3 = TextureManager::GetTexture("ExampleData/textures/transparent_window.png", gl::ColorSpace::sRGB);
 
 	//-------------------------------------------------------------------------
 	// create Sampler

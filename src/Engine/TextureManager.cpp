@@ -179,9 +179,9 @@ gl::Texture* TextureManager::GetDefaultSpecular2D()
 	return defaultSpecular2D;
 }
 //=============================================================================
-gl::Texture* TextureManager::GetTexture(const std::string& name, bool srgb, bool flipVertical)
+gl::Texture* TextureManager::GetTexture(const std::string& name, gl::ColorSpace colorSpace, bool flipVertical)
 {
-	TextureCache keyMap = { .name = name, .sRGB = srgb, .flipVertical = flipVertical };
+	TextureCache keyMap = { .name = name, .sRGB = colorSpace == gl::ColorSpace::sRGB, .flipVertical = flipVertical };
 	auto it = texturesMap.find(keyMap);
 	if (it != texturesMap.end())
 	{
@@ -210,7 +210,7 @@ gl::Texture* TextureManager::GetTexture(const std::string& name, bool srgb, bool
 		else if (nrChannels == 2) imgFormat = gl::Format::R8G8_UNORM;
 		else if (nrChannels == 3) imgFormat = gl::Format::R8G8B8_UNORM;
 		else if (nrChannels == 4) imgFormat = gl::Format::R8G8B8A8_UNORM;
-		if (srgb) imgFormat = gl::detail::FormatToSrgb(imgFormat);
+		if (colorSpace == gl::ColorSpace::sRGB) imgFormat = gl::detail::FormatToSrgb(imgFormat);
 
 		const gl::TextureCreateInfo createInfo{
 			.imageType   = gl::ImageType::Tex2D,

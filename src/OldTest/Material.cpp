@@ -35,11 +35,11 @@ Material& MaterialManager::MakeMaterial(std::string name,
 
 	// Load Texture
 	Material material;
-	material.albedoTex = TextureManager::GetTexture(albedoTexName, true);
-	material.roughnessTex = TextureManager::GetTexture(roughnessTexName, false);
-	material.metalnessTex = TextureManager::GetTexture(metalnessTexName, false);
-	material.normalTex = TextureManager::GetTexture(normalTexName, false);
-	material.ambientOcclusionTex = TextureManager::GetTexture(ambientOcclusionTexName, false);
+	material.albedoTex = TextureManager::GetTexture(albedoTexName, gl::ColorSpace::sRGB);
+	material.roughnessTex = TextureManager::GetTexture(roughnessTexName);
+	material.metalnessTex = TextureManager::GetTexture(metalnessTexName);
+	material.normalTex = TextureManager::GetTexture(normalTexName);
+	material.ambientOcclusionTex = TextureManager::GetTexture(ambientOcclusionTexName);
 	auto p = m_materials.insert({ name, material });
 	return p.first->second;
 }

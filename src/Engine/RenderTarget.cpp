@@ -1,12 +1,12 @@
 ﻿#include "stdafx.h"
 #include "RenderTarget.h"
 //=============================================================================
-void RenderTarget::Init(uint16_t width, uint16_t height, RTAttachment colors, std::optional<RTAttachment> depth)
+void RenderTarget::Init(uint16_t width, uint16_t height, RTAttachment colors, std::optional<RTDAttachment> depth)
 {
 	Init(width, height, { &colors, 1 }, depth);
 }
 //=============================================================================
-void RenderTarget::Init(uint16_t width, uint16_t height, std::span<RTAttachment> colors, std::optional<RTAttachment> depth)
+void RenderTarget::Init(uint16_t width, uint16_t height, std::span<RTAttachment> colors, std::optional<RTDAttachment> depth)
 {
 	Close();
 
@@ -26,7 +26,7 @@ void RenderTarget::Init(uint16_t width, uint16_t height, std::span<RTAttachment>
 	createDepth(depth);
 }
 //=============================================================================
-void RenderTarget::Init(uint16_t width, uint16_t height, const RTAttachment& depth)
+void RenderTarget::Init(uint16_t width, uint16_t height, const RTDAttachment& depth)
 {
 	Close();
 
@@ -129,7 +129,7 @@ void RenderTarget::BlitToSwapChain(size_t id)
 	gl::BlitTextureToSwapChain(*GetColor(id), {}, {}, GetExtent(), {GetWindowWidth(), GetWindowHeight(), 1}, gl::MagFilter::Nearest);
 }
 //=============================================================================
-void RenderTarget::createDepth(std::optional<RTAttachment> depth)
+void RenderTarget::createDepth(std::optional<RTDAttachment> depth)
 {
 	if (depth.has_value())
 	{

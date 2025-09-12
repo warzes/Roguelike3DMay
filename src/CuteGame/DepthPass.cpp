@@ -9,7 +9,7 @@ bool DepthPass::Init()
 {
 	m_depthDataUBO.Init();
 
-	m_rt.Init(DepthMapSize, DepthMapSize, RTAttachment{ gl::Format::D32_FLOAT, "DepthPass", gl::AttachmentLoadOp::Clear });
+	m_rt.Init(DepthMapSize, DepthMapSize, RTDAttachment{ gl::Format::D32_FLOAT, "DepthPass", gl::AttachmentLoadOp::Clear });
 
 	auto vertexShader = gl::Shader(gl::ShaderType::VertexShader, io::ReadShaderCode("CuteGameData/shaders/depth.vert"), "DepthPassVS");
 

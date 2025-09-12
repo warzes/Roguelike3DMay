@@ -12,5 +12,5 @@ public:
 	static gl::Texture* GetDefaultNormal2D();
 	static gl::Texture* GetDefaultSpecular2D();
 
-	static gl::Texture* GetTexture(const std::string& name, bool srgb, bool flipVertical = false);
+	static gl::Texture* GetTexture(const std::string& name, gl::ColorSpace colorSpace = gl::ColorSpace::None, bool flipVertical = false);
 };

@@ -1,7 +1,5 @@
 ﻿#include "stdafx.h"
-#include "TM_000.h"
-//=============================================================================
-// основа сцены
+#include "GameApp.h"
 //=============================================================================
 namespace
 {
@@ -78,13 +76,13 @@ void main()
 	std::optional<gl::GraphicsPipeline> pipeline;
 }
 //=============================================================================
-EngineCreateInfo TM_000::GetCreateInfo() const
+EngineCreateInfo GameApp::GetCreateInfo() const
 {
 	EngineCreateInfo createInfo{};
 	return createInfo;
 }
 //=============================================================================
-bool TM_000::OnInit()
+bool GameApp::OnInit()
 {
 	box.Create(GeometryGenerator::CreateBox());
 	plane.Create(GeometryGenerator::CreatePlane(100.0f, 100.0f, 100.0f, 100.0f));
@@ -125,11 +123,11 @@ bool TM_000::OnInit()
 			.depthState = {.depthTestEnable = true },
 			});
 	}
-	
+
 	return true;
 }
 //=============================================================================
-void TM_000::OnClose()
+void GameApp::OnClose()
 {
 	box.Free();
 	plane.Free();
@@ -143,7 +141,7 @@ void TM_000::OnClose()
 	texture2 = nullptr;
 }
 //=============================================================================
-void TM_000::OnUpdate([[maybe_unused]] float deltaTime)
+void GameApp::OnUpdate([[maybe_unused]] float deltaTime)
 {
 	if (Input::IsKeyDown(GLFW_KEY_W)) camera.ProcessKeyboard(CameraForward, deltaTime);
 	if (Input::IsKeyDown(GLFW_KEY_S)) camera.ProcessKeyboard(CameraBackward, deltaTime);
@@ -165,7 +163,7 @@ void TM_000::OnUpdate([[maybe_unused]] float deltaTime)
 	SceneDataUBO->cameraPosition = camera.Position;
 }
 //=============================================================================
-void TM_000::OnRender()
+void GameApp::OnRender()
 {
 	renderTarget.Begin({ .1f, .5f, .8f });
 	{
@@ -218,29 +216,29 @@ void TM_000::OnRender()
 	renderTarget.BlitToSwapChain();
 }
 //=============================================================================
-void TM_000::OnImGuiDraw()
+void GameApp::OnImGuiDraw()
 {
 	DrawFPS();
 }
 //=============================================================================
-void TM_000::OnResize(uint16_t width, uint16_t height)
+void GameApp::OnResize(uint16_t width, uint16_t height)
 {
 	renderTarget.SetSize(width, height);
 }
 //=============================================================================
-void TM_000::OnMouseButton([[maybe_unused]] int button, [[maybe_unused]] int action, [[maybe_unused]] int mods)
+void GameApp::OnMouseButton([[maybe_unused]] int button, [[maybe_unused]] int action, [[maybe_unused]] int mods)
 {
 }
 //=============================================================================
-void TM_000::OnMousePos([[maybe_unused]] double x, [[maybe_unused]] double y)
+void GameApp::OnMousePos([[maybe_unused]] double x, [[maybe_unused]] double y)
 {
 }
 //=============================================================================
-void TM_000::OnScroll([[maybe_unused]] double dx, [[maybe_unused]] double dy)
+void GameApp::OnScroll([[maybe_unused]] double dx, [[maybe_unused]] double dy)
 {
 }
 //=============================================================================
-void TM_000::OnKey([[maybe_unused]] int key, [[maybe_unused]] int scanCode, [[maybe_unused]] int action, [[maybe_unused]] int mods)
+void GameApp::OnKey([[maybe_unused]] int key, [[maybe_unused]] int scanCode, [[maybe_unused]] int action, [[maybe_unused]] int mods)
 {
 }
 //=============================================================================

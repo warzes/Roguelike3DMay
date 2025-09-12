@@ -1,7 +1,7 @@
-#include "stdafx.h"
+п»ї#include "stdafx.h"
 #include "TM_001.h"
 //=============================================================================
-// основа сцены
+// РѕСЃРЅРѕРІР° СЃС†РµРЅС‹
 //=============================================================================
 namespace
 {
@@ -96,8 +96,8 @@ bool TM_001::OnInit()
 
 	SceneDataUBO.Init();
 
-	texture1 = TextureManager::GetTexture("ExampleData/textures/metal.png", true);
-	texture2 = TextureManager::GetTexture("ExampleData/textures/marble.jpg", true);
+	texture1 = TextureManager::GetTexture("ExampleData/textures/metal.png", gl::ColorSpace::sRGB);
+	texture2 = TextureManager::GetTexture("ExampleData/textures/marble.jpg", gl::ColorSpace::sRGB);
 
 	gl::SamplerState sampleDesc;
 	sampleDesc.minFilter = gl::MinFilter::Nearest;
@@ -111,7 +111,7 @@ bool TM_001::OnInit()
 
 	renderTarget.Init(GetWindowWidth(), GetWindowHeight(),
 		RTAttachment{ gl::Format::R8G8B8A8_SRGB, "MainPassColor", gl::AttachmentLoadOp::Clear },
-		RTAttachment{ gl::Format::D32_FLOAT, "MainPassDepth", gl::AttachmentLoadOp::Clear });
+		RTDAttachment{ gl::Format::D32_FLOAT, "MainPassDepth", gl::AttachmentLoadOp::Clear });
 	{
 		auto vertexShader = gl::Shader(gl::ShaderType::VertexShader, shaderCodeVertex, "VS");
 		auto fragmentShader = gl::Shader(gl::ShaderType::FragmentShader, shaderCodeFragment, "FS");
@@ -171,7 +171,7 @@ void TM_001::OnRender()
 	{
 		gl::Cmd::BindGraphicsPipeline(*pipeline);
 
-		// плоскость
+		// РїР»РѕСЃРєРѕСЃС‚СЊ
 		{
 			SceneDataUBO->modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
 			SceneDataUBO.Bind(0);
@@ -179,7 +179,7 @@ void TM_001::OnRender()
 			plane.Draw(std::nullopt);
 		}
 
-		// куб
+		// РєСѓР±
 		{
 			SceneDataUBO->modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(2.0f, 0.5f, 0.0f));
 			SceneDataUBO.Bind(0);
@@ -187,7 +187,7 @@ void TM_001::OnRender()
 			box.Draw(std::nullopt);
 		}
 
-		// Сфера
+		// РЎС„РµСЂР°
 		{
 			SceneDataUBO->modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 5.0f, 0.0f));
 			SceneDataUBO.Bind(0);
@@ -195,7 +195,7 @@ void TM_001::OnRender()
 			sphere.Draw(std::nullopt);
 		}
 
-		// Дом
+		// Р”РѕРј
 		{
 			std::vector<glm::vec3> housePositions
 			{

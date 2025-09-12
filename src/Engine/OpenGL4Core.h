@@ -151,8 +151,6 @@ namespace gl
 	};
 	SE_DECLARE_FLAG_TYPE(AspectMask, AspectMaskBit, uint32_t)
 
-
-
 	enum class ColorComponentFlag : uint32_t
 	{
 		None,
@@ -403,5 +401,11 @@ namespace gl
 		// TODO: add more bits as necessary
 	};
 	SE_DECLARE_FLAG_TYPE(MemoryBarrierBits, MemoryBarrierBit, uint32_t)
+
+	enum class ColorSpace : uint8_t
+	{
+		None,
+		sRGB
+	};
 
 } // namespace gl

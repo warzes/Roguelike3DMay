@@ -184,7 +184,7 @@ namespace Utility
 
 								auto fileData = io::LoadBinaryFile(filePath->uri.path());
 
-								return MakeRawImageData(fileData.first.get(), fileData.second, filePath->mimeType, image.name);
+								return MakeRawImageData(fileData.data(), fileData.size(), filePath->mimeType, image.name);
 							}
 
 							if (const auto* vector = std::get_if<fastgltf::sources::Vector>(&image.data))

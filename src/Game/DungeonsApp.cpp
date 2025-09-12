@@ -32,8 +32,8 @@ bool dung::DungeonsApp::OnInit()
 
 	m_model1.mesh = LoadDataMesh(vertices, indices);
 	m_model1.textureFilter = gl::MagFilter::Nearest;
-	m_model1.material.diffuseTexture = TextureManager::GetTexture("ExampleData/textures/wood.jpg", true);
-	m_model1.material.normalTexture = TextureManager::GetTexture("CoreData/textures/normal01.tga", false);
+	m_model1.material.diffuseTexture = TextureManager::GetTexture("ExampleData/textures/wood.jpg", gl::ColorSpace::sRGB);
+	m_model1.material.normalTexture = TextureManager::GetTexture("CoreData/textures/normal01.tga");
 
 	m_model2.mesh = LoadAssimpMesh("ExampleData/mesh/bunny.obj");
 	m_model2.scale = glm::vec3(3.0f);

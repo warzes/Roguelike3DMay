@@ -31,10 +31,16 @@
       <Filter>01_BaseExamples</Filter>
     </ClCompile>
     <ClCompile Include="TM_000.cpp">
-      <Filter>02_ThinMatrix</Filter>
+      <Filter>03_ThinMatrix</Filter>
     </ClCompile>
     <ClCompile Include="TM_001.cpp">
-      <Filter>02_ThinMatrix</Filter>
+      <Filter>03_ThinMatrix</Filter>
+    </ClCompile>
+    <ClCompile Include="Example010.cpp">
+      <Filter>01_BaseExamples</Filter>
+    </ClCompile>
+    <ClCompile Include="Demo_DeferredRendering.cpp">
+      <Filter>Demo\Demo_DeferredRendering</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -67,18 +73,44 @@
       <Filter>01_BaseExamples</Filter>
     </ClInclude>
     <ClInclude Include="TM_000.h">
-      <Filter>02_ThinMatrix</Filter>
+      <Filter>03_ThinMatrix</Filter>
     </ClInclude>
     <ClInclude Include="TM_001.h">
-      <Filter>02_ThinMatrix</Filter>
+      <Filter>03_ThinMatrix</Filter>
+    </ClInclude>
+    <ClInclude Include="Example010.h">
+      <Filter>01_BaseExamples</Filter>
+    </ClInclude>
+    <ClInclude Include="Demo_DeferredRendering.h">
+      <Filter>Demo\Demo_DeferredRendering</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="01_BaseExamples">
       <UniqueIdentifier>{d4085903-5c45-4e41-a558-2a8b5da2c669}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02_ThinMatrix">
+    <Filter Include="03_ThinMatrix">
       <UniqueIdentifier>{57944248-c5d9-4c64-a768-dcf227f02c3c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Demo">
+      <UniqueIdentifier>{eff5dfff-eee2-4a78-9831-6dd859ec7c40}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Demo\Demo_DeferredRendering">
+      <UniqueIdentifier>{e5c183cc-2b2e-4220-894a-5089ce7cd276}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\bin\ExampleData\shaders\Demo_DeferredRendering\render.frag">
+      <Filter>Demo\Demo_DeferredRendering</Filter>
+    </None>
+    <None Include="..\..\bin\ExampleData\shaders\Demo_DeferredRendering\render.vert">
+      <Filter>Demo\Demo_DeferredRendering</Filter>
+    </None>
+    <None Include="..\..\bin\ExampleData\shaders\Demo_DeferredRendering\light.frag">
+      <Filter>Demo\Demo_DeferredRendering</Filter>
+    </None>
+    <None Include="..\..\bin\ExampleData\shaders\Demo_DeferredRendering\light.vert">
+      <Filter>Demo\Demo_DeferredRendering</Filter>
+    </None>
   </ItemGroup>
 </Project>

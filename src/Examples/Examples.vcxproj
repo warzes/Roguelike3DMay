@@ -94,6 +94,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Demo_DeferredRendering.cpp" />
     <ClCompile Include="Example002.cpp" />
     <ClCompile Include="Example003.cpp" />
     <ClCompile Include="Example004.cpp" />
@@ -102,6 +103,7 @@
     <ClCompile Include="Example007.cpp" />
     <ClCompile Include="Example008.cpp" />
     <ClCompile Include="Example009.cpp" />
+    <ClCompile Include="Example010.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Example001.cpp" />
     <ClCompile Include="stdafx.cpp">
@@ -112,6 +114,7 @@
     <ClCompile Include="TM_001.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Demo_DeferredRendering.h" />
     <ClInclude Include="Example001.h" />
     <ClInclude Include="Example002.h" />
     <ClInclude Include="Example003.h" />
@@ -121,9 +124,16 @@
     <ClInclude Include="Example007.h" />
     <ClInclude Include="Example008.h" />
     <ClInclude Include="Example009.h" />
+    <ClInclude Include="Example010.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="TM_000.h" />
     <ClInclude Include="TM_001.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\bin\ExampleData\shaders\Demo_DeferredRendering\light.frag" />
+    <None Include="..\..\bin\ExampleData\shaders\Demo_DeferredRendering\light.vert" />
+    <None Include="..\..\bin\ExampleData\shaders\Demo_DeferredRendering\render.frag" />
+    <None Include="..\..\bin\ExampleData\shaders\Demo_DeferredRendering\render.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

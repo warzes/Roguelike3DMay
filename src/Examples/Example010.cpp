@@ -1,11 +1,9 @@
 ﻿#include "stdafx.h"
-#include "TM_000.h"
-//=============================================================================
-// основа сцены
+#include "Example010.h"
 //=============================================================================
 namespace
 {
-	const char* shaderCodeVertex = R"(
+	const char* planeCodeVertex = R"(
 #version 460 core
 
 layout(location = 0) in vec3 vertexPosition;
@@ -22,82 +20,72 @@ layout(binding = 0, std140) uniform SceneDataBlock {
 };
 
 layout(location = 0) out vec2 fragTexCoord;
-layout(location = 1) out vec3 fragNormal;
-layout(location = 2) out vec4 fragWorldPosition;
+layout(location = 1) out vec3 fragColor;
+layout(location = 2) out vec3 fragNormal;
+layout(location = 3) out vec4 fragWorldPosition;
 
 void main()
 {
 	gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(vertexPosition, 1.0);
 
-	fragTexCoord      = vertexTexCoord;
-	fragNormal        = mat3(transpose(inverse(modelMatrix))) * vertexNormal;
+	fragColor = vec3(1.0);
 	fragWorldPosition = modelMatrix * vec4(vertexPosition, 1.0);
+	fragNormal = mat3(transpose(inverse(modelMatrix))) * vertexNormal;
 }
 )";
 
-	const char* shaderCodeFragment = R"(
+	const char* planeCodeFragment = R"(
 #version 460 core
 
 layout(location = 0) in vec2 fragTexCoord;
-layout(location = 1) in vec3 fragNormal;
-layout(location = 2) in vec4 fragWorldPosition;
-
-layout(binding = 0) uniform sampler2D diffuseTexture;
+layout(location = 1) in vec3 fragColor;
+layout(location = 2) in vec3 fragNormal;
+layout(location = 3) in vec4 fragWorldPosition;
 
 layout(location = 0) out vec4 outputColor;
 
 void main()
 {
-	vec4 textureColor = texture(diffuseTexture, fragTexCoord);
-	outputColor = textureColor;
+	outputColor.rgb = fragColor;
+	outputColor.a = 1.0;
 }
 )";
 
-	struct alignas(16) SceneDataBlock final
+	struct alignas(16) PlaneSceneDataBlock final
 	{
 		glm::mat4         viewMatrix;
 		glm::mat4         projectionMatrix;
 		glm::mat4         modelMatrix;
 		glm::aligned_vec3 cameraPosition;
 	};
-	inline UniformsWrapper<SceneDataBlock> SceneDataUBO;
+	inline UniformsWrapper<PlaneSceneDataBlock> PlaneSceneDataUBO;
 
 	Camera camera;
 
 	Model plane;
-	Model box;
 	Model sphere;
 
-	Model house;
-
 	gl::Texture* texture1;
-	gl::Texture* texture2;
 	std::optional<gl::Sampler> sampler;
 
 	RenderTarget                        renderTarget;
-	std::optional<gl::GraphicsPipeline> pipeline;
+	std::optional<gl::GraphicsPipeline> planePipeline;
 }
 //=============================================================================
-EngineCreateInfo TM_000::GetCreateInfo() const
+EngineCreateInfo Example010::GetCreateInfo() const
 {
 	EngineCreateInfo createInfo{};
 	return createInfo;
 }
 //=============================================================================
-bool TM_000::OnInit()
+bool Example010::OnInit()
 {
-	box.Create(GeometryGenerator::CreateBox());
-	plane.Create(GeometryGenerator::CreatePlane(100.0f, 100.0f, 100.0f, 100.0f));
-	sphere.Create(GeometryGenerator::CreateSphere());
-
-	auto matrix = glm::scale(glm::mat4(1.0f), glm::vec3(0.002f));
-	matrix = glm::rotate(matrix, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-	house.Load("ExampleData/mesh/scheune_3ds/scheune.3ds", matrix);
-
-	SceneDataUBO.Init();
+	plane.Create(GeometryGenerator::CreatePlane(2.0f, 2.0f, 1.0f, 1.0f));
+	sphere.Create(GeometryGenerator::CreateSphere(0.5));
+	
+	PlaneSceneDataUBO.Init();
 
 	texture1 = TextureManager::GetTexture("ExampleData/textures/metal.png", gl::ColorSpace::sRGB);
-	texture2 = TextureManager::GetTexture("ExampleData/textures/marble.jpg", gl::ColorSpace::sRGB);
 
 	gl::SamplerState sampleDesc;
 	sampleDesc.minFilter = gl::MinFilter::Nearest;
@@ -106,17 +94,17 @@ bool TM_000::OnInit()
 	sampleDesc.addressModeV = gl::AddressMode::Repeat;
 	sampler = gl::Sampler(sampleDesc);
 
-	camera.SetPosition(glm::vec3(0.0f, 1.4f, -6.0f));
-	camera.MovementSpeed = 20.0f;
+	camera.SetPosition(glm::vec3(0.0f, 0.4f, -2.0f));
+	camera.MovementSpeed = 10.0f;
 
 	renderTarget.Init(GetWindowWidth(), GetWindowHeight(),
 		RTAttachment{ gl::Format::R8G8B8A8_SRGB, "MainPassColor", gl::AttachmentLoadOp::Clear },
 		RTDAttachment{ gl::Format::D32_FLOAT, "MainPassDepth", gl::AttachmentLoadOp::Clear });
 	{
-		auto vertexShader = gl::Shader(gl::ShaderType::VertexShader, shaderCodeVertex, "VS");
-		auto fragmentShader = gl::Shader(gl::ShaderType::FragmentShader, shaderCodeFragment, "FS");
+		auto vertexShader = gl::Shader(gl::ShaderType::VertexShader, planeCodeVertex, "VS");
+		auto fragmentShader = gl::Shader(gl::ShaderType::FragmentShader, planeCodeFragment, "FS");
 
-		pipeline = gl::GraphicsPipeline({
+		planePipeline = gl::GraphicsPipeline({
 			 .name = "Pipeline",
 			.vertexShader = &vertexShader,
 			.fragmentShader = &fragmentShader,
@@ -125,25 +113,22 @@ bool TM_000::OnInit()
 			.depthState = {.depthTestEnable = true },
 			});
 	}
-	
+
 	return true;
 }
 //=============================================================================
-void TM_000::OnClose()
+void Example010::OnClose()
 {
-	box.Free();
 	plane.Free();
 	sphere.Free();
-	house.Free();
-	SceneDataUBO.Close();
+	PlaneSceneDataUBO.Close();
 	renderTarget.Close();
-	pipeline = {};
+	planePipeline = {};
 	sampler = {};
 	texture1 = nullptr;
-	texture2 = nullptr;
 }
 //=============================================================================
-void TM_000::OnUpdate([[maybe_unused]] float deltaTime)
+void Example010::OnUpdate([[maybe_unused]] float deltaTime)
 {
 	if (Input::IsKeyDown(GLFW_KEY_W)) camera.ProcessKeyboard(CameraForward, deltaTime);
 	if (Input::IsKeyDown(GLFW_KEY_S)) camera.ProcessKeyboard(CameraBackward, deltaTime);
@@ -160,57 +145,30 @@ void TM_000::OnUpdate([[maybe_unused]] float deltaTime)
 		Input::SetCursorVisible(true);
 	}
 
-	SceneDataUBO->viewMatrix = camera.GetViewMatrix();
-	SceneDataUBO->projectionMatrix = glm::perspective(glm::radians(60.0f), GetWindowAspect(), 0.1f, 1000.0f);
-	SceneDataUBO->cameraPosition = camera.Position;
+	PlaneSceneDataUBO->viewMatrix = camera.GetViewMatrix();
+	PlaneSceneDataUBO->projectionMatrix = glm::perspective(glm::radians(60.0f), GetWindowAspect(), 0.1f, 1000.0f);
+	PlaneSceneDataUBO->cameraPosition = camera.Position;
 }
 //=============================================================================
-void TM_000::OnRender()
+void Example010::OnRender()
 {
 	renderTarget.Begin({ .1f, .5f, .8f });
 	{
-		gl::Cmd::BindGraphicsPipeline(*pipeline);
-
 		// плоскость
 		{
-			SceneDataUBO->modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-			SceneDataUBO.Bind(0);
+			gl::Cmd::BindGraphicsPipeline(*planePipeline);
+			PlaneSceneDataUBO->modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+			PlaneSceneDataUBO.Bind(0);
 			gl::Cmd::BindSampledImage(0, *texture1, *sampler);
 			plane.Draw(std::nullopt);
 		}
 
-		// куб
-		{
-			SceneDataUBO->modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(2.0f, 0.5f, 0.0f));
-			SceneDataUBO.Bind(0);
-			gl::Cmd::BindSampledImage(0, *texture2, *sampler);
-			box.Draw(std::nullopt);
-		}
-
 		// Сфера
 		{
-			SceneDataUBO->modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 5.0f, 0.0f));
-			SceneDataUBO.Bind(0);
-			gl::Cmd::BindSampledImage(0, *texture2, *sampler);
+			PlaneSceneDataUBO->modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+			PlaneSceneDataUBO.Bind(0);
+			gl::Cmd::BindSampledImage(0, *texture1, *sampler);
 			sphere.Draw(std::nullopt);
-		}
-
-		// Дом
-		{
-			std::vector<glm::vec3> housePositions
-			{
-				glm::vec3(0.0f, 0.0f, -10.0f),
-				glm::vec3(-20.0f, 0.0f, 0.0f),
-				glm::vec3(0.0f, 0.0f, 10.0f),
-				glm::vec3(20.0f, 0.0f, 0.0f),
-				glm::vec3(5.0f, 0.0f, 0.0f),
-			};
-			for (const auto& housePosition : housePositions)
-			{
-				SceneDataUBO->modelMatrix = glm::translate(glm::mat4(1.0f), housePosition);
-				SceneDataUBO.Bind(0);
-				house.Draw(sampler);
-			}
 		}
 	}
 	renderTarget.End();
@@ -218,29 +176,29 @@ void TM_000::OnRender()
 	renderTarget.BlitToSwapChain();
 }
 //=============================================================================
-void TM_000::OnImGuiDraw()
+void Example010::OnImGuiDraw()
 {
 	DrawFPS();
 }
 //=============================================================================
-void TM_000::OnResize(uint16_t width, uint16_t height)
+void Example010::OnResize(uint16_t width, uint16_t height)
 {
 	renderTarget.SetSize(width, height);
 }
 //=============================================================================
-void TM_000::OnMouseButton([[maybe_unused]] int button, [[maybe_unused]] int action, [[maybe_unused]] int mods)
+void Example010::OnMouseButton([[maybe_unused]] int button, [[maybe_unused]] int action, [[maybe_unused]] int mods)
 {
 }
 //=============================================================================
-void TM_000::OnMousePos([[maybe_unused]] double x, [[maybe_unused]] double y)
+void Example010::OnMousePos([[maybe_unused]] double x, [[maybe_unused]] double y)
 {
 }
 //=============================================================================
-void TM_000::OnScroll([[maybe_unused]] double dx, [[maybe_unused]] double dy)
+void Example010::OnScroll([[maybe_unused]] double dx, [[maybe_unused]] double dy)
 {
 }
 //=============================================================================
-void TM_000::OnKey([[maybe_unused]] int key, [[maybe_unused]] int scanCode, [[maybe_unused]] int action, [[maybe_unused]] int mods)
+void Example010::OnKey([[maybe_unused]] int key, [[maybe_unused]] int scanCode, [[maybe_unused]] int action, [[maybe_unused]] int mods)
 {
 }
 //=============================================================================

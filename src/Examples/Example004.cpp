@@ -180,7 +180,7 @@ bool Example004::OnInit()
 
 	//-------------------------------------------------------------------------
 	// load texture
-	m_texture = TextureManager::GetTexture("CoreData/textures/temp.png", true);
+	m_texture = TextureManager::GetTexture("CoreData/textures/temp.png", gl::ColorSpace::sRGB);
 
 	//-------------------------------------------------------------------------
 	// create Sampler
