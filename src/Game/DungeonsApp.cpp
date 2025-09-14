@@ -41,6 +41,8 @@ bool dung::DungeonsApp::OnInit()
 	m_model3.model.Load("ExampleData/mesh/school/school.obj");
 	//m_model3.model.Load("ExampleData/mesh/metro/metro.obj");
 
+	//m_model3.model.Load("ExampleData/mesh/megaron_citadel_night/scene.gltf");
+
 	if (!createPipeline())
 		return false;
 
