@@ -41,7 +41,7 @@ void main()
 	vec4 DiffuseColor = (hasDiffuseTexture)
 		? texture(diffuseTex, vTexCoords)
 		: diffuse;
-	DiffuseColor = DiffuseColor * vColor;
+//	DiffuseColor = DiffuseColor * vColor;
 
 	// прозрачность скипаем
 	if (DiffuseColor.a < 0.02)

@@ -41,7 +41,6 @@ bool dung::DungeonsApp::OnInit()
 	m_model3.model.Load("ExampleData/mesh/school/school.obj");
 	//m_model3.model.Load("ExampleData/mesh/metro/metro.obj");
 
-
 	if (!createPipeline())
 		return false;
 
