@@ -188,5 +188,7 @@ void Example003::OnScroll([[maybe_unused]] double dx, [[maybe_unused]] double dy
 //=============================================================================
 void Example003::OnKey([[maybe_unused]] int key, [[maybe_unused]] int scanCode, [[maybe_unused]] int action, [[maybe_unused]] int mods)
 {
+
+
 }
 //=============================================================================

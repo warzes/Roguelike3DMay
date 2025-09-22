@@ -180,7 +180,7 @@ gl::GraphicsPipeline::GraphicsPipeline(const GraphicsPipelineInfo& info)
 //=============================================================================
 gl::GraphicsPipeline::~GraphicsPipeline()
 {
-	if (m_id != 0)
+	if (m_id)
 	{
 		Debug("Destroyed Graphics Program with handle " + std::to_string(m_id));
 		auto it = gGraphicsPipelines.find(static_cast<GLuint>(m_id));
